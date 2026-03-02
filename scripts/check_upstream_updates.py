@@ -34,8 +34,12 @@ def github_api_get(path: str) -> list | dict:
         with urllib.request.urlopen(req) as resp:
             return json.loads(resp.read().decode())
     except urllib.error.HTTPError as e:
-        print(f"[ERROR] GitHub API request failed: {e.code} {e.reason} (path={path})", file=sys.stderr)
-        sys.exit(1)
+        if e.code == 404:
+            print(f"[WARNING] Directory not found (404): {path} - skipping", file=sys.stderr)
+            return []
+        else:
+            print(f"[ERROR] GitHub API request failed: {e.code} {e.reason} (path={path})", file=sys.stderr)
+            sys.exit(1)
 
 
 def fetch_filenames(directory: str) -> list[str]:
