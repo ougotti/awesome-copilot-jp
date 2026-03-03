@@ -79,7 +79,7 @@ jobs:
               `> このIssueは [check-upstream-updates](../../actions/workflows/check-upstream-updates.yml) ワークフローにより自動生成されました。`,
             ].join('\n');
 
-            await github.rest.issues.create({
+            const issue = await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `[更新通知] awesome-copilot に ${totalCount} 個の新規ファイル追加 (${new Date().toISOString().split('T')[0]})`,
@@ -87,7 +87,20 @@ jobs:
               labels: ['upstream-update', 'documentation'],
             });
 
-            console.log(`Issue created: ${totalCount} new files found`);
+            console.log(`Issue #${issue.data.number} created: ${totalCount} new files found`);
+
+            // GitHub Copilot Coding Agent に自動アサイン
+            try {
+              await github.rest.issues.addAssignees({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.data.number,
+                assignees: ['copilot'],
+              });
+              console.log(`Issue #${issue.data.number} assigned to Copilot Coding Agent`);
+            } catch (assignError) {
+              console.log(`Note: Could not assign to copilot (Copilot Coding Agent may not be enabled): ${assignError.message}`);
+            }
 
       - name: 新規ファイルなし（スキップ）
         if: steps.check.outputs.has_new_files != 'true'
