@@ -1,6 +1,6 @@
 # Instructions 一覧と活用ガイド
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **168 個の Instructions** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **178 個の Instructions** を日本語で解説します。
 
 ## Instructions とは
 
@@ -65,6 +65,7 @@ applyTo: "**/*.py"
 | [`dotnet-wpf.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/dotnet-wpf.instructions.md) | WPF デスクトップアプリ（MVVM） | Windows デスクトップ |
 | [`blazor.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/blazor.instructions.md) | Blazor コンポーネント開発 | .NET Web UI |
 | [`aspnet-rest-apis.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/aspnet-rest-apis.instructions.md) | ASP.NET Core REST API 設計 | Web API 構築 |
+| [`winui3.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/winui3.instructions.md) | WinUI 3 / Windows App SDK デスクトップアプリ規約 | Windows デスクトップアプリ |
 
 **[csharp.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/csharp.instructions.md) の主なルール:
 - PascalCase（public）、camelCase（private）、インターフェースは `I` プレフィックス
@@ -164,6 +165,7 @@ applyTo: "**/*.py"
 | [`ruby-mcp-server.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/ruby-mcp-server.instructions.md) | Ruby での MCP サーバー開発 | MCP サーバー構築 |
 | [`php-symfony.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/php-symfony.instructions.md) | Symfony フレームワーク規約 | PHP Web 開発 |
 | [`php-mcp-server.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/php-mcp-server.instructions.md) | PHP での MCP サーバー開発 | MCP サーバー構築 |
+| [`moodle.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/moodle.instructions.md) | Moodle プラグイン・テーマ開発規約（PHP） | Moodle LMS 開発 |
 | [`kotlin-mcp-server.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/kotlin-mcp-server.instructions.md) | Kotlin での MCP サーバー開発 | MCP サーバー構築 |
 | [`swift-mcp-server.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/swift-mcp-server.instructions.md) | Swift での MCP サーバー開発 | MCP サーバー構築 |
 | [`dart-n-flutter.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/dart-n-flutter.instructions.md) | Dart / Flutter 開発規約 | モバイルアプリ開発 |
@@ -332,6 +334,14 @@ applyTo: "**/*.py"
 
 ---
 
+#### AWS
+
+| ファイル名 | 概要 | 活用場面 |
+|-----------|------|---------|
+| [`aws-appsync.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/aws-appsync.instructions.md) | AWS AppSync Event API ハンドラー実装規約 | AppSync イベント駆動 API 開発 |
+
+---
+
 ### テスト
 
 | ファイル名 | 概要 | 活用場面 |
@@ -356,9 +366,11 @@ applyTo: "**/*.py"
 | [`security-and-owasp.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/security-and-owasp.instructions.md) | OWASP Top 10 ベースのセキュア コーディング | セキュリティ対策 |
 | [`performance-optimization.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/performance-optimization.instructions.md) | パフォーマンス最適化ガイド | パフォーマンス改善 |
 | [`a11y.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/a11y.instructions.md) | アクセシビリティ（WCAG 2.2 Level AA） | アクセシビリティ対応 |
+| [`markdown-accessibility.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/markdown-accessibility.instructions.md) | Markdown アクセシビリティガイドライン（GitHub ベスト5） | ドキュメントの a11y 対応 |
 | [`code-review-generic.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/code-review-generic.instructions.md) | 汎用コードレビューガイドライン | コードレビュー |
 | [`self-explanatory-code-commenting.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/self-explanatory-code-commenting.instructions.md) | 自己説明的なコードとコメント | コード可読性 |
 | [`object-calisthenics.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/object-calisthenics.instructions.md) | Object Calisthenics（コード品質練習） | コード品質向上 |
+| [`oop-design-patterns.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/oop-design-patterns.instructions.md) | OOP デザインパターン（GoF パターン・SOLID 原則） | オブジェクト指向設計 |
 
 **[security-and-owasp.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/security-and-owasp.instructions.md) の主なルール:
 - 最小権限の原則、「デフォルト拒否」パターン
@@ -483,6 +495,9 @@ applyTo: "**/*.py"
 | [`ai-prompt-engineering-safety-best-practices.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/ai-prompt-engineering-safety-best-practices.instructions.md) | プロンプトエンジニアリング安全規約 | 安全な AI 活用 |
 | [`taming-copilot.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/taming-copilot.instructions.md) | Copilot の制御 | Copilot 活用 |
 | [`genaiscript.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/genaiscript.instructions.md) | GenAIScript 規約 | AI スクリプト |
+| [`agent-safety.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/agent-safety.instructions.md) | AI エージェント安全性・ガバナンス規約 | エージェントシステムの安全設計 |
+| [`context-engineering.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/context-engineering.instructions.md) | Copilot の提案精度を高めるコンテキスト設計 | Copilot の効果的な活用 |
+| [`context7.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/context7.instructions.md) | Context7 による最新外部ドキュメント参照 | バージョン固有の API・フレームワーク開発 |
 
 **[memory-bank.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/memory-bank.instructions.md) の主なルール:
 - セッションリセット後は Memory Bank に完全に依存（必須ファイルを毎回読み込む）
@@ -512,8 +527,10 @@ applyTo: "**/*.py"
 | [`devbox-image-definition.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/devbox-image-definition.instructions.md) | Devbox イメージ定義 | 開発環境構築 |
 | [`vsixtoolkit.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/vsixtoolkit.instructions.md) | VSIX Toolkit | VS Code 拡張開発 |
 | [`cmake-vcpkg.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/cmake-vcpkg.instructions.md) | CMake + vcpkg | C++ ビルド |
+| [`cpp-language-service-tools.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/cpp-language-service-tools.instructions.md) | C++ 言語サービスツール（IntelliSense 活用）規約 | C++ リファクタリング・コード解析 |
 | [`html-css-style-color-guide.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/html-css-style-color-guide.instructions.md) | HTML/CSS スタイル・カラーガイド | Web デザイン |
 | [`markdown.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/markdown.instructions.md) | Markdown 規約 | ドキュメント作成 |
+| [`no-heredoc.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/no-heredoc.instructions.md) | ヒアドキュメント禁止（ファイル編集ツール使用を強制） | VS Code Copilot でのファイル操作 |
 
 ---
 
@@ -539,19 +556,19 @@ applyTo: "**/*.py"
 
 ## まとめ
 
-Instructions は **168 ファイル** あり、以下のカテゴリに分類されます：
+Instructions は **178 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な内容 |
 |---------|----------|---------|
-| プログラミング言語 | 約 40 | Python, C#, Java, Go, TypeScript, Rust 等 |
+| プログラミング言語 | 約 42 | Python, C#, Java, Go, TypeScript, Rust 等 |
 | Web フレームワーク | 約 15 | React, Next.js, Vue, Angular, Svelte 等 |
-| インフラ・DevOps | 約 20 | Terraform, Kubernetes, Docker, CI/CD |
+| インフラ・DevOps | 約 21 | Terraform, Kubernetes, Docker, CI/CD, AWS |
 | テスト | 約 5 | Playwright (各言語版) |
-| セキュリティ・品質 | 約 10 | OWASP, アクセシビリティ, パフォーマンス |
+| セキュリティ・品質 | 約 12 | OWASP, アクセシビリティ, パフォーマンス, OOP 設計 |
 | データベース | 約 5 | MongoDB, SQL Server |
 | Power Platform | 約 25 | Power BI, PCF, Power Apps |
 | MCP サーバー開発 | 約 10 | 各言語の MCP SDK |
 | Copilot SDK | 約 5 | Python, C#, Go, Node.js |
-| その他 | 約 30 | ワークフロー, ツール, 環境設定 |
+| その他 | 約 38 | ワークフロー, ツール, 環境設定, AI/エージェント |
 
 チームのニーズに合わせて、必要な Instructions を `.github/instructions/` ディレクトリにコピーして活用してください。
