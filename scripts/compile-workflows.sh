@@ -34,7 +34,7 @@ for md_file in "${WORKFLOWS_DIR}"/*.md; do
   yaml_content="$(python3 -c "
 import re, pathlib, sys
 text = pathlib.Path('${md_file}').read_text(encoding='utf-8')
-match = re.search(r'\`\`\`(?:ya?ml)[ \t]*\r?\n(.*?)\`\`\`', text, re.DOTALL)
+match = re.search(r'\`\`\`(?:ya?ml)[ \t]*(?:\r\n|\n)(.*?)\`\`\`', text, re.DOTALL)
 if match:
     print(match.group(1), end='')
 ")"
