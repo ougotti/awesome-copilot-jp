@@ -81,12 +81,12 @@ jobs:
 
       - name: JSON 形式チェック
         run: |
-          python3 -c "
+          python3 - << 'EOF'
           import json
           with open('scripts/known-files.json') as f:
               json.load(f)
           print('JSON 形式チェック OK')
-          "
+          EOF
 
   build:
     name: build

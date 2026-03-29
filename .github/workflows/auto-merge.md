@@ -18,13 +18,14 @@
 ### labeled イベントの場合
 
 1. 付与されたラベルが `automerge` でなければ何もしない
-2. 該当PRのCI結果を確認する（後述の手順3以降へ）
+2. ラベルを付与したactorの権限が `write`・`maintain`・`admin` のいずれかでなければスキップする（不正な自動マージを防止）
+3. 該当PRのCI結果を確認する（後述の手順3以降へ）
 
 ### workflow_run 完了イベントの場合
 
 1. CIの結論が `success` でなければ何もしない
-2. CIのHEAD SHAに対応するオープン中のPRを検索する
-3. PRが見つからなければ何もしない
+2. `listPullRequestsAssociatedWithCommit` APIでCIのHEAD SHAに紐づくPRを取得する（`per_page: 100` によるページング漏れなし）
+3. オープン中のPRが見つからなければ何もしない
 
 ### 共通：マージ判定
 
@@ -78,9 +79,25 @@ jobs:
                 console.log('automerge ラベル以外のためスキップします。');
                 return;
               }
+
+              // ラベル付与者の権限チェック（write / maintain / admin のみ許可）
+              const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                username: context.actor,
+              });
+
+              const allowedPermissions = ['admin', 'maintain', 'write'];
+              if (!allowedPermissions.includes(permission.permission)) {
+                console.log(
+                  `actor "${context.actor}" の権限 "${permission.permission}" では automerge ラベルを有効化できません。スキップします。`
+                );
+                return;
+              }
+
               prNumber = context.payload.pull_request.number;
             } else if (context.eventName === 'workflow_run') {
-              // CI 完了イベント：該当 PR を特定する
+              // CI 完了イベント：コミットに紐づくPRを取得する（ページング不要）
               const run = context.payload.workflow_run;
               if (run.conclusion !== 'success') {
                 console.log(`CI が成功していません（${run.conclusion}）。スキップします。`);
@@ -88,14 +105,13 @@ jobs:
               }
 
               const headSha = run.head_sha;
-              const { data: prs } = await github.rest.pulls.list({
+              const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                state: 'open',
-                per_page: 100,
+                commit_sha: headSha,
               });
 
-              const matchedPr = prs.find(pr => pr.head.sha === headSha);
+              const matchedPr = prs.find(pr => pr.state === 'open');
               if (!matchedPr) {
                 console.log('対応するオープンPRが見つかりませんでした。');
                 return;

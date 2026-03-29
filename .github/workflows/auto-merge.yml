@@ -32,9 +32,25 @@ jobs:
                 console.log('automerge ラベル以外のためスキップします。');
                 return;
               }
+
+              // ラベル付与者の権限チェック（write / maintain / admin のみ許可）
+              const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                username: context.actor,
+              });
+
+              const allowedPermissions = ['admin', 'maintain', 'write'];
+              if (!allowedPermissions.includes(permission.permission)) {
+                console.log(
+                  `actor "${context.actor}" の権限 "${permission.permission}" では automerge ラベルを有効化できません。スキップします。`
+                );
+                return;
+              }
+
               prNumber = context.payload.pull_request.number;
             } else if (context.eventName === 'workflow_run') {
-              // CI 完了イベント：該当 PR を特定する
+              // CI 完了イベント：コミットに紐づくPRを取得する（ページング不要）
               const run = context.payload.workflow_run;
               if (run.conclusion !== 'success') {
                 console.log(`CI が成功していません（${run.conclusion}）。スキップします。`);
@@ -42,14 +58,13 @@ jobs:
               }
 
               const headSha = run.head_sha;
-              const { data: prs } = await github.rest.pulls.list({
+              const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                state: 'open',
-                per_page: 100,
+                commit_sha: headSha,
               });
 
-              const matchedPr = prs.find(pr => pr.head.sha === headSha);
+              const matchedPr = prs.find(pr => pr.state === 'open');
               if (!matchedPr) {
                 console.log('対応するオープンPRが見つかりませんでした。');
                 return;

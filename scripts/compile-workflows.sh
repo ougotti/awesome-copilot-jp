@@ -34,7 +34,7 @@ for md_file in "${WORKFLOWS_DIR}"/*.md; do
   yaml_content="$(python3 -c "
 import re, pathlib, sys
 text = pathlib.Path('${md_file}').read_text(encoding='utf-8')
-match = re.search(r'\`\`\`yaml\n(.*?)\`\`\`', text, re.DOTALL)
+match = re.search(r'\`\`\`(?:ya?ml)[ \t]*\r?\n(.*?)\`\`\`', text, re.DOTALL)
 if match:
     print(match.group(1), end='')
 ")"
@@ -45,7 +45,7 @@ if match:
     continue
   fi
 
-  echo "${yaml_content}" > "${yml_file}"
+  printf '%s' "${yaml_content}" > "${yml_file}"
   echo "[OK]   ${base}.md → ${base}.yml"
   compiled=$((compiled + 1))
 done
