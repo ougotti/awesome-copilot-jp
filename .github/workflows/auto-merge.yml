@@ -1,0 +1,110 @@
+name: 自動マージ（automerge）
+
+on:
+  pull_request:
+    types:
+      - labeled
+  workflow_run:
+    workflows:
+      - CI
+    types:
+      - completed
+
+jobs:
+  auto-merge:
+    name: CIパスかつautomergeラベルのPRを自動マージ
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: read
+
+    steps:
+      - name: 自動マージ処理
+        uses: actions/github-script@v7
+        with:
+          script: |
+            let prNumber = null;
+
+            if (context.eventName === 'pull_request') {
+              // labeled イベント：automerge ラベルが追加された場合
+              if (context.payload.label.name !== 'automerge') {
+                console.log('automerge ラベル以外のためスキップします。');
+                return;
+              }
+              prNumber = context.payload.pull_request.number;
+            } else if (context.eventName === 'workflow_run') {
+              // CI 完了イベント：該当 PR を特定する
+              const run = context.payload.workflow_run;
+              if (run.conclusion !== 'success') {
+                console.log(`CI が成功していません（${run.conclusion}）。スキップします。`);
+                return;
+              }
+
+              const headSha = run.head_sha;
+              const { data: prs } = await github.rest.pulls.list({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                per_page: 100,
+              });
+
+              const matchedPr = prs.find(pr => pr.head.sha === headSha);
+              if (!matchedPr) {
+                console.log('対応するオープンPRが見つかりませんでした。');
+                return;
+              }
+              prNumber = matchedPr.number;
+            }
+
+            if (prNumber === null) {
+              console.log('PR番号を特定できませんでした。スキップします。');
+              return;
+            }
+
+            // PR 情報を取得
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+
+            // automerge ラベルを確認
+            const labels = pr.labels.map(l => l.name);
+            if (!labels.includes('automerge')) {
+              console.log(`PR #${prNumber} には automerge ラベルがありません。スキップします。`);
+              return;
+            }
+
+            // CI ステータスを確認
+            const { data: checks } = await github.rest.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: pr.head.sha,
+            });
+
+            const requiredChecks = ['lint', 'build', 'test'];
+            const checkRuns = checks.check_runs;
+
+            for (const required of requiredChecks) {
+              const run = checkRuns.find(r => r.name === required);
+              if (!run) {
+                console.log(`必須チェック "${required}" が見つかりません。スキップします。`);
+                return;
+              }
+              if (run.status !== 'completed' || run.conclusion !== 'success') {
+                console.log(`チェック "${required}" が成功していません（status: ${run.status}, conclusion: ${run.conclusion}）。`);
+                return;
+              }
+            }
+
+            console.log(`PR #${prNumber} の全CIチェックが成功しました。自動マージを実行します。`);
+
+            await github.rest.pulls.merge({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+              merge_method: 'squash',
+            });
+
+            console.log(`PR #${prNumber} を自動マージしました。`);
