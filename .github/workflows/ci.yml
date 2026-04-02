@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: Python セットアップ
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Python 構文チェック
+        run: |
+          python -m py_compile scripts/check_upstream_updates.py
+          echo "Python 構文チェック OK"
+
+      - name: JSON 形式チェック
+        run: |
+          python3 - << 'EOF'
+          import json
+          with open('scripts/known-files.json') as f:
+              json.load(f)
+          print('JSON 形式チェック OK')
+          EOF
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: Python セットアップ
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 依存関係のインストール
+        run: pip install requests
+
+      - name: ファイル構造の確認
+        run: |
+          test -f README.md || (echo "README.md が存在しません" && exit 1)
+          test -f docs/instructions.md || (echo "docs/instructions.md が存在しません" && exit 1)
+          test -f docs/agents.md || (echo "docs/agents.md が存在しません" && exit 1)
+          test -f docs/prompts.md || (echo "docs/prompts.md が存在しません" && exit 1)
+          test -f scripts/known-files.json || (echo "scripts/known-files.json が存在しません" && exit 1)
+          echo "ファイル構造チェック OK"
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: Python セットアップ
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 依存関係のインストール
+        run: pip install requests
+
+      - name: スクリプトのドライランテスト
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UPSTREAM_REPO: github/awesome-copilot
+          TRACKED_DIRS: instructions,agents,prompts
+          TRACKED_FILE: scripts/known-files.json
+          DRY_RUN: 'true'
+        run: |
+          python scripts/check_upstream_updates.py
+          echo "スクリプトのドライランテスト OK"
