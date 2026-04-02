@@ -1,6 +1,6 @@
 # Instructions 一覧と活用ガイド
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **178 個の Instructions** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **182 個の Instructions** を日本語で解説します。
 
 ## Instructions とは
 
@@ -371,6 +371,7 @@ applyTo: "**/*.py"
 | [`self-explanatory-code-commenting.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/self-explanatory-code-commenting.instructions.md) | 自己説明的なコードとコメント | コード可読性 |
 | [`object-calisthenics.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/object-calisthenics.instructions.md) | Object Calisthenics（コード品質練習） | コード品質向上 |
 | [`oop-design-patterns.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/oop-design-patterns.instructions.md) | OOP デザインパターン（GoF パターン・SOLID 原則） | オブジェクト指向設計 |
+| [`use-cliche-data-in-docs.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/use-cliche-data-in-docs.instructions.md) | ドキュメント・サンプルには実データでなく架空プレースホルダーを使用するルール | ドキュメント・サンプルコード記述 |
 
 **[security-and-owasp.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/security-and-owasp.instructions.md) の主なルール:
 - 最小権限の原則、「デフォルト拒否」パターン
@@ -530,6 +531,9 @@ applyTo: "**/*.py"
 | [`cpp-language-service-tools.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/cpp-language-service-tools.instructions.md) | C++ 言語サービスツール（IntelliSense 活用）規約 | C++ リファクタリング・コード解析 |
 | [`html-css-style-color-guide.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/html-css-style-color-guide.instructions.md) | HTML/CSS スタイル・カラーガイド | Web デザイン |
 | [`markdown.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/markdown.instructions.md) | Markdown 規約 | ドキュメント作成 |
+| [`markdown-gfm.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/markdown-gfm.instructions.md) | GitHub Flavored Markdown（GFM）仕様準拠の書き方ルール | GFM ドキュメント作成 |
+| [`markdown-content-creation.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/markdown-content-creation.instructions.md) | ブログ投稿向け Markdown コンテンツ作成ガイドライン | ブログ・技術記事作成 |
+| [`draw-io.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/draw-io.instructions.md) | draw.io ダイアグラム作成・編集の規約（mxGraph XML） | `.drawio` / `.drawio.svg` ファイル編集 |
 | [`no-heredoc.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/no-heredoc.instructions.md) | ヒアドキュメント禁止（ファイル編集ツール使用を強制） | VS Code Copilot でのファイル操作 |
 
 ---
@@ -556,7 +560,7 @@ applyTo: "**/*.py"
 
 ## まとめ
 
-Instructions は **178 ファイル** あり、以下のカテゴリに分類されます：
+Instructions は **182 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な内容 |
 |---------|----------|---------|
@@ -564,11 +568,11 @@ Instructions は **178 ファイル** あり、以下のカテゴリに分類さ
 | Web フレームワーク | 約 15 | React, Next.js, Vue, Angular, Svelte 等 |
 | インフラ・DevOps | 約 21 | Terraform, Kubernetes, Docker, CI/CD, AWS |
 | テスト | 約 5 | Playwright (各言語版) |
-| セキュリティ・品質 | 約 12 | OWASP, アクセシビリティ, パフォーマンス, OOP 設計 |
+| セキュリティ・品質 | 約 13 | OWASP, アクセシビリティ, パフォーマンス, OOP 設計, ドキュメントデータ安全管理 |
 | データベース | 約 5 | MongoDB, SQL Server |
 | Power Platform | 約 25 | Power BI, PCF, Power Apps |
 | MCP サーバー開発 | 約 10 | 各言語の MCP SDK |
 | Copilot SDK | 約 5 | Python, C#, Go, Node.js |
-| その他 | 約 38 | ワークフロー, ツール, 環境設定, AI/エージェント |
+| その他 | 約 41 | ワークフロー, ツール, 環境設定, AI/エージェント, draw.io, Markdown |
 
 チームのニーズに合わせて、必要な Instructions を `.github/instructions/` ディレクトリにコピーして活用してください。
