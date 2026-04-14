@@ -1,7 +1,5 @@
 # Awesome GitHub Copilot JP
 
-[![Awesome](https://awesome.re/badge.svg)](https://awesome.re)
-
 > [github/awesome-copilot](https://github.com/github/awesome-copilot) リポジトリで公開されている GitHub Copilot のカスタマイズ機能を、日本語で体系的に解説するガイドです。
 
 ## 目次
