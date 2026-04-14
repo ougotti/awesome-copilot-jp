@@ -323,6 +323,8 @@ applyTo: "**/*.py"
 | [`bicep-code-best-practices.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/bicep-code-best-practices.instructions.md) | Azure Bicep 規約 | Azure IaC |
 | [`azure-verified-modules-bicep.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/azure-verified-modules-bicep.instructions.md) | Azure Verified Modules（Bicep） | 検証済みモジュール |
 | [`azure-functions-typescript.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/azure-functions-typescript.instructions.md) | Azure Functions（TypeScript） | サーバーレス |
+| [`azure-functions-csharp.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/azure-functions-csharp.instructions.md) | Azure Functions（C# 分離ワーカーモデル） | サーバーレス |
+| [`azure-durable-functions-csharp.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/azure-durable-functions-csharp.instructions.md) | Azure Durable Functions（C#） | ステートフルワークフロー |
 | [`azure-logic-apps-power-automate.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/azure-logic-apps-power-automate.instructions.md) | Logic Apps / Power Automate | ワークフロー自動化 |
 
 **[bicep-code-best-practices.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/bicep-code-best-practices.instructions.md) の主なルール:
@@ -560,7 +562,7 @@ applyTo: "**/*.py"
 
 ## まとめ
 
-Instructions は **182 ファイル** あり、以下のカテゴリに分類されます：
+Instructions は **184 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な内容 |
 |---------|----------|---------|
