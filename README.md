@@ -28,6 +28,7 @@
 | **[Instructions 一覧](docs/instructions.md)** | 184 個の Instructions ファイルの詳細解説 |
 | **[Agents 一覧](docs/agents.md)** | 211 個の Agents ファイルの詳細解説 |
 | **[Prompts 一覧](docs/prompts.md)** | 138 個の Prompts ファイルの詳細解説 |
+| **[Learning Hub ガイド](docs/learning-hub.md)** | Learning Hub 全記事の日本語概要（Blob SHA による変更追跡付き） |
 
 ## このガイドについて
 
