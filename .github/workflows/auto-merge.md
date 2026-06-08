@@ -68,7 +68,7 @@ jobs:
 
     steps:
       - name: 自動マージ処理
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             let prNumber = null;
