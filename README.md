@@ -12,6 +12,7 @@
 | **[Claude Code スキル](docs/claude-code-skills.md)** | Claude Code 専用のスラッシュコマンド、カスタムコマンド、フック、CLAUDE.md、MCP 連携の解説 | — |
 | **[Anthropic 公式スキル](docs/anthropics-skills.md)** | [anthropics/skills](https://github.com/anthropics/skills) リポジトリ収録の 17 スキル（docx/pdf/pptx/xlsx 等）の詳細解説 | 17 件 |
 | **[Codex 公式スキル](docs/codex-skills.md)** | [openai/skills](https://github.com/openai/skills) リポジトリ収録の Codex Agent Skills（system/curated/experimental の 3 層構成）の詳細解説 | 40+ 件 |
+| **[superpowers](docs/superpowers.md)** | [obra/superpowers](https://github.com/obra/superpowers) の SDLC スキルフレームワーク（brainstorming / TDD / systematic-debugging 等 14 スキル）の詳細解説 | 14 件 |
 
 ---
 
