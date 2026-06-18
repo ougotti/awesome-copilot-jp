@@ -266,6 +266,8 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`devops-expert.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/devops-expert.agent.md) | DevOps エキスパート | DevOps ライフサイクル全般 |
 | [`github-actions-expert.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/github-actions-expert.agent.md) | GitHub Actions エキスパート | GitHub Actions CI/CD |
 | [`aws-cloud-expert.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/aws-cloud-expert.agent.md) | AWS クラウドエキスパート | AWS 設計・構築・運用 |
+| [`aws-principal-architect.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/aws-principal-architect.agent.md) | AWS プリンシパルアーキテクト | AWS Well-Architected Framework に基づくエンタープライズ設計 |
+| [`aws-serverless-architect.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/aws-serverless-architect.agent.md) | AWS サーバーレスアーキテクト | Lambda・API Gateway・EventBridge 等のサーバーレス設計 |
 | [`se-gitops-ci-specialist.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/se-gitops-ci-specialist.agent.md) | GitOps CI スペシャリスト | GitOps ワークフロー |
 | [`gem-devops.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-devops.agent.md) | GEM DevOps エージェント | コンテナ・CI/CD・インフラデプロイ |
 | [`github-actions-node-upgrade.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/github-actions-node-upgrade.agent.md) | GitHub Actions Node ランタイムアップグレード | Actions の Node.js バージョン更新・メジャーバンプ |
@@ -314,6 +316,8 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`terraform-azure-planning.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/terraform-azure-planning.agent.md) | Terraform Azure 計画 | Azure インフラ計画 |
 | [`terraform-azure-implement.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/terraform-azure-implement.agent.md) | Terraform Azure 実装 | Azure インフラ実装 |
 | [`terratest-module-testing.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/terratest-module-testing.agent.md) | Terratest モジュールテスト | Terraform モジュールの Go テスト自動化 |
+| [`terraform-aws-planning.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/terraform-aws-planning.agent.md) | Terraform AWS 計画 | AWS インフラ実装計画（WAF 準拠・Mermaid 図生成） |
+| [`terraform-aws-implement.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/terraform-aws-implement.agent.md) | Terraform AWS 実装 | AWS インフラ Terraform コード実装・レビュー |
 
 **[terraform.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/terraform.agent.md) の特徴:
 - パブリック/プライベート Terraform レジストリ連携
@@ -563,7 +567,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 
 ## まとめ
 
-Agents は **231 ファイル** あり、以下のカテゴリに分類されます：
+Agents は **235 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な用途 |
 |---------|----------|---------|
