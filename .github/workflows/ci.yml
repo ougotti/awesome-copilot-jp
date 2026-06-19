@@ -24,7 +24,7 @@ jobs:
 
       - name: Python 構文チェック
         run: |
-          python -m py_compile scripts/check_upstream_updates.py
+          python -m py_compile scripts/*.py
           echo "Python 構文チェック OK"
 
       - name: JSON 形式チェック
@@ -35,6 +35,9 @@ jobs:
               json.load(f)
           print('JSON 形式チェック OK')
           EOF
+
+      - name: 内部リンクチェック
+        run: python3 scripts/check_links.py
 
   build:
     name: build
@@ -59,6 +62,9 @@ jobs:
           test -f docs/instructions.md || (echo "docs/instructions.md が存在しません" && exit 1)
           test -f docs/agents.md || (echo "docs/agents.md が存在しません" && exit 1)
           test -f docs/prompts.md || (echo "docs/prompts.md が存在しません" && exit 1)
+          test -f docs/use-cases.md || (echo "docs/use-cases.md が存在しません" && exit 1)
+          test -f docs/office-work.md || (echo "docs/office-work.md が存在しません" && exit 1)
+          test -f docs/financial-services.md || (echo "docs/financial-services.md が存在しません" && exit 1)
           test -f scripts/known-files.json || (echo "scripts/known-files.json が存在しません" && exit 1)
           echo "ファイル構造チェック OK"
 

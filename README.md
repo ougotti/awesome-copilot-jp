@@ -52,7 +52,7 @@
 | ドキュメント | 内容 | 件数 |
 |-------------|------|------|
 | **[事務・バックオフィス活用ガイド](docs/office-work.md)** | 議事録・請求書・レポート・スプレッドシート作成など、日々の事務作業を生成AIで効率化する実践ガイド | — |
-| **[金融サービス向けスキル](docs/financial-services.md)** | [anthropics/financial-services](https://github.com/anthropics/financial-services) 収録の金融・経理業務向けエージェント／スキル（決算照合・月次決算・KYC 等）の詳細解説 | 13 エージェント + 7 業務プラグイン |
+| **[金融サービス向けスキル](docs/financial-services.md)** | [anthropics/financial-services](https://github.com/anthropics/financial-services) 収録の金融・経理業務向けエージェント／スキル（決算照合・月次決算・KYC 等）の詳細解説 | 10 エージェント + 7 業務プラグイン |
 
 ---
 

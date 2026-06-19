@@ -585,5 +585,30 @@
     "web-artifacts-builder",
     "webapp-testing",
     "xlsx"
+  ],
+  "financial_services_agents": [
+    "earnings-reviewer",
+    "gl-reconciler",
+    "kyc-screener",
+    "market-researcher",
+    "meeting-prep-agent",
+    "model-builder",
+    "month-end-closer",
+    "pitch-agent",
+    "statement-auditor",
+    "valuation-reviewer"
+  ],
+  "financial_services_vertical": [
+    "equity-research",
+    "financial-analysis",
+    "fund-admin",
+    "investment-banking",
+    "operations",
+    "private-equity",
+    "wealth-management"
+  ],
+  "financial_services_partner": [
+    "lseg",
+    "spglobal"
   ]
 }
