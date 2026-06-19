@@ -1,6 +1,8 @@
-# Awesome GitHub Copilot JP
+# Awesome AI Skills JP
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) リポジトリで公開されている GitHub Copilot のカスタマイズ機能、および [Claude Code](https://docs.anthropic.com/ja/docs/claude-code/overview) のスキルを、日本語で体系的に解説するガイドです。
+> GitHub・OpenAI・Anthropic が公式に公開している **生成AIツールのスキル／エージェント／カスタマイズ機能**を、日本語で体系的に解説するガイドです。GitHub Copilot のカスタマイズ、[Claude Code](https://docs.anthropic.com/ja/docs/claude-code/overview) のスキル、Codex のスキル、そして**事務・ビジネス業務での実践的な活用**まで幅広くカバーします。
+>
+> エンジニアだけでなく、**事務・経理・金融・バックオフィス**で生成AIを使いたい方にも役立つ情報を集めています。
 
 ## ドキュメント一覧
 
@@ -14,13 +16,23 @@
 | **[Codex 公式スキル](docs/codex-skills.md)** | [openai/skills](https://github.com/openai/skills) リポジトリ収録の Codex Agent Skills（system/curated/experimental の 3 層構成）の詳細解説 | 40+ 件 |
 | **[superpowers](docs/superpowers.md)** | [obra/superpowers](https://github.com/obra/superpowers) の SDLC スキルフレームワーク（brainstorming / TDD / systematic-debugging 等 14 スキル）の詳細解説 | 14 件 |
 
+### 💼 事務・ビジネス業務での活用
+
+| ドキュメント | 内容 | 件数 |
+|-------------|------|------|
+| **[事務・バックオフィス活用ガイド](docs/office-work.md)** | 議事録・請求書・レポート・スプレッドシート作成など、日々の事務作業を生成AIで効率化する実践ガイド | — |
+| **[金融サービス向けスキル](docs/financial-services.md)** | [anthropics/financial-services](https://github.com/anthropics/financial-services) 収録の金融・経理業務向けエージェント／スキル（決算照合・月次決算・KYC 等）の詳細解説 | 13 エージェント + 7 業務プラグイン |
+
 ---
 
 ## このガイドについて
 
-GitHub Copilot はそのままでも強力なコーディングアシスタントですが、**カスタマイズ**を適用することで、チームのコーディング規約に合ったコードを生成させたり、特定のフレームワークに精通した専門家として振る舞わせたりできます。
+生成AIツールは、そのままでも強力なアシスタントですが、**スキル・エージェント・カスタマイズ**を適用することで、用途に特化した使い方ができます。
 
-また、Anthropic の **Claude Code** は、ターミナルから使えるコーディングエージェントです。スラッシュコマンドやフックを活用することで、複雑なタスクを自動化できます。
+- **GitHub Copilot** — カスタマイズを適用することで、チームのコーディング規約に合ったコードを生成させたり、特定フレームワークの専門家として振る舞わせたりできます。
+- **Claude Code**（Anthropic）— ターミナルから使えるコーディングエージェント。スラッシュコマンドやフックで複雑なタスクを自動化できます。
+- **Codex**（OpenAI）— Agent Skills でデプロイ・ブラウザ自動化・外部サービス連携などを追加できます。
+- **事務・ビジネス活用** — Word／Excel／PowerPoint／PDF の自動生成・編集や、金融・経理業務向けのエージェントなど、コードを書かない業務にも活用できます。
 
 ---
 
