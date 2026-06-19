@@ -1,6 +1,8 @@
-# Awesome GitHub Copilot JP
+# Awesome AI Skills JP
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) リポジトリで公開されている GitHub Copilot のカスタマイズ機能、および [Claude Code](https://docs.anthropic.com/ja/docs/claude-code/overview) のスキルを、日本語で体系的に解説するガイドです。
+> GitHub・OpenAI・Anthropic が公式に公開している **生成AIツールのスキル／エージェント／カスタマイズ機能**を、日本語で体系的に解説するガイドです。GitHub Copilot のカスタマイズ、[Claude Code](https://docs.anthropic.com/ja/docs/claude-code/overview) のスキル、Codex のスキル、そして**事務・ビジネス業務での実践的な活用**まで幅広くカバーします。
+>
+> エンジニアだけでなく、**事務・経理・金融・バックオフィス**で生成AIを使いたい方にも役立つ情報を集めています。
 
 ## ドキュメント一覧
 
@@ -14,13 +16,23 @@
 | **[Codex 公式スキル](docs/codex-skills.md)** | [openai/skills](https://github.com/openai/skills) リポジトリ収録の Codex Agent Skills（system/curated/experimental の 3 層構成）の詳細解説 | 40+ 件 |
 | **[superpowers](docs/superpowers.md)** | [obra/superpowers](https://github.com/obra/superpowers) の SDLC スキルフレームワーク（brainstorming / TDD / systematic-debugging 等 14 スキル）の詳細解説 | 14 件 |
 
+### 💼 事務・ビジネス業務での活用
+
+| ドキュメント | 内容 | 件数 |
+|-------------|------|------|
+| **[事務・バックオフィス活用ガイド](docs/office-work.md)** | 議事録・請求書・レポート・スプレッドシート作成など、日々の事務作業を生成AIで効率化する実践ガイド | — |
+| **[金融サービス向けスキル](docs/financial-services.md)** | [anthropics/financial-services](https://github.com/anthropics/financial-services) 収録の金融・経理業務向けエージェント／スキル（決算照合・月次決算・KYC 等）の詳細解説 | 13 エージェント + 7 業務プラグイン |
+
 ---
 
 ## このガイドについて
 
-GitHub Copilot はそのままでも強力なコーディングアシスタントですが、**カスタマイズ**を適用することで、チームのコーディング規約に合ったコードを生成させたり、特定のフレームワークに精通した専門家として振る舞わせたりできます。
+生成AIツールは、そのままでも強力なアシスタントですが、**スキル・エージェント・カスタマイズ**を適用することで、用途に特化した使い方ができます。
 
-また、Anthropic の **Claude Code** は、ターミナルから使えるコーディングエージェントです。スラッシュコマンドやフックを活用することで、複雑なタスクを自動化できます。
+- **GitHub Copilot** — カスタマイズを適用することで、チームのコーディング規約に合ったコードを生成させたり、特定フレームワークの専門家として振る舞わせたりできます。
+- **Claude Code**（Anthropic）— ターミナルから使えるコーディングエージェント。スラッシュコマンドやフックで複雑なタスクを自動化できます。
+- **Codex**（OpenAI）— Agent Skills でデプロイ・ブラウザ自動化・外部サービス連携などを追加できます。
+- **事務・ビジネス活用** — Word／Excel／PowerPoint／PDF の自動生成・編集や、金融・経理業務向けのエージェントなど、コードを書かない業務にも活用できます。
 
 ---
 
@@ -449,6 +461,33 @@ $skill-installer vercel-deploy
 | **セキュリティ** | security-best-practices / security-threat-model など 3 種 |
 
 **→ Codex 公式スキルの詳細は [docs/codex-skills.md](docs/codex-skills.md) を参照**
+
+---
+
+## 事務・ビジネス業務での活用
+
+### 概要
+
+生成AIはコーディングだけでなく、**事務・経理・総務・営業事務**といったバックオフィス業務の効率化にも役立ちます。Word／Excel／PowerPoint／PDF の自動生成・編集や、金融・経理業務に特化したエージェントを活用できます。
+
+### こんなときに使える
+
+- **議事録・報告書・案内文を素早く作りたい** — 走り書きメモから整った文書を生成
+- **バラバラの表を集計・整形したい** — 複数の Excel を共通フォーマットに統合
+- **提案資料・報告スライドを量産したい** — 文章メモから構成済みのスライドを作成
+- **請求書 PDF から情報を転記したい** — 帳票からの抽出・フォーム入力を自動化
+- **月次決算・勘定照合・取引先審査を効率化したい** — 金融・経理向けエージェントでドラフト作成
+
+### 主なドキュメント
+
+| ドキュメント | 内容 |
+|-------------|------|
+| **[事務・バックオフィス活用ガイド](docs/office-work.md)** | 議事録・請求書・集計表・スライド作成など、業種を問わない事務作業の実践レシピ |
+| **[金融サービス向けスキル](docs/financial-services.md)** | 決算照合・月次決算・KYC・バリュエーションなど金融・経理業務向けエージェント／スキル |
+
+> **ポイント**: 金額・税・日付などの数値や、契約・法的文書は**必ず人（有資格者）が確認**してください。生成AIの出力はドラフトとして扱うのが安全です。
+
+**→ 事務活用の詳細は [docs/office-work.md](docs/office-work.md) を参照**
 
 ---
 
