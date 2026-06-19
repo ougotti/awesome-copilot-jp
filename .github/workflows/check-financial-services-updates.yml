@@ -1,0 +1,90 @@
+name: anthropics/financial-services 更新チェック
+
+on:
+  schedule:
+    # 毎週月曜 09:00 JST (00:00 UTC) に実行
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run（Issue を作成しない）'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  check-updates:
+    name: financial-services の新規エージェント／プラグインをチェック
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v5
+
+      - name: Python セットアップ
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: 更新チェックスクリプトを実行
+        id: check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TRACKED_FILE: scripts/known-files.json
+        run: python scripts/check_financial_services_updates.py
+
+      - name: 新規アイテムがある場合 Issue を作成
+        if: steps.check.outputs.has_new_items == 'true' && inputs.dry_run != 'true'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const report = JSON.parse(fs.readFileSync('financial_services_report.json', 'utf8'));
+
+            const sections = [];
+            let total = 0;
+            for (const key of Object.keys(report)) {
+              const { dir, label, new: items } = report[key];
+              if (!items || items.length === 0) continue;
+              total += items.length;
+              const list = items.map(s =>
+                `- [\`${s}\`](https://github.com/anthropics/financial-services/tree/main/${dir}/${s})`
+              ).join('\n');
+              sections.push(`### ${label} (${items.length} 件)\n\n${list}`);
+            }
+
+            const body = [
+              `## anthropics/financial-services に新しいアイテムが追加されました`,
+              ``,
+              `[anthropics/financial-services](https://github.com/anthropics/financial-services) に **${total} 件**の新しいエージェント／プラグインが追加されました。`,
+              `[docs/financial-services.md](docs/financial-services.md) への解説追加を検討してください。`,
+              ``,
+              sections.join('\n\n'),
+              ``,
+              `---`,
+              ``,
+              `### 対応方法`,
+              ``,
+              `1. 上記アイテムの内容（README / SKILL.md / agent 定義）を確認する`,
+              `2. \`docs/financial-services.md\` に解説を追加する`,
+              `3. \`scripts/known-files.json\` の該当リスト（\`financial_services_*\`）を更新する`,
+              ``,
+              `> このIssueは [check-financial-services-updates](../../actions/workflows/check-financial-services-updates.yml) ワークフローにより自動生成されました。`,
+            ].join('\n');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[更新通知] anthropics/financial-services に ${total} 件の新規追加 (${new Date().toISOString().split('T')[0]})`,
+              body,
+              labels: ['upstream-update', 'documentation'],
+            });
+
+            console.log(`Issue created: ${total} new items found`);
+
+      - name: 新規アイテムなし（スキップ）
+        if: steps.check.outputs.has_new_items != 'true'
+        run: echo "新規アイテムはありませんでした。"
