@@ -18,6 +18,7 @@
 | 🧑‍💻 Copilot を専門家として使いたい | [Agents 一覧](docs/agents.md) |
 | ⚡ `/` コマンドで定型タスクを実行したい | [Prompts / Skills 一覧](docs/prompts.md) |
 | 🤖 Claude Code をターミナルで使いたい | [Claude Code スキル](docs/claude-code-skills.md) |
+| 🧱 開発プロセス（要件整理〜TDD〜設計）を改善したい | [mattpocock/skills](docs/mattpocock-skills.md) |
 | 📦 公式スキル（docx/pdf/pptx/xlsx 等）を知りたい | [Anthropic 公式スキル](docs/anthropics-skills.md) |
 
 ---
@@ -46,6 +47,7 @@
 | **[Anthropic 公式スキル](docs/anthropics-skills.md)** | [anthropics/skills](https://github.com/anthropics/skills) リポジトリ収録の 17 スキル（docx/pdf/pptx/xlsx 等）の詳細解説 | 17 件 |
 | **[Codex 公式スキル](docs/codex-skills.md)** | [openai/skills](https://github.com/openai/skills) リポジトリ収録の Codex Agent Skills（system/curated/experimental の 3 層構成）の詳細解説 | 40+ 件 |
 | **[superpowers](docs/superpowers.md)** | [obra/superpowers](https://github.com/obra/superpowers) の SDLC スキルフレームワーク（brainstorming / TDD / systematic-debugging 等 14 スキル）の詳細解説 | 14 件 |
+| **[mattpocock/skills](docs/mattpocock-skills.md)** | [mattpocock/skills](https://github.com/mattpocock/skills) の実務エンジニア向けスキル集（grill-me / to-prd / tdd 等、開発プロセス改善型）の詳細解説 | 21 件 |
 
 ### 💼 事務・ビジネス業務での活用
 
