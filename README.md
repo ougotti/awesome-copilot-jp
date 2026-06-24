@@ -1,12 +1,15 @@
 # Awesome AI Skills JP
 
-> GitHub・OpenAI・Anthropic が公式に公開している **生成AIツールのスキル／エージェント／カスタマイズ機能**を、日本語で体系的に解説するガイドです。GitHub Copilot のカスタマイズ、[Claude Code](https://docs.anthropic.com/ja/docs/claude-code/overview) のスキル、Codex のスキル、そして**事務・ビジネス業務での実践的な活用**まで幅広くカバーします。
->
+> GitHub・OpenAI・Anthropic が公式に公開している **生成AIツールのスキル／エージェント／カスタマイズ機能**を、日本語で体系的に解説するガイドです。  
 > エンジニアだけでなく、**事務・経理・金融・バックオフィス**で生成AIを使いたい方にも役立つ情報を集めています。
+
+---
 
 ## 🧭 目的から選ぶ
 
 「何を読めばいいか分からない」方は、目的から入口を選んでください。
+
+### 共通・事務活用
 
 | やりたいこと | おすすめの入口 |
 |------------|--------------|
@@ -14,12 +17,28 @@
 | 📋 業務シーン別に「使える例」を見たい | [シナリオ別ユースケース集](docs/use-cases.md) |
 | 📝 議事録・請求書・資料など事務作業を効率化したい | [事務・バックオフィス活用ガイド](docs/office-work.md) |
 | 💹 決算・経理・金融業務を効率化したい | [金融サービス向けスキル](docs/financial-services.md) |
+
+### GitHub Copilot
+
+| やりたいこと | おすすめの入口 |
+|------------|--------------|
 | ⌨️ コーディング規約を Copilot に守らせたい | [Instructions 一覧](docs/instructions.md) |
 | 🧑‍💻 Copilot を専門家として使いたい | [Agents 一覧](docs/agents.md) |
 | ⚡ `/` コマンドで定型タスクを実行したい | [Prompts / Skills 一覧](docs/prompts.md) |
+
+### Claude Code
+
+| やりたいこと | おすすめの入口 |
+|------------|--------------|
 | 🤖 Claude Code をターミナルで使いたい | [Claude Code スキル](docs/claude-code-skills.md) |
 | 🧱 開発プロセス（要件整理〜TDD〜設計）を改善したい | [mattpocock/skills](docs/mattpocock-skills.md) |
 | 📦 公式スキル（docx/pdf/pptx/xlsx 等）を知りたい | [Anthropic 公式スキル](docs/anthropics-skills.md) |
+
+### Codex
+
+| やりたいこと | おすすめの入口 |
+|------------|--------------|
+| 🚀 Codex でデプロイ・ブラウザ自動化を追加したい | [Codex 公式スキル](docs/codex-skills.md) |
 
 ---
 
@@ -37,22 +56,34 @@
 
 ## ドキュメント一覧
 
+### GitHub Copilot
+
 | ドキュメント | 内容 | 件数 |
 |-------------|------|------|
-| **[シナリオ別ユースケース集](docs/use-cases.md)** | 役割・業務シーンから探す生成AIの実例カタログ（プロンプト例つき） | — |
 | **[Instructions 一覧](docs/instructions.md)** | ファイルパターンに応じてコーディング規約を自動適用するルールファイルの詳細解説 | 184+ 件 |
 | **[Agents 一覧](docs/agents.md)** | Copilot を特定ドメインの専門家ペルソナとして振る舞わせるエージェント定義の詳細解説 | 211+ 件 |
 | **[Prompts / Skills 一覧](docs/prompts.md)** | `/` コマンドから呼び出せる再利用可能なタスクテンプレートおよび Skills の詳細解説 | 138+ 件 |
-| **[Claude Code スキル](docs/claude-code-skills.md)** | Claude Code 専用のスラッシュコマンド、カスタムコマンド、フック、CLAUDE.md、MCP 連携の解説 | — |
-| **[Anthropic 公式スキル](docs/anthropics-skills.md)** | [anthropics/skills](https://github.com/anthropics/skills) リポジトリ収録の 17 スキル（docx/pdf/pptx/xlsx 等）の詳細解説 | 17 件 |
-| **[Codex 公式スキル](docs/codex-skills.md)** | [openai/skills](https://github.com/openai/skills) リポジトリ収録の Codex Agent Skills（system/curated/experimental の 3 層構成）の詳細解説 | 40+ 件 |
-| **[superpowers](docs/superpowers.md)** | [obra/superpowers](https://github.com/obra/superpowers) の SDLC スキルフレームワーク（brainstorming / TDD / systematic-debugging 等 14 スキル）の詳細解説 | 14 件 |
-| **[mattpocock/skills](docs/mattpocock-skills.md)** | [mattpocock/skills](https://github.com/mattpocock/skills) の実務エンジニア向けスキル集（grill-me / to-prd / tdd 等、開発プロセス改善型）の詳細解説 | 21 件 |
 
-### 💼 事務・ビジネス業務での活用
+### Claude Code
 
 | ドキュメント | 内容 | 件数 |
 |-------------|------|------|
+| **[Claude Code スキル](docs/claude-code-skills.md)** | Claude Code 専用のスラッシュコマンド、カスタムコマンド、フック、CLAUDE.md、MCP 連携の解説 | — |
+| **[Anthropic 公式スキル](docs/anthropics-skills.md)** | [anthropics/skills](https://github.com/anthropics/skills) リポジトリ収録の 17 スキル（docx/pdf/pptx/xlsx 等）の詳細解説 | 17 件 |
+| **[mattpocock/skills](docs/mattpocock-skills.md)** | [mattpocock/skills](https://github.com/mattpocock/skills) の実務エンジニア向けスキル集（grill-me / to-prd / tdd 等、開発プロセス改善型） | 21 件 |
+| **[superpowers](docs/superpowers.md)** | [obra/superpowers](https://github.com/obra/superpowers) の SDLC スキルフレームワーク（brainstorming / TDD / systematic-debugging 等 14 スキル） ※ Claude Code・Codex・Copilot CLI など複数ツール対応 | 14 件 |
+
+### Codex
+
+| ドキュメント | 内容 | 件数 |
+|-------------|------|------|
+| **[Codex 公式スキル](docs/codex-skills.md)** | [openai/skills](https://github.com/openai/skills) リポジトリ収録の Codex Agent Skills（system/curated/experimental の 3 層構成）の詳細解説 | 40+ 件 |
+
+### 共通・事務活用
+
+| ドキュメント | 内容 | 件数 |
+|-------------|------|------|
+| **[シナリオ別ユースケース集](docs/use-cases.md)** | 役割・業務シーンから探す生成AIの実例カタログ（プロンプト例つき） | — |
 | **[事務・バックオフィス活用ガイド](docs/office-work.md)** | 議事録・請求書・レポート・スプレッドシート作成など、日々の事務作業を生成AIで効率化する実践ガイド | — |
 | **[金融サービス向けスキル](docs/financial-services.md)** | [anthropics/financial-services](https://github.com/anthropics/financial-services) 収録の金融・経理業務向けエージェント／スキル（決算照合・月次決算・KYC 等）の詳細解説 | 10 エージェント + 7 業務プラグイン |
 
@@ -62,14 +93,19 @@
 
 生成AIツールは、そのままでも強力なアシスタントですが、**スキル・エージェント・カスタマイズ**を適用することで、用途に特化した使い方ができます。
 
-- **GitHub Copilot** — カスタマイズを適用することで、チームのコーディング規約に合ったコードを生成させたり、特定フレームワークの専門家として振る舞わせたりできます。
-- **Claude Code**（Anthropic）— ターミナルから使えるコーディングエージェント。スラッシュコマンドやフックで複雑なタスクを自動化できます。
-- **Codex**（OpenAI）— Agent Skills でデプロイ・ブラウザ自動化・外部サービス連携などを追加できます。
-- **事務・ビジネス活用** — Word／Excel／PowerPoint／PDF の自動生成・編集や、金融・経理業務向けのエージェントなど、コードを書かない業務にも活用できます。
+| ツール | 提供元 | 特徴 |
+|-------|-------|------|
+| **GitHub Copilot** | GitHub | IDE 内インライン補完・チャット中心。Instructions／Agents／Skills でチームのルールや専門家ペルソナを適用 |
+| **Claude Code** | Anthropic | ターミナルベースのコーディングエージェント。スラッシュコマンドやフックで複雑なタスクを自動化 |
+| **Codex** | OpenAI | Agent Skills でデプロイ・ブラウザ自動化・外部サービス連携などを追加 |
 
 ---
 
-## カスタマイズの種類（GitHub Copilot）
+## GitHub Copilot
+
+GitHub Copilot のカスタマイズは、以下の種類があります。
+
+### カスタマイズの種類
 
 | 種類 | ファイル形式 | 概要 | 適用タイミング |
 |------|------------|------|--------------|
@@ -84,21 +120,21 @@
 
 ---
 
-## Instructions - コーディング規約の自動適用
+### Instructions - コーディング規約の自動適用
 
-### 概要
+#### 概要
 
 Instructions は、特定のファイルパターン（例: `*.py`, `*.tsx`）に対して、Copilot が従うべきコーディング規約やベストプラクティスを定義するものです。一度設定すれば、該当ファイルを編集するたびに自動的に適用されます。
 
-### こんなときに使える
+#### こんなときに使える
 
 - **チームのコーディング規約を徹底したい** — レビューで毎回指摘する代わりに、Copilot が最初から規約に沿ったコードを生成する
 - **特定フレームワークの推奨パターンを適用したい** — React の関数コンポーネントスタイルや、Python の型ヒント付きコードを標準にする
 - **新人のオンボーディングを加速したい** — プロジェクト固有のパターンを Instructions に記述しておけば、初日から規約に沿ったコードが書ける
 
-### 利用できる主な Instructions
+#### 利用できる主な Instructions
 
-#### プログラミング言語
+##### プログラミング言語
 
 | カテゴリ | 主なルール例 | 活用場面 |
 |---------|------------|---------|
@@ -106,7 +142,7 @@ Instructions は、特定のファイルパターン（例: `*.py`, `*.tsx`）�
 | [**Go**](https://github.com/github/awesome-copilot/blob/main/instructions/go.instructions.md) | エラーハンドリング、goroutine パターン | Go サービス開発 |
 | [**Rust**](https://github.com/github/awesome-copilot/blob/main/instructions/rust.instructions.md) | 所有権パターン、Result 型の活用 | Rust プロジェクト |
 
-#### Web フレームワーク
+##### Web フレームワーク
 
 | カテゴリ | 主なルール例 | 活用場面 |
 |---------|------------|---------|
@@ -114,7 +150,7 @@ Instructions は、特定のファイルパターン（例: `*.py`, `*.tsx`）�
 | [**Svelte**](https://github.com/github/awesome-copilot/blob/main/instructions/svelte.instructions.md) | ストア管理、コンポーネント設計 | Svelte アプリケーション開発 |
 | [**Blazor**](https://github.com/github/awesome-copilot/blob/main/instructions/blazor.instructions.md) | コンポーネントライフサイクル、状態管理 | .NET Web UI 開発 |
 
-#### インフラ・DevOps
+##### インフラ・DevOps
 
 | カテゴリ | 主なルール例 | 活用場面 |
 |---------|------------|---------|
@@ -124,7 +160,7 @@ Instructions は、特定のファイルパターン（例: `*.py`, `*.tsx`）�
 | [**Docker**](https://github.com/github/awesome-copilot/blob/main/instructions/containerization-docker-best-practices.instructions.md) | マルチステージビルド、セキュリティ | コンテナイメージ最適化 |
 | [**Azure**](https://github.com/github/awesome-copilot/tree/main/instructions) | リソース命名、セキュリティ設定 | Azure クラウド構築 |
 
-#### テスト
+##### テスト
 
 | カテゴリ | 主なルール例 | 活用場面 |
 |---------|------------|---------|
@@ -132,7 +168,7 @@ Instructions は、特定のファイルパターン（例: `*.py`, `*.tsx`）�
 | [**Vitest**](https://github.com/github/awesome-copilot/blob/main/instructions/nodejs-javascript-vitest.instructions.md) | ユニットテスト構成、モック戦略 | Vite プロジェクトのテスト |
 | [**Pester**](https://github.com/github/awesome-copilot/blob/main/instructions/powershell-pester-5.instructions.md) | PowerShell テストパターン | PowerShell スクリプトのテスト |
 
-### 設定方法
+#### 設定方法
 
 Instructions ファイルをリポジトリの `.github/instructions/` ディレクトリに配置します。
 
@@ -156,22 +192,22 @@ applyTo: "**/*.py"
 
 ---
 
-## Prompts - 再利用可能なタスクテンプレート
+### Prompts - 再利用可能なタスクテンプレート
 
-### 概要
+#### 概要
 
 Prompts は、Copilot Chat の `/` コマンドから呼び出せる再利用可能なタスクテンプレートです。繰り返し行う定型作業をテンプレート化することで、一貫した品質の出力を得られます。
 
-### こんなときに使える
+#### こんなときに使える
 
 - **README やドキュメントを毎回同じ品質で作りたい** — テンプレート化されたプロンプトで、抜け漏れなくドキュメントを生成
 - **コードレビューの観点を統一したい** — セキュリティ、パフォーマンス、保守性など、チーム共通のレビュー基準でチェック
 - **テストコードの雛形を素早く作りたい** — フレームワーク固有のテスト構造を一発生成
 - **定型的なコード生成を効率化したい** — API エンドポイント、データモデル、コンポーネントなどの雛形生成
 
-### 利用できる主な Prompts
+#### 利用できる主な Prompts
 
-#### ドキュメント生成
+##### ドキュメント生成
 
 | プロンプト名 | 用途 | 活用場面 |
 |-------------|------|---------|
@@ -179,7 +215,7 @@ Prompts は、Copilot Chat の `/` コマンドから呼び出せる再利用可
 | [**create-spec**](https://github.com/github/awesome-copilot/tree/main/skills/create-specification) | 技術仕様書の作成 | 機能開発の設計フェーズ |
 | [**create-adr**](https://github.com/github/awesome-copilot/tree/main/skills/create-architectural-decision-record) | Architecture Decision Record の作成 | アーキテクチャ上の意思決定を記録 |
 
-#### テスト生成
+##### テスト生成
 
 | プロンプト名 | 用途 | 活用場面 |
 |-------------|------|---------|
@@ -188,7 +224,7 @@ Prompts は、Copilot Chat の `/` コマンドから呼び出せる再利用可
 | [**generate-playwright-tests**](https://github.com/github/awesome-copilot/tree/main/skills/playwright-generate-test) | Playwright テスト生成 | E2E テストの自動生成 |
 | [**generate-nunit-tests**](https://github.com/github/awesome-copilot/tree/main/skills/csharp-nunit) | NUnit テスト生成 | .NET ユニットテスト |
 
-#### インフラ・DevOps
+##### インフラ・DevOps
 
 | プロンプト名 | 用途 | 活用場面 |
 |-------------|------|---------|
@@ -196,7 +232,7 @@ Prompts は、Copilot Chat の `/` コマンドから呼び出せる再利用可
 | [**create-github-actions**](https://github.com/github/awesome-copilot/tree/main/skills/create-github-action-workflow-specification) | GitHub Actions ワークフロー生成 | CI/CD セットアップ |
 | [**optimize-sql**](https://github.com/github/awesome-copilot/tree/main/skills/sql-optimization) | SQL クエリ最適化 | データベースパフォーマンス改善 |
 
-### 設定方法
+#### 設定方法
 
 Prompt ファイルをリポジトリの `.github/prompts/` ディレクトリに配置します。
 
@@ -213,22 +249,22 @@ Copilot Chat で `/create-readme` のように入力すると呼び出せます�
 
 ---
 
-## Agents - 専門家ペルソナ
+### Agents - 専門家ペルソナ
 
-### 概要
+#### 概要
 
 Agents は、Copilot を特定ドメインの専門家として振る舞わせるペルソナ定義です。MCP（Model Context Protocol）サーバーと連携させることで、外部ツールやサービスと直接やり取りする能力を持たせることもできます。
 
-### こんなときに使える
+#### こんなときに使える
 
 - **コードレビューを専門家の視点で行いたい** — セキュリティレビューア、パフォーマンスエキスパートとして分析
 - **特定クラウドサービスの構築に詳しいアドバイザーが欲しい** — Azure、AWS などのアーキテクト視点でアドバイス
 - **データベース設計の相談相手が欲しい** — PostgreSQL、MongoDB などの DBA として最適化の提案を受ける
 - **メンターとして段階的に教えてほしい** — いきなり回答を出さず、考え方をガイドしてくれるメンター
 
-### 利用できる主な Agents
+#### 利用できる主な Agents
 
-#### コードの品質と開発プロセス
+##### コードの品質と開発プロセス
 
 | エージェント名 | 役割 | 活用場面 |
 |--------------|------|---------|
@@ -237,7 +273,7 @@ Agents は、Copilot を特定ドメインの専門家として振る舞わせ�
 | [**technical-writer**](https://github.com/github/awesome-copilot/blob/main/agents/se-technical-writer.agent.md) | テクニカルライター | API ドキュメント、ユーザーガイド作成 |
 | [**mentor**](https://github.com/github/awesome-copilot/blob/main/agents/mentor.agent.md) | メンター・教育者 | 新人指導、学習支援 |
 
-#### インフラ・クラウド
+##### インフラ・クラウド
 
 | エージェント名 | 役割 | 活用場面 |
 |--------------|------|---------|
@@ -245,7 +281,7 @@ Agents は、Copilot を特定ドメインの専門家として振る舞わせ�
 | [**kubernetes-sre**](https://github.com/github/awesome-copilot/blob/main/agents/platform-sre-kubernetes.agent.md) | Kubernetes SRE | K8s 運用・トラブルシュート |
 | [**terraform-expert**](https://github.com/github/awesome-copilot/blob/main/agents/terraform.agent.md) | Terraform の専門家 | IaC 設計・最適化 |
 
-### 設定方法
+#### 設定方法
 
 Agent ファイルをリポジトリの `.github/agents/` ディレクトリに配置します。
 
@@ -260,19 +296,19 @@ Agent ファイルをリポジトリの `.github/agents/` ディレクトリに�
 
 ---
 
-## Skills - リソース同梱の複合ツール
+### Skills - リソース同梱の複合ツール
 
-### 概要
+#### 概要
 
 Skills は、Instructions だけでは実現できない、関連リソース（テンプレートファイル、設定ファイル、サンプルコードなど）を同梱した自己完結型のツールキットです。
 
-### こんなときに使える
+#### こんなときに使える
 
 - **コミットメッセージを規約に沿って自動生成したい** — `git-commit` スキルがリポジトリの変更を分析して適切なメッセージを提案
 - **アーキテクチャ図を自動生成したい** — `excalidraw-diagram-generator` や `plantuml-ascii` でコードからダイアグラムを生成
 - **PRD（プロダクト要件定義書）を標準フォーマットで作りたい** — `prd` スキルで統一的な要件定義書を作成
 
-### 利用できる主な Skills
+#### 利用できる主な Skills
 
 | スキル名 | 機能 | 活用場面 |
 |---------|------|---------|
@@ -282,7 +318,7 @@ Skills は、Instructions だけでは実現できない、関連リソース（
 | **excalidraw-diagram-generator** | 図表自動生成 | アーキテクチャ図の作成 |
 | **azure-deployment-preflight** | Azure デプロイ事前チェック | デプロイ前の検証 |
 
-### 設定方法
+#### 設定方法
 
 ```
 .github/
@@ -296,18 +332,18 @@ Skills は、Instructions だけでは実現できない、関連リソース（
 
 ---
 
-## Collections - カスタマイズのセット
+### Collections - カスタマイズのセット
 
-### 概要
+#### 概要
 
 Collections は、関連する Instructions、Prompts、Agents、Skills をテーマごとにまとめたキュレーション済みのセットです。
 
-### こんなときに使える
+#### こんなときに使える
 
 - **新規プロジェクトのセットアップを効率化したい** — 技術スタックに合った Collection を選ぶだけで必要なカスタマイズ一式が揃う
 - **チーム全体の開発環境を統一したい** — Collection を共有すれば全員が同じルールとツールを使える
 
-### 利用できる主な Collections
+#### 利用できる主な Collections
 
 | コレクション名 | 含まれるカスタマイズ | 活用場面 |
 |--------------|-------------------|---------|
@@ -317,7 +353,7 @@ Collections は、関連する Instructions、Prompts、Agents、Skills をテ�
 | **security-best-practices** | セキュリティカスタマイズ | セキュリティ対策の強化 |
 | **devops-oncall** | オンコール対応カスタマイズ | 運用・障害対応 |
 
-### 設定方法
+#### 設定方法
 
 ```yaml
 # .github/collections/java-development.collection.yml
@@ -331,19 +367,19 @@ items:
 
 ---
 
-## Hooks - セッションイベント駆動の自動アクション
+### Hooks - セッションイベント駆動の自動アクション
 
-### 概要
+#### 概要
 
 Hooks は、GitHub Copilot コーディングエージェントのセッション中に発生する特定のイベントをトリガーとして自動実行されるスクリプトです。
 
-### こんなときに使える
+#### こんなときに使える
 
 - **セッションのログ・監査証跡を残したい** — セッション開始・終了・プロンプトを自動記録
 - **危険な操作を事前にブロックしたい** — 破壊的ファイル操作や force push などをエージェントが実行する前に遮断
 - **シークレットの漏洩を防ぎたい** — セッション中に変更されたファイルを自動スキャン
 
-### 利用できる主な Hooks
+#### 利用できる主な Hooks
 
 | フック名 | 概要 | 対応イベント |
 |---------|------|------------|
@@ -352,7 +388,7 @@ Hooks は、GitHub Copilot コーディングエージェントのセッショ�
 | [**session-auto-commit**](https://github.com/github/awesome-copilot/tree/main/hooks/session-auto-commit) | セッション終了時に変更を自動コミット＆プッシュ | sessionEnd |
 | [**tool-guardian**](https://github.com/github/awesome-copilot/tree/main/hooks/tool-guardian) | 危険なツール操作（破壊的ファイル操作、force push）をブロック | preToolUse |
 
-### 設定方法
+#### 設定方法
 
 ```
 .github/
@@ -364,19 +400,19 @@ Hooks は、GitHub Copilot コーディングエージェントのセッショ�
 
 ---
 
-## Agentic Workflows - AI 駆動のリポジトリ自動化
+### Agentic Workflows - AI 駆動のリポジトリ自動化
 
-### 概要
+#### 概要
 
 Agentic Workflows は、GitHub Actions 上でコーディングエージェントを実行する AI 駆動のリポジトリ自動化の仕組みです。
 
-### こんなときに使える
+#### こんなときに使える
 
 - **Issue のトリアージ・ラベリングを自動化したい** — 新しい Issue を自動で分類し、適切なラベルを付与
 - **定期的なステータスレポートを生成したい** — 毎日・毎週の進捗サマリーを自動作成
 - **スラッシュコマンドで操作したい** — Issue や PR にコメントするだけでエージェントを呼び出せる
 
-### 利用できる主な Agentic Workflows
+#### 利用できる主な Agentic Workflows
 
 | ワークフロー名 | 概要 | トリガー |
 |--------------|------|---------|
@@ -384,7 +420,7 @@ Agentic Workflows は、GitHub Actions 上でコーディングエージェン�
 | [**ospo-org-health**](https://github.com/github/awesome-copilot/blob/main/workflows/ospo-org-health.md) | ステール Issue/PR・コントリビューターランキングの週次レポート | schedule |
 | [**relevance-check**](https://github.com/github/awesome-copilot/blob/main/workflows/relevance-check.md) | Issue や PR がプロジェクトに関連するかをスラッシュコマンドで評価 | slash_command |
 
-### 設定方法
+#### 設定方法
 
 ```bash
 # gh aw 拡張機能をインストール
@@ -396,13 +432,13 @@ gh aw compile
 
 ---
 
-## Cookbook Recipes - 実践的なコード例
+### Cookbook Recipes - 実践的なコード例
 
-### 概要
+#### 概要
 
 Cookbook Recipes は、GitHub Copilot SDK を使ったアプリケーション開発のための実践的なコードスニペット集です。
 
-### 対応言語
+#### 対応言語
 
 | 言語 | 提供される例 |
 |------|------------|
@@ -413,11 +449,9 @@ Cookbook Recipes は、GitHub Copilot SDK を使ったアプリケーション�
 
 ---
 
-## Claude Code スキル
+## Claude Code
 
-### 概要
-
-Claude Code は Anthropic が提供するターミナルベースのコーディングエージェントです。GitHub Copilot とは別製品ですが、同様にスラッシュコマンドやフックでカスタマイズできます。
+Claude Code は Anthropic が提供するターミナルベースのコーディングエージェントです。GitHub Copilot が IDE 内のインライン補完に特化しているのに対し、ファイルシステム全体を横断する複雑なタスクをこなせるエージェントとして設計されています。
 
 ### 主な機能
 
@@ -433,13 +467,11 @@ Claude Code は Anthropic が提供するターミナルベースのコーディ
 
 ---
 
-## Anthropic 公式スキル
-
-### 概要
+### Anthropic 公式スキル
 
 [anthropics/skills](https://github.com/anthropics/skills) は Anthropic が公開している Claude 用スキルのリポジトリです。Word・PDF・PowerPoint・Excel などのドキュメント処理スキルや、生成アート・MCP サーバービルドなど 17 種類のスキルが収録されています。
 
-### カテゴリ別スキル一覧
+#### カテゴリ別スキル一覧
 
 | カテゴリ | スキル | 主な機能 |
 |---------|-------|---------|
@@ -448,7 +480,7 @@ Claude Code は Anthropic が提供するターミナルベースのコーディ
 | **開発・技術** | claude-api / mcp-builder / webapp-testing / web-artifacts-builder | API 開発・MCP 構築・Web テスト |
 | **エンタープライズ** | brand-guidelines / doc-coauthoring / internal-comms / slack-gif-creator / skill-creator | 組織コミュニケーション・カスタムスキル作成 |
 
-### インストール方法（Claude Code）
+#### インストール方法（Claude Code）
 
 ```bash
 /plugin marketplace add anthropics/skills
@@ -459,9 +491,7 @@ Claude Code は Anthropic が提供するターミナルベースのコーディ
 
 ---
 
-## Codex 公式スキル（Agent Skills）
-
-### 概要
+## Codex（OpenAI）
 
 [openai/skills](https://github.com/openai/skills) は OpenAI が公開している Codex 用スキルのカタログリポジトリです。system / curated / experimental の 3 層構造で、デプロイ・Figma・Notion・セキュリティ・ブラウザ自動化など 40 種類以上のスキルが収録されています。
 
@@ -499,8 +529,6 @@ $skill-installer vercel-deploy
 
 ## 事務・ビジネス業務での活用
 
-### 概要
-
 生成AIはコーディングだけでなく、**事務・経理・総務・営業事務**といったバックオフィス業務の効率化にも役立ちます。Word／Excel／PowerPoint／PDF の自動生成・編集や、金融・経理業務に特化したエージェントを活用できます。
 
 ### こんなときに使える
@@ -520,13 +548,11 @@ $skill-installer vercel-deploy
 
 > **ポイント**: 金額・税・日付などの数値や、契約・法的文書は**必ず人（有資格者）が確認**してください。生成AIの出力はドラフトとして扱うのが安全です。
 
-**→ 事務活用の詳細は [docs/office-work.md](docs/office-work.md) を参照**
-
 ---
 
 ## クイックスタートガイド
 
-### 1. 最小構成で始める（GitHub Copilot）
+### GitHub Copilot — 最小構成で始める
 
 まずは Instructions から始めるのが最もシンプルです。
 
@@ -547,7 +573,7 @@ applyTo: "**/*.go"
 - エラーは即座にチェックし `fmt.Errorf` でラップすること
 ```
 
-### 2. チーム向けの推奨構成
+### GitHub Copilot — チーム向けの推奨構成
 
 ```
 .github/
@@ -562,7 +588,7 @@ applyTo: "**/*.go"
     security-reviewer.agent.md     # セキュリティレビュー
 ```
 
-### 3. Claude Code を導入する
+### Claude Code を導入する
 
 ```bash
 # Claude Code のインストール
@@ -585,6 +611,10 @@ claude
 
 **GitHub Copilot** は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完やチャットが中心です。**Claude Code** は Anthropic が提供するターミナルベースのエージェントで、ファイルシステム全体を横断する複雑なタスクに向いています。
 
+### Q: GitHub Copilot と Codex の違いは？
+
+**GitHub Copilot** は IDE 補完・チャット向けのカスタマイズが中心です。**Codex**（OpenAI）はターミナルベースのエージェントで、Agent Skills によってデプロイ・ブラウザ自動化・外部サービス連携などのワークフローを追加できます。
+
 ### Q: 既存のプロジェクトにも適用できる？
 
 はい。`.github/` ディレクトリにファイルを追加するだけで、既存プロジェクトにも適用できます。コードベースへの変更は不要です。
@@ -597,14 +627,23 @@ Instructions、Prompts、Agents は GitHub Copilot のすべてのプラン（In
 
 ## 参考リンク
 
+### GitHub Copilot
+
 - [github/awesome-copilot](https://github.com/github/awesome-copilot) — カスタマイズの公式リポジトリ
 - [GitHub Copilot ドキュメント](https://docs.github.com/copilot) — 公式ドキュメント
 - [Copilot のカスタマイズ方法](https://docs.github.com/copilot/customizing-copilot) — 公式カスタマイズガイド
-- [Claude Code 公式ドキュメント](https://docs.anthropic.com/ja/docs/claude-code/overview) — Claude Code の使い方
-- [anthropics/skills](https://github.com/anthropics/skills) — Anthropic 公式 Claude スキルリポジトリ
 - [Agentic Workflows ドキュメント](https://github.com/github/awesome-copilot/blob/main/docs/README.workflows.md) — AI 駆動ワークフローの一覧
 - [Hooks ドキュメント](https://github.com/github/awesome-copilot/blob/main/docs/README.hooks.md) — セッションイベント駆動フックの一覧
 - [Cookbook](https://github.com/github/awesome-copilot/blob/main/cookbook/README.md) — Copilot SDK を活用した実践的コードレシピ集
+
+### Claude Code
+
+- [Claude Code 公式ドキュメント](https://docs.anthropic.com/ja/docs/claude-code/overview) — Claude Code の使い方
+- [anthropics/skills](https://github.com/anthropics/skills) — Anthropic 公式 Claude スキルリポジトリ
+
+### Codex
+
+- [openai/skills](https://github.com/openai/skills) — Codex 公式スキルカタログ
 
 ---
 
