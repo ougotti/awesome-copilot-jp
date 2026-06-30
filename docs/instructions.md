@@ -83,6 +83,7 @@ applyTo: "**/*.py"
 | [`springboot-4-migration.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/springboot-4-migration.instructions.md) | Spring Boot 4 への移行 | Spring Boot アップグレード |
 | [`quarkus.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/quarkus.instructions.md) | Quarkus クラウドネイティブ Java | 軽量 Java マイクロサービス |
 | [`quarkus-mcp-server-sse.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/quarkus-mcp-server-sse.instructions.md) | Quarkus での MCP サーバー（SSE） | MCP + Quarkus |
+| [`java-junit5-assertions.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/java-junit5-assertions.instructions.md) | JUnit 5（Jupiter）アサーションのベストプラクティス（Supplier メッセージ、assertAll、assertThrowsExactly） | Java テストコードの記述・レビュー |
 
 **[java-17-to-java-21-upgrade.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/java-17-to-java-21-upgrade.instructions.md) の主なルール:
 - **Virtual Threads（JEP 444）**: `Thread.ofVirtual()` で高スループット並行処理
@@ -149,6 +150,7 @@ applyTo: "**/*.py"
 | [`swift-mcp-server.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/swift-mcp-server.instructions.md) | Swift での MCP サーバー開発 | MCP サーバー構築 |
 | [`dart-n-flutter.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/dart-n-flutter.instructions.md) | Dart / Flutter 開発規約 | モバイルアプリ開発 |
 | [`scala2.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/scala2.instructions.md) | Scala 2 開発規約 | Scala プロジェクト |
+| [`scala-spark.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/scala-spark.instructions.md) | Scala での Apache Spark 開発（DataFrame/Dataset、SparkSQL、性能チューニング、テスト） | ビッグデータ/分散処理 |
 | [`clojure.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/clojure.instructions.md) | Clojure 開発規約 | Clojure プロジェクト |
 | [`r.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/r.instructions.md) | R 言語開発規約 | データ分析/統計 |
 | [`apex.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/apex.instructions.md) | Salesforce Apex 開発規約 | Salesforce 開発 |
@@ -193,6 +195,21 @@ applyTo: "**/*.py"
 - SSR ではグローバル `$state` モジュールを避ける（リクエスト間データ漏洩防止）
 - SvelteKit の `+page.server.ts` でサーバーサイドデータロード
 - `{#snippet}` ブロックで再利用可能なテンプレートロジック
+
+---
+
+#### Vue
+
+| ファイル名 | 概要 | 活用場面 |
+|-----------|------|---------|
+| [`vue.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/vue.instructions.md) | Vue 3 開発規約（Composition API、`<script setup>`、Pinia、Vue Router、TypeScript、テスト、SSR） | Vue 3 アプリ開発 |
+
+**[vue.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/vue.instructions.md) の主なルール:
+- Composition API + `<script setup lang="ts">` をデフォルトとし、Options API / Vue 2 パターンを避ける
+- Vue 3.4+（可能なら 3.5+ の `useTemplateRef`、`useId`、リアクティブな props 分割代入）を前提
+- 状態管理は Pinia、ルーティングは Vue Router、ビルド/開発は Vite を使用
+- コンポーザブル（composables）で再利用可能なロジックを抽出
+- テストは Vitest + Vue Test Utils（または Testing Library for Vue）
 
 ---
 

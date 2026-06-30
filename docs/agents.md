@@ -113,6 +113,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`microsoft_learn_contributor.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/microsoft_learn_contributor.agent.md) | Microsoft Learn コントリビューター | 学習コンテンツ作成 |
 | [`mentoring-juniors.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/mentoring-juniors.agent.md) | ジュニア開発者メンター「先生」（ソクラテス式） | 新人指導・PEAR ループ学習支援 |
 | [`gem-documentation-writer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-documentation-writer.agent.md) | GEM ドキュメントライター | 技術ドキュメント作成・コード-ドキュメント整合性維持 |
+| [`interview-prep.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/interview-prep.agent.md) | 技術面接コーチ（模擬面接・システム設計・STAR 法・企業研究） | エンジニアの技術面接対策 |
 
 **[mentor.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/mentor.agent.md) の特徴:
 - ソクラテス式メソッドと「5 Whys」技法
@@ -314,6 +315,8 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`terraform-azure-planning.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/terraform-azure-planning.agent.md) | Terraform Azure 計画 | Azure インフラ計画 |
 | [`terraform-azure-implement.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/terraform-azure-implement.agent.md) | Terraform Azure 実装 | Azure インフラ実装 |
 | [`terratest-module-testing.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/terratest-module-testing.agent.md) | Terratest モジュールテスト | Terraform モジュールの Go テスト自動化 |
+| [`terraform-aws-planning.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/terraform-aws-planning.agent.md) | Terraform AWS 計画 | AWS インフラの実装計画（INFRA.{goal}.md）作成 |
+| [`terraform-aws-implement.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/terraform-aws-implement.agent.md) | Terraform AWS 実装 | AWS インフラの Terraform 実装・レビュー |
 
 **[terraform.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/terraform.agent.md) の特徴:
 - パブリック/プライベート Terraform レジストリ連携
@@ -354,6 +357,28 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 - テナント分離戦略（shared, siloed, pooled）
 - ID フェデレーション（エンタープライズ/コンシューマー）
 - コンプライアンスフレームワーク（SOC 2, ISO 27001, GDPR, CCPA）
+
+---
+
+#### AWS アーキテクチャ
+
+| ファイル名 | ペルソナ | 活用場面 |
+|-----------|---------|---------|
+| [`aws-principal-architect.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/aws-principal-architect.agent.md) | AWS プリンシパルアーキテクト（Well-Architected 6 本柱） | AWS アーキテクチャ設計全般 |
+| [`aws-serverless-architect.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/aws-serverless-architect.agent.md) | AWS サーバーレスアーキテクト | Lambda/API Gateway/EventBridge を用いたイベント駆動設計 |
+| [`aws-incident-triage.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/aws-incident-triage.agent.md) | AWS インシデントトリアージ（オンコール SRE） | CloudWatch ベースの障害調査・根本原因仮説 |
+
+**[aws-principal-architect.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/aws-principal-architect.agent.md) の特徴:
+- Well-Architected Framework 6 本柱（運用上の優秀性、セキュリティ、信頼性、性能効率、コスト最適化、持続可能性）
+- マルチアカウント戦略（AWS Organizations、SCP、Control Tower、Landing Zone Accelerator）
+- ネットワーク設計（VPC、Transit Gateway、PrivateLink、Direct Connect、ハイブリッド）
+- ゼロトラスト・最小権限 IAM、マルチ AZ/マルチリージョンの信頼性設計
+
+**[aws-incident-triage.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/aws-incident-triage.agent.md) の特徴:
+- 証拠ベース（メトリクス・ログ・トレース）の構造化インシデント調査
+- デフォルトで読み取り専用、明示的承認なしにインフラを変更しない
+- 各調査フェーズをタイムボックス化し、判明した知見を逐次共有
+- アラーム発火から根本原因の仮説形成まで主導
 
 ---
 
