@@ -1,6 +1,6 @@
 # Agents 一覧と活用ガイド
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **192 個の Agents** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **238 個の Agents** を日本語で解説します。
 
 ## Agents とは
 
