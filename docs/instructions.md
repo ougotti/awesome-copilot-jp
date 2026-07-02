@@ -83,6 +83,7 @@ applyTo: "**/*.py"
 | [`springboot-4-migration.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/springboot-4-migration.instructions.md) | Spring Boot 4 への移行 | Spring Boot アップグレード |
 | [`quarkus.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/quarkus.instructions.md) | Quarkus クラウドネイティブ Java | 軽量 Java マイクロサービス |
 | [`quarkus-mcp-server-sse.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/quarkus-mcp-server-sse.instructions.md) | Quarkus での MCP サーバー（SSE） | MCP + Quarkus |
+| [`java-junit5-assertions.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/java-junit5-assertions.instructions.md) | JUnit 5 アサーションのベストプラクティス | Java テスト記述 |
 
 **[java-17-to-java-21-upgrade.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/java-17-to-java-21-upgrade.instructions.md) の主なルール:
 - **Virtual Threads（JEP 444）**: `Thread.ofVirtual()` で高スループット並行処理
@@ -149,6 +150,7 @@ applyTo: "**/*.py"
 | [`swift-mcp-server.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/swift-mcp-server.instructions.md) | Swift での MCP サーバー開発 | MCP サーバー構築 |
 | [`dart-n-flutter.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/dart-n-flutter.instructions.md) | Dart / Flutter 開発規約 | モバイルアプリ開発 |
 | [`scala2.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/scala2.instructions.md) | Scala 2 開発規約 | Scala プロジェクト |
+| [`scala-spark.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/scala-spark.instructions.md) | Scala + Apache Spark ベストプラクティス（DataFrame、パフォーマンスチューニング、Delta Lake） | Spark データ処理・分析 |
 | [`clojure.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/clojure.instructions.md) | Clojure 開発規約 | Clojure プロジェクト |
 | [`r.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/r.instructions.md) | R 言語開発規約 | データ分析/統計 |
 | [`apex.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/apex.instructions.md) | Salesforce Apex 開発規約 | Salesforce 開発 |
@@ -205,6 +207,7 @@ applyTo: "**/*.py"
 | [`tailwind-v4-vite.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/tailwind-v4-vite.instructions.md) | Tailwind CSS v4 + Vite | スタイリング |
 | [`oqtane.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/oqtane.instructions.md) | Oqtane フレームワーク | .NET CMS |
 | [`wordpress.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/wordpress.instructions.md) | WordPress 開発規約 | WordPress サイト |
+| [`vue.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/vue.instructions.md) | Vue 3 開発標準（Composition API、Pinia、Vue Router、TypeScript、SSR、セキュリティ） | Vue 3 アプリ開発 |
 
 ---
 
@@ -522,7 +525,7 @@ applyTo: "**/*.py"
 
 ## まとめ
 
-Instructions は **184 ファイル** あり、以下のカテゴリに分類されます：
+Instructions は **187 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な内容 |
 |---------|----------|---------|
