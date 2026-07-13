@@ -1,6 +1,6 @@
 # Agents 一覧と活用ガイド
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **192 個の Agents** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **239 個の Agents** を日本語で解説します。
 
 ## Agents とは
 
@@ -113,6 +113,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`microsoft_learn_contributor.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/microsoft_learn_contributor.agent.md) | Microsoft Learn コントリビューター | 学習コンテンツ作成 |
 | [`mentoring-juniors.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/mentoring-juniors.agent.md) | ジュニア開発者メンター「先生」（ソクラテス式） | 新人指導・PEAR ループ学習支援 |
 | [`gem-documentation-writer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-documentation-writer.agent.md) | GEM ドキュメントライター | 技術ドキュメント作成・コード-ドキュメント整合性維持 |
+| [`interview-prep.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/interview-prep.agent.md) | テクニカル面接コーチ | 模擬面接、システム設計・行動面接（STAR）対策、企業リサーチ |
 
 **[mentor.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/mentor.agent.md) の特徴:
 - ソクラテス式メソッドと「5 Whys」技法
@@ -120,6 +121,13 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 - 安全でない実践や短期的解決の長期コストを指摘
 - 表、図、GIF を使った視覚的説明
 - **MCP ツール:** `codebase`, `web/fetch`, `findTestFiles`, `githubRepo`, `search`, `usages`
+
+**[interview-prep.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/interview-prep.agent.md)** の特徴:
+- システム設計面接を要件定義・容量見積もり・API 設計・アーキテクチャ・深掘り・トレードオフの 6 フェーズでコーチング
+- STAR 法（状況・課題・行動・結果）による行動面接の構造化と、あいまいな回答への深掘り
+- 役職・企業・選考段階・重点分野をセッション開始時に確認
+- 企業の面接プロセス・技術スタック・エンジニアリング文化をリサーチし、逆質問候補を提案
+- 曖昧な回答を許容せず、具体的な数値と個人の貢献度を求める率直なフィードバック
 
 ---
 
@@ -271,6 +279,8 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`se-gitops-ci-specialist.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/se-gitops-ci-specialist.agent.md) | GitOps CI スペシャリスト | GitOps ワークフロー |
 | [`gem-devops.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-devops.agent.md) | GEM DevOps エージェント | コンテナ・CI/CD・インフラデプロイ |
 | [`github-actions-node-upgrade.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/github-actions-node-upgrade.agent.md) | GitHub Actions Node ランタイムアップグレード | Actions の Node.js バージョン更新・メジャーバンプ |
+| [`aws-incident-triage.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/aws-incident-triage.agent.md) | AWS インシデントトリアージ（オンコール SRE） | CloudWatch アラームからの根本原因調査・障害切り分け |
+| [`python-win-arm64-gha-wheel-builder.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/python-win-arm64-gha-wheel-builder.agent.md) | Windows ARM64 Wheel ビルダー | `windows-11-arm` ランナーを使った Python パッケージのネイティブ ARM64 ビルド追加 |
 
 **[devops-expert.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/devops-expert.agent.md) の特徴:
 - DevOps ライフサイクル 8 フェーズ（plan, code, build, test, release, deploy, operate, monitor）
@@ -284,6 +294,18 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 - CodeQL SAST、依存関係レビュー、Trivy コンテナスキャン、SBOM 生成
 - キャッシュ戦略と並行制御による最適化
 - 15 項目のセキュリティチェックリスト
+
+**[aws-incident-triage.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/aws-incident-triage.agent.md)** の特徴:
+- アラーム把握 → 影響範囲判定 → メトリクス異常検知 → ログ調査 → トレース確認 → 根本原因仮説の 6 フェーズ調査フロー
+- Account → Region → Service → Operation → Resource の階層的な影響範囲判定
+- 読み取り専用操作を優先し、根拠（メトリクス・ログ・トレース）のない推測を避ける
+- 信頼度付きの根本原因仮説と対処提案をまとめて報告
+
+**[python-win-arm64-gha-wheel-builder.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/python-win-arm64-gha-wheel-builder.agent.md)** の特徴:
+- 既存の AMD64/Linux/macOS ビルドを維持したまま `windows-11-arm` ランナーでの Windows ARM64 wheel ビルドを追加
+- MSVC ツールチェーン、Python アーキテクチャ、Rust ターゲット（`aarch64-pc-windows-msvc`）の設定を含む 15 ステップの手順
+- PyTorch など ARM64 版 PyPI wheel が未提供のパッケージは代替インデックス URL で対応
+- Windows x64 のテスト構成を ARM64 にミラーリングし、YAML 構文検証で既存ビルドの回帰を防止
 
 ---
 
@@ -567,7 +589,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 
 ## まとめ
 
-Agents は **235 ファイル** あり、以下のカテゴリに分類されます：
+Agents は **239 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な用途 |
 |---------|----------|---------|
