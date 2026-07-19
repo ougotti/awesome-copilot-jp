@@ -61,7 +61,7 @@ applyTo: "**/*.py"
 | [`aspnet-rest-apis.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/aspnet-rest-apis.instructions.md) | ASP.NET Core REST API 設計 | Web API 構築 |
 | [`winui3.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/winui3.instructions.md) | WinUI 3 / Windows App SDK デスクトップアプリ規約 | Windows デスクトップアプリ |
 
-**[csharp.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/csharp.instructions.md) の主なルール:
+**[csharp.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/csharp.instructions.md)** の主なルール:
 - PascalCase（public）、camelCase（private）、インターフェースは `I` プレフィックス
 - `== null` ではなく `is null` / `is not null` を使用
 - Nullable 参照型を適切に実装
@@ -85,7 +85,7 @@ applyTo: "**/*.py"
 | [`quarkus-mcp-server-sse.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/quarkus-mcp-server-sse.instructions.md) | Quarkus での MCP サーバー（SSE） | MCP + Quarkus |
 | [`java-junit5-assertions.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/java-junit5-assertions.instructions.md) | JUnit 5 アサーションのベストプラクティス | Java テスト記述 |
 
-**[java-17-to-java-21-upgrade.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/java-17-to-java-21-upgrade.instructions.md) の主なルール:
+**[java-17-to-java-21-upgrade.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/java-17-to-java-21-upgrade.instructions.md)** の主なルール:
 - **Virtual Threads（JEP 444）**: `Thread.ofVirtual()` で高スループット並行処理
 - **Pattern Matching for switch（JEP 441）**: `when` 句でガード付きパターン
 - **Sequenced Collections（JEP 431）**: `getFirst()`, `getLast()`, `reversed()`
@@ -102,7 +102,7 @@ applyTo: "**/*.py"
 | [`go-mcp-server.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/go-mcp-server.instructions.md) | Go での MCP サーバー開発 | MCP サーバー構築 |
 | [`copilot-sdk-go.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/copilot-sdk-go.instructions.md) | Copilot SDK（Go）の使い方 | Copilot 組み込みアプリ |
 
-**[go.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/go.instructions.md) の主なルール:
+**[go.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/go.instructions.md)** の主なルール:
 - `package` 宣言の重複禁止（各ファイル 1 つのみ）
 - インターフェースを受け取り、具象型を返す
 - エラーは即座にチェック、`fmt.Errorf` で `%w` を使ってラップ
@@ -128,7 +128,7 @@ applyTo: "**/*.py"
 | [`rust.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/rust.instructions.md) | Rust 開発規約（所有権、Result 型） | Rust プロジェクト全般 |
 | [`rust-mcp-server.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/rust-mcp-server.instructions.md) | Rust での MCP サーバー開発（rmcp SDK） | MCP サーバー構築 |
 
-**[rust.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/rust.instructions.md) の主なルール:
+**[rust.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/rust.instructions.md)** の主なルール:
 - 所有権移動より借用（`&T`）を優先
 - `Result<T, E>` で回復可能なエラーを処理、ライブラリでは `unwrap()` 禁止
 - `Debug`, `Clone`, `PartialEq`, `From`, `Default` トレイトを適切に実装
@@ -173,7 +173,7 @@ applyTo: "**/*.py"
 | [`nextjs.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/nextjs.instructions.md) | Next.js 16+（App Router、Server Components） | Next.js フルスタック |
 | [`nextjs-tailwind.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/nextjs-tailwind.instructions.md) | Next.js + Tailwind CSS | スタイリング統合 |
 
-**[nextjs.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/nextjs.instructions.md) の主なルール:
+**[nextjs.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/nextjs.instructions.md)** の主なルール:
 - `app/` ディレクトリ（App Router）を使用、Server Components がデフォルト
 - Server Component 内で `next/dynamic` + `{ ssr: false }` は使用禁止
 - `unstable_cache` より Cache Components（`use cache` ディレクティブ）を優先
@@ -189,7 +189,7 @@ applyTo: "**/*.py"
 | [`svelte.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/svelte.instructions.md) | Svelte 5（Runes: $state, $derived, $effect） | Svelte アプリ開発 |
 | [`astro.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/astro.instructions.md) | Astro フレームワーク | コンテンツ駆動サイト |
 
-**[svelte.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/svelte.instructions.md) の主なルール:
+**[svelte.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/svelte.instructions.md)** の主なルール:
 - Svelte 5 Runes を使用: `$state()` でリアクティブ状態、`$derived()` で計算値
 - 状態同期には `$effect()` より `$derived()` を優先（effect は副作用専用）
 - SSR ではグローバル `$state` モジュールを避ける（リクエスト間データ漏洩防止）
@@ -223,7 +223,7 @@ applyTo: "**/*.py"
 | [`generate-modern-terraform-code-for-azure.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/generate-modern-terraform-code-for-azure.instructions.md) | Azure 向け最新 Terraform コード生成 | Azure IaC |
 | [`azure-verified-modules-terraform.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/azure-verified-modules-terraform.instructions.md) | Azure Verified Modules（Terraform） | 検証済みモジュール |
 
-**[terraform.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/terraform.instructions.md) の主なルール:
+**[terraform.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/terraform.instructions.md)** の主なルール:
 - 最新の安定版 Terraform とプロバイダーを使用
 - 認証情報は AWS Secrets Manager / SSM Parameter Store に保存（state ファイルに含めない）
 - 機密変数には `sensitive = true` を設定
@@ -241,14 +241,14 @@ applyTo: "**/*.py"
 | [`kubernetes-deployment-best-practices.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/kubernetes-deployment-best-practices.instructions.md) | K8s デプロイのベストプラクティス | 本番環境デプロイ |
 | [`containerization-docker-best-practices.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/containerization-docker-best-practices.instructions.md) | Docker コンテナ化のベストプラクティス | コンテナ開発 |
 
-**[kubernetes-manifests.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/kubernetes-manifests.instructions.md) の主なルール:
+**[kubernetes-manifests.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/kubernetes-manifests.instructions.md)** の主なルール:
 - 標準ラベル: `app.kubernetes.io/name`, `app.kubernetes.io/instance`, `app.kubernetes.io/version`
 - セキュリティ: non-root 実行、`readOnlyRootFilesystem: true`、全 capabilities drop
 - リソース requests/limits を定義、本番では Guaranteed QoS
 - liveness, readiness, startup probes を実装
 - `kubectl apply --dry-run`, kubeconform, ポリシーバリデーター（OPA Conftest, Kyverno）でデプロイ前検証
 
-**[containerization-docker-best-practices.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/containerization-docker-best-practices.instructions.md) の主なルール:
+**[containerization-docker-best-practices.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/containerization-docker-best-practices.instructions.md)** の主なルール:
 - マルチステージビルドでビルド時/ランタイム依存を分離
 - 最小限のベースイメージ（Alpine, distroless）でアタックサーフェスを削減
 - non-root ユーザーでコンテナ実行
@@ -265,7 +265,7 @@ applyTo: "**/*.py"
 | [`azure-devops-pipelines.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/azure-devops-pipelines.instructions.md) | Azure DevOps Pipelines | Azure DevOps CI/CD |
 | [`devops-core-principles.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/devops-core-principles.instructions.md) | DevOps の基本原則 | DevOps 文化導入 |
 
-**[github-actions-ci-cd-best-practices.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/github-actions-ci-cd-best-practices.instructions.md) の主なルール:
+**[github-actions-ci-cd-best-practices.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/github-actions-ci-cd-best-practices.instructions.md)** の主なルール:
 - 説明的な `name` と適切な `on` トリガー、`fetch-depth: 1` で最適化
 - `GITHUB_TOKEN` は最小権限、クラウド認証には OIDC を使用
 - `hashFiles` と `restore-keys` でキャッシュ最適化
@@ -287,7 +287,7 @@ applyTo: "**/*.py"
 | [`azure-iot-edge-architecture.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/azure-iot-edge-architecture.instructions.md) | Azure IoT Edge 前提のアーキテクチャ検討手順 | スマートシティ / エッジ IoT 設計 |
 | [`azure-naming.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/azure-naming.instructions.md) | Azure CAF 準拠のリソース命名規約 | Azure インフラ命名の標準化 |
 
-**[bicep-code-best-practices.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/bicep-code-best-practices.instructions.md) の主なルール:
+**[bicep-code-best-practices.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/bicep-code-best-practices.instructions.md)** の主なルール:
 - lowerCamelCase で命名（変数、パラメーター、リソース）
 - パラメーターはファイル先頭に配置、`@description` デコレーター付き
 - `reference()` や `resourceId()` の代わりにシンボリック名でリソース参照
@@ -313,7 +313,7 @@ applyTo: "**/*.py"
 | [`playwright-dotnet.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/playwright-dotnet.instructions.md) | Playwright（.NET）E2E テスト | ブラウザ自動テスト |
 | [`qa-engineering-best-practices.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/qa-engineering-best-practices.instructions.md) | QA エンジニアリング全般のベストプラクティス | テスト戦略・設計・自動化・不具合管理 |
 
-**[playwright-typescript.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/playwright-typescript.instructions.md) の主なルール:
+**[playwright-typescript.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/playwright-typescript.instructions.md)** の主なルール:
 - アクセシビリティ優先のセレクター: `getByRole()`, `getByLabel()`（脆弱な CSS セレクターを避ける）
 - 自動リトライ付きアサーション（`await` プレフィックス）
 - Playwright 組み込みの自動待機を活用（ハードコードした wait を避ける）
@@ -337,14 +337,14 @@ applyTo: "**/*.py"
 | [`exclude-prompt-data.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/exclude-prompt-data.instructions.md) | プロンプト由来の指示文やメタ情報を成果物へ混入させないルール | ドキュメント・コード生成時の情報漏えい防止 |
 | [`use-cliche-data-in-docs.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/use-cliche-data-in-docs.instructions.md) | ドキュメント・サンプルには実データでなく架空プレースホルダーを使用するルール | ドキュメント・サンプルコード記述 |
 
-**[security-and-owasp.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/security-and-owasp.instructions.md) の主なルール:
+**[security-and-owasp.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/security-and-owasp.instructions.md)** の主なルール:
 - 最小権限の原則、「デフォルト拒否」パターン
 - データベースにはパラメータ化クエリのみ使用（SQL インジェクション対策）
 - パスワードハッシュには Argon2, bcrypt、機密データ暗号化には AES-256
 - シークレットは環境変数またはシークレット管理サービスから読み込み
 - セッション Cookie に `HttpOnly`, `Secure`, `SameSite=Strict`、レート制限を実装
 
-**[a11y.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/a11y.instructions.md) の主なルール:
+**[a11y.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/a11y.instructions.md)** の主なルール:
 - WCAG 2.2 Level AA を満たす（可能な限り超える）
 - 全インタラクティブ要素がキーボードナビゲーション可能、フォーカスインジケーター表示
 - テキストコントラスト比 4.5:1 以上（大きいテキストは 3:1）
@@ -464,7 +464,7 @@ applyTo: "**/*.py"
 | [`context7.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/context7.instructions.md) | Context7 による最新外部ドキュメント参照 | バージョン固有の API・フレームワーク開発 |
 | [`caveman-mode.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/caveman-mode.instructions.md) | 低トークン・簡潔回答モード | 短文で素早いやり取り |
 
-**[memory-bank.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/memory-bank.instructions.md) の主なルール:
+**[memory-bank.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/memory-bank.instructions.md)** の主なルール:
 - セッションリセット後は Memory Bank に完全に依存（必須ファイルを毎回読み込む）
 - 必須コアファイル: `projectbrief.md`, `productContext.md`, `activeContext.md`, `systemPatterns.md`, `techContext.md`, `progress.md`
 - 各タスクに専用の Markdown ファイルを作成（元のリクエスト、思考プロセス、実装計画、進捗ログを記録）
