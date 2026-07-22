@@ -15,6 +15,7 @@
 |------------|--------------|
 | 💬 まず生成AIを触ってみたい（コードは書かない） | [非エンジニア向けクイックスタート](#-非エンジニア向けクイックスタート) |
 | 📋 業務シーン別に「使える例」を見たい | [シナリオ別ユースケース集](docs/use-cases.md) |
+| 🌐 2026年のSkills・MCP・GUI自動化をまとめて知りたい | [2026年7月版 Skills最新動向](docs/skills-ecosystem-2026.md) |
 | 📝 議事録・請求書・資料など事務作業を効率化したい | [事務・バックオフィス活用ガイド](docs/office-work.md) |
 | 💹 決算・経理・金融業務を効率化したい | [金融サービス向けスキル](docs/financial-services.md) |
 
@@ -86,6 +87,7 @@
 | **[シナリオ別ユースケース集](docs/use-cases.md)** | 役割・業務シーンから探す生成AIの実例カタログ（プロンプト例つき） | — |
 | **[事務・バックオフィス活用ガイド](docs/office-work.md)** | 議事録・請求書・レポート・スプレッドシート作成など、日々の事務作業を生成AIで効率化する実践ガイド | — |
 | **[金融サービス向けスキル](docs/financial-services.md)** | [anthropics/financial-services](https://github.com/anthropics/financial-services) 収録の金融・経理業務向けエージェント／スキル（決算照合・月次決算・KYC 等）の詳細解説 | 10 エージェント + 7 業務プラグイン |
+| **[2026年7月版 Skills最新動向](docs/skills-ecosystem-2026.md)** | Matt Pocock、Context7、Firecrawl、Vercel、Record & Replay、Computer Use / Browser Use の比較と使い分け | 6 テーマ |
 
 ---
 
