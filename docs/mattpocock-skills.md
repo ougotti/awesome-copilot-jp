@@ -1,132 +1,153 @@
-# mattpocock/skills - 実務エンジニア向け Claude Code スキル集
+# mattpocock/skills - 実務エンジニア向け Agent Skills
 
-> [mattpocock/skills](https://github.com/mattpocock/skills) は、TypeScript 教育者として知られる **Matt Pocock** 氏が公開している、コーディングエージェント向けのスキル集です。「実際のエンジニアリング現場で AI エージェントを使うと起きる失敗」を防ぐことを目的に、**小さく・適応しやすく・組み合わせ可能**なスキルとして設計されています。
+> [mattpocock/skills](https://github.com/mattpocock/skills) は、TypeScript教育者として知られる **Matt Pocock** 氏が実務で使うAgent Skills集です。「vibe coding」ではなく、要件の認識合わせ、仕様化、TDD、デバッグ、設計、レビューといったソフトウェア開発の基本を、小さく組み合わせ可能なSkillとしてエージェントへ与えます。
 
 ## このリポジトリの特徴
 
-- **Claude Code をはじめとするコーディングエージェント**（Claude Agent SDK 互換）向け
-- 「AI 支援開発でよく起きる 4 つの失敗モード」を解決するという明確な設計思想
-- `skills` CLI（`npx skills`）でインストールでき、対象エージェントを選んで導入
-- **ユーザーが `/` で呼び出すスキル**と、**モデルが必要に応じて自動で呼び出すスキル**を区別
+- Claude Code、Codexなど、Agent Skills形式に対応するコーディングエージェントで利用できる
+- 巨大な開発フレームワークではなく、目的ごとに分割されたSkillを組み合わせる
+- **ユーザー呼び出し**のSkillが処理を編成し、**モデル呼び出し**のSkillが再利用可能な規律を提供する
+- `skills.sh` から編集可能なコピーとして導入する方法と、Claude Codeの管理プラグインとして購読する方法がある
 
 > [!NOTE]
-> [anthropics/skills](anthropics-skills.md) が「ドキュメント生成・デザインなど汎用タスク」中心なのに対し、こちらは **SDLC（開発プロセス）そのものを改善する**ワークフロー型スキルが中心です。
+> 2026年7月時点では、以前の `to-prd` / `to-issues` を中心とした構成から、`to-spec` / `to-tickets` / `implement` / `wayfinder` などへ発展しています。
 
 ---
 
-## 設計思想：4 つの失敗モード
+## インストール
 
-Matt 氏は、AI エージェントによる開発で起きがちな問題を 4 つに整理し、それぞれに対応するスキルを用意しています。
+### Agent Skills対応エージェント
 
-| 失敗モード | 内容 | 対応スキル |
-|-----------|------|-----------|
-| **Misalignment（認識のズレ）** | 開発者の意図とエージェントの理解が食い違う | `/grill-me`・`/grill-with-docs` で着手前に認識を揃える |
-| **Excessive Verbosity（冗長さ）** | やり取りが長くなり非効率 | 共通ドメイン言語（`CONTEXT.md`）でトークン効率・一貫性を改善 |
-| **Broken Code（壊れたコード）** | 動かない・質の低いコードを生む | 静的型・ブラウザ・自動テストによるフィードバックループ（red-green-refactor） |
-| **Architectural Decay（設計の劣化）** | 場当たり的な変更で設計が崩れる | `/to-prd`・`/improve-codebase-architecture` で日々設計に投資 |
-
----
-
-## インストール方法
-
-```bash
+```powershell
 npx skills@latest add mattpocock/skills
 ```
 
-セットアップ手順：
+導入時に `setup-matt-pocock-skills` を選択し、対象リポジトリで一度実行します。Issue tracker、トリアージ用ラベル、文書の保存先を設定します。
 
-1. 導入したいスキルと対象エージェントを選択（`setup-matt-pocock-skills` を必ず含める）
-2. `/setup-matt-pocock-skills` を実行し、以下を設定：
-   - **イシュートラッカー**（GitHub / Linear / ローカルファイル）
-   - チケットの **トリアージ用ラベル**
-   - **ドキュメントの保存先**
+### Claude Codeプラグイン
 
----
+```text
+/plugin marketplace add mattpocock/skills
+/plugin install mattpocock-skills@mattpocock
+```
 
-## スキル一覧
+シェルから導入する場合：
 
-### 🛠 エンジニアリング
+```powershell
+claude plugin marketplace add mattpocock/skills
+claude plugin install mattpocock-skills@mattpocock
+```
 
-#### ユーザー呼び出し（`/` コマンド）
-
-| スキル | 用途 |
-|-------|------|
-| **ask-matt** | 状況に応じて最適なスキルへ案内する入口 |
-| **grill-with-docs** | 詳細なヒアリングでドメインモデルを構築し、プロジェクト文書を更新 |
-| **triage** | イシューをステートマシンで管理するトリアージ |
-| **improve-codebase-architecture** | アーキテクチャ改善点を洗い出し HTML レポートで提示 |
-| **setup-matt-pocock-skills** | リポジトリ向けにスキル群を初期設定 |
-| **to-issues** | 計画を縦割り（vertical slice）の独立したイシューに分解 |
-| **to-prd** | 議論を正式な PRD（要件定義書）に整理 |
-| **prototype** | 設計検証用の使い捨てプロトタイプを作成 |
-
-#### モデル呼び出し（自動）
-
-| スキル | 用途 |
-|-------|------|
-| **diagnosing-bugs** | 構造化されたデバッグループで原因を切り分け |
-| **tdd** | red-green-refactor のテスト駆動開発 |
-| **domain-modeling** | プロジェクトのドメインモデルを構築・洗練 |
-| **codebase-design** | 保守しやすいモジュール設計の原則を確立 |
-
-### ⚡ 生産性（Productivity）
-
-#### ユーザー呼び出し
-
-| スキル | 用途 |
-|-------|------|
-| **grill-me** | 計画や設計について徹底的にヒアリング（認識合わせ） |
-| **handoff** | エージェント間の引き継ぎ用にコンパクトな handoff 文書を作成 |
-| **teach** | 複数セッションにまたがって新しい概念を教える |
-| **writing-great-skills** | 質の高いスキルを書くためのリファレンス |
-
-#### モデル呼び出し
-
-| スキル | 用途 |
-|-------|------|
-| **grilling** | （自動）深掘りヒアリングのプロセス |
-
-### 🧩 その他（Misc）
-
-| スキル | 用途 |
-|-------|------|
-| **git-guardrails-claude-code** | 危険な git コマンドをブロックするガードレール |
-| **migrate-to-shoehorn** | テストアサーションを TypeScript 向けツール（shoehorn）へ移行 |
-| **scaffold-exercises** | 構造化された演習ディレクトリを作成 |
-| **setup-pre-commit** | lint・テスト付きの pre-commit フックを設定 |
+| 導入方法 | 特徴 |
+|----------|------|
+| `npx skills` | プロジェクトへコピーされ、自分向けに編集できる。Codexなどにも導入可能 |
+| Claude Codeプラグイン | 読み取り専用の管理された一式として更新を追従する |
 
 ---
 
-## 注目スキルの使いどころ
+## 設計思想：4つの失敗モード
 
-- **着手前の認識合わせ** — `/grill-me` や `/grill-with-docs` で、実装に入る前にエージェントへ要件を深掘りさせる。手戻りを大きく減らせます。
-- **計画 → PRD → イシュー化** — `/to-prd` で要件をまとめ、`/to-issues` で縦割りの独立タスクに分解。エージェントが拾いやすい単位になります。
-- **品質を保つ開発ループ** — `tdd` と `diagnosing-bugs` で red-green-refactor を徹底し、壊れたコードを早期に検出。
-- **設計の劣化を防ぐ** — `/improve-codebase-architecture` で定期的にアーキテクチャを点検し、HTML レポートで可視化。
-- **安全な git 運用** — `git-guardrails-claude-code` で `push --force` などの危険操作をブロック。
+| 失敗モード | 問題 | 対応 |
+|------------|------|------|
+| **Misalignment** | 開発者の意図とエージェントの理解がずれる | `grill-me` / `grill-with-docs` で着手前に質問を重ねる |
+| **Excessive Verbosity** | 用語が揃わず説明が長くなる | `CONTEXT.md` とドメインモデルで共通言語を作る |
+| **Broken Code** | 実行時のフィードバックがなく壊れたコードを作る | `tdd` / `diagnosing-bugs` で検証ループを回す |
+| **Architectural Decay** | 高速な変更で設計の劣化も加速する | `to-spec` / `codebase-design` / `improve-codebase-architecture` を使う |
 
 ---
 
-## 他のスキル集との違い
+## Engineering Skills
+
+### ユーザー呼び出し
+
+ユーザーが明示的に起動し、複数の作業を編成するSkillです。
+
+| Skill | 用途 |
+|-------|------|
+| **ask-matt** | 現在の状況に適したSkillや進め方を案内する |
+| **grill-with-docs** | 深掘り質問を行い、用語集、`CONTEXT.md`、ADRも更新する |
+| **triage** | Issueを役割ベースの状態機械でトリアージする |
+| **improve-codebase-architecture** | コードベースの改善候補をHTMLレポートで示し、対象を深掘りする |
+| **setup-matt-pocock-skills** | Issue tracker、ラベル、文書構成をリポジトリへ設定する |
+| **to-spec** | 現在の会話を仕様へ整理し、Issue trackerへ公開する |
+| **to-tickets** | 計画や仕様を、依存関係を持つtracer-bullet型チケットへ分解する |
+| **implement** | 仕様やチケットを実装し、合意した境界でTDDとコードレビューを回す |
+| **wayfinder** | 1セッションでは収まらない大規模作業を調査チケットの地図にする |
+
+### モデル呼び出し
+
+ユーザーからの明示指定に加え、タスクに合えばモデルが自動選択できるSkillです。
+
+| Skill | 用途 |
+|-------|------|
+| **prototype** | 設計上の問いに答えるため、使い捨ての実行可能プロトタイプを作る |
+| **diagnosing-bugs** | 再現→最小化→仮説→計測→修正→回帰テストの順で診断する |
+| **research** | 信頼度の高い一次情報を調査し、引用付きMarkdownとして記録する |
+| **tdd** | red-green-refactorを垂直スライス単位で進める |
+| **domain-modeling** | 用語、境界条件、エッジケースを通してドメインモデルを更新する |
+| **codebase-design** | 小さなインターフェースの背後に多くの振る舞いを持つ深いモジュールを設計する |
+| **code-review** | StandardsとSpecの2軸を別々にレビューする |
+| **resolving-merge-conflicts** | merge / rebaseの競合を、両側の意図と一次情報からhunk単位で解決する |
+
+---
+
+## Productivity Skills
+
+### ユーザー呼び出し
+
+| Skill | 用途 |
+|-------|------|
+| **grill-me** | 計画や設計の意思決定を、分岐が解決するまで質問で詰める |
+| **handoff** | 現在の会話を、別エージェントが継続できるhandoff文書へ圧縮する |
+| **teach** | ディレクトリを状態保存に使い、複数セッションで概念を教える |
+| **writing-great-skills** | 予測可能なSkillを書くための語彙と設計原則を提供する |
+
+### モデル呼び出し
+
+| Skill | 用途 |
+|-------|------|
+| **grilling** | `grill-me` / `grill-with-docs` が共通利用する深掘り質問ループ |
+
+---
+
+## 推奨ワークフロー
+
+```text
+grill-with-docs
+  ↓ 要件・用語・判断を整理
+to-spec
+  ↓ 会話を仕様化
+to-tickets
+  ↓ 依存関係を持つ実装単位へ分解
+implement
+  ├─ tdd
+  ├─ diagnosing-bugs
+  └─ code-review
+```
+
+大規模で不確実性が高い作業では、最初に `wayfinder` を使い、`research` で調査結果を一次情報付きで蓄積します。
+
+---
+
+## 他のSkill集との違い
 
 | | **mattpocock/skills** | **[anthropics/skills](anthropics-skills.md)** | **[superpowers](superpowers.md)** |
-|--|----------------------|---------------------|-----------------------|
-| 主眼 | 開発プロセス（SDLC）の改善 | 汎用タスク（文書生成・デザイン等） | SDLC スキルフレームワーク |
-| 代表スキル | grill-me / to-prd / tdd | docx / pdf / pptx / xlsx | brainstorming / TDD / systematic-debugging |
-| インストール | `npx skills add` | `/plugin install` | `/plugin marketplace add` |
-| 設計思想 | 4 つの失敗モードへの対処 | 自己完結型ツールキット | 体系的な開発ワークフロー |
-
-> いずれも Claude Code で利用できます。プロセス改善目的なら mattpocock/skills や superpowers、ファイル生成・事務作業なら anthropics/skills が向いています。
+|--|----------------------|----------------------------------------------|-----------------------------------|
+| 主眼 | 実務開発プロセスを小さなSkillとして構成 | 文書・表計算・デザイン等の成果物作成 | SDLC全体に規律を強制するフレームワーク |
+| 代表例 | grill-with-docs / to-spec / implement / code-review | docx / pdf / pptx / xlsx | brainstorming / TDD / systematic-debugging |
+| カスタマイズ | コピーして改変しやすい | 公式Skillを用途別に利用 | 定められた開発フローを強く適用 |
+| 対応 | skills.sh対応エージェント、Claude Codeプラグイン | 主にClaude環境 | Claude Code、Codex、Copilot CLI等 |
 
 ---
 
 ## 参考リンク
 
 - [mattpocock/skills](https://github.com/mattpocock/skills) — 公式リポジトリ
-- [Matt Pocock](https://www.mattpocock.com/) — 著者（Total TypeScript 等で知られる）
-- [Claude Code スキル](claude-code-skills.md) — スキルの実行環境
-- [Anthropic 公式スキル](anthropics-skills.md) / [superpowers](superpowers.md) — 他のスキル集
+- [skills.sh: mattpocock/skills](https://skills.sh/mattpocock/skills) — Skill一覧と導入
+- [Matt Pocock](https://www.mattpocock.com/) — 作者
+- [2026年7月版 Skills最新動向](skills-ecosystem-2026.md)
+- [Anthropic公式Skills](anthropics-skills.md) / [superpowers](superpowers.md)
 
 ---
 
-> **注意**: 本ドキュメントは [mattpocock/skills](https://github.com/mattpocock/skills) の公開情報を元にした日本語解説です。収録スキルや使い方は更新されることがあるため、最新情報は公式リポジトリを確認してください。
+> **更新基準日：2026年7月22日**。本ページは公式リポジトリのREADMEとSkill定義を元にした日本語解説です。
