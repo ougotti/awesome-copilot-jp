@@ -100,6 +100,76 @@ Claude Code on the Web（ブラウザ版・モバイル版）では、以下の�
 
 ---
 
+## Agent Skills（`.claude/skills`）
+
+Agent Skills は、Claude Code がタスク内容に応じて自動的に読み込む再利用可能なスキル定義です。カスタムスラッシュコマンドが「手動で呼び出すコマンド」なのに対し、Agent Skills は「必要なときに自動適用される能力パッケージ」として使えます。
+
+### 配置場所と構成
+
+```
+.claude/
+  skills/
+    my-skill/
+      SKILL.md
+```
+
+- プロジェクト共有: `.claude/skills/`
+- 個人用（全プロジェクト共通）: `~/.claude/skills/`
+- 各スキルは `SKILL.md` をエントリーポイントとして持ちます
+
+### 使いどころ
+
+- 繰り返し発生する実装・レビュー手順の標準化
+- チーム固有のルールやチェック観点の再利用
+- 特定ドメイン（例: テスト生成、移行作業、ドキュメント更新）の作業品質の平準化
+
+---
+
+## プラグインとマーケットプレイス
+
+Claude Code では、コミュニティや公式が公開しているスキル群・拡張をプラグインとして導入できます。`anthropics/skills` や `mattpocock/skills` のような配布元を追加して、必要な機能をインストールする流れです。
+
+### よく使うコマンド
+
+| コマンド | 概要 |
+|---------|------|
+| `/plugin marketplace add <source>` | マーケットプレイスの配布元を追加 |
+| `/plugin install <plugin>` | プラグインをインストール |
+| `/plugin` | インストール済みプラグインの確認・管理 |
+
+### 例
+
+```text
+/plugin marketplace add anthropics/skills
+/plugin install anthropics/skills
+```
+
+---
+
+## サブエージェント（`.claude/agents`）
+
+サブエージェントは、特定役割に特化したカスタムエージェント定義です。Copilot 側の Agents と同様に、役割を分けて複雑な作業を進めたいときに有効です。
+
+### 配置場所
+
+```
+.claude/
+  agents/
+    reviewer.md
+    migration-helper.md
+```
+
+- プロジェクト共有: `.claude/agents/`
+- 個人用（全プロジェクト共通）: `~/.claude/agents/`
+
+### 使いどころ
+
+- レビュー専用、ドキュメント更新専用などの役割分離
+- 大きなタスクを分割し、担当ごとの観点で品質を担保
+- チーム内で「この役割はこのエージェントを使う」という運用の定着
+
+---
+
 ## カスタムスラッシュコマンド
 
 `.claude/commands/` ディレクトリに Markdown ファイルを置くことで、独自のスラッシュコマンドを作成できます。チームで共有する定型タスクをコマンド化するのに最適です。
@@ -430,6 +500,9 @@ CLAUDE.md              # プロジェクトの説明
 ## 参考リンク
 
 - [Claude Code 公式ドキュメント](https://docs.anthropic.com/ja/docs/claude-code/overview) — 機能説明・セットアップガイド
+- [Claude Code Agent Skills](https://docs.anthropic.com/ja/docs/claude-code/skills) — Agent Skills（`.claude/skills`）の作成と運用
+- [Claude Code Plugins](https://docs.anthropic.com/ja/docs/claude-code/plugins) — プラグインとマーケットプレイスの使い方
+- [Claude Code Subagents](https://docs.anthropic.com/ja/docs/claude-code/sub-agents) — サブエージェント（`.claude/agents`）の定義
 - [Claude Code フック](https://docs.anthropic.com/ja/docs/claude-code/hooks) — フックの詳細仕様
 - [Claude Code 設定](https://docs.anthropic.com/ja/docs/claude-code/settings) — settings.json リファレンス
 - [MCP 公式サイト](https://modelcontextprotocol.io/) — Model Context Protocol の仕様
