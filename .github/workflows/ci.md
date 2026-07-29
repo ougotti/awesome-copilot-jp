@@ -18,8 +18,10 @@ Pull Requestに対して自動でコード品質チェックを行い、
 
 1. リポジトリをチェックアウトする
 2. Python 3.12 をセットアップする
-3. `scripts/check_upstream_updates.py` の構文チェック（`py_compile`）を実行する
+3. `scripts/*.py` の構文チェック（`py_compile`）を実行する
 4. `scripts/known-files.json` のJSON形式が正しいか検証する
+5. `python3 scripts/check_links.py` で内部リンクを検証する
+6. `python3 scripts/check_catalog_counts.py` で README / docs の件数表記を検証する
 
 ### build ジョブ
 
@@ -76,7 +78,7 @@ jobs:
 
       - name: Python 構文チェック
         run: |
-          python -m py_compile scripts/check_upstream_updates.py
+          python -m py_compile scripts/*.py
           echo "Python 構文チェック OK"
 
       - name: JSON 形式チェック
@@ -87,6 +89,12 @@ jobs:
               json.load(f)
           print('JSON 形式チェック OK')
           EOF
+
+      - name: 内部リンクチェック
+        run: python3 scripts/check_links.py
+
+      - name: 件数表記チェック
+        run: python3 scripts/check_catalog_counts.py
 
   build:
     name: build

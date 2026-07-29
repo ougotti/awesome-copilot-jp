@@ -67,9 +67,9 @@
 
 | ドキュメント | 内容 | 件数 |
 |-------------|------|------|
-| **[Instructions 一覧](docs/instructions.md)** | ファイルパターンに応じてコーディング規約を自動適用するルールファイルの詳細解説 | 184+ 件 |
-| **[Agents 一覧](docs/agents.md)** | Copilot を特定ドメインの専門家ペルソナとして振る舞わせるエージェント定義の詳細解説 | 211+ 件 |
-| **[Prompts / Skills 一覧](docs/prompts.md)** | `/` コマンドから呼び出せる再利用可能なタスクテンプレートおよび Skills の詳細解説 | 138+ 件 |
+| **[Instructions 一覧](docs/instructions.md)** | ファイルパターンに応じてコーディング規約を自動適用するルールファイルの詳細解説 | 197 件 |
+| **[Agents 一覧](docs/agents.md)** | Copilot を特定ドメインの専門家ペルソナとして振る舞わせるエージェント定義の詳細解説 | 240 件 |
+| **[Prompts / Skills 一覧](docs/prompts.md)** | `/` コマンドから呼び出せる再利用可能なタスクテンプレートおよび Skills の詳細解説 | 137 件 |
 
 ### Claude Code
 

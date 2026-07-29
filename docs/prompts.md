@@ -1,5 +1,7 @@
 # Skills (旧 Prompts) 一覧と活用ガイド
 
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **137 個の Skills（旧 Prompts）** を日本語で解説します。
+>
 > **注意**: upstream の [github/awesome-copilot](https://github.com/github/awesome-copilot) では、Prompts は **[Skills](https://github.com/github/awesome-copilot/tree/main/skills)** に移行されました。各リンクは現在の Skills ディレクトリを指しています。
 
 ## Prompts とは
@@ -517,7 +519,7 @@ Copilot Chat で `/create-readme` のように入力すると呼び出せます�
 
 ## まとめ
 
-Prompts は **138 ファイル** あり、以下のカテゴリに分類されます：
+Prompts は **137 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な用途 |
 |---------|----------|---------|
