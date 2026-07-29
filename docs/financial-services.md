@@ -156,8 +156,8 @@ scripts/deploy-managed-agent.sh gl-reconciler
 ## 参考リンク
 
 - [anthropics/financial-services](https://github.com/anthropics/financial-services) — 公式リポジトリ
-- [Claude Cowork](https://www.anthropic.com/) — プラグインの実行環境
-- [Managed Agents API](https://docs.claude.com/) — バックエンド展開向け API
+- [Claude Cowork](https://claude.com/product/cowork) — プラグインの実行環境
+- [Managed Agents API](https://docs.claude.com/en/api/managed-agents) — バックエンド展開向け API
 - [anthropics/skills](https://github.com/anthropics/skills) — 汎用ドキュメント処理スキル（[日本語解説](anthropics-skills.md)）
 
 ---
