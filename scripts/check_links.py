@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-README.md と docs/ 配下の Markdown 内部リンク（相対リンク・アンカー）が
-壊れていないかを検証するスクリプト。
+README.md・CHANGELOG.md と docs/ 配下の Markdown 内部リンク
+（相対リンク・アンカー）が壊れていないかを検証するスクリプト。
 
 CI (.github/workflows/ci.yml) から呼び出されます。
 外部 URL（http/https）はチェック対象外です。
