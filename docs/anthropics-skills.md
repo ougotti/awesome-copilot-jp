@@ -1,5 +1,7 @@
 # anthropics/skills - Claude 公式スキルリポジトリ
 
+> **対象ツール**: Claude.ai・Claude Code ｜ **対象読者**: エンジニア・非エンジニア ｜ **最終更新**: 2026-07-29
+
 > [anthropics/skills](https://github.com/anthropics/skills) は Anthropic が公開している Claude 用の公式スキルリポジトリです。ドキュメント処理、クリエイティブデザイン、開発支援、エンタープライズ向けなど 17 種類のスキルが収録されています。
 
 ## スキルとは

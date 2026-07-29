@@ -1,5 +1,7 @@
 # OpenAI Codex 公式スキル（Agent Skills）
 
+> **対象ツール**: Codex（OpenAI） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-07-29
+
 > [openai/skills](https://github.com/openai/skills) は OpenAI が公開している Codex 用の公式スキルカタログです。エージェントがタスクを確実に実行できるよう、指示・スクリプト・リソースをフォルダにまとめた「スキル」が収録されています。
 
 ## スキルとは

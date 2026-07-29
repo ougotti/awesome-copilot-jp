@@ -1,5 +1,7 @@
 # Claude Code スキル一覧と活用ガイド
 
+> **対象ツール**: Claude Code ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-07-29
+
 > [Claude Code](https://docs.anthropic.com/ja/docs/claude-code/overview) は Anthropic が提供するコーディング支援 CLI ツールです。スラッシュコマンド、カスタムコマンド、フック、MCP 連携などの仕組みで作業を自動化・効率化できます。
 
 ## Claude Code とは
