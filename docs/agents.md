@@ -1,6 +1,6 @@
 # Agents 一覧と活用ガイド
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **239 個の Agents** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **240 個の Agents** を日本語で解説します。
 
 ## Agents とは
 
@@ -85,6 +85,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`gem-designer-mobile.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-designer-mobile.agent.md) | GEM モバイルデザイナー（HIG/Material Design 3 専門） | モバイル UI/UX 設計・プラットフォーム規約準拠 |
 | [`gem-implementer-mobile.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-implementer-mobile.agent.md) | GEM モバイル実装エージェント（TDD） | React Native/Expo/Flutter コード実装 |
 | [`project-architecture-planner.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/project-architecture-planner.agent.md) | プロジェクトアーキテクチャプランナー | テックスタック評価・スケーラビリティロードマップ設計・クラウド非依存コスト分析・Mermaid 図生成 |
+| [`workshop-ta.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/workshop-ta.agent.md) | ワークショップ TA（マルチエージェントルームコーディネーター） | デスク管理・作業ルーティング・ジャーナル管理・調整シグナル送出 |
 
 **[plan.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/plan.agent.md) の特徴:
 - 「Think First, Code Later」アプローチ
@@ -99,6 +100,13 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 - ステータスバッジ（Completed, In progress, Planned 等）
 - 標準 ID プレフィックス（REQ-, TASK-, GOAL-）
 - **MCP ツール:** 43 種類のツールを使用
+
+**[workshop-ta.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/workshop-ta.agent.md) の特徴:
+- マルチエージェントワークショップの「ルームコーディネーター」— デスク自体ではなく部屋全体を見渡す存在
+- 各デスクは `journal.md`（永続メモリ）・共有ベンチ（成果物の置き場）・対等な立場を持つ
+- `workshop-create` / `desk-open` / `bench-read` / `signal-write` 等のスキルで調整を実施
+- 調整シグナル（hands-up・blocked・done・checkpoint）でオペレーターに状況を通知
+- Cairn（石積み）理念：誠実さ・スコープ遵守・沈黙しない・間違いを声に出して修正する
 
 ---
 
@@ -589,12 +597,12 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 
 ## まとめ
 
-Agents は **239 ファイル** あり、以下のカテゴリに分類されます：
+Agents は **240 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な用途 |
 |---------|----------|---------|
 | コード品質・レビュー | 約 18 | セキュリティ、アーキテクチャレビュー、ガバナンス |
-| 計画・設計 | 約 25 | PRD、仕様書、実装計画、マルチエージェント調整 |
+| 計画・設計 | 約 26 | PRD、仕様書、実装計画、マルチエージェント調整、ワークショップ |
 | メンタリング・教育 | 約 7 | 新人指導、学習支援、ドキュメント作成 |
 | デバッグ・保守 | 約 8 | バグ調査、コードクリーンアップ、パフォーマンス診断 |
 | 言語・フレームワーク専門家 | 約 29 | .NET, React, Vue, Nuxt, Salesforce, WinUI 3 等 |
