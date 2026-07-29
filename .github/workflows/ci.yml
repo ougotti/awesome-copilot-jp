@@ -39,6 +39,9 @@ jobs:
       - name: 内部リンクチェック
         run: python3 scripts/check_links.py
 
+      - name: 件数表記チェック
+        run: python3 scripts/check_catalog_counts.py
+
   build:
     name: build
     runs-on: ubuntu-latest

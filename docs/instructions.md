@@ -1,6 +1,6 @@
 # Instructions 一覧と活用ガイド
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **194 個の Instructions** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **197 個の Instructions** を日本語で解説します。
 
 ## Instructions とは
 
@@ -533,7 +533,7 @@ applyTo: "**/*.py"
 
 ## まとめ
 
-Instructions は **187 ファイル** あり、以下のカテゴリに分類されます：
+Instructions は **197 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な内容 |
 |---------|----------|---------|
