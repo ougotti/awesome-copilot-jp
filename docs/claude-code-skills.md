@@ -354,7 +354,7 @@ fi
 
 ```json
 {
-  "model": "claude-opus-4-7",
+  "model": "opus",
   "theme": "dark",
   "permissions": {
     "allow": [

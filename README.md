@@ -635,7 +635,7 @@ claude
 
 ### Q: カスタマイズはどのプランで使える？
 
-Instructions、Prompts、Agents は GitHub Copilot のすべてのプラン（Individual、Business、Enterprise）で利用可能です。
+Instructions、Prompts、Agents は GitHub Copilot のすべてのプラン（Free、Pro、Pro+、Business、Enterprise）で利用可能です。
 
 ---
 
