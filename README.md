@@ -124,13 +124,15 @@ GitHub Copilot のカスタマイズは、以下の種類があります。
 | 種類 | ファイル形式 | 概要 | 適用タイミング |
 |------|------------|------|--------------|
 | [Instructions](#instructions---コーディング規約の自動適用) | `.instructions.md` | ファイルパターンに応じた規約を自動適用 | コード編集時に自動 |
-| [Prompts](#prompts---再利用可能なタスクテンプレート) | `.prompt.md` | `/` コマンドで呼び出せるタスクテンプレート | チャットで手動実行 |
+| [Prompts](#prompts---再利用可能なタスクテンプレート) | `.prompt.md` | VS Code などで `/` コマンドから呼び出すローカルのタスクテンプレート | チャットで手動実行 |
 | [Agents](#agents---専門家ペルソナ) | `.agent.md` | 特定ドメインの専門家として振る舞うペルソナ | チャットで手動選択 |
-| [Skills](#skills---リソース同梱の複合ツール) | `SKILL.md` + 関連ファイル | 関連リソースを同梱した自己完結型ツール | チャットで手動実行 |
+| [Skills](#skills---リソース同梱の複合ツール) | `SKILL.md` + 関連ファイル | upstream の `skills/` で公開される、関連リソース同梱の自己完結型ツール | チャットで手動実行 |
 | [Collections](#collections---カスタマイズのセット) | `.collection.yml` | 上記を組み合わせたキュレーション済みセット | プロジェクト単位で適用 |
 | [Hooks](#hooks---セッションイベント駆動の自動アクション) | `hooks.json` + スクリプト | Copilot コーディングエージェントのセッションイベントで自動実行 | エージェントセッション中に自動 |
 | [Agentic Workflows](#agentic-workflows---ai-駆動のリポジトリ自動化) | `.md`（フロントマター + 自然言語） | GitHub Actions 上で動く AI 自動化ワークフロー | スケジュール・イベントで自動実行 |
 | [Cookbook](#cookbook-recipes---実践的なコード例) | コードスニペット集 | Copilot SDK を使ったコピー＆ペーストですぐ使えるコード例 | 実装の参考として随時 |
+
+> **補足**: upstream の [github/awesome-copilot](https://github.com/github/awesome-copilot) では、Prompts のカタログは **[skills/](https://github.com/github/awesome-copilot/tree/main/skills)** に移行済みです。ローカルでは `.prompt.md` を使い続けられますが、この README の upstream 参照リンクは `xxx.prompt.md` 表記で skills/ を指しています。
 
 ---
 
@@ -212,6 +214,8 @@ applyTo: "**/*.py"
 
 Prompts は、Copilot Chat の `/` コマンドから呼び出せる再利用可能なタスクテンプレートです。繰り返し行う定型作業をテンプレート化することで、一貫した品質の出力を得られます。
 
+> **注意**: upstream の [github/awesome-copilot](https://github.com/github/awesome-copilot) では、Prompts は **[Skills](https://github.com/github/awesome-copilot/tree/main/skills)** に移行されました。VS Code などのローカル機能では `.prompt.md` を `.github/prompts/` に置く運用が残っていますが、以下のリンクは現在の Skills ディレクトリを参照しています。
+
 #### こんなときに使える
 
 - **README やドキュメントを毎回同じ品質で作りたい** — テンプレート化されたプロンプトで、抜け漏れなくドキュメントを生成
@@ -225,30 +229,30 @@ Prompts は、Copilot Chat の `/` コマンドから呼び出せる再利用可
 
 | プロンプト名 | 用途 | 活用場面 |
 |-------------|------|---------|
-| [**create-readme**](https://github.com/github/awesome-copilot/tree/main/skills/create-readme) | README.md の作成 | 新規プロジェクトの初期セットアップ |
-| [**create-spec**](https://github.com/github/awesome-copilot/tree/main/skills/create-specification) | 技術仕様書の作成 | 機能開発の設計フェーズ |
-| [**create-adr**](https://github.com/github/awesome-copilot/tree/main/skills/create-architectural-decision-record) | Architecture Decision Record の作成 | アーキテクチャ上の意思決定を記録 |
+| [**create-readme.prompt.md**](https://github.com/github/awesome-copilot/tree/main/skills/create-readme) | README.md の作成 | 新規プロジェクトの初期セットアップ |
+| [**create-specification.prompt.md**](https://github.com/github/awesome-copilot/tree/main/skills/create-specification) | 技術仕様書の作成 | 機能開発の設計フェーズ |
+| [**create-architectural-decision-record.prompt.md**](https://github.com/github/awesome-copilot/tree/main/skills/create-architectural-decision-record) | Architecture Decision Record の作成 | アーキテクチャ上の意思決定を記録 |
 
 ##### テスト生成
 
 | プロンプト名 | 用途 | 活用場面 |
 |-------------|------|---------|
-| [**generate-jest-tests**](https://github.com/github/awesome-copilot/tree/main/skills/javascript-typescript-jest) | Jest テスト生成 | JavaScript/TypeScript ユニットテスト |
-| [**generate-junit-tests**](https://github.com/github/awesome-copilot/tree/main/skills/java-junit) | JUnit テスト生成 | Java ユニットテスト |
-| [**generate-playwright-tests**](https://github.com/github/awesome-copilot/tree/main/skills/playwright-generate-test) | Playwright テスト生成 | E2E テストの自動生成 |
-| [**generate-nunit-tests**](https://github.com/github/awesome-copilot/tree/main/skills/csharp-nunit) | NUnit テスト生成 | .NET ユニットテスト |
+| [**javascript-typescript-jest.prompt.md**](https://github.com/github/awesome-copilot/tree/main/skills/javascript-typescript-jest) | Jest テスト生成 | JavaScript/TypeScript ユニットテスト |
+| [**java-junit.prompt.md**](https://github.com/github/awesome-copilot/tree/main/skills/java-junit) | JUnit テスト生成 | Java ユニットテスト |
+| [**playwright-generate-test.prompt.md**](https://github.com/github/awesome-copilot/tree/main/skills/playwright-generate-test) | Playwright テスト生成 | E2E テストの自動生成 |
+| [**csharp-nunit.prompt.md**](https://github.com/github/awesome-copilot/tree/main/skills/csharp-nunit) | NUnit テスト生成 | .NET ユニットテスト |
 
 ##### インフラ・DevOps
 
 | プロンプト名 | 用途 | 活用場面 |
 |-------------|------|---------|
-| [**create-dockerfile**](https://github.com/github/awesome-copilot/tree/main/skills/multi-stage-dockerfile) | Dockerfile 生成 | コンテナ化 |
-| [**create-github-actions**](https://github.com/github/awesome-copilot/tree/main/skills/create-github-action-workflow-specification) | GitHub Actions ワークフロー生成 | CI/CD セットアップ |
-| [**optimize-sql**](https://github.com/github/awesome-copilot/tree/main/skills/sql-optimization) | SQL クエリ最適化 | データベースパフォーマンス改善 |
+| [**multi-stage-dockerfile.prompt.md**](https://github.com/github/awesome-copilot/tree/main/skills/multi-stage-dockerfile) | Dockerfile 生成 | コンテナ化 |
+| [**create-github-action-workflow-specification.prompt.md**](https://github.com/github/awesome-copilot/tree/main/skills/create-github-action-workflow-specification) | GitHub Actions ワークフロー生成 | CI/CD セットアップ |
+| [**sql-optimization.prompt.md**](https://github.com/github/awesome-copilot/tree/main/skills/sql-optimization) | SQL クエリ最適化 | データベースパフォーマンス改善 |
 
 #### 設定方法
 
-Prompt ファイルをリポジトリの `.github/prompts/` ディレクトリに配置します。
+VS Code などのローカルカスタマイズでは、Prompt ファイルをリポジトリの `.github/prompts/` ディレクトリに配置します。
 
 ```
 .github/
