@@ -50,7 +50,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`gem-critic.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-critic.agent.md) | GEM クリティック（仮定・設計・アプローチへの批判的挑戦） | 仮定の検証・エッジケース発見・過剰設計の指摘 |
 | [`gem-designer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-designer.agent.md) | GEM デザイナー（UI/UX スペシャリスト） | レイアウト・テーマ・カラースキーム・デザインシステム・アクセシビリティ検証 |
 
-**[se-security-reviewer.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/se-security-reviewer.agent.md) の特徴:
+**[se-security-reviewer.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/se-security-reviewer.agent.md)** の特徴:
 - OWASP Top 10 脆弱性検出
 - AI/LLM システムのセキュリティレビュー（プロンプトインジェクション対策含む）
 - Zero Trust 原則に基づく認証・認可検証
@@ -87,21 +87,21 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`project-architecture-planner.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/project-architecture-planner.agent.md) | プロジェクトアーキテクチャプランナー | テックスタック評価・スケーラビリティロードマップ設計・クラウド非依存コスト分析・Mermaid 図生成 |
 | [`workshop-ta.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/workshop-ta.agent.md) | ワークショップ TA（マルチエージェントルームコーディネーター） | デスク管理・作業ルーティング・ジャーナル管理・調整シグナル送出 |
 
-**[plan.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/plan.agent.md) の特徴:
+**[plan.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/plan.agent.md)** の特徴:
 - 「Think First, Code Later」アプローチ
 - コードベース探索とパターン発見
 - 複雑な要件を管理可能な単位に分解
 - 複数の実装オプションとトレードオフ評価
 - **MCP ツール:** `search/codebase`, `vscode/extensions`, `web/fetch`, `web/githubRepo`, `read/problems` 等
 
-**[implementation-plan.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/implementation-plan.agent.md) の特徴:
+**[implementation-plan.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/implementation-plan.agent.md)** の特徴:
 - AI-to-AI コミュニケーション向けの曖昧さゼロの計画
 - `/plan/` ディレクトリに標準命名で保存
 - ステータスバッジ（Completed, In progress, Planned 等）
 - 標準 ID プレフィックス（REQ-, TASK-, GOAL-）
 - **MCP ツール:** 43 種類のツールを使用
 
-**[workshop-ta.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/workshop-ta.agent.md) の特徴:
+**[workshop-ta.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/workshop-ta.agent.md)** の特徴:
 - マルチエージェントワークショップの「ルームコーディネーター」— デスク自体ではなく部屋全体を見渡す存在
 - 各デスクは `journal.md`（永続メモリ）・共有ベンチ（成果物の置き場）・対等な立場を持つ
 - `workshop-create` / `desk-open` / `bench-read` / `signal-write` 等のスキルで調整を実施
@@ -123,7 +123,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`gem-documentation-writer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-documentation-writer.agent.md) | GEM ドキュメントライター | 技術ドキュメント作成・コード-ドキュメント整合性維持 |
 | [`interview-prep.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/interview-prep.agent.md) | テクニカル面接コーチ | 模擬面接、システム設計・行動面接（STAR）対策、企業リサーチ |
 
-**[mentor.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/mentor.agent.md) の特徴:
+**[mentor.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/mentor.agent.md)** の特徴:
 - ソクラテス式メソッドと「5 Whys」技法
 - 直接解答せず、問題解決の思考をガイド
 - 安全でない実践や短期的解決の長期コストを指摘
@@ -154,13 +154,13 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`devtools-regression-investigator.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/devtools-regression-investigator.agent.md) | DevTools リグレッション調査エージェント | ブラウザリグレッションの再現・証拠収集・根本原因特定 |
 | [`frontend-performance-investigator.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/frontend-performance-investigator.agent.md) | フロントエンドパフォーマンス調査エージェント | Core Web Vitals・Lighthouse リグレッション診断 |
 
-**[debug.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/debug.agent.md) の特徴:
+**[debug.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/debug.agent.md)** の特徴:
 - 4 フェーズの構造化アプローチ（問題評価、調査、解決、品質保証）
 - エラー分析とコードベース検査
 - 変数状態、データフロー、制御ロジックの追跡
 - **MCP ツール:** `edit/editFiles`, `search`, `execute/runInTerminal`, `read/problems`, `execute/runTests` 等 12 種類
 
-**[janitor.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/janitor.agent.md) の特徴:
+**[janitor.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/janitor.agent.md)** の特徴:
 - 「Less Code = Less Debt」の原則
 - 未使用の関数、変数、インポート、デッドコード削除
 - 複雑なパターンの簡略化（インライン化、ネスト解消）
@@ -187,7 +187,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`winui3-expert.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/winui3-expert.agent.md) | WinUI 3 専門家 | Windows App SDK デスクトップアプリ開発 |
 | [`dotnet-self-learning-architect.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/dotnet-self-learning-architect.agent.md) | .NET 自己学習アーキテクト（並行/オーケストレーション型サブエージェント対応） | エンタープライズ .NET システム設計・実装 |
 
-**[expert-dotnet-software-engineer.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/expert-dotnet-software-engineer.agent.md) の特徴:
+**[expert-dotnet-software-engineer.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/expert-dotnet-software-engineer.agent.md)** の特徴:
 - Anders Hejlsberg、Robert C. Martin、Kent Beck の教えに基づく
 - async/await パターンと依存性注入
 - Repository、Unit of Work、CQRS、Event Sourcing パターン
@@ -206,14 +206,14 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`vuejs-expert.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/vuejs-expert.agent.md) | Vue.js フロントエンドエンジニア | Vue 3 / Composition API 開発 |
 | [`nuxt-expert.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/nuxt-expert.agent.md) | Nuxt エキスパート | Nuxt 3 / Nitro / SSR 開発 |
 
-**[expert-nextjs-developer.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/expert-nextjs-developer.agent.md) の特徴:
+**[expert-nextjs-developer.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/expert-nextjs-developer.agent.md)** の特徴:
 - App Router、Server Components、Cache Components
 - Turbopack（デフォルトバンドラー）
 - v16 の破壊的変更（async params/searchParams）に対応
 - `next/image`, `next/font`, React Compiler でパフォーマンス最適化
 - **MCP ツール:** `codebase`, `edit/editFiles`, `runTests`, `figma-dev-mode-mcp-server` 等
 
-**[expert-react-frontend-engineer.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/expert-react-frontend-engineer.agent.md) の特徴:
+**[expert-react-frontend-engineer.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/expert-react-frontend-engineer.agent.md)** の特徴:
 - React 19.2 の新機能: `<Activity>`, `useEffectEvent()`, `cacheSignal`
 - モダン Hooks: `use()`, `useFormStatus`, `useOptimistic`, `useActionState`
 - Server Components、Actions、クライアント/サーバー境界
@@ -290,14 +290,14 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`aws-incident-triage.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/aws-incident-triage.agent.md) | AWS インシデントトリアージ（オンコール SRE） | CloudWatch アラームからの根本原因調査・障害切り分け |
 | [`python-win-arm64-gha-wheel-builder.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/python-win-arm64-gha-wheel-builder.agent.md) | Windows ARM64 Wheel ビルダー | `windows-11-arm` ランナーを使った Python パッケージのネイティブ ARM64 ビルド追加 |
 
-**[devops-expert.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/devops-expert.agent.md) の特徴:
+**[devops-expert.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/devops-expert.agent.md)** の特徴:
 - DevOps ライフサイクル 8 フェーズ（plan, code, build, test, release, deploy, operate, monitor）
 - CI/CD パイプライン、IaC、テストフレームワーク自動化
 - DORA メトリクス（deployment frequency, lead time, MTTR, failure rate）
 - 文化的ガイダンス（サイロ解消、ブレームレス・ポストモーテム）
 - **MCP ツール:** `codebase`, `edit/editFiles`, `terminalCommand`, `githubRepo`, `runCommands`, `runTasks`
 
-**[github-actions-expert.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/github-actions-expert.agent.md) の特徴:
+**[github-actions-expert.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/github-actions-expert.agent.md)** の特徴:
 - 最小権限と OIDC 認証によるセキュリティ強化
 - CodeQL SAST、依存関係レビュー、Trivy コンテナスキャン、SBOM 生成
 - キャッシュ戦略と並行制御による最適化
@@ -329,7 +329,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`debian-linux-expert.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/debian-linux-expert.agent.md) | Debian エキスパート | Debian 環境 |
 | [`fedora-linux-expert.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/fedora-linux-expert.agent.md) | Fedora エキスパート | Fedora 環境 |
 
-**[platform-sre-kubernetes.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/platform-sre-kubernetes.agent.md) の特徴:
+**[platform-sre-kubernetes.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/platform-sre-kubernetes.agent.md)** の特徴:
 - 5 フェーズのデプロイ方法論（計画、マニフェスト生成、検証、監視付きロールアウト、テスト済みロールバック）
 - 必須セキュリティ設定（runAsNonRoot, readOnlyRootFilesystem）
 - 高可用性パターン（マルチレプリカ、Pod Disruption Budgets、ゾーン分散）
@@ -349,7 +349,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`terraform-aws-planning.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/terraform-aws-planning.agent.md) | Terraform AWS 計画 | AWS インフラ実装計画（WAF 準拠・Mermaid 図生成） |
 | [`terraform-aws-implement.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/terraform-aws-implement.agent.md) | Terraform AWS 実装 | AWS インフラ Terraform コード実装・レビュー |
 
-**[terraform.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/terraform.agent.md) の特徴:
+**[terraform.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/terraform.agent.md)** の特徴:
 - パブリック/プライベート Terraform レジストリ連携
 - 厳格なファイル構造（main.tf, variables.tf, outputs.tf, README.md）
 - HCP Terraform ワークスペース管理と plan/apply オーケストレーション
@@ -375,14 +375,14 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`azure-verified-modules-terraform.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/azure-verified-modules-terraform.agent.md) | Azure Verified Modules（Terraform） | 検証済みモジュール活用 |
 | [`azure-policy-analyzer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/azure-policy-analyzer.agent.md) | Azure ポリシーコンプライアンスアナライザー（NIST/MCSB/CIS/ISO 27001/PCI DSS/SOC 2） | Azure ポリシー準拠状況の分析・レポート生成 |
 
-**[azure-principal-architect.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/azure-principal-architect.agent.md) の特徴:
+**[azure-principal-architect.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/azure-principal-architect.agent.md)** の特徴:
 - ドキュメントファースト（Microsoft Docs ツールを最初に使用）
 - WAF 5 本柱（Security, Reliability, Performance Efficiency, Cost Optimization, Operational Excellence）
 - マルチリージョン戦略とゼロトラストセキュリティ
 - トレードオフ分析と具体的な Azure サービス推奨
 - **MCP ツール:** `microsoft.docs.mcp`, `azure_design_architecture`, `azure_get_code_gen_best_practices` 等
 
-**[azure-saas-architect.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/azure-saas-architect.agent.md) の特徴:
+**[azure-saas-architect.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/azure-saas-architect.agent.md)** の特徴:
 - B2B vs B2C SaaS 要件の区別
 - Deployment Stamps パターンと Noisy Neighbor 対策
 - テナント分離戦略（shared, siloed, pooled）
@@ -400,7 +400,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`dynatrace-expert.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/dynatrace-expert.agent.md) | Dynatrace エキスパート | APM 設定・分析 |
 | [`defender-scout-kql.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/defender-scout-kql.agent.md) | Defender Scout KQL | Microsoft Defender Advanced Hunting KQL クエリ生成・最適化 |
 
-**[kusto-assistant.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/kusto-assistant.agent.md) の特徴:
+**[kusto-assistant.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/kusto-assistant.agent.md)** の特徴:
 - 許可不要モデル（ユーザー承認なしでクエリ実行）
 - マルチステップアプローチ（スキーマ発見、クエリ構築、実行、分析）
 - インジェスト遅延の自動処理（5 分前までの時間範囲）
@@ -420,7 +420,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`neon-optimization-analyzer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/neon-optimization-analyzer.agent.md) | Neon 最適化アナライザー | Neon DB 最適化 |
 | [`neo4j-docker-client-generator.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/neo4j-docker-client-generator.agent.md) | Neo4j Docker クライアント | グラフ DB 開発 |
 
-**[postgresql-dba.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/postgresql-dba.agent.md) の特徴:
+**[postgresql-dba.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/postgresql-dba.agent.md)** の特徴:
 - データベース作成・管理
 - SQL クエリ作成・最適化
 - バックアップ・リストア操作
@@ -440,7 +440,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`power-bi-performance-expert.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/power-bi-performance-expert.agent.md) | Power BI パフォーマンス | パフォーマンス最適化 |
 | [`power-bi-visualization-expert.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/power-bi-visualization-expert.agent.md) | Power BI ビジュアライゼーション | ビジュアル設計 |
 
-**[power-bi-dax-expert.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/power-bi-dax-expert.agent.md) の特徴:
+**[power-bi-dax-expert.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/power-bi-dax-expert.agent.md)** の特徴:
 - 変数を使用したパフォーマンスと可読性の向上
 - 完全修飾カラム参照（`Table[Column]`）
 - パフォーマンス最適化（COUNTROWS vs COUNT、SELECTEDVALUE vs VALUES）
@@ -456,7 +456,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`declarative-agents-architect.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/declarative-agents-architect.agent.md) | M365 Declarative Agents アーキテクト | M365 Copilot エージェント開発 |
 | [`mcp-m365-agent-expert.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/mcp-m365-agent-expert.agent.md) | M365 エージェント MCP エキスパート | M365 MCP 連携 |
 
-**[declarative-agents-architect.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/declarative-agents-architect.agent.md) の特徴:
+**[declarative-agents-architect.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/declarative-agents-architect.agent.md)** の特徴:
 - JSON スキーマ v1.5 準拠（文字数制限、バリデーション要件）
 - TypeSpec による型安全なエージェント定義
 - VS Code 拡張による M365 Agents Toolkit 統合

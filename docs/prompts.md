@@ -38,20 +38,20 @@ Copilot Chat で `/create-readme` のように入力すると呼び出せます�
 | [`tldr-prompt.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/tldr-prompt) | TLDR 形式の説明 | 簡潔な概要 |
 | [`readme-blueprint-generator.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/readme-blueprint-generator) | README 設計図生成 | README の構造案 |
 
-**[create-readme.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/create-readme) の特徴:
+**[create-readme.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/create-readme)** の特徴:
 - ワークスペース全体をレビューして README を生成
 - GitHub Flavored Markdown（GFM）+ admonition 構文
 - 過剰な絵文字を避けた簡潔なコンテンツ
 - LICENSE/CONTRIBUTING/CHANGELOG は別ファイルに（README には含めない）
 
-**[create-specification.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/create-specification) の特徴:
+**[create-specification.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/create-specification)** の特徴:
 - AI 向けに最適化された機械可読な仕様書
 - 明確で曖昧さのない言語
 - `/spec/` ディレクトリに保存
 - 11 セクション構成（Introduction, Requirements, Acceptance Criteria 等）
 - YAML フロントマター（title, version, dates, owner, tags）
 
-**[create-architectural-decision-record.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/create-architectural-decision-record) の特徴:
+**[create-architectural-decision-record.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/create-architectural-decision-record)** の特徴:
 - `/docs/adr/` に連番で保存（adr-0001-*, adr-0002-* ...）
 - ステータス追跡（Proposed/Accepted/Rejected/Superseded/Deprecated）
 - Consequences セクション（POS/NEG コーディング）
@@ -78,20 +78,20 @@ Copilot Chat で `/create-readme` のように入力すると呼び出せます�
 | [`project-workflow-analysis-blueprint-generator.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/project-workflow-analysis-blueprint-generator) | プロジェクトワークフロー分析 | ワークフロー設計 |
 | [`technology-stack-blueprint-generator.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/technology-stack-blueprint-generator) | 技術スタック設計図 | 技術選定ガイド |
 
-**[create-implementation-plan.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/create-implementation-plan) の特徴:
+**[create-implementation-plan.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/create-implementation-plan)** の特徴:
 - AI-to-AI コミュニケーション向けの決定論的言語
 - Purpose プレフィックス: `upgrade`, `refactor`, `feature`, `data`, `infrastructure`, `process`, `architecture`, `design`
 - 8 セクション構成（Requirements, Implementation Steps, Alternatives, Dependencies, Files, Testing, Risks, Related Specs）
 - 標準 ID プレフィックス（REQ-, TASK-, SEC-, CON-）
 - 具体的なファイルパスと関数名を含む
 
-**[breakdown-epic-pm.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/breakdown-epic-pm) の特徴:
+**[breakdown-epic-pm.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/breakdown-epic-pm)** の特徴:
 - SaaS プラットフォーム向け Epic PRD
 - 8 セクション構成（Epic Name, Goal, User Personas, User Journeys, Business Requirements, Success Metrics, Out of Scope, Business Value）
 - 機能要件と非機能要件の分離
 - KPI の定義
 
-**[breakdown-test.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/breakdown-test) の特徴:
+**[breakdown-test.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/breakdown-test)** の特徴:
 - ISTQB / ISO 25010 準拠
 - GitHub Issue テンプレート生成（テスト戦略: 2-3 SP、Playwright E2E: 2-5 SP、QA 検証: 3-5 SP）
 - 品質目標: > 80% 行カバレッジ、> 90% ブランチカバレッジ（クリティカルパス）
@@ -122,14 +122,14 @@ Copilot Chat で `/create-readme` のように入力すると呼び出せます�
 - テストスイート
 - Claude Desktop 統合手順
 
-**[python-mcp-server-generator.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/python-mcp-server-generator) の特徴:
+**[python-mcp-server-generator.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/python-mcp-server-generator)** の特徴:
 - `uv` パッケージマネージャー使用
 - FastMCP サーバー実装
 - デコレーター付きツール関数
 - 型ヒント、docstring、async サポート
 - PEP 8 準拠
 
-**[typescript-mcp-server-generator.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/typescript-mcp-server-generator) の特徴:
+**[typescript-mcp-server-generator.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/typescript-mcp-server-generator)** の特徴:
 - `@modelcontextprotocol/sdk` + `zod` 依存関係
 - ES モジュールサポートの `tsconfig.json`
 - McpServer クラス + zod バリデーションスキーマ
@@ -145,7 +145,7 @@ Copilot Chat で `/create-readme` のように入力すると呼び出せます�
 |-----------|------|------|
 | [`javascript-typescript-jest.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/javascript-typescript-jest) | Jest テストガイド | Jest テスト規約 |
 
-**[javascript-typescript-jest.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/javascript-typescript-jest) の特徴:
+**[javascript-typescript-jest.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/javascript-typescript-jest)** の特徴:
 - テストファイル命名規則（`.test.ts`/`.test.js`）
 - 分離テクニック（`jest.mock()`, `jest.spyOn()`）
 - async テストパターン
@@ -163,18 +163,18 @@ Copilot Chat で `/create-readme` のように入力すると呼び出せます�
 | [`csharp-mstest.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/csharp-mstest) | MSTest テストガイド | MSTest テスト規約 |
 | [`csharp-tunit.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/csharp-tunit) | TUnit テストガイド | TUnit テスト規約（.NET 8.0+） |
 
-**[csharp-xunit.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/csharp-xunit) の特徴:
+**[csharp-xunit.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/csharp-xunit)** の特徴:
 - `[Fact]` と `[Theory]` 属性
 - AAA（Arrange-Act-Assert）パターン
 - データ駆動テスト（`[InlineData]`, `[MemberData]`, `[ClassData]`）
 
-**[csharp-mstest.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/csharp-mstest) の特徴:
+**[csharp-mstest.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/csharp-mstest)** の特徴:
 - MSTest 3.x/4.x の最新機能
 - `[DataRow]` と `DynamicData`
 - `[Retry]`, `[Timeout]` などの高度な機能
 - ワークアイテムトレーサビリティ
 
-**[csharp-tunit.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/csharp-tunit) の特徴:
+**[csharp-tunit.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/csharp-tunit)** の特徴:
 - .NET 8.0+ 必須
 - 非同期 Fluent アサーション（`await Assert.That(value).IsEqualTo(expected)`）
 - デフォルトで並列実行
@@ -189,7 +189,7 @@ Copilot Chat で `/create-readme` のように入力すると呼び出せます�
 | [`java-junit.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/java-junit) | JUnit 5 テストガイド | JUnit 5 テスト規約 |
 | [`java-docs.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/java-docs) | Java ドキュメント生成 | Javadoc |
 
-**[java-junit.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/java-junit) の特徴:
+**[java-junit.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/java-junit)** の特徴:
 - JUnit 5 ライフサイクル管理（`@BeforeEach`, `@AfterEach`）
 - Arrange-Act-Assert パターン
 - パラメータ化テスト（`@ParameterizedTest`, `@ValueSource`, `@CsvSource`, `@MethodSource`）
@@ -205,13 +205,13 @@ Copilot Chat で `/create-readme` のように入力すると呼び出せます�
 | [`playwright-explore-website.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/playwright-explore-website) | Web サイト探索 | UI 要素ドキュメント、テストケース提案 |
 | [`playwright-automation-fill-in-form.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/playwright-automation-fill-in-form) | フォーム自動入力 | フォーム操作自動化 |
 
-**[playwright-generate-test.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/playwright-generate-test) の特徴:
+**[playwright-generate-test.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/playwright-generate-test)** の特徴:
 - 「理解してからコード」の構造化手法
 - `@playwright/test` 使用
 - `tests/` ディレクトリに保存
 - 反復的なテスト検証
 
-**[playwright-explore-website.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/playwright-explore-website) の特徴:
+**[playwright-explore-website.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/playwright-explore-website)** の特徴:
 - 3-5 のコア機能/ユーザーフローを特定
 - UI 要素ロケーターとインタラクションパターンの文書化
 - テストケース提案
@@ -224,7 +224,7 @@ Copilot Chat で `/create-readme` のように入力すると呼び出せます�
 |-----------|------|------|
 | [`pytest-coverage.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/pytest-coverage) | pytest カバレッジ分析 | 100% カバレッジ達成まで反復 |
 
-**[pytest-coverage.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/pytest-coverage) の特徴:
+**[pytest-coverage.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/pytest-coverage)** の特徴:
 - `cov_annotate` ディレクトリにカバレッジレポート生成
 - 未カバー行（`!` マーク）の特定
 - 反復的なテスト追加で 100% カバレッジ達成
@@ -241,24 +241,24 @@ Copilot Chat で `/create-readme` のように入力すると呼び出せます�
 | [`postgresql-code-review.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/postgresql-code-review) | PostgreSQL コードレビュー | PostgreSQL 固有のレビュー |
 | [`cosmosdb-datamodeling.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/cosmosdb-datamodeling) | Cosmos DB データモデリング | データモデル設計 |
 
-**[sql-optimization.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/sql-optimization) の特徴:
+**[sql-optimization.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/sql-optimization)** の特徴:
 - MySQL, PostgreSQL, SQL Server, Oracle 対応
 - クエリチューニング、インデックス戦略
 - アンチパターン特定（相関サブクエリ → ウィンドウ関数）
 - DB 固有の最適化戦略
 
-**[sql-code-review.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/sql-code-review) の特徴:
+**[sql-code-review.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/sql-code-review)** の特徴:
 - 優先度レベルとリスク評価
 - セキュリティ問題（SQL インジェクション、アクセス制御）
 - Before/After コード例
 - セキュリティ、パフォーマンス、保守性、スキーマ品質のスコア
 
-**[postgresql-optimization.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/postgresql-optimization) の特徴:
+**[postgresql-optimization.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/postgresql-optimization)** の特徴:
 - PostgreSQL 固有機能（JSONB, 配列, ウィンドウ関数, 全文検索）
 - インデックス戦略（GIN, 複合, 部分, 式インデックス）
 - 拡張機能推奨（uuid-ossp, pgcrypto）
 
-**[cosmosdb-datamodeling.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/cosmosdb-datamodeling) の特徴:
+**[cosmosdb-datamodeling.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/cosmosdb-datamodeling)** の特徴:
 - ペアプログラミング形式でインタラクティブに要件収集
 - 集約指向設計原則
 - パーティションキー戦略
@@ -275,20 +275,20 @@ Copilot Chat で `/create-readme` のように入力すると呼び出せます�
 | [`containerize-aspnetcore.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/containerize-aspnetcore) | ASP.NET Core コンテナ化 | Linux Docker 環境向け Dockerfile |
 | [`containerize-aspnet-framework.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/containerize-aspnet-framework) | ASP.NET Framework コンテナ化 | Windows Docker 環境向け Dockerfile |
 
-**[multi-stage-dockerfile.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/multi-stage-dockerfile) の特徴:
+**[multi-stage-dockerfile.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/multi-stage-dockerfile)** の特徴:
 - 言語/フレームワークを問わず適用可能
 - ビルダーステージとランタイムステージの分離
 - レイヤー最適化とキャッシュ活用
 - セキュリティベストプラクティス（non-root ユーザー）
 - ヘルスチェック設定
 
-**[containerize-aspnetcore.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/containerize-aspnetcore) の特徴:
+**[containerize-aspnetcore.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/containerize-aspnetcore)** の特徴:
 - .NET バージョン検出と SDK/ランタイムイメージ選択
 - Linux ディストリビューション選択（Alpine, Ubuntu, Chiseled, Azure Linux）
 - `.dockerignore` 生成
 - non-root ユーザー実行設定
 
-**[containerize-aspnet-framework.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/containerize-aspnet-framework) の特徴:
+**[containerize-aspnet-framework.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/containerize-aspnet-framework)** の特徴:
 - Windows Server Core ベースイメージ
 - IIS 設定、GAC アセンブリ、COM コンポーネント対応
 - LogMonitor 設定
@@ -307,14 +307,14 @@ Copilot Chat で `/create-readme` のように入力すると呼び出せます�
 | [`conventional-commit.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/conventional-commit) | Conventional Commits 形式 | `type(scope): description` 形式のコミット |
 | [`git-flow-branch-creator.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/git-flow-branch-creator) | Git Flow ブランチ作成 | feature/release/hotfix ブランチ |
 
-**[create-github-action-workflow-specification.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/create-github-action-workflow-specification) の特徴:
+**[create-github-action-workflow-specification.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/create-github-action-workflow-specification)** の特徴:
 - AI 最適化された CI/CD 仕様書
 - Mermaid 実行フロー図
 - Jobs/Dependencies マトリクス
 - 要件マトリクス（機能、セキュリティ、パフォーマンス）
 - 入出力契約とシークレット管理
 
-**[conventional-commit.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/conventional-commit) の特徴:
+**[conventional-commit.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/conventional-commit)** の特徴:
 - `git status` と `git diff` で変更を分析
 - 標準フォーマット: `type(scope): description`
 - タイプ: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert
@@ -330,13 +330,13 @@ Copilot Chat で `/create-readme` のように入力すると呼び出せます�
 | [`azure-resource-health-diagnose.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/azure-resource-health-diagnose) | Azure リソースヘルス診断 | 7 ステップの診断レポート |
 | [`update-avm-modules-in-bicep.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/update-avm-modules-in-bicep) | AVM モジュール更新 | 更新された Bicep ファイル |
 
-**[az-cost-optimize.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/az-cost-optimize) の特徴:
+**[az-cost-optimize.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/az-cost-optimize)** の特徴:
 - Azure IaC ファイル（Bicep, Terraform, ARM）を分析
 - 個別の最適化ごとに GitHub Issue 作成
 - マスター EPIC Issue（アーキテクチャ図、優先度順推奨）
 - 優先度スコア: (Value Score × Monthly Savings) / (Risk Score × Implementation Days)
 
-**[azure-resource-health-diagnose.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/azure-resource-health-diagnose) の特徴:
+**[azure-resource-health-diagnose.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/azure-resource-health-diagnose)** の特徴:
 - 7 ステップのワークフロー
 - Log Analytics / Application Insights（KQL クエリ）
 - 重大度分類（critical, high, medium, low）
@@ -352,7 +352,7 @@ Copilot Chat で `/create-readme` のように入力すると呼び出せます�
 | [`review-and-refactor.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/review-and-refactor) | コードレビュー＆リファクタリング | リファクタリング済みコード |
 | [`ai-prompt-engineering-safety-review.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/ai-prompt-engineering-safety-review) | プロンプトエンジニアリング安全レビュー | 安全性評価 |
 
-**[review-and-refactor.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/review-and-refactor) の特徴:
+**[review-and-refactor.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/review-and-refactor)** の特徴:
 - `.github/instructions/*.md` のプロジェクトルールに従う
 - `.github/copilot-instructions.md` も参照
 - ファイル構造を維持（断片化なし）
@@ -462,7 +462,7 @@ Copilot Chat で `/create-readme` のように入力すると呼び出せます�
 | [`suggest-awesome-github-copilot-instructions.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/suggest-awesome-github-copilot-instructions) | おすすめ Instructions 提案 | Instructions 推奨 |
 | [`github-copilot-starter.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/github-copilot-starter) | GitHub Copilot スターター | 入門ガイド |
 
-**[generate-custom-instructions-from-codebase.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/generate-custom-instructions-from-codebase) の特徴:
+**[generate-custom-instructions-from-codebase.prompt.md](https://github.com/github/awesome-copilot/tree/main/skills/generate-custom-instructions-from-codebase)** の特徴:
 - 既存コードベースを分析
 - プロジェクト固有のパターンを抽出
 - チーム向けカスタム Instructions を自動生成
