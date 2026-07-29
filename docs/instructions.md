@@ -1,6 +1,6 @@
 # Instructions 一覧と活用ガイド
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **193 個の Instructions** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **194 個の Instructions** を日本語で解説します。
 
 ## Instructions とは
 
@@ -336,6 +336,7 @@ applyTo: "**/*.py"
 | [`oop-design-patterns.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/oop-design-patterns.instructions.md) | OOP デザインパターン（GoF パターン・SOLID 原則） | オブジェクト指向設計 |
 | [`exclude-prompt-data.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/exclude-prompt-data.instructions.md) | プロンプト由来の指示文やメタ情報を成果物へ混入させないルール | ドキュメント・コード生成時の情報漏えい防止 |
 | [`use-cliche-data-in-docs.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/use-cliche-data-in-docs.instructions.md) | ドキュメント・サンプルには実データでなく架空プレースホルダーを使用するルール | ドキュメント・サンプルコード記述 |
+| [`attester-verify-packages.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/attester-verify-packages.instructions.md) | PyPI・npm パッケージ名を attester.dev オラクルで存在確認してからインストール・インポートするルール | 幻覚パッケージ名の混入防止 |
 
 **[security-and-owasp.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/security-and-owasp.instructions.md) の主なルール:
 - 最小権限の原則、「デフォルト拒否」パターン
@@ -350,6 +351,13 @@ applyTo: "**/*.py"
 - テキストコントラスト比 4.5:1 以上（大きいテキストは 3:1）
 - 適切なセマンティクス（name, role, value, states, properties）とランドマーク使用
 - フォーム要素にラベル、必須フィールドには `aria-required="true"`
+
+**[attester-verify-packages.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/attester-verify-packages.instructions.md) の主なルール:
+- `requirements.txt`, `package.json` 等への追加前や `import` 前に attester.dev オラクル（無料・キーレス）でパッケージ名を検証
+- USENIX Security 2025 研究でモデルが提案するパッケージ名の 5.2〜21.7% が実在しないことが判明
+- `exists: false` の場合はインストール・インポートせず、`closest_match` を提示してユーザーに確認
+- `typosquat_adjacent: true` はタイポやハルシネーション名の強いシグナルとして扱い、絶対にインストールしない
+- 1 日 25 リクエストの無料枠（UTC 00:00 リセット）。429 エラー時はチェックをスキップしたことを明示して続行
 
 ---
 
@@ -533,7 +541,7 @@ Instructions は **187 ファイル** あり、以下のカテゴリに分類さ
 | Web フレームワーク | 約 15 | React, Next.js, Vue, Angular, Svelte 等 |
 | インフラ・DevOps | 約 21 | Terraform, Kubernetes, Docker, CI/CD, AWS |
 | テスト | 約 5 | Playwright (各言語版) |
-| セキュリティ・品質 | 約 13 | OWASP, アクセシビリティ, パフォーマンス, OOP 設計, ドキュメントデータ安全管理 |
+| セキュリティ・品質 | 約 14 | OWASP, アクセシビリティ, パフォーマンス, OOP 設計, ドキュメントデータ安全管理, パッケージ検証 |
 | データベース | 約 5 | MongoDB, SQL Server |
 | Power Platform | 約 25 | Power BI, PCF, Power Apps |
 | MCP サーバー開発 | 約 10 | 各言語の MCP SDK |

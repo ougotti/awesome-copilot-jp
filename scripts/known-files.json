@@ -11,6 +11,7 @@
     "arch-linux.instructions.md",
     "aspnet-rest-apis.instructions.md",
     "astro.instructions.md",
+    "attester-verify-packages.instructions.md",
     "aws-appsync.instructions.md",
     "azure-devops-pipelines.instructions.md",
     "azure-durable-functions-csharp.instructions.md",
@@ -436,7 +437,8 @@
     "vuejs-expert.agent.md",
     "wg-code-alchemist.agent.md",
     "wg-code-sentinel.agent.md",
-    "winui3-expert.agent.md"
+    "winui3-expert.agent.md",
+    "workshop-ta.agent.md"
   ],
   "prompts": [
     "add-educational-comments.prompt.md",
