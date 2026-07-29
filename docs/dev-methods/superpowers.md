@@ -337,4 +337,4 @@ superpowers のスキルは**エージェントがタスクの前に自動でチ
 
 ---
 
-> **注意**: superpowers は Anthropic・OpenAI・GitHub が公式に提供するものではなく、Jesse Vincent 氏および Prime Radiant によるコミュニティプロジェクトです。Anthropic 公式スキルについては [Anthropic 公式スキル](anthropics-skills.md) を参照してください。
+> **注意**: superpowers は Anthropic・OpenAI・GitHub が公式に提供するものではなく、Jesse Vincent 氏および Prime Radiant によるコミュニティプロジェクトです。Anthropic 公式スキルについては [Anthropic 公式スキル](../claude-code/official-skills.md) を参照してください。

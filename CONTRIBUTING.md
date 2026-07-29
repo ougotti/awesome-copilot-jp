@@ -33,6 +33,25 @@
 4. プッシュ: `git push origin fix/description`
 5. Pull Request を作成
 
+## ディレクトリ構成
+
+`docs/` はツール別のディレクトリ構成になっています。新しいドキュメントを追加するときは、対象ツールに合ったディレクトリへ配置してください。
+
+```
+docs/
+  copilot/       # GitHub Copilot 専用（instructions / agents / prompts）
+  claude-code/   # Claude Code 専用（基本ガイド・Anthropic 公式スキル）
+  codex/         # Codex（OpenAI）専用
+  dev-methods/   # ツール横断の開発手法（mattpocock/skills・superpowers・AI-DLC）
+  business/      # 非エンジニア・業務活用（ユースケース・事務・金融）
+  trends.md      # ツール横断の最新動向
+```
+
+- 特定ツール専用の内容 → 該当ツールのディレクトリへ
+- 複数ツールに対応する開発手法・フレームワーク → `dev-methods/` へ（特定ツール配下に置かない）
+- 職種・業務起点の活用ガイド → `business/` へ
+- 各ドキュメントの冒頭には `> **対象ツール**: … ｜ **対象読者**: … ｜ **最終更新**: …` のヘッダーを付ける
+
 ## 編集ルール
 
 - 説明文は日本語で書く
@@ -47,9 +66,9 @@
 
 | 対象 upstream | 更新チェック workflow | スクリプト | `scripts/known-files.json` の更新キー | 主な更新先ドキュメント |
 |---|---|---|---|---|
-| [github/awesome-copilot](https://github.com/github/awesome-copilot) | `.github/workflows/check-upstream-updates.yml` | `scripts/check_upstream_updates.py` | `instructions` / `agents` / `prompts` | `docs/instructions.md` / `docs/agents.md` / `docs/prompts.md` |
-| [anthropics/skills](https://github.com/anthropics/skills) | `.github/workflows/check-anthropics-skills-updates.yml` | `scripts/check_anthropics_skills_updates.py` | `anthropics_skills` | `docs/anthropics-skills.md` |
-| [anthropics/financial-services](https://github.com/anthropics/financial-services) | `.github/workflows/check-financial-services-updates.yml` | `scripts/check_financial_services_updates.py` | `financial_services_agents` / `financial_services_vertical` / `financial_services_partner` | `docs/financial-services.md` |
+| [github/awesome-copilot](https://github.com/github/awesome-copilot) | `.github/workflows/check-upstream-updates.yml` | `scripts/check_upstream_updates.py` | `instructions` / `agents` / `prompts` | `docs/copilot/instructions.md` / `docs/copilot/agents.md` / `docs/copilot/prompts.md` |
+| [anthropics/skills](https://github.com/anthropics/skills) | `.github/workflows/check-anthropics-skills-updates.yml` | `scripts/check_anthropics_skills_updates.py` | `anthropics_skills` | `docs/claude-code/official-skills.md` |
+| [anthropics/financial-services](https://github.com/anthropics/financial-services) | `.github/workflows/check-financial-services-updates.yml` | `scripts/check_financial_services_updates.py` | `financial_services_agents` / `financial_services_vertical` / `financial_services_partner` | `docs/business/financial-services.md` |
 
 > 補足: `openai/skills`、`mattpocock/skills`、`obra/superpowers`、`awslabs/aidlc-workflows` は現時点で専用の自動更新チェック workflow がないため、必要に応じて手動で差分確認して更新してください。
 

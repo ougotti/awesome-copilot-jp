@@ -133,7 +133,7 @@ implement
 
 ## 他のSkill集との違い
 
-| | **mattpocock/skills** | **[anthropics/skills](anthropics-skills.md)** | **[superpowers](superpowers.md)** |
+| | **mattpocock/skills** | **[anthropics/skills](../claude-code/official-skills.md)** | **[superpowers](superpowers.md)** |
 |--|----------------------|----------------------------------------------|-----------------------------------|
 | 主眼 | 実務開発プロセスを小さなSkillとして構成 | 文書・表計算・デザイン等の成果物作成 | SDLC全体に規律を強制するフレームワーク |
 | 代表例 | grill-with-docs / to-spec / implement / code-review | docx / pdf / pptx / xlsx | brainstorming / TDD / systematic-debugging |
@@ -147,8 +147,8 @@ implement
 - [mattpocock/skills](https://github.com/mattpocock/skills) — 公式リポジトリ
 - [skills.sh: mattpocock/skills](https://skills.sh/mattpocock/skills) — Skill一覧と導入
 - [Matt Pocock](https://www.mattpocock.com/) — 作者
-- [2026年7月版 Skills最新動向](skills-ecosystem-2026.md)
-- [Anthropic公式Skills](anthropics-skills.md) / [superpowers](superpowers.md)
+- [2026年7月版 Skills最新動向](../trends.md)
+- [Anthropic公式Skills](../claude-code/official-skills.md) / [superpowers](superpowers.md)
 
 ---
 
