@@ -75,6 +75,7 @@ jobs:
               `1. 上記ファイルの内容を確認する`,
               `2. 該当カテゴリの \`docs/copilot/instructions.md\` / \`docs/copilot/agents.md\` / \`docs/copilot/prompts.md\` に解説を追加する`,
               `3. \`scripts/known-files.json\` を更新して追跡リストに加える`,
+              `4. \`CHANGELOG.md\` に更新内容を1行追記する`,
               ``,
               `> このIssueは [check-upstream-updates](../../actions/workflows/check-upstream-updates.yml) ワークフローにより自動生成されました。`,
             ].join('\n');
