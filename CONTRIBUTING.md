@@ -62,7 +62,7 @@ docs/
 
 ## 新規ファイルの追跡
 
-自動検知の対象 upstream で新規追加があった場合は、該当ワークフローの通知 Issue を起点に、`scripts/known-files.json` と対応する `docs/` を更新してください。
+自動検知の対象 upstream で新規追加があった場合は、該当ワークフローの通知 Issue を起点に、`scripts/known-files.json` と対応する `docs/` を更新してください。更新したら [CHANGELOG.md](CHANGELOG.md) にも1行追記してください。
 
 | 対象 upstream | 更新チェック workflow | スクリプト | `scripts/known-files.json` の更新キー | 主な更新先ドキュメント |
 |---|---|---|---|---|

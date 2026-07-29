@@ -66,6 +66,7 @@ jobs:
               `1. 上記スキルの \`SKILL.md\` を確認する`,
               `2. \`docs/claude-code/official-skills.md\` に解説を追加する`,
               `3. \`scripts/known-files.json\` の \`anthropics_skills\` リストを更新する`,
+              `4. \`CHANGELOG.md\` に更新内容を1行追記する`,
               ``,
               `> このIssueは [check-anthropics-skills-updates](../../actions/workflows/check-anthropics-skills-updates.yml) ワークフローにより自動生成されました。`,
             ].join('\n');

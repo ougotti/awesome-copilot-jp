@@ -71,6 +71,7 @@ jobs:
               `1. 上記アイテムの内容（README / SKILL.md / agent 定義）を確認する`,
               `2. \`docs/business/financial-services.md\` に解説を追加する`,
               `3. \`scripts/known-files.json\` の該当リスト（\`financial_services_*\`）を更新する`,
+              `4. \`CHANGELOG.md\` に更新内容を1行追記する`,
               ``,
               `> このIssueは [check-financial-services-updates](../../actions/workflows/check-financial-services-updates.yml) ワークフローにより自動生成されました。`,
             ].join('\n');

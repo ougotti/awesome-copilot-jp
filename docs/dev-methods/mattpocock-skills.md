@@ -147,7 +147,7 @@ implement
 - [mattpocock/skills](https://github.com/mattpocock/skills) — 公式リポジトリ
 - [skills.sh: mattpocock/skills](https://skills.sh/mattpocock/skills) — Skill一覧と導入
 - [Matt Pocock](https://www.mattpocock.com/) — 作者
-- [2026年7月版 Skills最新動向](../trends.md)
+- [Skills 最新動向](../trends.md)
 - [Anthropic公式Skills](../claude-code/official-skills.md) / [superpowers](superpowers.md)
 
 ---
