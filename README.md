@@ -14,38 +14,38 @@
 | やりたいこと | おすすめの入口 |
 |------------|--------------|
 | 💬 まず生成AIを触ってみたい（コードは書かない） | [非エンジニア向けクイックスタート](#-非エンジニア向けクイックスタート) |
-| 📋 業務シーン別に「使える例」を見たい | [シナリオ別ユースケース集](docs/use-cases.md) |
-| 🌐 2026年のSkills・MCP・GUI自動化をまとめて知りたい | [2026年7月版 Skills最新動向](docs/skills-ecosystem-2026.md) |
-| 📝 議事録・請求書・資料など事務作業を効率化したい | [事務・バックオフィス活用ガイド](docs/office-work.md) |
-| 💹 決算・経理・金融業務を効率化したい | [金融サービス向けスキル](docs/financial-services.md) |
+| 📋 業務シーン別に「使える例」を見たい | [シナリオ別ユースケース集](docs/business/use-cases.md) |
+| 🌐 2026年のSkills・MCP・GUI自動化をまとめて知りたい | [2026年7月版 Skills最新動向](docs/trends.md) |
+| 📝 議事録・請求書・資料など事務作業を効率化したい | [事務・バックオフィス活用ガイド](docs/business/office-work.md) |
+| 💹 決算・経理・金融業務を効率化したい | [金融サービス向けスキル](docs/business/financial-services.md) |
 
 ### GitHub Copilot
 
 | やりたいこと | おすすめの入口 |
 |------------|--------------|
-| ⌨️ コーディング規約を Copilot に守らせたい | [Instructions 一覧](docs/instructions.md) |
-| 🧑‍💻 Copilot を専門家として使いたい | [Agents 一覧](docs/agents.md) |
-| ⚡ `/` コマンドで定型タスクを実行したい | [Prompts / Skills 一覧](docs/prompts.md) |
+| ⌨️ コーディング規約を Copilot に守らせたい | [Instructions 一覧](docs/copilot/instructions.md) |
+| 🧑‍💻 Copilot を専門家として使いたい | [Agents 一覧](docs/copilot/agents.md) |
+| ⚡ `/` コマンドで定型タスクを実行したい | [Prompts / Skills 一覧](docs/copilot/prompts.md) |
 
 ### Claude Code
 
 | やりたいこと | おすすめの入口 |
 |------------|--------------|
-| 🤖 Claude Code をターミナルで使いたい | [Claude Code スキル](docs/claude-code-skills.md) |
-| 🧱 開発プロセス（要件整理〜TDD〜設計）を改善したい | [mattpocock/skills](docs/mattpocock-skills.md) |
-| 📦 公式スキル（docx/pdf/pptx/xlsx 等）を知りたい | [Anthropic 公式スキル](docs/anthropics-skills.md) |
+| 🤖 Claude Code をターミナルで使いたい | [Claude Code スキル](docs/claude-code/basics.md) |
+| 🧱 開発プロセス（要件整理〜TDD〜設計）を改善したい | [mattpocock/skills](docs/dev-methods/mattpocock-skills.md) |
+| 📦 公式スキル（docx/pdf/pptx/xlsx 等）を知りたい | [Anthropic 公式スキル](docs/claude-code/official-skills.md) |
 
 ### Codex
 
 | やりたいこと | おすすめの入口 |
 |------------|--------------|
-| 🚀 Codex でデプロイ・ブラウザ自動化を追加したい | [Codex 公式スキル](docs/codex-skills.md) |
+| 🚀 Codex でデプロイ・ブラウザ自動化を追加したい | [Codex 公式スキル](docs/codex/README.md) |
 
 ### AWS AI-DLC
 
 | やりたいこと | おすすめの入口 |
 |------------|--------------|
-| 🏗️ AI エージェントに 3 フェーズの開発ライフサイクルを適用したい | [AI-DLC ワークフロー](docs/aidlc-workflows.md) |
+| 🏗️ AI エージェントに 3 フェーズの開発ライフサイクルを適用したい | [AI-DLC ワークフロー](docs/dev-methods/aidlc-workflows.md) |
 
 ---
 
@@ -57,7 +57,7 @@
 2. **ファイルを添付して、日本語で頼むだけ** — 例：「この議事録メモを、決定事項と ToDo に分けた Word にして」
 3. **出力をダウンロードして確認・微修正** — 数値や固有名詞は必ず自分で確認しましょう。
 
-> 「どんなことを頼めるの？」という方は、まず [シナリオ別ユースケース集](docs/use-cases.md) を眺めてみてください。
+> 「どんなことを頼めるの？」という方は、まず [シナリオ別ユースケース集](docs/business/use-cases.md) を眺めてみてください。
 
 ---
 
@@ -67,39 +67,39 @@
 
 | ドキュメント | 内容 | 件数 |
 |-------------|------|------|
-| **[Instructions 一覧](docs/instructions.md)** | ファイルパターンに応じてコーディング規約を自動適用するルールファイルの詳細解説 | 197 件 |
-| **[Agents 一覧](docs/agents.md)** | Copilot を特定ドメインの専門家ペルソナとして振る舞わせるエージェント定義の詳細解説 | 240 件 |
-| **[Prompts / Skills 一覧](docs/prompts.md)** | `/` コマンドから呼び出せる再利用可能なタスクテンプレートおよび Skills の詳細解説 | 137 件 |
+| **[Instructions 一覧](docs/copilot/instructions.md)** | ファイルパターンに応じてコーディング規約を自動適用するルールファイルの詳細解説 | 197 件 |
+| **[Agents 一覧](docs/copilot/agents.md)** | Copilot を特定ドメインの専門家ペルソナとして振る舞わせるエージェント定義の詳細解説 | 240 件 |
+| **[Prompts / Skills 一覧](docs/copilot/prompts.md)** | `/` コマンドから呼び出せる再利用可能なタスクテンプレートおよび Skills の詳細解説 | 137 件 |
 
 ### Claude Code
 
 | ドキュメント | 内容 | 件数 |
 |-------------|------|------|
-| **[Claude Code スキル](docs/claude-code-skills.md)** | Claude Code 専用のスラッシュコマンド、カスタムコマンド、フック、CLAUDE.md、MCP 連携の解説 | — |
-| **[Anthropic 公式スキル](docs/anthropics-skills.md)** | [anthropics/skills](https://github.com/anthropics/skills) リポジトリ収録の 17 スキル（docx/pdf/pptx/xlsx 等）の詳細解説 | 17 件 |
-| **[mattpocock/skills](docs/mattpocock-skills.md)** | [mattpocock/skills](https://github.com/mattpocock/skills) の実務エンジニア向けスキル集（grill-me / to-prd / tdd 等、開発プロセス改善型） | 21 件 |
-| **[superpowers](docs/superpowers.md)** | [obra/superpowers](https://github.com/obra/superpowers) の SDLC スキルフレームワーク（brainstorming / TDD / systematic-debugging 等 14 スキル） ※ Claude Code・Codex・Copilot CLI など複数ツール対応 | 14 件 |
+| **[Claude Code スキル](docs/claude-code/basics.md)** | Claude Code 専用のスラッシュコマンド、カスタムコマンド、フック、CLAUDE.md、MCP 連携の解説 | — |
+| **[Anthropic 公式スキル](docs/claude-code/official-skills.md)** | [anthropics/skills](https://github.com/anthropics/skills) リポジトリ収録の 17 スキル（docx/pdf/pptx/xlsx 等）の詳細解説 | 17 件 |
+| **[mattpocock/skills](docs/dev-methods/mattpocock-skills.md)** | [mattpocock/skills](https://github.com/mattpocock/skills) の実務エンジニア向けスキル集（grill-me / to-prd / tdd 等、開発プロセス改善型） | 21 件 |
+| **[superpowers](docs/dev-methods/superpowers.md)** | [obra/superpowers](https://github.com/obra/superpowers) の SDLC スキルフレームワーク（brainstorming / TDD / systematic-debugging 等 14 スキル） ※ Claude Code・Codex・Copilot CLI など複数ツール対応 | 14 件 |
 
 ### Codex
 
 | ドキュメント | 内容 | 件数 |
 |-------------|------|------|
-| **[Codex 公式スキル](docs/codex-skills.md)** | [openai/skills](https://github.com/openai/skills) リポジトリ収録の Codex Agent Skills（system/curated/experimental の 3 層構成）の詳細解説 | 40+ 件 |
+| **[Codex 公式スキル](docs/codex/README.md)** | [openai/skills](https://github.com/openai/skills) リポジトリ収録の Codex Agent Skills（system/curated/experimental の 3 層構成）の詳細解説 | 40+ 件 |
 
 ### AWS AI-DLC
 
 | ドキュメント | 内容 | 件数 |
 |-------------|------|------|
-| **[AI-DLC ワークフロー](docs/aidlc-workflows.md)** | [awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows) の AI 駆動開発ライフサイクル（Inception → Construction → Operations の 3 フェーズ）の詳細解説。GitHub Copilot・Claude Code・Amazon Q・Cursor など主要エージェント対応 | — |
+| **[AI-DLC ワークフロー](docs/dev-methods/aidlc-workflows.md)** | [awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows) の AI 駆動開発ライフサイクル（Inception → Construction → Operations の 3 フェーズ）の詳細解説。GitHub Copilot・Claude Code・Amazon Q・Cursor など主要エージェント対応 | — |
 
 ### 共通・事務活用
 
 | ドキュメント | 内容 | 件数 |
 |-------------|------|------|
-| **[シナリオ別ユースケース集](docs/use-cases.md)** | 役割・業務シーンから探す生成AIの実例カタログ（プロンプト例つき） | — |
-| **[事務・バックオフィス活用ガイド](docs/office-work.md)** | 議事録・請求書・レポート・スプレッドシート作成など、日々の事務作業を生成AIで効率化する実践ガイド | — |
-| **[金融サービス向けスキル](docs/financial-services.md)** | [anthropics/financial-services](https://github.com/anthropics/financial-services) 収録の金融・経理業務向けエージェント／スキル（決算照合・月次決算・KYC 等）の詳細解説 | 10 エージェント + 7 業務プラグイン |
-| **[2026年7月版 Skills最新動向](docs/skills-ecosystem-2026.md)** | Matt Pocock、Context7、Firecrawl、Vercel、Record & Replay、Computer Use / Browser Use の比較と使い分け | 6 テーマ |
+| **[シナリオ別ユースケース集](docs/business/use-cases.md)** | 役割・業務シーンから探す生成AIの実例カタログ（プロンプト例つき） | — |
+| **[事務・バックオフィス活用ガイド](docs/business/office-work.md)** | 議事録・請求書・レポート・スプレッドシート作成など、日々の事務作業を生成AIで効率化する実践ガイド | — |
+| **[金融サービス向けスキル](docs/business/financial-services.md)** | [anthropics/financial-services](https://github.com/anthropics/financial-services) 収録の金融・経理業務向けエージェント／スキル（決算照合・月次決算・KYC 等）の詳細解説 | 10 エージェント + 7 業務プラグイン |
+| **[2026年7月版 Skills最新動向](docs/trends.md)** | Matt Pocock、Context7、Firecrawl、Vercel、Record & Replay、Computer Use / Browser Use の比較と使い分け | 6 テーマ |
 
 ---
 
@@ -218,7 +218,7 @@ applyTo: "**/*.py"
 ---
 ```
 
-**→ 全 Instructions の詳細は [docs/instructions.md](docs/instructions.md) を参照**
+**→ 全 Instructions の詳細は [docs/copilot/instructions.md](docs/copilot/instructions.md) を参照**
 
 ---
 
@@ -277,7 +277,7 @@ VS Code などのローカルカスタマイズでは、Prompt ファイルを�
 
 Copilot Chat で `/create-readme` のように入力すると呼び出せます。
 
-**→ 全 Prompts / Skills の詳細は [docs/prompts.md](docs/prompts.md) を参照**
+**→ 全 Prompts / Skills の詳細は [docs/copilot/prompts.md](docs/copilot/prompts.md) を参照**
 
 ---
 
@@ -324,7 +324,7 @@ Agent ファイルをリポジトリの `.github/agents/` ディレクトリに�
     azure-architect.agent.md
 ```
 
-**→ 全 Agents の詳細は [docs/agents.md](docs/agents.md) を参照**
+**→ 全 Agents の詳細は [docs/copilot/agents.md](docs/copilot/agents.md) を参照**
 
 ---
 
@@ -495,7 +495,7 @@ Claude Code は Anthropic が提供するターミナルベースのコーディ
 | **CLAUDE.md** | プロジェクトのコンテキストと規約を記述するファイル |
 | **MCP 連携** | GitHub、PostgreSQL、Slack などの外部ツールと統合 |
 
-**→ Claude Code スキルの詳細は [docs/claude-code-skills.md](docs/claude-code-skills.md) を参照**
+**→ Claude Code スキルの詳細は [docs/claude-code/basics.md](docs/claude-code/basics.md) を参照**
 
 ---
 
@@ -519,7 +519,7 @@ Claude Code は Anthropic が提供するターミナルベースのコーディ
 /plugin install document-skills@anthropic-agent-skills
 ```
 
-**→ Anthropic 公式スキルの詳細は [docs/anthropics-skills.md](docs/anthropics-skills.md) を参照**
+**→ Anthropic 公式スキルの詳細は [docs/claude-code/official-skills.md](docs/claude-code/official-skills.md) を参照**
 
 ---
 
@@ -555,7 +555,7 @@ $skill-installer vercel-deploy
 | **Notion** | notion-spec-to-implementation / notion-meeting-intelligence など 4 種 |
 | **セキュリティ** | security-best-practices / security-threat-model など 3 種 |
 
-**→ Codex 公式スキルの詳細は [docs/codex-skills.md](docs/codex-skills.md) を参照**
+**→ Codex 公式スキルの詳細は [docs/codex/README.md](docs/codex/README.md) を参照**
 
 ---
 
@@ -575,8 +575,8 @@ $skill-installer vercel-deploy
 
 | ドキュメント | 内容 |
 |-------------|------|
-| **[事務・バックオフィス活用ガイド](docs/office-work.md)** | 議事録・請求書・集計表・スライド作成など、業種を問わない事務作業の実践レシピ |
-| **[金融サービス向けスキル](docs/financial-services.md)** | 決算照合・月次決算・KYC・バリュエーションなど金融・経理業務向けエージェント／スキル |
+| **[事務・バックオフィス活用ガイド](docs/business/office-work.md)** | 議事録・請求書・集計表・スライド作成など、業種を問わない事務作業の実践レシピ |
+| **[金融サービス向けスキル](docs/business/financial-services.md)** | 決算照合・月次決算・KYC・バリュエーションなど金融・経理業務向けエージェント／スキル |
 
 > **ポイント**: 金額・税・日付などの数値や、契約・法的文書は**必ず人（有資格者）が確認**してください。生成AIの出力はドラフトとして扱うのが安全です。
 

@@ -7,7 +7,7 @@
 ## このガイドの読み方
 
 - エンジニア向けの設定知識は不要です。**Claude.ai の有料プラン**ではドキュメント処理スキル（docx / pdf / pptx / xlsx）が標準で使えます。
-- 各スキルの技術的な詳細は [Anthropic 公式スキル解説](anthropics-skills.md) を参照してください。
+- 各スキルの技術的な詳細は [Anthropic 公式スキル解説](../claude-code/official-skills.md) を参照してください。
 - 金融・経理に特化した業務（決算照合・月次決算・KYC 等）は [金融サービス向けスキル](financial-services.md) を参照してください。
 
 ---
@@ -54,7 +54,7 @@
 
 ### 📨 メール・社内コミュニケーション
 
-- **問い合わせ対応の下書き**：要件を渡して丁寧なビジネスメールを作成（[internal-comms スキル](anthropics-skills.md)）
+- **問い合わせ対応の下書き**：要件を渡して丁寧なビジネスメールを作成（[internal-comms スキル](../claude-code/official-skills.md)）
 - **多言語対応**：英語メールの下書き・和訳・トーン調整
 
 ---
@@ -91,15 +91,15 @@
 2. チャットに**ファイルを添付**し、やりたいことを日本語で指示するだけ（例：「この議事録メモを、決定事項とToDoに分けた Word にして」）。
 3. 出力ファイルをダウンロードして確認・微修正。
 
-より高度に自動化したい場合は [Claude Code](claude-code-skills.md) や [Microsoft 365 連携](financial-services.md)（financial-services リポジトリに同梱）も検討できます。
+より高度に自動化したい場合は [Claude Code](../claude-code/basics.md) や [Microsoft 365 連携](financial-services.md)（financial-services リポジトリに同梱）も検討できます。
 
 ---
 
 ## 参考リンク
 
-- [anthropics/skills](https://github.com/anthropics/skills) — ドキュメント処理スキルの公式リポジトリ（[日本語解説](anthropics-skills.md)）
+- [anthropics/skills](https://github.com/anthropics/skills) — ドキュメント処理スキルの公式リポジトリ（[日本語解説](../claude-code/official-skills.md)）
 - [anthropics/financial-services](https://github.com/anthropics/financial-services) — 金融・経理業務向け（[日本語解説](financial-services.md)）
-- [Claude Code スキル](claude-code-skills.md) — ターミナルからの自動化
+- [Claude Code スキル](../claude-code/basics.md) — ターミナルからの自動化
 
 ---
 

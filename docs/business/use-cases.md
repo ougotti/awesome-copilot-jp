@@ -19,7 +19,7 @@
 
 ### 議事録を整える
 - **頼みかた**: 「この会議メモを、決定事項・ToDo（担当者・期日つき）・次回までの宿題に整理した Word にして」
-- **関連**: [事務・バックオフィス活用ガイド](office-work.md#-議事録文書作成) / [docx スキル](anthropics-skills.md)
+- **関連**: [事務・バックオフィス活用ガイド](office-work.md#-議事録文書作成) / [docx スキル](../claude-code/official-skills.md)
 
 ### 社内案内文を量産する
 - **頼みかた**: 「このテンプレートと宛先リストで、宛名差し込み済みの案内文を全員分作って」
@@ -27,7 +27,7 @@
 
 ### 長い資料を要約する
 - **頼みかた**: 「この PDF 資料を、要点 5 つとアクション項目に圧縮して」
-- **関連**: [pdf スキル](anthropics-skills.md)
+- **関連**: [pdf スキル](../claude-code/official-skills.md)
 
 ---
 
@@ -57,7 +57,7 @@
 
 ### 提案資料をスライド化
 - **頼みかた**: 「この提案メモを、表紙・課題・解決策・価格・導入ステップ構成のスライドにして」
-- **関連**: [事務・バックオフィス活用ガイド](office-work.md#-プレゼン報告資料) / [pptx スキル](anthropics-skills.md)
+- **関連**: [事務・バックオフィス活用ガイド](office-work.md#-プレゼン報告資料) / [pptx スキル](../claude-code/official-skills.md)
 
 ### 見積書・請求書のドラフト
 - **頼みかた**: 「この取引内容で、定型フォーマットの見積書を作って（消費税 10%）」
@@ -73,7 +73,7 @@
 
 ### 募集要項・案内文の作成
 - **頼みかた**: 「この職務内容から、求人票のドラフトを作って（必須／歓迎スキルに分けて）」
-- **関連**: [docx スキル](anthropics-skills.md)
+- **関連**: [docx スキル](../claude-code/official-skills.md)
 
 ### 応募データの整理
 - **頼みかた**: 「この応募者リストの会社名表記を統一して、選考ステータス列を追加して」
@@ -97,19 +97,19 @@
 
 ### コーディング規約を自動適用
 - **頼みかた**: Instructions を配置しておくと、該当ファイル編集時に自動で規約が効きます。
-- **関連**: [Instructions 一覧](instructions.md)
+- **関連**: [Instructions 一覧](../copilot/instructions.md)
 
 ### 専門家ペルソナとして相談
 - **頼みかた**: 「（React 専門 Agent を選択して）このコンポーネントの再レンダリングを最適化して」
-- **関連**: [Agents 一覧](agents.md)
+- **関連**: [Agents 一覧](../copilot/agents.md)
 
 ### 定型タスクを `/` コマンドで実行
 - **頼みかた**: `/` から PR レビューやテスト生成などのテンプレートを呼び出し。
-- **関連**: [Prompts / Skills 一覧](prompts.md) / [Claude Code スキル](claude-code-skills.md)
+- **関連**: [Prompts / Skills 一覧](../copilot/prompts.md) / [Claude Code スキル](../claude-code/basics.md)
 
 ### 体系的なデバッグ・TDD
 - **頼みかた**: superpowers の systematic-debugging / TDD スキルで開発プロセスを構造化。
-- **関連**: [superpowers](superpowers.md)
+- **関連**: [superpowers](../dev-methods/superpowers.md)
 
 ---
 
@@ -126,5 +126,5 @@
 
 - [事務・バックオフィス活用ガイド](office-work.md)
 - [金融サービス向けスキル](financial-services.md)
-- [Anthropic 公式スキル](anthropics-skills.md)
-- [Instructions 一覧](instructions.md) / [Agents 一覧](agents.md) / [Prompts / Skills 一覧](prompts.md)
+- [Anthropic 公式スキル](../claude-code/official-skills.md)
+- [Instructions 一覧](../copilot/instructions.md) / [Agents 一覧](../copilot/agents.md) / [Prompts / Skills 一覧](../copilot/prompts.md)

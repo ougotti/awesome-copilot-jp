@@ -512,4 +512,4 @@ CLAUDE.md              # プロジェクトの説明
 
 ---
 
-> **注意**: Claude Code は Anthropic が開発・提供するツールであり、GitHub Copilot とは別製品です。このページは Claude Code 固有の機能を解説しています。GitHub Copilot のカスタマイズについては [トップページ](../README.md) を参照してください。
+> **注意**: Claude Code は Anthropic が開発・提供するツールであり、GitHub Copilot とは別製品です。このページは Claude Code 固有の機能を解説しています。GitHub Copilot のカスタマイズについては [トップページ](../../README.md) を参照してください。

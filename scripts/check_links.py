@@ -52,7 +52,7 @@ def collect_headings(path: Path) -> set[str]:
 
 def iter_md_files() -> list[Path]:
     files = [ROOT / "README.md"]
-    files += sorted((ROOT / "docs").glob("*.md"))
+    files += sorted((ROOT / "docs").rglob("*.md"))
     return [f for f in files if f.exists()]
 
 

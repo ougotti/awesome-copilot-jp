@@ -60,7 +60,7 @@ Claude Codeでは管理されたプラグインとして導入する方法もあ
 /plugin install mattpocock-skills@mattpocock
 ```
 
-詳しくは [mattpocock/skills 日本語解説](mattpocock-skills.md) を参照してください。
+詳しくは [mattpocock/skills 日本語解説](dev-methods/mattpocock-skills.md) を参照してください。
 
 ---
 

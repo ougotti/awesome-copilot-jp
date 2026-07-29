@@ -30,9 +30,9 @@ Pull Requestに対して自動でコード品質チェックを行い、
 3. `pip install requests` で依存関係をインストールする
 4. 以下のファイルが存在することを確認する：
    - `README.md`
-   - `docs/instructions.md`
-   - `docs/agents.md`
-   - `docs/prompts.md`
+   - `docs/copilot/instructions.md`
+   - `docs/copilot/agents.md`
+   - `docs/copilot/prompts.md`
    - `scripts/known-files.json`
 
 ### test ジョブ
@@ -116,9 +116,12 @@ jobs:
       - name: ファイル構造の確認
         run: |
           test -f README.md || (echo "README.md が存在しません" && exit 1)
-          test -f docs/instructions.md || (echo "docs/instructions.md が存在しません" && exit 1)
-          test -f docs/agents.md || (echo "docs/agents.md が存在しません" && exit 1)
-          test -f docs/prompts.md || (echo "docs/prompts.md が存在しません" && exit 1)
+          test -f docs/copilot/instructions.md || (echo "docs/copilot/instructions.md が存在しません" && exit 1)
+          test -f docs/copilot/agents.md || (echo "docs/copilot/agents.md が存在しません" && exit 1)
+          test -f docs/copilot/prompts.md || (echo "docs/copilot/prompts.md が存在しません" && exit 1)
+          test -f docs/business/use-cases.md || (echo "docs/business/use-cases.md が存在しません" && exit 1)
+          test -f docs/business/office-work.md || (echo "docs/business/office-work.md が存在しません" && exit 1)
+          test -f docs/business/financial-services.md || (echo "docs/business/financial-services.md が存在しません" && exit 1)
           test -f scripts/known-files.json || (echo "scripts/known-files.json が存在しません" && exit 1)
           echo "ファイル構造チェック OK"
 
