@@ -1,5 +1,7 @@
 # Skills (旧 Prompts) 一覧と活用ガイド
 
+> **対象ツール**: GitHub Copilot ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-07-29
+
 > [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **137 個の Skills（旧 Prompts）** を日本語で解説します。
 >
 > **注意**: upstream の [github/awesome-copilot](https://github.com/github/awesome-copilot) では、Prompts は **[Skills](https://github.com/github/awesome-copilot/tree/main/skills)** に移行されました。各リンクは現在の Skills ディレクトリを指しています。

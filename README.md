@@ -113,6 +113,20 @@
 | **Claude Code** | Anthropic | ターミナルベースのコーディングエージェント。スラッシュコマンドやフックで複雑なタスクを自動化 |
 | **Codex** | OpenAI | Agent Skills でデプロイ・ブラウザ自動化・外部サービス連携などを追加 |
 
+### ツール間の用語対照表
+
+「Skills」「Agents」などの用語は、**ツールによって指すものが異なります**。本ガイドを読んでいて迷ったら、この表に戻ってください。
+
+| 用語 | GitHub Copilot | Claude Code / Claude | Codex（OpenAI） |
+|------|----------------|----------------------|------------------|
+| **Skills** | `SKILL.md` + 関連リソース同梱の自己完結型ツール（upstream では旧 Prompts の移行先） | Agent Skills。[anthropics/skills](https://github.com/anthropics/skills) の公式スキル（docx / pdf 等）や [mattpocock/skills](https://github.com/mattpocock/skills) 等の手順スキル | Agent Skills。[openai/skills](https://github.com/openai/skills) の system / curated / experimental 3層カタログ |
+| **Agents** | 専門家ペルソナ定義（`.agent.md`） | サブエージェント（メインの会話から分離して動く補助エージェント） | —（相当機能はスキルで代替） |
+| **Instructions** | ファイルパターン別にコーディング規約を自動適用（`.instructions.md`） | `CLAUDE.md` がほぼ同じ役割 | `AGENTS.md` がほぼ同じ役割 |
+| **Prompts** | `/` コマンドのタスクテンプレート（`.prompt.md`） | カスタムコマンド（`.claude/commands/`） | カスタムプロンプト（`~/.codex/prompts/`） |
+| **Hooks** | コーディングエージェントセッションのイベント駆動スクリプト（`hooks.json`） | `PreToolUse` / `PostToolUse` 等のイベント駆動自動化 | — |
+
+> 各ドキュメントの冒頭には「**対象ツール**」ヘッダーを付けています。どのツールの話か迷ったら、ページ先頭とこの表を確認してください。
+
 ---
 
 ## GitHub Copilot

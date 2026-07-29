@@ -1,5 +1,7 @@
 # awslabs/aidlc-workflows — AI 駆動開発ライフサイクル（AI-DLC）ワークフロー
 
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Amazon Q・Cursor ほか） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-07-29
+
 > [awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows) は AWS が公開した、AI エージェントを**検証可能・自己修正可能なエンジニアリングワークフロー**へと変える OSS プロジェクトです。GitHub Copilot、Claude Code、Amazon Q Developer、Cursor、Cline、Codex など主要なコーディングエージェントに対応しています。
 
 ## AI-DLC とは

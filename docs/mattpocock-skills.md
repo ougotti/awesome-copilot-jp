@@ -1,5 +1,7 @@
 # mattpocock/skills - 実務エンジニア向け Agent Skills
 
+> **対象ツール**: ツール横断（Claude Code ほか Agent Skills 対応ツール） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-07-29
+
 > [mattpocock/skills](https://github.com/mattpocock/skills) は、TypeScript教育者として知られる **Matt Pocock** 氏が実務で使うAgent Skills集です。「vibe coding」ではなく、要件の認識合わせ、仕様化、TDD、デバッグ、設計、レビューといったソフトウェア開発の基本を、小さく組み合わせ可能なSkillとしてエージェントへ与えます。
 
 ## このリポジトリの特徴
