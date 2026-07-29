@@ -81,7 +81,6 @@
 
 | ドキュメント | 内容 | 件数 |
 |-------------|------|------|
-| **[GitHub Copilot ガイド](docs/copilot/README.md)** | カスタマイズ8種の概要・設定方法・クイックスタート（入口ページ） | — |
 | **[Instructions 一覧](docs/copilot/instructions.md)** | ファイルパターンに応じてコーディング規約を自動適用するルールファイルの詳細解説 | 197 件 |
 | **[Agents 一覧](docs/copilot/agents.md)** | Copilot を特定ドメインの専門家ペルソナとして振る舞わせるエージェント定義の詳細解説 | 240 件 |
 | **[Prompts / Skills 一覧](docs/copilot/prompts.md)** | `/` コマンドから呼び出せる再利用可能なタスクテンプレートおよび Skills の詳細解説 | 137 件 |
@@ -90,7 +89,6 @@
 
 | ドキュメント | 内容 | 件数 |
 |-------------|------|------|
-| **[Claude Code ガイド](docs/claude-code/README.md)** | 主な機能と Anthropic 公式スキルの概要・導入方法（入口ページ） | — |
 | **[Claude Code スキル](docs/claude-code/basics.md)** | Claude Code 専用のスラッシュコマンド、カスタムコマンド、フック、CLAUDE.md、MCP 連携の解説 | — |
 | **[Anthropic 公式スキル](docs/claude-code/official-skills.md)** | [anthropics/skills](https://github.com/anthropics/skills) リポジトリ収録の 17 スキル（docx/pdf/pptx/xlsx 等）の詳細解説 | 17 件 |
 
@@ -112,7 +110,6 @@
 
 | ドキュメント | 内容 | 件数 |
 |-------------|------|------|
-| **[事務・ビジネス活用ガイド](docs/business/README.md)** | 非エンジニア向けの業務活用の入口ページ | — |
 | **[シナリオ別ユースケース集](docs/business/use-cases.md)** | 役割・業務シーンから探す生成AIの実例カタログ（プロンプト例つき） | — |
 | **[事務・バックオフィス活用ガイド](docs/business/office-work.md)** | 議事録・請求書・レポート・スプレッドシート作成など、日々の事務作業を生成AIで効率化する実践ガイド | — |
 | **[金融サービス向けスキル](docs/business/financial-services.md)** | [anthropics/financial-services](https://github.com/anthropics/financial-services) 収録の金融・経理業務向けエージェント／スキル（決算照合・月次決算・KYC 等）の詳細解説 | 10 エージェント + 7 業務プラグイン |
@@ -156,7 +153,7 @@
 
 **GitHub Copilot** は IDE 補完・チャット向けのカスタマイズが中心です。**Codex**（OpenAI）はターミナルベースのエージェントで、Agent Skills によってデプロイ・ブラウザ自動化・外部サービス連携などのワークフローを追加できます。
 
-> ツール固有の FAQ（設定方法・対応プランなど）は各ツールの入口ページを参照してください: [GitHub Copilot](docs/copilot/README.md#よくある質問)
+> ツール固有の FAQ（設定方法・対応プランなど）は [GitHub Copilot ガイドのよくある質問](docs/copilot/README.md#よくある質問)を参照してください。
 
 ---
 

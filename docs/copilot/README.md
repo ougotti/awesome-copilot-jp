@@ -429,5 +429,5 @@ Instructions、Prompts、Agents は GitHub Copilot のすべてのプラン（Fr
 
 ## 関連ドキュメント
 
-- [ツール横断の開発手法（superpowers / AI-DLC など）](../dev-methods/superpowers.md) — GitHub Copilot CLI にも対応した SDLC スキルフレームワーク
+- ツール横断の開発手法: [superpowers](../dev-methods/superpowers.md) / [mattpocock/skills](../dev-methods/mattpocock-skills.md) / [AI-DLC ワークフロー](../dev-methods/aidlc-workflows.md) — GitHub Copilot（CLI・コーディングエージェント）にも対応した開発プロセス改善スキル
 - [ツール間の用語対照表](../../README.md#ツール間の用語対照表) — 「Skills」「Agents」がツールごとに何を指すかの整理
