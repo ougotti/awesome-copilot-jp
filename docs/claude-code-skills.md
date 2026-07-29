@@ -200,7 +200,7 @@ description: 現在のブランチのテストを生成して実行する
 3. `npm test` でテストを実行して結果を報告する
 ```
 
-Copilot Chat で `/generate-tests src/utils.ts` のように引数を渡して呼び出します。
+Claude Code で `/generate-tests src/utils.ts` のように引数を渡して呼び出します。
 
 ### 特殊記法
 
