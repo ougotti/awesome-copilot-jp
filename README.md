@@ -41,6 +41,12 @@
 |------------|--------------|
 | 🚀 Codex でデプロイ・ブラウザ自動化を追加したい | [Codex 公式スキル](docs/codex-skills.md) |
 
+### AWS AI-DLC
+
+| やりたいこと | おすすめの入口 |
+|------------|--------------|
+| 🏗️ AI エージェントに 3 フェーズの開発ライフサイクルを適用したい | [AI-DLC ワークフロー](docs/aidlc-workflows.md) |
+
 ---
 
 ## 🚀 非エンジニア向けクイックスタート
@@ -79,6 +85,12 @@
 | ドキュメント | 内容 | 件数 |
 |-------------|------|------|
 | **[Codex 公式スキル](docs/codex-skills.md)** | [openai/skills](https://github.com/openai/skills) リポジトリ収録の Codex Agent Skills（system/curated/experimental の 3 層構成）の詳細解説 | 40+ 件 |
+
+### AWS AI-DLC
+
+| ドキュメント | 内容 | 件数 |
+|-------------|------|------|
+| **[AI-DLC ワークフロー](docs/aidlc-workflows.md)** | [awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows) の AI 駆動開発ライフサイクル（Inception → Construction → Operations の 3 フェーズ）の詳細解説。GitHub Copilot・Claude Code・Amazon Q・Cursor など主要エージェント対応 | — |
 
 ### 共通・事務活用
 
