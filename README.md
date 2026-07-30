@@ -14,7 +14,7 @@
 | **[GitHub Copilot ガイド](docs/copilot/README.md)** | Instructions / Prompts / Agents / Skills など8種のカスタマイズの解説とクイックスタート |
 | **[Claude Code ガイド](docs/claude-code/README.md)** | 基本機能（コマンド・フック・MCP）と Anthropic 公式スキル |
 | **[Codex ガイド](docs/codex/README.md)** | OpenAI Codex の Agent Skills（system / curated / experimental） |
-| **[ツール横断の開発手法](#ツール横断の開発手法)** | superpowers / mattpocock/skills / AI-DLC などツールを問わない開発プロセス改善 |
+| **[ツール横断の開発手法](#ツール横断の開発手法)** | superpowers / mattpocock/skills / AI-DLC などツールを問わない開発プロセス改善。skills.sh での Agent Skills 発見・導入も含む |
 | **[事務・ビジネス活用ガイド](docs/business/README.md)** | 非エンジニア向けの業務活用（議事録・帳票・金融・経理） |
 
 ---
@@ -62,6 +62,13 @@
 |------------|--------------|
 | 🏗️ AI エージェントに 3 フェーズの開発ライフサイクルを適用したい | [AI-DLC ワークフロー](docs/dev-methods/aidlc-workflows.md) |
 
+### skills.sh
+
+| やりたいこと | おすすめの入口 |
+|------------|--------------|
+| 🔍 skills.sh で人気スキルを検索・導入したい | [skills.sh ガイド](docs/dev-methods/skills-sh.md) |
+| ⭐ 注目の Agent Skills Top 20 を知りたい | [skills.sh ガイド](docs/dev-methods/skills-sh.md) |
+
 ---
 
 ## 🚀 非エンジニア向けクイックスタート
@@ -103,6 +110,7 @@
 
 | ドキュメント | 内容 | 件数 |
 |-------------|------|------|
+| **[skills.sh ガイド](docs/dev-methods/skills-sh.md)** | [skills.sh](https://skills.sh/) の Agent Skills 発見・導入ポータルの解説。`npx skills` CLI の使い方と注目 Top 20 スキルの紹介 | 20 件 |
 | **[mattpocock/skills](docs/dev-methods/mattpocock-skills.md)** | [mattpocock/skills](https://github.com/mattpocock/skills) の実務エンジニア向けスキル集（grill-me / to-prd / tdd 等、開発プロセス改善型） | 21 件 |
 | **[superpowers](docs/dev-methods/superpowers.md)** | [obra/superpowers](https://github.com/obra/superpowers) の SDLC スキルフレームワーク（brainstorming / TDD / systematic-debugging 等 14 スキル） ※ Claude Code・Codex・Copilot CLI など複数ツール対応 | 14 件 |
 | **[AI-DLC ワークフロー](docs/dev-methods/aidlc-workflows.md)** | [awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows) の AI 駆動開発ライフサイクル（Inception → Construction → Operations の 3 フェーズ）の詳細解説。GitHub Copilot・Claude Code・Amazon Q・Cursor など主要エージェント対応 | — |
