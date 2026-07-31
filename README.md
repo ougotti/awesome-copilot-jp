@@ -30,7 +30,7 @@
 | 💬 まず生成AIを触ってみたい（コードは書かない） | [非エンジニア向けクイックスタート](#-非エンジニア向けクイックスタート) |
 | 📋 業務シーン別に「使える例」を見たい | [シナリオ別ユースケース集](docs/business/use-cases.md) |
 | 🌐 Skills・MCP・GUI自動化の最新動向をまとめて知りたい | [Skills 最新動向](docs/trends.md) |
-| 🔎 Skill の探し方・バージョン固定・組織配布を知りたい | [Skills 最新動向](docs/trends.md) の「Skill の発見・配布・更新」 |
+| 🔎 Skill の探し方・バージョン固定・組織配布を知りたい | [Skills 最新動向](docs/trends.md#7-skill-の発見配布更新)（「Skill の発見・配布・更新」） |
 | 🆕 このガイドの最近の更新を知りたい | [更新履歴（CHANGELOG）](CHANGELOG.md) |
 | 📝 議事録・請求書・資料など事務作業を効率化したい | [事務・バックオフィス活用ガイド](docs/business/office-work.md) |
 | 💹 決算・経理・金融業務を効率化したい | [金融サービス向けスキル](docs/business/financial-services.md) |
