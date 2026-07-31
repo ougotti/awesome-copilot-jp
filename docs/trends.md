@@ -338,7 +338,7 @@ Copilot CLI には `copilot-plugins`（GitHub 公式コレクション）と `aw
 | 主用途 | Skill の検索・導入 | Skill のライフサイクル管理 | 複数拡張の一括配布 |
 | 配布単位 | Skill | Skill | Plugin |
 | 更新追跡 | CLI 依存 | provenance（git tree SHA） | Marketplace のバージョン |
-| バージョン固定 | — | `--pin` / コミット SHA 指定 | Marketplace のバージョン |
+| バージョン固定 | — | `--pin` / コミット SHA 指定 | Marketplace のバージョン / `source.sha`（commit SHA） |
 | 対応 Host | 複数エージェント | 複数エージェント | 主に Copilot CLI / VS Code |
 | 含められる要素 | Skills | Skills | Skills / Agents / Hooks / MCP / LSP |
 | サプライチェーン対策 | 配布元の確認 | `preview` / pin / immutable releases | Marketplace と Enterprise ポリシー |
