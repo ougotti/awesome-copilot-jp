@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-07-29
+> **対象ツール**: ツール横断 ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-01
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-08-01 | 「Skill の発見・配布・更新」を追加（`gh skill` / Agent Finder・ARD / Copilot Plugins） |
 | 2026-07-29 | 常設ページ化（旧タイトル「2026年7月版」）。ガイド全体の更新は [更新履歴（CHANGELOG）](../CHANGELOG.md) を参照 |
 | 2026-07-22 | 初版公開（Matt Pocock's Skills / Context7 / Firecrawl / Vercel / Record & Replay / Computer Use の6テーマ） |
 
@@ -24,6 +25,8 @@
 
 > `Versel` ではなく、正式な表記は **Vercel** です。
 
+> 「[7. Skill の発見・配布・更新](#7-skill-の発見配布更新)」は動画チャプター外の追補です。GitHub 公式のエコシステム側の動き（CLI・Registry・Plugin）を扱います。
+
 ---
 
 ## 全体像
@@ -36,6 +39,7 @@
 | Skill配布・実践 | Vercel / skills.sh | Skillの検索・導入、React等の公式知見 | Skill導入とWeb開発 |
 | 操作の記録 | Record & Replay | 実演から生成した再利用可能なSkill | 定型GUI業務 |
 | GUI実行 | Computer Use / Browser Use | 画面認識、クリック、入力、検証 | APIのないアプリやWeb画面 |
+| 発見・配布・更新 | `gh skill` / Agent Finder / Copilot Plugins | Skillを探す・固定する・組織へ配る仕組み | 導入後の運用と組織標準化 |
 
 ---
 
@@ -207,6 +211,150 @@ npx skills add vercel-labs/agent-skills
 
 ---
 
+## 7. Skill の発見・配布・更新
+
+> `gh skill` / Agent Finder・ARD / GitHub Copilot Plugins
+
+ここまでの 6 テーマが「どんな Skill があるか」だとすれば、本節は **「Skill をどう探し、安全に導入し、更新・固定・配布するか」** です。GitHub は 2026 年に、この運用面を埋める仕組みを 3 つ公式提供しました。
+
+| 仕組み | 役割 | 提供状況 |
+|--------|------|---------|
+| `gh skill` | GitHub CLI による Skill のライフサイクル管理（検索・確認・導入・更新・公開） | Public Preview（2026-04-16 提供開始、GitHub CLI v2.90.0 以降） |
+| Agent Finder / ARD | 必要になった時点で Skill・MCP・Agent・Tool を Registry から発見する | 提供中（2026-06-17 提供開始、全 Copilot プラン） |
+| Copilot Plugins | Agents・Skills・Hooks・MCP・LSP を 1 つの配布単位にまとめる | 提供中（Copilot CLI）／ VS Code は Preview |
+
+---
+
+### 7-1. `gh skill` — Skill のライフサイクル管理
+
+GitHub CLI から、複数の Agent Host を横断して Skill を管理できます。GitHub Copilot、Claude Code、Cursor、Codex、Gemini CLI など多数のエージェントに対応し、それぞれのホスト固有ディレクトリへ配置します。
+
+#### 探す・中身を見る
+
+```powershell
+gh skill search react
+gh skill preview github/awesome-copilot documentation-writer
+```
+
+`search` は GitHub Code Search API で公開リポジトリの `SKILL.md` を検索し、名前や説明にキーワードを含む Skill を返します。`preview` は **インストールせずに中身を確認する**ためのコマンドです。
+
+#### 導入する
+
+```powershell
+gh skill install github/awesome-copilot documentation-writer --agent copilot --scope user
+gh skill list
+```
+
+| フラグ | 意味 |
+|--------|------|
+| `--agent` | インストール先エージェントを指定（非対話実行時の既定は GitHub Copilot） |
+| `--scope` | `project`（現在の Git リポジトリ内）または `user`（ホームディレクトリ。既定は `project`） |
+| `--pin` | バージョンを固定し、以降の更新対象から外す |
+| `@<commit-sha>` | Skill 名の後ろに付けて、特定コミットを指定して導入 |
+
+#### 更新する
+
+```powershell
+gh skill update --all
+```
+
+インストール時に、取得元の **git tree SHA** が provenance メタデータとして記録されます。`update` はローカルとリモートの SHA を比較するため、バージョン表記だけが変わって中身が同じ場合は何もしません。
+
+#### 公開する
+
+```powershell
+gh skill publish --dry-run
+gh skill publish --fix
+```
+
+`publish` は Agent Skills 仕様への適合を検証します。`--dry-run` は公開せず検証のみ、`--fix` はメタデータの不備を自動修正します。あわせて、リポジトリ側の tag protection や immutable releases といったサプライチェーン設定も確認されます。
+
+#### 安全に使う
+
+- Skill は **GitHub による検証済みではありません**。プロンプトインジェクション、隠し指示、悪意あるスクリプトが含まれ得ます。
+- 導入前に `gh skill preview` で `SKILL.md` と `scripts/` を読み、想定外のネットワーク通信や作業ツリー外への書き込みがないか確認してください。
+- タグは後から差し替えられる可能性があるため、**コミット SHA での固定が最も安全**です。配布側で immutable releases を有効にすると、タグ指定でも内容が変わらなくなります。
+
+---
+
+### 7-2. Agent Finder / ARD — 必要な時に見つける
+
+Agent Finder は、自然言語で書いたタスクに応じて、Skill・MCP サーバー・Agent・Tool を Registry から検索し、候補をランキングして提示する仕組みです。**すべてを常時コンテキストへ詰め込まない**ため、Context Window の消費とツール選択の誤りを減らせます。
+
+| 特徴 | 内容 |
+|------|------|
+| 発見と接続は別 | 候補を提示するだけで、勝手に接続・インストールしない |
+| 対象リソース | Skills / MCP servers / Agents / Tools |
+| 組織制御 | Enterprise の managed settings で、発見・利用してよいリソースを限定できる |
+| 対応プラン | 全 GitHub Copilot プラン |
+
+#### ARD（Agentic Resource Discovery）
+
+Agent Finder は、Google・Microsoft・GitHub・Hugging Face・GoDaddy などが策定するオープン仕様 **ARD** の実装です。仕様は 2 つの構成要素からなります。
+
+| 構成要素 | 役割 |
+|---------|------|
+| Catalog | 提供元が自ドメインの `/.well-known/ai-catalog.json` に、公開するリソースを機械可読な形で掲載する |
+| Registry | 複数の Catalog を集約し、タスクの意図に基づく検索を提供する |
+
+Catalog には、Skill だけでなく OpenAPI で記述したツール、A2A エージェント、下位 Catalog への参照も含められます。オープン仕様であるため、社内向けの Private Registry を立てて、自組織の Skill カタログを同じ方式で運用することもできます。
+
+#### skills.sh・GitHub 検索との関係
+
+| 発見手段 | 対象範囲 | 実行主体 |
+|---------|---------|---------|
+| [skills.sh](https://skills.sh/) / `npx skills find` | 公開 Skill の Web ディレクトリ | 人が探す |
+| `gh skill search` | GitHub 上の公開 `SKILL.md` | 人が探す |
+| Agent Finder / ARD | Catalog を公開したリソース（公開・社内問わず） | エージェントがタスク実行中に探す |
+
+> 人が事前に選ぶのが前者 2 つ、エージェントが必要になった時点で探すのが Agent Finder、という違いです。
+
+---
+
+### 7-3. GitHub Copilot Plugins — まとめて配る
+
+Copilot Plugin は、`plugin.json` を持つディレクトリに Custom Agents・Skills・Hooks・MCP サーバー設定・LSP サーバー設定をまとめた配布単位です。Marketplace（`marketplace.json` を置いた Git リポジトリ）から導入します。
+
+```powershell
+copilot plugin marketplace list
+copilot plugin marketplace browse awesome-copilot
+copilot plugin install database-data-management@awesome-copilot
+copilot plugin list
+copilot plugin update database-data-management
+```
+
+Copilot CLI には `copilot-plugins`（GitHub 公式コレクション）と `awesome-copilot` が既定で登録されています。リポジトリの `.github/copilot/settings.json` に `enabledPlugins` を書けば、そのリポジトリの開発者全員へ同じ構成を適用できます。
+
+**→ 構成・`enabledPlugins`・Claude Code Plugin との比較は [GitHub Copilot Plugins](copilot/plugins.md) を参照**
+
+---
+
+### 3 つの仕組みの比較
+
+| 観点 | `npx skills` | `gh skill` | Copilot Plugin |
+|------|-------------|-----------|----------------|
+| 主用途 | Skill の検索・導入 | Skill のライフサイクル管理 | 複数拡張の一括配布 |
+| 配布単位 | Skill | Skill | Plugin |
+| 更新追跡 | CLI 依存 | provenance（git tree SHA） | Marketplace のバージョン |
+| バージョン固定 | — | `--pin` / コミット SHA 指定 | Marketplace のバージョン |
+| 対応 Host | 複数エージェント | 複数エージェント | 主に Copilot CLI / VS Code |
+| 含められる要素 | Skills | Skills | Skills / Agents / Hooks / MCP / LSP |
+| サプライチェーン対策 | 配布元の確認 | `preview` / pin / immutable releases | Marketplace と Enterprise ポリシー |
+| 提供元 | Vercel（コミュニティ） | GitHub（公式） | GitHub（公式） |
+
+### 使い分けの目安
+
+| やりたいこと | 選ぶもの |
+|-------------|---------|
+| Skill を探して試す | `npx skills find` / `gh skill search` |
+| 導入前に中身を確認する | `gh skill preview` |
+| バージョンを固定して事故を防ぐ | `gh skill install ...@<commit-sha>` または `--pin` |
+| 自作 Skill を公開・配布する | `gh skill publish` |
+| チーム標準の拡張一式を配る | Copilot Plugin + `enabledPlugins` |
+| 組織で使えるリソースを制限する | Enterprise managed settings（Agent Finder / Plugins） |
+
+---
+
 ## 使い分け
 
 | やりたいこと | 第一候補 |
@@ -217,6 +365,9 @@ npx skills add vercel-labs/agent-skills
 | 要件整理からTDD・レビューまでの開発手順を改善したい | Matt Pocock's Skills |
 | 毎回同じGUI操作をSkill化したい | Record & Replay |
 | APIのないデスクトップ／Web画面を直接操作したい | Computer Use / Browser Use |
+| Skillを検索・固定・公開したい | `gh skill` |
+| チームや組織へ拡張一式を配布したい | Copilot Plugins |
+| 必要な時だけツールを見つけさせたい | Agent Finder / ARD |
 
 ---
 
@@ -229,6 +380,17 @@ npx skills add vercel-labs/agent-skills
 - [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills)
 - [OpenAI Record & Replay](https://learn.chatgpt.com/docs/extend/record-and-replay)
 - [OpenAI Computer Use](https://learn.chatgpt.com/docs/computer-use)
+
+### Skill の発見・配布・更新（本ページ 7 節）
+
+- [Manage agent skills with GitHub CLI](https://github.blog/changelog/2026-04-16-manage-agent-skills-with-github-cli/) — `gh skill` の提供開始（公式）
+- [gh skill マニュアル](https://cli.github.com/manual/gh_skill) — サブコマンドとフラグ（公式）
+- [Adding agent skills for GitHub Copilot](https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/add-skills) — Copilot への Skill 追加（公式）
+- [Agent finder for GitHub Copilot now available](https://github.blog/changelog/2026-06-17-agent-finder-for-github-copilot-now-available/) — Agent Finder の提供開始（公式）
+- [ARD Specification](https://agenticresourcediscovery.org/spec/) — Agentic Resource Discovery 仕様（公式）
+- [About GitHub Copilot plugins](https://docs.github.com/en/copilot/concepts/agents/about-plugins) — Plugin の概念と構成（公式）
+- [Finding and installing plugins for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-finding-installing) — Plugin の導入手順（公式）
+- [GitHub Copilot Plugins 日本語解説](copilot/plugins.md) — 本ガイド内の詳細ページ
 
 ---
 
