@@ -144,6 +144,8 @@ npx skills find react
 npx skills add vercel-labs/agent-skills
 ```
 
+skills.shで公開されている注目スキル集の一覧と導入方法は、**[skills.sh ガイド](dev-methods/skills-sh.md)** を参照してください。
+
 ### vercel-labs/agent-skills
 
 [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) は、Vercel公式のWeb開発向けSkill集です。
