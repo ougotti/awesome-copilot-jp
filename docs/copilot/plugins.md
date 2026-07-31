@@ -13,7 +13,7 @@ Plugin は、Custom Agents・Skills・Hooks・MCP サーバー設定・LSP サ�
 | 観点 | Skill 単体 | Plugin |
 |------|-----------|--------|
 | 配布単位 | `SKILL.md` を含む 1 ディレクトリ | `plugin.json` でまとめた複数の拡張 |
-| 含められる要素 | 手順とその付随リソース | Agents / Skills / Hooks / MCP / LSP |
+| 含められる要素 | 手順とその付随リソース | Agents / Skills / Commands / Hooks / MCP / LSP |
 | 導入方法 | `gh skill install`、`npx skills add`、手動配置 | `copilot plugin install`、`enabledPlugins` |
 | 向いている場面 | 1 つの作業手順を共有したい | チーム標準の拡張一式を配りたい |
 | 更新の追跡 | Skill 単位（tree SHA・pin） | Plugin 単位（Marketplace のバージョン） |
@@ -24,16 +24,19 @@ Plugin は、Custom Agents・Skills・Hooks・MCP サーバー設定・LSP サ�
 
 ## Plugin の構成
 
-Plugin の必須要素は、ディレクトリ直下の `plugin.json` マニフェストだけです。以下の要素は、必要なものだけを含められます。
+Plugin の必須要素は `plugin.json` マニフェストの `name` フィールドだけです。マニフェスト自体は `plugin.json`（ルート）のほか `.plugin/plugin.json` や `.github/plugin/plugin.json`、`.claude-plugin/plugin.json` でも認識されます。以下の要素は、必要なものだけを含められます。
 
 | 要素 | 配置場所 | 役割 |
 |------|---------|------|
-| マニフェスト | `plugin.json`（ルート・必須） | Plugin 名、説明、バージョン等のメタデータ |
+| マニフェスト | `plugin.json`（必須。`name` 以外は任意項目） | Plugin 名、説明、バージョン等のメタデータ |
 | Custom Agents | `agents/*.agent.md` | 専門家ペルソナの定義 |
 | Skills | `skills/<スキル名>/SKILL.md` | 関連リソース同梱の作業手順 |
+| Commands | `commands/` 配下 | スラッシュコマンドの定義 |
 | Hooks | ルートまたは `hooks/` の `hooks.json` | エージェントの動作に介入するイベントハンドラー |
 | MCP サーバー設定 | ルートの `.mcp.json` または `.github/mcp.json` | 外部サービス連携（Model Context Protocol） |
 | LSP サーバー設定 | ルートまたは `.github/` の `lsp.json` | 言語サーバー連携（Language Server Protocol） |
+
+> 各要素の配置場所は `plugin.json` の `agents` / `skills` / `commands` / `hooks` / `mcpServers` / `lspServers` フィールドで上書きできます。詳細なフィールド定義は [GitHub Copilot CLI plugin reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-plugin-reference) を参照してください。
 
 ```text
 my-plugin/
@@ -85,10 +88,13 @@ Copilot CLI のセッション中は、スラッシュコマンドでも実行�
 /plugin install database-data-management@awesome-copilot
 ```
 
-### 3. 更新・削除する
+### 3. 更新・有効/無効・削除する
 
 ```powershell
-copilot plugin update database-data-management
+copilot plugin update database-data-management   # 個別に更新
+copilot plugin update --all                       # まとめて更新
+copilot plugin disable database-data-management   # 無効化（アンインストールせず一時停止）
+copilot plugin enable database-data-management    # 再度有効化
 copilot plugin uninstall database-data-management
 ```
 
@@ -96,14 +102,17 @@ copilot plugin uninstall database-data-management
 
 ```powershell
 copilot plugin marketplace add OWNER/REPO
+copilot plugin marketplace update MARKETPLACE-NAME   # カタログを再取得（alias: refresh）
 copilot plugin marketplace remove MARKETPLACE-NAME
 ```
 
-> **注意**: 追加時は Marketplace リポジトリの `OWNER/REPO` を、削除時は登録済み一覧に表示される **Marketplace 名** を指定します。Plugin がインストール済みの Marketplace は、`--force` を付けない限り削除されません（`--force` を付けると、その Marketplace 由来の Plugin も削除されます）。
+> **注意**: 追加時は Marketplace リポジトリの `OWNER/REPO`（ローカルパスや Git URL も可）を、更新・削除時は登録済み一覧に表示される **Marketplace 名**（`marketplace.json` の `name` フィールドの値）を指定します。Plugin がインストール済みの Marketplace は、`--force` を付けない限り削除されません（`--force` を付けると、その Marketplace 由来の Plugin も削除されます）。`copilot-plugins` と `awesome-copilot` は組み込みの既定 Marketplace のため削除できません。
 
-### インストール先
+### インストール先とバージョン固定
 
-Copilot CLI は Plugin を `~/.copilot/installed-plugins/<marketplace>/<plugin>/` に保存します。Marketplace を経由せず Git URL から直接インストールした Plugin は `_direct` に入ります。インストールは **開発者ごと・マシンごと** です。
+Copilot CLI は Plugin を `~/.copilot/installed-plugins/<marketplace>/<plugin-name>/` に保存します。Marketplace を経由せず Git URL やローカルパスから直接インストールした Plugin は `~/.copilot/installed-plugins/_direct/<source-id>/` に入ります。インストールは **開発者ごと・マシンごと** です。
+
+Marketplace の `marketplace.json` では、各 Plugin の `source` に GitHub リポジトリを指定でき、`ref`（タグ・ブランチ）に加えて **40 文字のフル commit SHA** を `sha` フィールドで指定すると、force-push やタグ・ブランチの移動に影響されない再現可能なインストールに固定できます。
 
 ---
 
@@ -124,7 +133,9 @@ Copilot CLI は Plugin を `~/.copilot/installed-plugins/<marketplace>/<plugin>/
 }
 ```
 
-リポジトリ側の設定ファイルをコミットしておけば、クローンした開発者が同じ Plugin 構成で作業を始められます。Enterprise では **managed settings** により、利用してよい Plugin を組織のポリシーとして強制できます（VS Code・Copilot CLI・Copilot アプリが対象）。
+リポジトリ側の設定ファイルをコミットしておけば、クローンした開発者が同じ Plugin 構成で作業を始められます。Copilot cloud agent（クラウド上のコーディングエージェント）は、この `enabledPlugins` を使う宣言的な方法のみに対応しています。既定で登録されていない Marketplace から導入したい場合は、同じ設定ファイルの `extraKnownMarketplaces` フィールドにも追加してください。
+
+Enterprise では **managed settings** により、利用してよい Plugin を組織のポリシーとして強制し、自動インストールする Plugin を指定することもできます（VS Code・Copilot CLI・Copilot アプリが対象）。
 
 ---
 
@@ -141,7 +152,7 @@ VS Code では **Agent plugins（Preview）** として提供され、「Agent P
 | Marketplace の実体 | Git リポジトリ（`marketplace.json`） | Git リポジトリ（`.claude-plugin/marketplace.json`） |
 | 登録コマンド | `copilot plugin marketplace add OWNER/REPO` | `/plugin marketplace add OWNER/REPO` |
 | インストール | `copilot plugin install NAME@MARKETPLACE` | `/plugin install NAME@MARKETPLACE` |
-| 含められる要素 | Agents / Skills / Hooks / MCP / LSP | Skills / Commands / Subagents / Hooks / MCP |
+| 含められる要素 | Agents / Skills / Commands / Hooks / MCP / LSP | Skills / Commands / Subagents / Hooks / MCP |
 | 既定の Marketplace | `copilot-plugins` / `awesome-copilot` | なし（利用者が追加） |
 | 組織での強制 | Enterprise managed settings | 設定ファイルの共有が中心 |
 

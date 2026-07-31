@@ -220,37 +220,39 @@ npx skills add vercel-labs/agent-skills
 | 仕組み | 役割 | 提供状況 |
 |--------|------|---------|
 | `gh skill` | GitHub CLI による Skill のライフサイクル管理（検索・確認・導入・更新・公開） | Public Preview（2026-04-16 提供開始、GitHub CLI v2.90.0 以降） |
-| Agent Finder / ARD | 必要になった時点で Skill・MCP・Agent・Tool を Registry から発見する | 提供中（2026-06-17 提供開始、全 Copilot プラン） |
+| Agent Finder / ARD | 必要になった時点で MCP サーバー・Skill・Canvas・Agent・Tool を Registry から発見する | 提供中（2026-06-17 提供開始、全 Copilot プラン） |
 | Copilot Plugins | Agents・Skills・Hooks・MCP・LSP を 1 つの配布単位にまとめる | 提供中（Copilot CLI）／ VS Code は Preview |
 
 ---
 
 ### 7-1. `gh skill` — Skill のライフサイクル管理
 
-GitHub CLI から、複数の Agent Host を横断して Skill を管理できます。GitHub Copilot、Claude Code、Cursor、Codex、Gemini CLI など多数のエージェントに対応し、それぞれのホスト固有ディレクトリへ配置します。
+GitHub CLI v2.90.0 以降で利用できます。GitHub Copilot、Claude Code、Cursor、Codex、Gemini CLI など多数の Agent Host に対応し、`--agent` で指定したホスト固有のディレクトリへ Skill を配置します（`gh skill install --help` で全対応ホストを確認できます）。
 
 #### 探す・中身を見る
 
 ```powershell
-gh skill search react
+gh skill search terraform
 gh skill preview github/awesome-copilot documentation-writer
 ```
 
-`search` は GitHub Code Search API で公開リポジトリの `SKILL.md` を検索し、名前や説明にキーワードを含む Skill を返します。`preview` は **インストールせずに中身を確認する**ためのコマンドです。
+`search` は GitHub Code Search API で公開リポジトリの `SKILL.md` を検索し、名前や説明がクエリに一致する Skill を関連度順に返します（`--owner` で検索対象を特定ユーザー／組織に絞り込み可能）。`preview` は **インストールせずに `SKILL.md` の内容をターミナルで確認する**ためのコマンドです。
 
 #### 導入する
 
 ```powershell
-gh skill install github/awesome-copilot documentation-writer --agent copilot --scope user
+gh skill install github/awesome-copilot documentation-writer --agent claude-code --scope user
 gh skill list
 ```
 
 | フラグ | 意味 |
 |--------|------|
-| `--agent` | インストール先エージェントを指定（非対話実行時の既定は GitHub Copilot） |
-| `--scope` | `project`（現在の Git リポジトリ内）または `user`（ホームディレクトリ。既定は `project`） |
-| `--pin` | バージョンを固定し、以降の更新対象から外す |
-| `@<commit-sha>` | Skill 名の後ろに付けて、特定コミットを指定して導入 |
+| `--agent` | インストール先エージェントを指定する値。例: `github-copilot`（非対話実行時の既定）、`claude-code`、`cursor`、`codex`、`gemini-cli` 等 |
+| `--scope` | `project`（現在の Git リポジトリ内。既定）または `user`（ホームディレクトリ、どこからでも利用可） |
+| `--pin <string>` | 指定した git タグまたはコミット SHA に固定し、以降 `update` の対象から外す |
+| `@<VERSION>` | Skill 名の後ろに付けて、特定のタグ・ブランチ・コミット SHA を指定して導入・プレビュー |
+
+バージョンを指定しない場合、`install` はリポジトリの最新タグ付きリリース、無ければデフォルトブランチの HEAD を解決します。
 
 #### 更新する
 
@@ -258,7 +260,7 @@ gh skill list
 gh skill update --all
 ```
 
-インストール時に、取得元の **git tree SHA** が provenance メタデータとして記録されます。`update` はローカルとリモートの SHA を比較するため、バージョン表記だけが変わって中身が同じ場合は何もしません。
+`install` 時に、取得元リポジトリ・ref・**git tree SHA** が Skill 自身の `SKILL.md` frontmatter へ書き込まれます。この情報は Skill ファイルに同梱されるため、コピー・移動しても追跡が失われません。`update` はローカルとリモートの tree SHA を比較して実際に内容が変わった Skill だけを更新し、`--pin` した Skill は通知のみでスキップします（対象に含めるには `--unpin`）。
 
 #### 公開する
 
@@ -267,7 +269,7 @@ gh skill publish --dry-run
 gh skill publish --fix
 ```
 
-`publish` は Agent Skills 仕様への適合を検証します。`--dry-run` は公開せず検証のみ、`--fix` はメタデータの不備を自動修正します。あわせて、リポジトリ側の tag protection や immutable releases といったサプライチェーン設定も確認されます。
+`publish` は Skill 名の命名規則やディレクトリ名との一致、必須 frontmatter（`name` / `description`）の有無など、[Agent Skills 仕様](https://agentskills.io/specification) への適合を検証します。`--dry-run` は公開せず検証のみ、`--fix` はインストール時に混入したメタデータ（`metadata.github-*`）を公開せずに取り除きます。検証に通ると、`tag protection` ・ secret scanning ・ code scanning といったリポジトリ設定の確認と、**immutable releases**（公開後は管理者でもリリース内容を変更できなくする設定）の有効化を対話的に案内します。
 
 #### 安全に使う
 
@@ -279,12 +281,12 @@ gh skill publish --fix
 
 ### 7-2. Agent Finder / ARD — 必要な時に見つける
 
-Agent Finder は、自然言語で書いたタスクに応じて、Skill・MCP サーバー・Agent・Tool を Registry から検索し、候補をランキングして提示する仕組みです。**すべてを常時コンテキストへ詰め込まない**ため、Context Window の消費とツール選択の誤りを減らせます。
+Agent Finder は、自然言語で書いたタスクに応じて、MCP サーバー・Skill・Canvas・Agent・Tool を Registry（インデックス）から検索し、候補をランキングして提示する仕組みです。**すべてを常時コンテキストへ詰め込まない**ため、Context Window の消費とツール選択の誤りを減らせます。
 
 | 特徴 | 内容 |
 |------|------|
 | 発見と接続は別 | 候補を提示するだけで、勝手に接続・インストールしない |
-| 対象リソース | Skills / MCP servers / Agents / Tools |
+| 対象リソース | MCP servers / Skills / Canvases / Agents / Tools |
 | 組織制御 | Enterprise の managed settings で、発見・利用してよいリソースを限定できる |
 | 対応プラン | 全 GitHub Copilot プラン |
 
@@ -348,7 +350,7 @@ Copilot CLI には `copilot-plugins`（GitHub 公式コレクション）と `aw
 |-------------|---------|
 | Skill を探して試す | `npx skills find` / `gh skill search` |
 | 導入前に中身を確認する | `gh skill preview` |
-| バージョンを固定して事故を防ぐ | `gh skill install ...@<commit-sha>` または `--pin` |
+| バージョンを固定して事故を防ぐ | `gh skill install ...@<コミットSHA>` または `--pin <コミットSHA>` |
 | 自作 Skill を公開・配布する | `gh skill publish` |
 | チーム標準の拡張一式を配る | Copilot Plugin + `enabledPlugins` |
 | 組織で使えるリソースを制限する | Enterprise managed settings（Agent Finder / Plugins） |
