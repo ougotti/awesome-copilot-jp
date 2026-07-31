@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-07-29
+> **対象ツール**: GitHub Copilot ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-01
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -11,6 +11,7 @@ GitHub Copilot は GitHub が提供するコーディングアシスタントで
 | **[Instructions 一覧](instructions.md)** | ファイルパターンに応じてコーディング規約を自動適用するルールファイルの詳細解説 |
 | **[Agents 一覧](agents.md)** | Copilot を特定ドメインの専門家ペルソナとして振る舞わせるエージェント定義の詳細解説 |
 | **[Prompts / Skills 一覧](prompts.md)** | `/` コマンドから呼び出せる再利用可能なタスクテンプレートおよび Skills の詳細解説 |
+| **[Plugins](plugins.md)** | Agents / Skills / Hooks / MCP / LSP を 1 つの単位で配布する Plugin と Marketplace の詳細解説 |
 
 ---
 
@@ -23,6 +24,7 @@ GitHub Copilot は GitHub が提供するコーディングアシスタントで
 | [Agents](#agents---専門家ペルソナ) | `.agent.md` | 特定ドメインの専門家として振る舞うペルソナ | チャットで手動選択 |
 | [Skills](#skills---リソース同梱の複合ツール) | `SKILL.md` + 関連ファイル | upstream の `skills/` で公開される、関連リソース同梱の自己完結型ツール | チャットで手動実行 |
 | [Collections](#collections---カスタマイズのセット) | `.collection.yml` | 上記を組み合わせたキュレーション済みセット | プロジェクト単位で適用 |
+| [Plugins](#plugins---拡張をまとめた配布単位) | `plugin.json` + 各要素 | Agents / Skills / Hooks / MCP / LSP をまとめて配布・更新する単位 | インストール後は常時有効 |
 | [Hooks](#hooks---セッションイベント駆動の自動アクション) | `hooks.json` + スクリプト | Copilot コーディングエージェントのセッションイベントで自動実行 | エージェントセッション中に自動 |
 | [Agentic Workflows](#agentic-workflows---ai-駆動のリポジトリ自動化) | `.md`（フロントマター + 自然言語） | GitHub Actions 上で動く AI 自動化ワークフロー | スケジュール・イベントで自動実行 |
 | [Cookbook](#cookbook-recipes---実践的なコード例) | コードスニペット集 | Copilot SDK を使ったコピー＆ペーストですぐ使えるコード例 | 実装の参考として随時 |
@@ -280,6 +282,33 @@ items:
 
 ---
 
+## Plugins - 拡張をまとめた配布単位
+
+### 概要
+
+Plugins は、Custom Agents・Skills・Hooks・MCP サーバー設定・LSP サーバー設定を `plugin.json` で 1 つにまとめ、Marketplace 経由で配布・更新する仕組みです。Collections が「カスタマイズの推奨セット」を示すのに対し、Plugins は **インストールと更新の単位そのもの** です。
+
+### こんなときに使える
+
+- **チーム標準の拡張一式を配りたい** — Skill だけでなく、Hooks や MCP 接続設定まで含めて 1 コマンドで揃える
+- **リポジトリごとに必要な拡張を固定したい** — `.github/copilot/settings.json` の `enabledPlugins` に書けば、クローンした開発者全員に同じ構成が適用される
+- **組織で使える拡張を制限したい** — Enterprise の managed settings で、許可する Plugin を統制する
+
+### 導入方法
+
+```powershell
+copilot plugin marketplace list
+copilot plugin marketplace browse awesome-copilot
+copilot plugin install database-data-management@awesome-copilot
+copilot plugin update database-data-management
+```
+
+Copilot CLI には `copilot-plugins`（GitHub 公式コレクション）と `awesome-copilot` の 2 つの Marketplace が既定で登録されています。VS Code では **Agent plugins（Preview）** として利用できます。
+
+**→ 構成・Marketplace の作り方・Claude Code Plugin との比較は [plugins.md](plugins.md) を参照**
+
+---
+
 ## Hooks - セッションイベント駆動の自動アクション
 
 ### 概要
@@ -426,6 +455,8 @@ Instructions、Prompts、Agents は GitHub Copilot のすべてのプラン（Fr
 - [Agentic Workflows ドキュメント](https://github.com/github/awesome-copilot/blob/main/docs/README.workflows.md) — AI 駆動ワークフローの一覧
 - [Hooks ドキュメント](https://github.com/github/awesome-copilot/blob/main/docs/README.hooks.md) — セッションイベント駆動フックの一覧
 - [Cookbook](https://github.com/github/awesome-copilot/blob/main/cookbook/README.md) — Copilot SDK を活用した実践的コードレシピ集
+- [About GitHub Copilot plugins](https://docs.github.com/en/copilot/concepts/agents/about-plugins) — Plugin の概念と構成（公式）
+- [Manage agent skills with GitHub CLI](https://github.blog/changelog/2026-04-16-manage-agent-skills-with-github-cli/) — `gh skill` による Skill 管理（公式）
 
 ## 関連ドキュメント
 

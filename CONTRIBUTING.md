@@ -39,7 +39,7 @@
 
 ```
 docs/
-  copilot/       # GitHub Copilot 専用（instructions / agents / prompts）
+  copilot/       # GitHub Copilot 専用（instructions / agents / prompts / plugins）
   claude-code/   # Claude Code 専用（基本ガイド・Anthropic 公式スキル）
   codex/         # Codex（OpenAI）専用
   dev-methods/   # ツール横断の開発手法（mattpocock/skills・superpowers・AI-DLC）

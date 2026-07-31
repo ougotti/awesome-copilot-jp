@@ -30,6 +30,7 @@
 | 💬 まず生成AIを触ってみたい（コードは書かない） | [非エンジニア向けクイックスタート](#-非エンジニア向けクイックスタート) |
 | 📋 業務シーン別に「使える例」を見たい | [シナリオ別ユースケース集](docs/business/use-cases.md) |
 | 🌐 Skills・MCP・GUI自動化の最新動向をまとめて知りたい | [Skills 最新動向](docs/trends.md) |
+| 🔎 Skill の探し方・バージョン固定・組織配布を知りたい | [Skills 最新動向](docs/trends.md#7-skill-の発見配布更新)（「Skill の発見・配布・更新」） |
 | 🆕 このガイドの最近の更新を知りたい | [更新履歴（CHANGELOG）](CHANGELOG.md) |
 | 📝 議事録・請求書・資料など事務作業を効率化したい | [事務・バックオフィス活用ガイド](docs/business/office-work.md) |
 | 💹 決算・経理・金融業務を効率化したい | [金融サービス向けスキル](docs/business/financial-services.md) |
@@ -41,6 +42,7 @@
 | ⌨️ コーディング規約を Copilot に守らせたい | [Instructions 一覧](docs/copilot/instructions.md) |
 | 🧑‍💻 Copilot を専門家として使いたい | [Agents 一覧](docs/copilot/agents.md) |
 | ⚡ `/` コマンドで定型タスクを実行したい | [Prompts / Skills 一覧](docs/copilot/prompts.md) |
+| 📦 チームへ拡張一式をまとめて配布したい | [Plugins](docs/copilot/plugins.md) |
 
 ### Claude Code
 
@@ -92,6 +94,7 @@
 | **[Instructions 一覧](docs/copilot/instructions.md)** | ファイルパターンに応じてコーディング規約を自動適用するルールファイルの詳細解説 | 197 件 |
 | **[Agents 一覧](docs/copilot/agents.md)** | Copilot を特定ドメインの専門家ペルソナとして振る舞わせるエージェント定義の詳細解説 | 240 件 |
 | **[Prompts / Skills 一覧](docs/copilot/prompts.md)** | `/` コマンドから呼び出せる再利用可能なタスクテンプレートおよび Skills の詳細解説 | 137 件 |
+| **[Plugins](docs/copilot/plugins.md)** | Agents / Skills / Hooks / MCP / LSP を 1 つの単位で配布する Plugin、Marketplace、`enabledPlugins` の詳細解説 | — |
 
 ### Claude Code
 
@@ -122,7 +125,7 @@
 | **[シナリオ別ユースケース集](docs/business/use-cases.md)** | 役割・業務シーンから探す生成AIの実例カタログ（プロンプト例つき） | — |
 | **[事務・バックオフィス活用ガイド](docs/business/office-work.md)** | 議事録・請求書・レポート・スプレッドシート作成など、日々の事務作業を生成AIで効率化する実践ガイド | — |
 | **[金融サービス向けスキル](docs/business/financial-services.md)** | [anthropics/financial-services](https://github.com/anthropics/financial-services) 収録の金融・経理業務向けエージェント／スキル（決算照合・月次決算・KYC 等）の詳細解説 | 10 エージェント + 7 業務プラグイン |
-| **[Skills 最新動向](docs/trends.md)** | Matt Pocock、Context7、Firecrawl、Vercel、Record & Replay、Computer Use / Browser Use の比較と使い分け（常設・随時更新） | 6 テーマ |
+| **[Skills 最新動向](docs/trends.md)** | Matt Pocock、Context7、Firecrawl、Vercel、Record & Replay、Computer Use / Browser Use、Skill の発見・配布・更新（`gh skill` / Agent Finder・ARD / Copilot Plugins）の比較と使い分け（常設・随時更新） | 7 テーマ |
 | **[更新履歴（CHANGELOG）](CHANGELOG.md)** | 本ガイドの構成変更・解説追加・upstream 対応の時系列記録 | — |
 
 ---
@@ -148,6 +151,7 @@
 | **Instructions** | ファイルパターン別にコーディング規約を自動適用（`.instructions.md`） | `CLAUDE.md` がほぼ同じ役割 | `AGENTS.md` がほぼ同じ役割 |
 | **Prompts** | `/` コマンドのタスクテンプレート（`.prompt.md`） | カスタムコマンド（`.claude/commands/`） | カスタムプロンプト（`~/.codex/prompts/`） |
 | **Hooks** | コーディングエージェントセッションのイベント駆動スクリプト（`hooks.json`） | `PreToolUse` / `PostToolUse` 等のイベント駆動自動化 | — |
+| **Plugins** | Agents / Skills / Hooks / MCP / LSP をまとめた配布単位（`plugin.json`）。Marketplace から導入（[解説](docs/copilot/plugins.md)） | Skills / Commands / Subagents / Hooks / MCP をまとめた配布単位。`/plugin marketplace add` で導入 | Skill・MCP・コネクタ等をまとめた配布単位（例: firecrawl-codex-plugin） |
 
 > 各ドキュメントの冒頭には「**対象ツール**」ヘッダーを付けています。どのツールの話か迷ったら、ページ先頭とこの表を確認してください。
 
