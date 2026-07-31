@@ -8,22 +8,25 @@
 
 | ドキュメント | 内容 |
 |-------------|------|
-| **[Claude Code の基本](basics.md)** | スラッシュコマンド、カスタムコマンド、フック、CLAUDE.md、MCP 連携の解説 |
-| **[Anthropic 公式スキル](official-skills.md)** | [anthropics/skills](https://github.com/anthropics/skills) 収録の 17 スキル（docx / pdf / pptx / xlsx 等）の詳細解説 |
+| **[カスタマイズ機能](basics.md)** | CLAUDE.md、Agent Skills、カスタムコマンド、サブエージェント、フック、MCP と、その使い分け |
+| **[コマンド一覧（付録）](commands.md)** | 組み込みスラッシュコマンド、Web 版スキル、キーボードショートカットのスナップショット |
+| **[Anthropic 公式スキル](official-skills.md)** | [anthropics/skills](https://github.com/anthropics/skills) 収録スキル（docx / pdf / pptx / xlsx 等）の詳細解説 |
 
 ---
 
 ## 主な機能
 
-| 機能 | 概要 |
-|-----|------|
-| **組み込みスラッシュコマンド** | `/init`, `/review`, `/code-review`, `/compact` など |
-| **カスタムコマンド** | `.claude/commands/` に Markdown を置いてコマンド化 |
-| **フック（Hooks）** | `PreToolUse`, `PostToolUse`, `Stop` などのイベント駆動自動化 |
-| **CLAUDE.md** | プロジェクトのコンテキストと規約を記述するファイル |
-| **MCP 連携** | GitHub、PostgreSQL、Slack などの外部ツールと統合 |
+| 機能 | 概要 | いつ使うか |
+|-----|------|----------|
+| **CLAUDE.md** | プロジェクトの前提・規約を記述するファイル | 常に効かせたい前提がある |
+| **Agent Skills** | 必要なときに自動で読み込まれる作業手順 | 繰り返す手順を標準化したい |
+| **カスタムコマンド** | `.claude/commands/` の Markdown をコマンド化 | 手動で呼ぶ定型処理がある |
+| **サブエージェント** | 役割を分離した補助エージェント | 観点を分けて並行作業したい |
+| **フック（Hooks）** | `PreToolUse` / `PostToolUse` / `Stop` 等の自動実行 | 必ず挟みたい処理がある |
+| **MCP 連携** | GitHub、PostgreSQL、Slack などの外部ツール統合 | 外部サービスへ接続したい |
 
-**→ 各機能の詳細は [basics.md](basics.md) を参照**
+**→ 使い分けの判断表と設定方法は [カスタマイズ機能](basics.md) を参照**
+**→ 組み込みコマンドの一覧は [コマンド一覧（付録）](commands.md) を参照**
 
 ---
 
