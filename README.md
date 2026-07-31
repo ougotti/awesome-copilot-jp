@@ -106,7 +106,7 @@
 | **[シナリオ別ユースケース集](docs/business/use-cases.md)** | 本ガイド | — | Chat UI | 役割・業務シーン別の実例カタログ |
 | **[事務・バックオフィス活用ガイド](docs/business/office-work.md)** | 本ガイド | — | Chat UI | 議事録・帳票・集計・スライド作成の実践 |
 | **[金融サービス向けスキル](docs/business/financial-services.md)** | Official | GA | Chat UI / CLI | 決算照合・月次決算・KYC 等の業務エージェント |
-| **[Skills 最新動向](docs/trends.md)** | 横断 | 一部 Preview | 横断 | Skill・MCP・GUI 自動化の動向と使い分け（随時更新） |
+| **[Skills 最新動向](docs/trends.md)** | Official / Community / 本ガイド | GA / Preview / Experimental | Chat UI / IDE / CLI / Cloud | Skill・MCP・GUI 自動化の動向と使い分け（随時更新） |
 | **[更新履歴（CHANGELOG）](CHANGELOG.md)** | 本ガイド | — | — | 本ガイドの構成変更・解説追加の時系列記録 |
 
 ---
