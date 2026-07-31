@@ -1,6 +1,6 @@
 # OpenAI Codex 公式スキル（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-07-29
+> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-01
 
 > [openai/skills](https://github.com/openai/skills) は OpenAI が公開している Codex 用の公式スキルカタログです。エージェントがタスクを確実に実行できるよう、指示・スクリプト・リソースをフォルダにまとめた「スキル」が収録されています。
 
@@ -30,11 +30,11 @@ my-skill/
 
 `openai/skills` リポジトリはスキルを 3 層に分類しています。
 
-| 階層 | ディレクトリ | 説明 | インストール |
-|-----|------------|------|------------|
-| **System** | `skills/.system/` | Codex に自動インストールされる基盤スキル | 不要（自動） |
-| **Curated** | `skills/.curated/` | OpenAI が精選した高品質スキル | スキル名で指定 |
-| **Experimental** | `skills/.experimental/` | コミュニティ提供の実験的スキル | パス / URL で指定 |
+| 階層 | ディレクトリ | 提供元 | 状態 | 説明 | インストール |
+|-----|------------|-------|------|------|------------|
+| **System** | `skills/.system/` | Official | GA | Codex に自動インストールされる基盤スキル | 不要（自動） |
+| **Curated** | `skills/.curated/` | Official | GA | OpenAI が精選した高品質スキル | スキル名で指定 |
+| **Experimental** | `skills/.experimental/` | Community | Experimental | コミュニティ提供の実験的スキル。仕様・品質は保証されない | パス / URL で指定 |
 
 ---
 

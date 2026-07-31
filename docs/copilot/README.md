@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-01
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-01
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -17,17 +17,19 @@ GitHub Copilot は GitHub が提供するコーディングアシスタントで
 
 ## カスタマイズの種類
 
-| 種類 | ファイル形式 | 概要 | 適用タイミング |
-|------|------------|------|--------------|
-| [Instructions](#instructions---コーディング規約の自動適用) | `.instructions.md` | ファイルパターンに応じた規約を自動適用 | コード編集時に自動 |
-| [Prompts](#prompts---再利用可能なタスクテンプレート) | `.prompt.md` | VS Code などで `/` コマンドから呼び出すローカルのタスクテンプレート | チャットで手動実行 |
-| [Agents](#agents---専門家ペルソナ) | `.agent.md` | 特定ドメインの専門家として振る舞うペルソナ | チャットで手動選択 |
-| [Skills](#skills---リソース同梱の複合ツール) | `SKILL.md` + 関連ファイル | upstream の `skills/` で公開される、関連リソース同梱の自己完結型ツール | チャットで手動実行 |
-| [Collections](#collections---カスタマイズのセット) | `.collection.yml` | 上記を組み合わせたキュレーション済みセット | プロジェクト単位で適用 |
-| [Plugins](#plugins---拡張をまとめた配布単位) | `plugin.json` + 各要素 | Agents / Skills / Hooks / MCP / LSP をまとめて配布・更新する単位 | インストール後は常時有効 |
-| [Hooks](#hooks---セッションイベント駆動の自動アクション) | `hooks.json` + スクリプト | Copilot コーディングエージェントのセッションイベントで自動実行 | エージェントセッション中に自動 |
-| [Agentic Workflows](#agentic-workflows---ai-駆動のリポジトリ自動化) | `.md`（フロントマター + 自然言語） | GitHub Actions 上で動く AI 自動化ワークフロー | スケジュール・イベントで自動実行 |
-| [Cookbook](#cookbook-recipes---実践的なコード例) | コードスニペット集 | Copilot SDK を使ったコピー＆ペーストですぐ使えるコード例 | 実装の参考として随時 |
+| 種類 | ファイル形式 | 実行環境 | 状態 | 概要 | 適用タイミング |
+|------|------------|---------|------|------|--------------|
+| [Instructions](#instructions---コーディング規約の自動適用) | `.instructions.md` | IDE | GA | ファイルパターンに応じた規約を自動適用 | コード編集時に自動 |
+| [Prompts](#prompts---再利用可能なタスクテンプレート) | `.prompt.md` | IDE | GA | VS Code などで `/` コマンドから呼び出すローカルのタスクテンプレート | チャットで手動実行 |
+| [Agents](#agents---専門家ペルソナ) | `.agent.md` | IDE / CLI | GA | 特定ドメインの専門家として振る舞うペルソナ | チャットで手動選択 |
+| [Skills](#skills---リソース同梱の複合ツール) | `SKILL.md` + 関連ファイル | IDE / CLI | GA | upstream の `skills/` で公開される、関連リソース同梱の自己完結型ツール | チャットで手動実行 |
+| [Collections](#collections---カスタマイズのセット) | `.collection.yml` | IDE | GA | 上記を組み合わせたキュレーション済みセット | プロジェクト単位で適用 |
+| [Plugins](#plugins---拡張をまとめた配布単位) | `plugin.json` + 各要素 | CLI / IDE | GA（CLI）／Preview（VS Code） | Agents / Skills / Hooks / MCP / LSP をまとめて配布・更新する単位 | インストール後は常時有効 |
+| [Hooks](#hooks---セッションイベント駆動の自動アクション) | `hooks.json` + スクリプト | Cloud（コーディングエージェント） | GA | Copilot コーディングエージェントのセッションイベントで自動実行 | エージェントセッション中に自動 |
+| [Agentic Workflows](#agentic-workflows---ai-駆動のリポジトリ自動化) | `.md`（フロントマター + 自然言語） | Cloud（GitHub Actions） | GA | GitHub Actions 上で動く AI 自動化ワークフロー | スケジュール・イベントで自動実行 |
+| [Cookbook](#cookbook-recipes---実践的なコード例) | コードスニペット集 | — | GA | Copilot SDK を使ったコピー＆ペーストですぐ使えるコード例 | 実装の参考として随時 |
+
+> 表記の意味は [情報ラベルの読み方](../../README.md#情報ラベルの読み方) を参照してください。upstream の [github/awesome-copilot](https://github.com/github/awesome-copilot) が配布するカスタマイズはすべて `Official`（GitHub 公式）です。
 
 > **補足**: upstream の [github/awesome-copilot](https://github.com/github/awesome-copilot) では、Prompts のカタログは **[skills/](https://github.com/github/awesome-copilot/tree/main/skills)** に移行済みです。ローカルでは `.prompt.md` を使い続けられますが、このページの upstream 参照リンクは `xxx.prompt.md` 表記で skills/ を指しています。
 

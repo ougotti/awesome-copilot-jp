@@ -1,6 +1,6 @@
 # Claude Code ガイド
 
-> **対象ツール**: Claude Code ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-07-29
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-01
 
 [Claude Code](https://docs.anthropic.com/ja/docs/claude-code/overview) は Anthropic が提供するターミナルベースのコーディングエージェントです。GitHub Copilot が IDE 内のインライン補完に特化しているのに対し、ファイルシステム全体を横断する複雑なタスクをこなせるエージェントとして設計されています。
 
