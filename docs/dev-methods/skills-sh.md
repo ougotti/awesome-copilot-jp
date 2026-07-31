@@ -64,7 +64,7 @@ npx skills use vercel-labs/agent-skills --skill web-design-guidelines --agent cl
 
 ## 注目のスキル集（Top 20）
 
-以下は、[skills.sh](https://skills.sh/) で特に参照数が多く、実務での採用実績も豊富なスキルを 20 個まとめたものです。
+以下は、[skills.sh](https://skills.sh/) で特に参照数が多く、実務での採用実績も豊富なスキルを 20 項目にまとめたものです。なお、一部の項目では複数の関連スキルをまとめて紹介しています。
 
 ### 開発プロセス系
 
