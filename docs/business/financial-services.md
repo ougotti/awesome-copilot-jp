@@ -1,6 +1,6 @@
 # anthropics/financial-services - 金融・経理業務向け Claude スキル
 
-> **対象ツール**: Claude.ai・Claude Code ｜ **対象読者**: 経理・財務・金融 ｜ **最終更新**: 2026-07-29
+> **対象ツール**: Claude.ai・Claude Code ｜ **実行環境**: Chat UI（プラグイン導入）／ CLI ｜ **提供元**: Official（Anthropic） ｜ **対象読者**: 経理・財務・金融 ｜ **最終更新**: 2026-08-01
 
 > [anthropics/financial-services](https://github.com/anthropics/financial-services) は Anthropic が公開している**金融サービス業界向けのエージェント・スキル・データコネクタ**の参照実装リポジトリです。投資銀行・リサーチ・PE・ファンド管理・ウェルスマネジメント・コンプライアンスといった業務を、すぐに導入できる形でカバーしています。
 
