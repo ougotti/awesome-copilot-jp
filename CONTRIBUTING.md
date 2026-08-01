@@ -40,12 +40,15 @@
 ```
 docs/
   copilot/       # GitHub Copilot 専用（instructions / agents / prompts / plugins）
-  claude-code/   # Claude Code 専用（基本ガイド・Anthropic 公式スキル）
-  codex/         # Codex（OpenAI）専用
+  claude-code/   # Claude Code 専用（カスタマイズ機能・コマンド一覧・Anthropic 公式スキル）
+  codex/         # Codex（OpenAI）専用（入口ページ・スキルカタログ）
   dev-methods/   # ツール横断の開発手法（mattpocock/skills・superpowers・AI-DLC）
   business/      # 非エンジニア・業務活用（ユースケース・事務・金融）
   trends.md      # ツール横断の最新動向
 ```
+
+- 入口ページ（各ディレクトリの `README.md`）は「選び方」と「最小の手順」を中心にし、**網羅的な一覧は別ファイルへ分離する**（例: `codex/catalog.md`）
+- バージョンで変わりやすいコマンド一覧は付録ファイルへ分け、**公式リファレンスへのリンクを主とする**（例: `claude-code/commands.md`）
 
 - 特定ツール専用の内容 → 該当ツールのディレクトリへ
 - 複数ツールに対応する開発手法・フレームワーク → `dev-methods/` へ（特定ツール配下に置かない）

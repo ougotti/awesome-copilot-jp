@@ -81,14 +81,16 @@
 
 | ドキュメント | 提供元 | 状態 | 環境 | 内容 |
 |-------------|-------|------|------|------|
-| **[Claude Code の基本](docs/claude-code/basics.md)** | Official | GA | CLI | スラッシュコマンド、フック、CLAUDE.md、MCP 連携 |
+| **[Claude Code のカスタマイズ機能](docs/claude-code/basics.md)** | Official | GA | CLI / Chat UI | CLAUDE.md、Agent Skills、フック、MCP と使い分け |
+| **[コマンド一覧（付録）](docs/claude-code/commands.md)** | Official | GA | CLI / Chat UI | 組み込みコマンドとショートカットのスナップショット |
 | **[Anthropic 公式スキル](docs/claude-code/official-skills.md)** | Official | GA | Chat UI / CLI | [anthropics/skills](https://github.com/anthropics/skills) のドキュメント処理スキル等 |
 
 ### Codex
 
 | ドキュメント | 提供元 | 状態 | 環境 | 内容 |
 |-------------|-------|------|------|------|
-| **[Codex 公式スキル](docs/codex/README.md)** | Official | GA（System / Curated）／Experimental | CLI | [openai/skills](https://github.com/openai/skills) の 3 層カタログ |
+| **[Codex ガイド](docs/codex/README.md)** | Official | GA（System / Curated）／Experimental | CLI | 導入手順、最初に試すスキル、3 層の違い |
+| **[Agent Skills カタログ](docs/codex/catalog.md)** | Official / Community | GA / Experimental | CLI | [openai/skills](https://github.com/openai/skills) の全スキル一覧と作り方 |
 
 ### ツール横断の開発手法
 
