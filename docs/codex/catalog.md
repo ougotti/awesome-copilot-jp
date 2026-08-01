@@ -18,9 +18,7 @@ Codex に同梱され、インストール不要で使えます。
 | **skill-creator** | `$skill-creator` | 作りたい手順の説明 | `SKILL.md` とスクリプト雛形 | `description` が自動選択の判断に足るか |
 | **plugin-creator** | `$plugin-creator` | まとめたい機能の説明 | プラグインの雛形 | 同梱する MCP・スクリプトの権限範囲 |
 | **imagegen** | `$imagegen` | 画像の指示文 | 生成画像 | 権利・ブランド表現の妥当性 |
-| **openai-docs** | `$openai-docs` | 知りたい API・仕様 | ドキュメントの該当箇所 | 参照したバージョンが現行か |
-
-> インストール後は **Codex を完全に終了して再起動**しないとスキルが認識されません。
+> `skill-installer` でスキルを追加した後は、Codex を完全に終了して再起動しないと新しいスキルが認識されません。
 
 ---
 
