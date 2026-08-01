@@ -81,8 +81,8 @@
 
 | ドキュメント | 提供元 | 状態 | 環境 | 内容 |
 |-------------|-------|------|------|------|
-| **[Claude Code のカスタマイズ機能](docs/claude-code/basics.md)** | Official | GA | CLI / Web | CLAUDE.md、Agent Skills、フック、MCP と使い分け |
-| **[コマンド一覧（付録）](docs/claude-code/commands.md)** | Official | GA | CLI / Web | 組み込みコマンドとショートカットのスナップショット |
+| **[Claude Code のカスタマイズ機能](docs/claude-code/basics.md)** | Official | GA | CLI / Chat UI | CLAUDE.md、Agent Skills、フック、MCP と使い分け |
+| **[コマンド一覧（付録）](docs/claude-code/commands.md)** | Official | GA | CLI / Chat UI | 組み込みコマンドとショートカットのスナップショット |
 | **[Anthropic 公式スキル](docs/claude-code/official-skills.md)** | Official | GA | Chat UI / CLI | [anthropics/skills](https://github.com/anthropics/skills) のドキュメント処理スキル等 |
 
 ### Codex
