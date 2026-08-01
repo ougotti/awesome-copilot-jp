@@ -14,6 +14,7 @@
 |------------|---------|----------------|
 | コードを書かずに文書・表・スライドを作る | Chat UI | [事務・ビジネス活用ガイド](docs/business/README.md) |
 | 業務シーン別に「使える例」を眺める | Chat UI | [シナリオ別ユースケース集](docs/business/use-cases.md) |
+| 業務で使ってよい情報の線引きを知る | 共通 | [生成AIを業務で安全に使う](docs/business/safety.md) |
 | 決算・経理・金融業務を効率化する | Chat UI | [金融サービス向けスキル](docs/business/financial-services.md) |
 | IDE でのコーディングを支援する | IDE | [GitHub Copilot ガイド](docs/copilot/README.md) |
 | ターミナルから開発作業を任せる | CLI | [Claude Code ガイド](docs/claude-code/README.md) ／ [Codex ガイド](docs/codex/README.md) |
@@ -105,8 +106,9 @@
 
 | ドキュメント | 提供元 | 状態 | 環境 | 内容 |
 |-------------|-------|------|------|------|
-| **[シナリオ別ユースケース集](docs/business/use-cases.md)** | 本ガイド | — | Chat UI | 役割・業務シーン別の実例カタログ |
+| **[シナリオ別ユースケース集](docs/business/use-cases.md)** | 本ガイド | — | Chat UI | 役割・業務シーン別の実例とプロンプトのテンプレート |
 | **[事務・バックオフィス活用ガイド](docs/business/office-work.md)** | 本ガイド | — | Chat UI | 議事録・帳票・集計・スライド作成の実践 |
+| **[生成AIを業務で安全に使う](docs/business/safety.md)** | 本ガイド | — | 共通 | 入力してよい情報、外部送信、出力後に確認する項目 |
 | **[金融サービス向けスキル](docs/business/financial-services.md)** | Official | GA | Chat UI / CLI | 決算照合・月次決算・KYC 等の業務エージェント |
 | **[Skills 最新動向](docs/trends.md)** | Official / Community / 本ガイド | GA / Preview / Experimental | Chat UI / IDE / CLI / Cloud | Skill・MCP・GUI 自動化の動向と使い分け（随時更新） |
 | **[更新履歴（CHANGELOG）](CHANGELOG.md)** | 本ガイド | — | — | 本ガイドの構成変更・解説追加の時系列記録 |
