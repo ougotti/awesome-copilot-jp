@@ -162,6 +162,11 @@ scripts/deploy-managed-agent.sh gl-reconciler
 - [Managed Agents API](https://docs.claude.com/en/api/managed-agents) — バックエンド展開向け API
 - [anthropics/skills](https://github.com/anthropics/skills) — 汎用ドキュメント処理スキル（[日本語解説](../claude-code/official-skills.md)）
 
+## 関連ドキュメント
+
+- [生成AIを業務で安全に使う](safety.md) — 情報の取り扱いと、有資格者の確認が必要な範囲
+- [シナリオ別ユースケース集](use-cases.md) — 月次決算・勘定照合のプロンプトテンプレート
+
 ---
 
 > **注意**: 本ドキュメントは [anthropics/financial-services](https://github.com/anthropics/financial-services) の公開情報を元にした日本語解説です。最新の収録内容・インストール手順は公式リポジトリを確認してください。金融・会計・税務に関する判断は必ず有資格の専門家のレビューを受けてください。

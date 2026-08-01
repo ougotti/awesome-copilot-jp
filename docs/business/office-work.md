@@ -7,8 +7,10 @@
 ## このガイドの読み方
 
 - エンジニア向けの設定知識は不要です。**Claude.ai の有料プラン**ではドキュメント処理スキル（docx / pdf / pptx / xlsx）が標準で使えます。
+- このページは**業務ごとの進め方**を扱います。そのまま使えるプロンプトのテンプレートは [シナリオ別ユースケース集](use-cases.md) にあります。
 - 各スキルの技術的な詳細は [Anthropic 公式スキル解説](../claude-code/official-skills.md) を参照してください。
 - 金融・経理に特化した業務（決算照合・月次決算・KYC 等）は [金融サービス向けスキル](financial-services.md) を参照してください。
+- 情報の取り扱い・出力確認の共通ルールは [生成AIを業務で安全に使う](safety.md) にまとめています。
 
 ---
 
@@ -21,7 +23,8 @@
 | **pptx** | PowerPoint（.pptx） | 提案資料、社内報告スライド、研修資料の作成 |
 | **pdf** | PDF | フォーム入力、PDF からのテキスト・表抽出、結合・分割 |
 
-> これらは Claude.ai 有料プランに標準搭載。Claude Code では `/plugin install document-skills@anthropic-agent-skills` で導入できます。
+> **Chat UI**: Claude.ai の有料プランに標準搭載されており、設定なしで使えます。
+> **CLI（Claude Code）限定**: ターミナルから使う場合は `/plugin install document-skills@anthropic-agent-skills` で導入します。この手順は非エンジニアには不要です。
 
 ---
 
@@ -76,22 +79,20 @@
 ## 安全に使うためのポイント
 
 > [!IMPORTANT]
-> 生成AIの出力は**必ず人が確認**してください。特に以下に注意します。
+> 生成AIの出力は**ドラフト**です。提出前に必ず人が確認してください。事務作業では特に、**金額・税・日付の検算**と、**自動生成された数式・マクロの動作確認**が要点になります。
 
-- **金額・税・日付などの数値**は鵜呑みにせず検算する
-- **個人情報・機密情報**を入力してよいか、社内ルールを確認する（利用するプラン・契約の取り扱い範囲を確認）
-- **契約書・法的文書**は有資格者（法務・税理士等）のレビューを受ける
-- 自動生成された数式やマクロは、提出前に動作と結果を確認する
+情報の取り扱い（個人情報・機密情報・外部送信・ファイル保持）と、出力後に確認する項目の一覧は **[生成AIを業務で安全に使う](safety.md)** にまとめています。
 
 ---
 
-## 始め方（非エンジニア向け）
+## 始め方
 
-1. **Claude.ai の有料プラン**に登録すると、ドキュメント処理スキルがすぐ使えます。
-2. チャットに**ファイルを添付**し、やりたいことを日本語で指示するだけ（例：「この議事録メモを、決定事項とToDoに分けた Word にして」）。
-3. 出力ファイルをダウンロードして確認・微修正。
+Chat UI での始め方は [非エンジニア向けクイックスタート](../../README.md#非エンジニア向けクイックスタート)（3 ステップ・ターミナル不要）を参照してください。
 
-より高度に自動化したい場合は [Claude Code](../claude-code/basics.md) や [Microsoft 365 連携](financial-services.md)（financial-services リポジトリに同梱）も検討できます。
+**ここから先は CLI（ターミナル）を使う内容です。**定型処理を自動で回したくなった段階で検討してください。
+
+- [Claude Code のカスタマイズ機能](../claude-code/basics.md) — ファイルの一括処理、定期実行
+- [Microsoft 365 連携](financial-services.md) — `financial-services` リポジトリに同梱のプロビジョニング
 
 ---
 
@@ -99,7 +100,11 @@
 
 - [anthropics/skills](https://github.com/anthropics/skills) — ドキュメント処理スキルの公式リポジトリ（[日本語解説](../claude-code/official-skills.md)）
 - [anthropics/financial-services](https://github.com/anthropics/financial-services) — 金融・経理業務向け（[日本語解説](financial-services.md)）
-- [Claude Code スキル](../claude-code/basics.md) — ターミナルからの自動化
+
+## 関連ドキュメント
+
+- [生成AIを業務で安全に使う](safety.md) — 情報の取り扱いと出力確認の共通ルール
+- [シナリオ別ユースケース集](use-cases.md) — そのまま使えるプロンプトのテンプレート
 
 ---
 
