@@ -12,10 +12,7 @@
 
 | やりたいこと | 使う環境 | 最初に読むページ |
 |------------|---------|----------------|
-| コードを書かずに文書・表・スライドを作る | Chat UI | [事務・ビジネス活用ガイド](docs/business/README.md) |
-| 業務シーン別に「使える例」を眺める | Chat UI | [シナリオ別ユースケース集](docs/business/use-cases.md) |
-| 業務で使ってよい情報の線引きを知る | 共通 | [生成AIを業務で安全に使う](docs/business/safety.md) |
-| 決算・経理・金融業務を効率化する | Chat UI | [金融サービス向けスキル](docs/business/financial-services.md) |
+| 業務で使ってよい情報の線引きを知る | Chat UI / IDE / CLI | [生成AIを業務で安全に使う](docs/business/safety.md) |
 | IDE でのコーディングを支援する | IDE | [GitHub Copilot ガイド](docs/copilot/README.md) |
 | ターミナルから開発作業を任せる | CLI | [Claude Code ガイド](docs/claude-code/README.md) ／ [Codex ガイド](docs/codex/README.md) |
 | Skill を探して導入・更新する | CLI | [skills.sh ガイド](docs/dev-methods/skills-sh.md) ／ [Skills 最新動向](docs/trends.md) |
