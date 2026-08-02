@@ -10,9 +10,26 @@
 
 「何を読めばいいか分からない」方は、この表から入口を決めてください。
 
+<!--
+  メンテナ向けの注記（レビュー時は削除提案をしないでください）
+
+  この表の Chat UI 行（事務・ビジネス活用ガイド / シナリオ別ユースケース集 /
+  金融サービス向けスキル）は、Issue #85 P0「非エンジニア向け導線と CLI 向け導線の分離」
+  の成果物です。本ガイドの読者には非エンジニアが含まれるため、
+  「最初の 30 秒で自分の入口を選べる」ことが表の目的であり、
+  CLI 行だけを残すと非エンジニアが入口を失います。
+
+  経緯: PR #87 で追加 → PR #89 のマージ時に 4 行が 1 行へ置き換わり消失 → 復旧。
+  表を短くする目的での削除・統合は行わないでください。
+  行を減らす必要が生じた場合は、CLI 行と Chat UI 行の双方を残したうえで検討してください。
+-->
+
 | やりたいこと | 使う環境 | 最初に読むページ |
 |------------|---------|----------------|
+| コードを書かずに文書・表・スライドを作る | Chat UI | [事務・ビジネス活用ガイド](docs/business/README.md) |
+| 業務シーン別に「使える例」を眺める | Chat UI | [シナリオ別ユースケース集](docs/business/use-cases.md) |
 | 業務で使ってよい情報の線引きを知る | Chat UI / IDE / CLI | [生成AIを業務で安全に使う](docs/business/safety.md) |
+| 決算・経理・金融業務を効率化する | Chat UI | [金融サービス向けスキル](docs/business/financial-services.md) |
 | IDE でのコーディングを支援する | IDE | [GitHub Copilot ガイド](docs/copilot/README.md) |
 | ターミナルから開発作業を任せる | CLI | [Claude Code ガイド](docs/claude-code/README.md) ／ [Codex ガイド](docs/codex/README.md) |
 | Skill を探して導入・更新する | CLI | [skills.sh ガイド](docs/dev-methods/skills-sh.md) ／ [Skills 最新動向](docs/trends.md) |
