@@ -290,6 +290,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`gem-devops.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-devops.agent.md) | GEM DevOps エージェント | コンテナ・CI/CD・インフラデプロイ |
 | [`github-actions-node-upgrade.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/github-actions-node-upgrade.agent.md) | GitHub Actions Node ランタイムアップグレード | Actions の Node.js バージョン更新・メジャーバンプ |
 | [`aws-incident-triage.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/aws-incident-triage.agent.md) | AWS インシデントトリアージ（オンコール SRE） | CloudWatch アラームからの根本原因調査・障害切り分け |
+| [`cloud-saas-outage-triage.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/cloud-saas-outage-triage.agent.md) | クラウド・SaaS 障害トリアージ | コード変更前にクラウド／SaaS 側の障害か否かを切り分け |
 | [`python-win-arm64-gha-wheel-builder.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/python-win-arm64-gha-wheel-builder.agent.md) | Windows ARM64 Wheel ビルダー | `windows-11-arm` ランナーを使った Python パッケージのネイティブ ARM64 ビルド追加 |
 
 **[devops-expert.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/devops-expert.agent.md)** の特徴:
