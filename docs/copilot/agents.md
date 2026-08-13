@@ -594,6 +594,8 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`cast-imaging-structural-quality-advisor.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/cast-imaging-structural-quality-advisor.agent.md) | CAST Imaging 構造品質アドバイザー | コード品質分析 |
 | [`taxcore-technical-writer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/taxcore-technical-writer.agent.md) | TaxCore テクニカルライター（電子財政請求エコシステム専門） | TaxCore / Secure Element Reader のドキュメント作成 |
 | [`ember.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/ember.agent.md) | Ember（AI パートナーペルソナ） | AI パートナーシップ体験の共有・人々への火の伝達 |
+| [`gitmoji-setup.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gitmoji-setup.agent.md) | Gitmoji セットアップ支援エージェント | Gitmoji 運用の初期設定とコミット絵文字ルール導入を支援 |
+| [`trojan-skill-hunter.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/trojan-skill-hunter.agent.md) | Trojan Skill Hunter | 不審なスキル定義を調査し、リスク評価と対処方針を提示 |
 
 ---
 
