@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-08-13 | 「Agent Plugins 1.0.0」を追加（マルチベンダー共通エージェント設定標準） |
 | 2026-08-13 | 「AIエージェントの実行基盤（ハーネス）」を追加（Microsoft Copilot Studio を例に解説） |
 | 2026-08-01 | 「Skill の発見・配布・更新」を追加（`gh skill` / Agent Finder・ARD / Copilot Plugins） |
 | 2026-07-29 | 常設ページ化（旧タイトル「2026年7月版」）。ガイド全体の更新は [更新履歴（CHANGELOG）](../CHANGELOG.md) を参照 |
@@ -41,6 +42,7 @@
 | 操作の記録 | Record & Replay | 実演から生成した再利用可能なSkill | 定型GUI業務 |
 | GUI実行 | Computer Use / Browser Use | 画面認識、クリック、入力、検証 | APIのないアプリやWeb画面 |
 | 発見・配布・更新 | `gh skill` / Agent Finder / Copilot Plugins | Skillを探す・固定する・組織へ配る仕組み | 導入後の運用と組織標準化 |
+| 業界標準 | Agent Plugins 1.0.0 | `SKILL.md` / `mcp.json` の共通パッケージ形式 | マルチベンダー間のSkill・MCP設定共有 |
 | 実行基盤（ハーネス） | Microsoft Copilot Studio | エージェントを動かす裏側の仕組みを理解する | エージェント設計・運用の全体把握 |
 
 ---
@@ -361,7 +363,70 @@ Copilot CLI には `copilot-plugins`（GitHub 公式コレクション）と `aw
 
 ---
 
-## 8. AIエージェントの実行基盤（ハーネス）
+## 8. Agent Plugins 1.0.0 — マルチベンダー共通のエージェント設定標準
+
+2026年8月10日、AWS・Microsoft・OpenAI・Anysphere（Cursor）・Vercel が共同で **Agent Plugins 1.0.0** を発表しました。Google も対応を表明しています。
+
+Agent Plugins は、`SKILL.md`（スキル定義）と `mcp.json`（MCP サーバー設定）などをひとつのパッケージにまとめ、**異なる AI エージェント間で同じ設定を共有できる共通フォーマット**です。
+
+### 背景と位置づけ
+
+これまでエージェントごとに設定形式が異なり、たとえば GitHub Copilot で使っているスキルを Cursor や ChatGPT に持ち込むには個別の書き直しが必要でした。Agent Plugins 1.0.0 はこの断絶を解消し、「一度書いたらどのエージェントでも使える」パッケージを目指しています。
+
+### 対応状況（2026-08-13 時点）
+
+| ツール | 対応状況 |
+|--------|---------|
+| GitHub Copilot（VS Code / CLI / Web） | 対応済み |
+| Cursor | 対応済み |
+| ChatGPT / OpenAI Codex | 対応済み |
+| AWS Kiro | 対応済み |
+| Google（Gemini 系エージェント） | 対応表明 |
+| Claude Code（Anthropic） | 現時点では静観 |
+
+### パッケージの構成
+
+Agent Plugin パッケージの最小構成は `plugin.json`（メタデータ）と `skills/<スキル名>/SKILL.md`（スキル定義）です。MCP サーバー設定（`.mcp.json`）、Agent 定義、フックなどを追加できます。
+
+```
+my-plugin/
+├── plugin.json              # パッケージのメタデータ（name, version, description など）
+├── skills/
+│   └── my-skill/
+│       └── SKILL.md         # スキル定義（既存の SKILL.md と同形式）
+└── .mcp.json                # MCP サーバー設定（任意）
+```
+
+`plugin.json` の例：
+
+```json
+{
+  "name": "my-skill-pack",
+  "version": "1.0.0",
+  "description": "共通スキルパック",
+  "skills": ["skills/my-skill/SKILL.md"],
+  "mcpServers": ".mcp.json"
+}
+```
+
+### GitHub Copilot での導入
+
+Agent Plugins 1.0.0 対応の Copilot Plugin は、既存の `copilot plugin` コマンドでそのまま導入できます。
+
+```powershell
+copilot plugin marketplace list
+copilot plugin install <plugin-name>@<marketplace>
+```
+
+VS Code では設定 UI または `.github/copilot/settings.json` の `enabledPlugins` で有効化します。詳しくは [GitHub Copilot Plugins](copilot/plugins.md) を参照してください。
+
+### Copilot Plugins との関係
+
+GitHub の Copilot Plugin（本ページ [7-3 節](#7-3-github-copilot-plugins--まとめて配る)）は Agent Plugins 1.0.0 の形式を採用しており、仕様との互換性があります。Copilot Plugin として作成したパッケージは、Agent Plugins 1.0.0 に対応したほかのエージェント（Cursor・ChatGPT 等）でも利用できます。
+
+---
+
+## 9. AIエージェントの実行基盤（ハーネス）
 
 ChatGPT の「チャットに答える」段階から、タスクを自律的に実行する「エージェント時代」への移行に伴い、エージェントの裏側で動く**実行基盤（ハーネス）**への注目が高まっています。
 
@@ -379,12 +444,13 @@ ChatGPT の「チャットに答える」段階から、タスクを自律的に
 
 Microsoft Copilot Studio は、ハーネスの概念を GUI で構成できるプラットフォームです。トピック（会話フロー）とアクション（ツール呼び出し）を組み合わせることで、エージェントがどのように計画を立て、ツールを順番に呼び出し、結果をユーザーへ返すかを定義できます。
 
-| 構成要素 | Copilot Studio での対応 |
-|----------|------------------------|
+| 役割 | Copilot Studio での対応 |
+|------|------------------------|
 | ツール呼び出し | コネクタ / Power Automate フロー / カスタム API |
 | 状態管理 | 会話変数・グローバル変数 |
 | ループ制御 | トピック内の条件分岐とリダイレクト |
 | エラー処理 | エスカレーション・フォールバック トピック |
+| 出力整形 | 応答メッセージのテンプレートと変数展開 |
 
 ### ハーネスを意識する理由
 
@@ -408,8 +474,9 @@ Microsoft Copilot Studio は、ハーネスの概念を GUI で構成できる�
 | APIのないデスクトップ／Web画面を直接操作したい | Computer Use / Browser Use |
 | Skillを検索・固定・公開したい | `gh skill` |
 | チームや組織へ拡張一式を配布したい | Copilot Plugins |
+| 複数エージェント間でSkill・MCP設定を共有したい | Agent Plugins 1.0.0 対応パッケージ |
 | 必要な時だけツールを見つけさせたい | Agent Finder / ARD |
-| エージェントの内部動作・実行基盤を理解したい | ハーネスの概念（本ページ 8 節） |
+| エージェントの内部動作・実行基盤を理解したい | ハーネスの概念（本ページ 9 節） |
 
 ---
 
@@ -434,7 +501,12 @@ Microsoft Copilot Studio は、ハーネスの概念を GUI で構成できる�
 - [Finding and installing plugins for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-finding-installing) — Plugin の導入手順（公式）
 - [GitHub Copilot Plugins 日本語解説](copilot/plugins.md) — 本ガイド内の詳細ページ
 
-### AIエージェントの実行基盤（ハーネス）（本ページ 8 節）
+### Agent Plugins 1.0.0（本ページ 8 節）
+
+- [「Agent Plugins 1.0.0」発表、異なるAIエージェント間でもスキルやMCPサーバ設定が共通化へ](https://www.publickey1.jp/blog/26/agent_plugins_100aimcpopenaiawsgoogle.html) — Publickey（解説記事）
+- [Agent Plugins 1.0 in VS Code, Copilot CLI, and the Copilot app](https://github.blog/changelog/2026-08-12-agent-plugins-1-0-in-vs-code-copilot-cli-and-the-copilot-app) — GitHub Changelog（公式）
+
+### AIエージェントの実行基盤（ハーネス）（本ページ 9 節）
 
 - [なぜ今、AI に「ハーネス」が必要なのか](https://www.geekfujiwara.com/tech/powerplatform/8591/) — ハーネスの概念と Microsoft Copilot Studio での実装例（ギークフジワラ）
 
