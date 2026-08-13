@@ -9,6 +9,7 @@
 | 日付 | 変更内容 |
 |------|---------|
 | 2026-08-13 | 「Agent Plugins 1.0.0」を追加（マルチベンダー共通エージェント設定標準） |
+| 2026-08-13 | 「AIエージェントの実行基盤（ハーネス）」を追加（Microsoft Copilot Studio を例に解説） |
 | 2026-08-01 | 「Skill の発見・配布・更新」を追加（`gh skill` / Agent Finder・ARD / Copilot Plugins） |
 | 2026-07-29 | 常設ページ化（旧タイトル「2026年7月版」）。ガイド全体の更新は [更新履歴（CHANGELOG）](../CHANGELOG.md) を参照 |
 | 2026-07-22 | 初版公開（Matt Pocock's Skills / Context7 / Firecrawl / Vercel / Record & Replay / Computer Use の6テーマ） |
@@ -42,6 +43,7 @@
 | GUI実行 | Computer Use / Browser Use | 画面認識、クリック、入力、検証 | APIのないアプリやWeb画面 |
 | 発見・配布・更新 | `gh skill` / Agent Finder / Copilot Plugins | Skillを探す・固定する・組織へ配る仕組み | 導入後の運用と組織標準化 |
 | 業界標準 | Agent Plugins 1.0.0 | `SKILL.md` / `mcp.json` の共通パッケージ形式 | マルチベンダー間のSkill・MCP設定共有 |
+| 実行基盤（ハーネス） | Microsoft Copilot Studio | エージェントを動かす裏側の仕組みを理解する | エージェント設計・運用の全体把握 |
 
 ---
 
@@ -424,6 +426,42 @@ GitHub の Copilot Plugin（本ページ [7-3 節](#7-3-github-copilot-plugins--
 
 ---
 
+## 9. AIエージェントの実行基盤（ハーネス）
+
+ChatGPT の「チャットに答える」段階から、タスクを自律的に実行する「エージェント時代」への移行に伴い、エージェントの裏側で動く**実行基盤（ハーネス）**への注目が高まっています。
+
+「ハーネス（harness）」とは、AIモデルが外部ツールを呼び出したり、複数のステップを連鎖させたりするための仕組み全体を指す概念です。モデル本体とは別に、次の役割を担います。
+
+| 役割 | 内容 |
+|------|------|
+| ツール呼び出し | 検索、データ取得、API 実行などをモデルの指示で動かす |
+| 状態管理 | 会話履歴・タスク進捗・メモリを保持する |
+| ループ制御 | 「計画 → 実行 → 評価」のサイクルを繰り返す |
+| エラー処理 | ツール失敗・タイムアウトに対応し、再試行や代替ルートへ切り替える |
+| 出力整形 | モデルの生成結果を次のツールや人間が扱いやすい形式に変換する |
+
+### Microsoft Copilot Studio での実装例
+
+Microsoft Copilot Studio は、ハーネスの概念を GUI で構成できるプラットフォームです。トピック（会話フロー）とアクション（ツール呼び出し）を組み合わせることで、エージェントがどのように計画を立て、ツールを順番に呼び出し、結果をユーザーへ返すかを定義できます。
+
+| 役割 | Copilot Studio での対応 |
+|------|------------------------|
+| ツール呼び出し | コネクタ / Power Automate フロー / カスタム API |
+| 状態管理 | 会話変数・グローバル変数 |
+| ループ制御 | トピック内の条件分岐とリダイレクト |
+| エラー処理 | エスカレーション・フォールバック トピック |
+| 出力整形 | 応答メッセージのテンプレートと変数展開 |
+
+### ハーネスを意識する理由
+
+- **モデルの性能だけでは不十分**: 同じモデルでも、ハーネス設計の差が出力品質・コスト・レイテンシを大きく左右する。
+- **障害点の特定**: 問題が「モデルの判断ミス」か「ツール呼び出しの失敗」かを切り分けるには、ハーネスの構造を理解する必要がある。
+- **再利用と標準化**: スキルや MCP サーバーも、ハーネスに組み込まれる部品として設計すると再利用しやすい。
+
+> 詳しくは [なぜ今、AI に「ハーネス」が必要なのか（ギークフジワラ）](https://www.geekfujiwara.com/tech/powerplatform/8591/) を参照してください。
+
+---
+
 ## 使い分け
 
 | やりたいこと | 第一候補 |
@@ -438,6 +476,7 @@ GitHub の Copilot Plugin（本ページ [7-3 節](#7-3-github-copilot-plugins--
 | チームや組織へ拡張一式を配布したい | Copilot Plugins |
 | 複数エージェント間でSkill・MCP設定を共有したい | Agent Plugins 1.0.0 対応パッケージ |
 | 必要な時だけツールを見つけさせたい | Agent Finder / ARD |
+| エージェントの内部動作・実行基盤を理解したい | ハーネスの概念（本ページ 9 節） |
 
 ---
 
@@ -466,6 +505,10 @@ GitHub の Copilot Plugin（本ページ [7-3 節](#7-3-github-copilot-plugins--
 
 - [「Agent Plugins 1.0.0」発表、異なるAIエージェント間でもスキルやMCPサーバ設定が共通化へ](https://www.publickey1.jp/blog/26/agent_plugins_100aimcpopenaiawsgoogle.html) — Publickey（解説記事）
 - [Agent Plugins 1.0 in VS Code, Copilot CLI, and the Copilot app](https://github.blog/changelog/2026-08-12-agent-plugins-1-0-in-vs-code-copilot-cli-and-the-copilot-app) — GitHub Changelog（公式）
+
+### AIエージェントの実行基盤（ハーネス）（本ページ 9 節）
+
+- [なぜ今、AI に「ハーネス」が必要なのか](https://www.geekfujiwara.com/tech/powerplatform/8591/) — ハーネスの概念と Microsoft Copilot Studio での実装例（ギークフジワラ）
 
 ---
 
