@@ -384,13 +384,15 @@ Agent Plugins は、`SKILL.md`（スキル定義）と `mcp.json`（MCP サー�
 
 ### パッケージの構成
 
-Agent Plugin パッケージの最小構成は `plugin.json`（メタデータ）と `SKILL.md`（スキル定義）です。MCP サーバー設定（`mcp.json`）、Agent 定義、フックなどを追加できます。
+Agent Plugin パッケージの最小構成は `plugin.json`（メタデータ）と `skills/<スキル名>/SKILL.md`（スキル定義）です。MCP サーバー設定（`.mcp.json`）、Agent 定義、フックなどを追加できます。
 
 ```
 my-plugin/
-├── plugin.json      # パッケージのメタデータ（name, version, description など）
-├── SKILL.md         # スキル定義（既存の SKILL.md と同形式）
-└── mcp.json         # MCP サーバー設定（任意）
+├── plugin.json              # パッケージのメタデータ（name, version, description など）
+├── skills/
+│   └── my-skill/
+│       └── SKILL.md         # スキル定義（既存の SKILL.md と同形式）
+└── .mcp.json                # MCP サーバー設定（任意）
 ```
 
 `plugin.json` の例：
@@ -400,8 +402,8 @@ my-plugin/
   "name": "my-skill-pack",
   "version": "1.0.0",
   "description": "共通スキルパック",
-  "skills": ["SKILL.md"],
-  "mcpServers": "mcp.json"
+  "skills": ["skills/my-skill/SKILL.md"],
+  "mcpServers": ".mcp.json"
 }
 ```
 
