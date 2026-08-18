@@ -8,7 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
-| 2026-08-17 | Agent Plugins 1.0（オープン標準化）を 7-3 に反映し、「8. Skill / Plugin のセキュリティ」を新設 |
+| 2026-08-17 | Agent Plugins 1.0（オープン標準化）を 7-3 に反映し、「8. Skill / Plugin のセキュリティ」「9. Skill が動く場所の広がり」「10. MCP の次期仕様」を新設 |
 | 2026-08-01 | 「Skill の発見・配布・更新」を追加（`gh skill` / Agent Finder・ARD / Copilot Plugins） |
 | 2026-07-29 | 常設ページ化（旧タイトル「2026年7月版」）。ガイド全体の更新は [更新履歴（CHANGELOG）](../CHANGELOG.md) を参照 |
 | 2026-07-22 | 初版公開（Matt Pocock's Skills / Context7 / Firecrawl / Vercel / Record & Replay / Computer Use の6テーマ） |
@@ -26,7 +26,7 @@
 
 > `Versel` ではなく、正式な表記は **Vercel** です。
 
-> 「[7. Skill の発見・配布・更新](#7-skill-の発見配布更新)」と「[8. Skill / Plugin のセキュリティ](#8-skill--plugin-のセキュリティ)」は動画チャプター外の追補です。エコシステム側の動き（CLI・Registry・Plugin・オープン標準）と、導入時の安全性を扱います。
+> 「[7. Skill の発見・配布・更新](#7-skill-の発見配布更新)」以降は動画チャプター外の追補です。エコシステム側の動き（[7](#7-skill-の発見配布更新) CLI・Registry・オープン標準）、[導入時の安全性](#8-skill--plugin-のセキュリティ)、[Skill が動く場所](#9-skill-が動く場所の広がり)、[MCP の次期仕様](#10-mcp-の次期仕様)を扱います。
 
 ---
 
@@ -42,6 +42,7 @@
 | GUI実行 | Computer Use / Browser Use | 画面認識、クリック、入力、検証 | APIのないアプリやWeb画面 |
 | 発見・配布・更新 | `gh skill` / Agent Finder / Agent Plugins | Skillを探す・固定する・組織へ配る仕組み | 導入後の運用と組織標準化 |
 | 安全性 | `gh skill preview` / MCP allowlists | 導入前の内容確認と、組織での許可範囲の限定 | 業務利用・組織展開の前提 |
+| 実行される場所 | Copilot code review / IDE の Skill 管理 | 対話の外（レビュー・IDE の常設機能）での実行 | 規約の自動適用と定常運用 |
 
 ---
 
@@ -431,6 +432,69 @@ Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMa
 
 ---
 
+## 9. Skill が動く場所の広がり
+
+2026 年前半までは「エージェントとの**対話中**に Skill を使う」のが中心でしたが、7〜8 月にかけて**対話の外**へ広がりました。同じ `SKILL.md` を、レビューや IDE の常設機能として効かせられるようになっています。
+
+### 9-1. コードレビューに効かせる
+
+**Copilot code review** が Agent Skills と MCP に対応し、2026-07-29 に一般提供となりました。チーム独自のコーディング規約や社内ツールを、レビューの判断材料として持ち込めます。
+
+| 項目 | 内容 |
+|------|------|
+| Skill の配置 | リポジトリの `.github/skills/<スキル名>/SKILL.md` |
+| MCP の設定 | リポジトリ設定 → Copilot → MCP servers |
+| 資格情報 | リポジトリ設定 → Secrets and variables → **Agents** |
+| 重要な制約 | code review からの **MCP ツール呼び出しは read-only に限定**される |
+| 既定で有効 | GitHub MCP / Playwright MCP |
+| 対象プラン | Pro / Pro+ / Business / Enterprise |
+
+> **配置先を間違えやすい点**: ここで使う `.github/skills/` は、`gh skill install` が Skill を置く先（エージェントホストごとのディレクトリ）とは**別系統**です。レビューに効かせたい Skill は、リポジトリへコミットする必要があります。
+
+レビューコメントには、Skill や MCP のコンテキストを使ったかどうかが表示されます。
+
+あわせて **レビューの深さ**を選べるようになりました（2026-08-07 一般提供）。
+
+| レベル | 用途 |
+|--------|------|
+| `Lite` | 単純な変更へのフィードバック |
+| `Balanced` | より高い推論能力での分析が必要な変更 |
+
+レビューごとに選べるほか、組織管理者が既定値を設定できます（組織設定 → Copilot → Copilot code review）。使用されたレベルは、タイムラインと PR の概要コメントに表示されます。
+
+### 9-2. IDE・CLI 側の対応状況
+
+各ツールが Skill / Plugin を「設定ファイルを手で置くもの」から「**UI で管理するもの**」へ移しつつあります。
+
+| ツール | 押さえておく点 |
+|--------|---------------|
+| VS Code | 既存の **prompt ファイルを Skill へ変換**できる（AI Customizations 画面）。Agents window から Copilot / Claude / Codex のセッションを Git worktree で起動でき、サブエージェントのモデル・経過時間・ツール呼び出しを追跡できる |
+| Visual Studio | Copilot CLI と同じ Copilot SDK を基盤とする Agent。**.NET / Azure チームが作成したビルトイン Skill** を同梱 |
+| JetBrains | Marketplace またはソースリポジトリから Plugin を導入する UI。**Claude を agent provider に指定**して、カスタムエージェント・Skill・Instructions を利用できる |
+| Codex | Agent Plugins に対応。**ローカル / 個人 / ワークスペース / リモート**のカタログを横断検索できる。Cursor 管理の Skill をインポートできる |
+| Claude Code | Plugin marketplace が **GitLab に対応**（nested subgroup を含む）。`plugin validate` が `SKILL.md` の frontmatter の解析失敗を検出する |
+
+> **実務上の落とし穴**: Codex は、コンテキストが逼迫すると Skill カタログを切り詰め、その旨を警告します。Skill は入れるほど良いわけではなく、**使う分だけ有効にする**ほうが安定します。
+
+> 各ツールの機能は月次で更新されます。詳細と最新状態は、末尾の公式リリースノートを確認してください。
+
+---
+
+## 10. MCP の次期仕様
+
+Skill と並ぶもう一方の柱である MCP も、2026-07-28 版の仕様で構造が変わりました。
+
+| 変更点 | 内容 |
+|--------|------|
+| **stateless core** | セッションと初期化ステップを廃止。クライアントとサーバーのハンドシェイクを並列化できる |
+| マルチラウンドトリップ要求 | **elicitation**（実行途中でユーザーへ追加入力を求める）に対応するリモートサーバーが増える |
+| 認可の強化 | OAuth / OIDC |
+| 拡張 | Apps・Tasks 向けのバージョン付き拡張 |
+
+GitHub MCP Server は正式リリース前に先行対応済みです。**tier 1 SDK が後方互換を保っているため、利用者側の作業は不要**です。
+
+---
+
 ## 使い分け
 
 | やりたいこと | 第一候補 |
@@ -446,6 +510,8 @@ Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMa
 | 必要な時だけツールを見つけさせたい | Agent Finder / ARD |
 | 導入してよい Skill か判断したい | `gh skill preview` ＋ コミット SHA 固定 |
 | 組織で使える MCP サーバーを限定したい | MCP allowlists（managed settings） |
+| チームの規約をコードレビューに効かせたい | Copilot code review ＋ `.github/skills/` |
+| 手持ちの prompt ファイルを Skill にしたい | VS Code の AI Customizations から変換 |
 
 ---
 
@@ -480,6 +546,18 @@ Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMa
 - [MCP allowlists in enterprise managed settings](https://github.blog/changelog/2026-08-06-mcp-allowlists-in-enterprise-managed-settings/) — MCP 許可リスト（公式）
 - [Agent Skills specification](https://agentskills.io/specification) — `SKILL.md` 形式の仕様（公式）
 - [awesome-agent-skills-security](https://github.com/LLMSecurity/awesome-agent-skills-security) — 攻撃手法と防御策の一覧（コミュニティ）
+- [Agents 一覧](copilot/agents.md) — 導入前監査に使える `trojan-skill-hunter` の解説（本ガイド）
+
+### Skill が動く場所・MCP 次期仕様（本ページ 9・10 節）
+
+- [Copilot code review: Agent skills and MCP now generally available](https://github.blog/changelog/2026-07-29-copilot-code-review-agent-skills-and-mcp-now-generally-available/) — レビューでの Skill / MCP 対応（公式）
+- [Copilot code review effort levels are generally available](https://github.blog/changelog/2026-08-07-copilot-code-review-effort-levels-are-generally-available/) — レビューの深さの選択（公式）
+- [GitHub MCP Server supports the next MCP specification](https://github.blog/changelog/2026-07-23-github-mcp-server-supports-the-next-mcp-specification/) — MCP 次期仕様への対応（公式）
+- [GitHub Copilot in Visual Studio Code, July 2026 releases](https://github.blog/changelog/2026-07-30-github-copilot-in-visual-studio-code-july-2026-releases/) — VS Code の更新（公式）
+- [GitHub Copilot in Visual Studio — July update](https://github.blog/changelog/2026-07-30-github-copilot-in-visual-studio-july-update/) — Visual Studio の更新（公式）
+- [GitHub Copilot for JetBrains expands BYOK capabilities](https://github.blog/changelog/2026-07-14-github-copilot-for-jetbrains-expands-byok-capabilities/) — JetBrains の Plugin 管理と agent provider（公式）
+- [Claude Code changelog](https://code.claude.com/docs/en/changelog) — Claude Code の更新（公式）
+- [Codex changelog](https://learn.chatgpt.com/docs/changelog) — Codex の更新（公式）
 
 ---
 
