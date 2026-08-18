@@ -1,8 +1,8 @@
 # Instructions 一覧と活用ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-07-29
+> **対象ツール**: GitHub Copilot ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-18
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **198 個の Instructions** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **200 個の Instructions** を日本語で解説します。
 
 ## Instructions とは
 
@@ -289,6 +289,7 @@ applyTo: "**/*.py"
 | [`azure-iot-edge-architecture.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/azure-iot-edge-architecture.instructions.md) | Azure IoT Edge 前提のアーキテクチャ検討手順 | スマートシティ / エッジ IoT 設計 |
 | [`azure-naming.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/azure-naming.instructions.md) | Azure CAF 準拠のリソース命名規約 | Azure インフラ命名の標準化 |
 | [`microsoft-foundry.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/microsoft-foundry.instructions.md) | Microsoft Foundry SDK（Python）エージェント開発規約 | `azure-ai-projects` v2 を使った Foundry エージェント実装 |
+| [`azure-apim-ai-gateway.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/azure-apim-ai-gateway.instructions.md) | API Management を生成 AI ゲートウェイとして構成する規約 | LLM API の前段でトークン制御・認証・キャッシュ・コンテンツ安全性を集約 |
 
 **[bicep-code-best-practices.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/bicep-code-best-practices.instructions.md)** の主なルール:
 - lowerCamelCase で命名（変数、パラメーター、リソース）
@@ -296,6 +297,17 @@ applyTo: "**/*.py"
 - `reference()` や `resourceId()` の代わりにシンボリック名でリソース参照
 - `uniqueString()` で意味のある一意のリソース名を生成
 - シークレットを outputs に含めない
+
+**[azure-apim-ai-gateway.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/azure-apim-ai-gateway.instructions.md)** の主なルール:
+- 適用対象は APIM のポリシー XML と Bicep（`**/policies/**`、`**/*.bicep` など）
+- 特定プロバイダー向けではなく、**プロバイダー非依存の `llm-*` ポリシー**を優先する
+- レート制限は**リクエスト数ではなくトークン数**で行う（`llm-token-limit`）。上限超過のプロンプトはバックエンドへ送る前に拒否する
+- 認証はマネージド ID を使い、**対象モデルに応じてロールとトークンの audience を合わせる**（Azure OpenAI は Cognitive Services OpenAI User、その他の Foundry モデルは Cognitive Services User）
+- `llm-emit-token-metric` でトークン消費を Application Insights へ送り、コストを按分する。**メトリクスのカーディナリティは低く保つ**
+- セマンティックキャッシュは**認証済みの呼び出し元ごとに分割**する（利用者をまたぐ情報漏れを防ぐ）
+- ポリシーの**順序に依存**するため、記述順と対象 SKU の対応可否を必ず確認する
+
+> Copilot は APIM のポリシーについて、そのままでは無効または安全でない設定を提案しがちです。この Instructions は、その既定挙動を是正することを目的にしています。
 
 ---
 
@@ -315,6 +327,7 @@ applyTo: "**/*.py"
 | [`playwright-python.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/playwright-python.instructions.md) | Playwright（Python）E2E テスト | ブラウザ自動テスト |
 | [`playwright-dotnet.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/playwright-dotnet.instructions.md) | Playwright（.NET）E2E テスト | ブラウザ自動テスト |
 | [`qa-engineering-best-practices.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/qa-engineering-best-practices.instructions.md) | QA エンジニアリング全般のベストプラクティス | テスト戦略・設計・自動化・不具合管理 |
+| [`powershell-pester-6.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/powershell-pester-6.instructions.md) | Pester v6 の規約に基づく PowerShell テスト | PowerShell スクリプトの自動テスト |
 
 **[playwright-typescript.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/playwright-typescript.instructions.md)** の主なルール:
 - アクセシビリティ優先のセレクター: `getByRole()`, `getByLabel()`（脆弱な CSS セレクターを避ける）
@@ -322,6 +335,22 @@ applyTo: "**/*.py"
 - Playwright 組み込みの自動待機を活用（ハードコードした wait を避ける）
 - `test.step()` でインタラクションをグループ化
 - `tests/` ディレクトリに `<feature>.spec.ts` 形式で保存
+
+**[powershell-pester-6.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/powershell-pester-6.instructions.md)** の主なルール:
+- 適用対象は `*.Tests.ps1`。対象は PowerShell 5.1 および 7.4 以降
+- コードは Pester のブロック内にのみ置く。**スクリプト直下で処理を実行しない**
+- テスト対象の関数は `BeforeAll` の中でドットソースして読み込む
+- 構造は `Describe` → `Context` → `It`。準備・後始末は `BeforeAll` / `BeforeEach` / `AfterEach` / `AfterAll`
+- テストの**組み立ては `BeforeDiscovery`**、実行時の状態初期化は `BeforeAll` と役割を分ける
+- データ駆動テストは `-ForEach` / `-TestCases` を使う
+
+**v6 で変わった点**（v5 以前からの移行時に効きます）:
+- v6 は**ファイル単位で処理する**ため、ファイルをまたいだ discovery 時の副作用が効かない。テストファイルは**単体で実行できる状態**にする
+- 非推奨だった挙動が**厳格に適用される**
+- `Assert-MockCalled` は廃止。`Should -Invoke` を使う
+- モックのパラメーターフィルターに一致しない呼び出しが、**実コマンドへ流れなくなった**
+- テストケースの `$null` や空配列は**エラーになる**。許容するには `-AllowNullOrEmptyForEach` を付ける
+- `Set-ItResult -Pending` は廃止。`-Inconclusive` または `-Skipped` を使う
 
 ---
 
@@ -536,7 +565,7 @@ applyTo: "**/*.py"
 
 ## まとめ
 
-Instructions は **198 ファイル** あり、以下のカテゴリに分類されます：
+Instructions は **200 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な内容 |
 |---------|----------|---------|
