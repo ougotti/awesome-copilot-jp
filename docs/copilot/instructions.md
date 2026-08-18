@@ -2,7 +2,7 @@
 
 > **対象ツール**: GitHub Copilot ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-07-29
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **197 個の Instructions** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **198 個の Instructions** を日本語で解説します。
 
 ## Instructions とは
 
@@ -288,6 +288,7 @@ applyTo: "**/*.py"
 | [`azure-logic-apps-power-automate.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/azure-logic-apps-power-automate.instructions.md) | Logic Apps / Power Automate | ワークフロー自動化 |
 | [`azure-iot-edge-architecture.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/azure-iot-edge-architecture.instructions.md) | Azure IoT Edge 前提のアーキテクチャ検討手順 | スマートシティ / エッジ IoT 設計 |
 | [`azure-naming.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/azure-naming.instructions.md) | Azure CAF 準拠のリソース命名規約 | Azure インフラ命名の標準化 |
+| [`microsoft-foundry.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/microsoft-foundry.instructions.md) | Microsoft Foundry SDK（Python）エージェント開発規約 | `azure-ai-projects` v2 を使った Foundry エージェント実装 |
 
 **[bicep-code-best-practices.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/bicep-code-best-practices.instructions.md)** の主なルール:
 - lowerCamelCase で命名（変数、パラメーター、リソース）
@@ -535,7 +536,7 @@ applyTo: "**/*.py"
 
 ## まとめ
 
-Instructions は **197 ファイル** あり、以下のカテゴリに分類されます：
+Instructions は **198 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な内容 |
 |---------|----------|---------|

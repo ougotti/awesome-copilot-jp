@@ -8,7 +8,9 @@
 
 | 日付 | 変更内容 |
 |------|---------|
-| 2026-08-17 | Agent Plugins 1.0（オープン標準化）を 7-3 に反映し、「8. Skill / Plugin のセキュリティ」「9. Skill が動く場所の広がり」「10. MCP の次期仕様」を新設 |
+| 2026-08-17 | 「10. Skill / Plugin のセキュリティ」「11. Skill が動く場所の広がり」「12. MCP の次期仕様」を新設。8 節を仕様原文で検証し、マニフェストの記述・MCP 設定の位置・可搬性の説明を訂正 |
+| 2026-08-13 | 「Agent Plugins 1.0.0」を追加（マルチベンダー共通エージェント設定標準） |
+| 2026-08-13 | 「AIエージェントの実行基盤（ハーネス）」を追加（Microsoft Copilot Studio を例に解説） |
 | 2026-08-01 | 「Skill の発見・配布・更新」を追加（`gh skill` / Agent Finder・ARD / Copilot Plugins） |
 | 2026-07-29 | 常設ページ化（旧タイトル「2026年7月版」）。ガイド全体の更新は [更新履歴（CHANGELOG）](../CHANGELOG.md) を参照 |
 | 2026-07-22 | 初版公開（Matt Pocock's Skills / Context7 / Firecrawl / Vercel / Record & Replay / Computer Use の6テーマ） |
@@ -26,7 +28,7 @@
 
 > `Versel` ではなく、正式な表記は **Vercel** です。
 
-> 「[7. Skill の発見・配布・更新](#7-skill-の発見配布更新)」以降は動画チャプター外の追補です。エコシステム側の動き（[7](#7-skill-の発見配布更新) CLI・Registry・オープン標準）、[導入時の安全性](#8-skill--plugin-のセキュリティ)、[Skill が動く場所](#9-skill-が動く場所の広がり)、[MCP の次期仕様](#10-mcp-の次期仕様)を扱います。
+> 「[7. Skill の発見・配布・更新](#7-skill-の発見配布更新)」以降は動画チャプター外の追補です。[配布と発見の仕組み](#7-skill-の発見配布更新)、[共通パッケージ標準](#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準)、[実行基盤](#9-aiエージェントの実行基盤ハーネス)、[導入時の安全性](#10-skill--plugin-のセキュリティ)、[Skill が動く場所](#11-skill-が動く場所の広がり)、[MCP の次期仕様](#12-mcp-の次期仕様)を扱います。
 
 ---
 
@@ -40,7 +42,9 @@
 | Skill配布・実践 | Vercel / skills.sh | Skillの検索・導入、React等の公式知見 | Skill導入とWeb開発 |
 | 操作の記録 | Record & Replay | 実演から生成した再利用可能なSkill | 定型GUI業務 |
 | GUI実行 | Computer Use / Browser Use | 画面認識、クリック、入力、検証 | APIのないアプリやWeb画面 |
-| 発見・配布・更新 | `gh skill` / Agent Finder / Agent Plugins | Skillを探す・固定する・組織へ配る仕組み | 導入後の運用と組織標準化 |
+| 発見・配布・更新 | `gh skill` / Agent Finder / Copilot Plugins | Skillを探す・固定する・組織へ配る仕組み | 導入後の運用と組織標準化 |
+| 業界標準 | Agent Plugins 1.0.0 | `SKILL.md` / `mcp.json` の共通パッケージ形式 | マルチベンダー間のSkill・MCP設定共有 |
+| 実行基盤（ハーネス） | Microsoft Copilot Studio | エージェントを動かす裏側の仕組みを理解する | エージェント設計・運用の全体把握 |
 | 安全性 | `gh skill preview` / MCP allowlists | 導入前の内容確認と、組織での許可範囲の限定 | 業務利用・組織展開の前提 |
 | 実行される場所 | Copilot code review / IDE の Skill 管理 | 対話の外（レビュー・IDE の常設機能）での実行 | 規約の自動適用と定常運用 |
 
@@ -318,49 +322,36 @@ Catalog には、Skill だけでなく OpenAPI で記述したツール、A2A �
 
 ---
 
-### 7-3. Agent Plugins 1.0 — まとめて配る
+### 7-3. GitHub Copilot Plugins — まとめて配る
 
-2026-08-06 に **Agent Plugins 1.0.0** が公開され、Plugin は「各ツール独自の配布形式」から **ベンダー中立のオープン標準** へ移りました。1 つ作れば対応クライアント間で使い回せる、というのが狙いです。
-
-| 項目 | 内容 |
-|------|------|
-| 標準化するもの | Agent Skills と MCP サーバーを 1 ディレクトリへまとめる**可搬なパッケージ形式** |
-| 構成 | `plugin.json`（マニフェスト）＋ `skills/<名前>/SKILL.md` ＋ `mcp.json` |
-| v1 の構成要素 | **Skills と MCP サーバーの 2 種類だけ**。Agents・Hooks・LSP 等はツール独自拡張として、逆ドメイン名の名前空間ディレクトリ（例: `com.github.copilot/`）へ置く |
-| ガバナンス | Technical Steering Committee が技術的監督を担う。役職は**企業ではなく個人**が持ち、企業に議席を予約しない。**単一ベンダーが Core Maintainer の過半数を占めることを禁止** |
-| Core Maintainer の所属 | Amazon / Cursor / Microsoft / OpenAI / Vercel |
-| 対応クライアント | ChatGPT・Codex・Cursor・GitHub Copilot・Kiro・VS Code |
-| GitHub 実装 | 2026-08-12 に VS Code・Copilot CLI・Copilot SDK・Copilot アプリで一般提供（全 Copilot プラン） |
-
-`plugin.json` に正式な `$schema` を書くかどうかが、**可搬形式とツール独自形式の切り替えスイッチ**です。GitHub の実装では `$schema` は任意で、書かなければ従来の Copilot 独自形式のまま動きます。そのため**既存 Plugin の移行は不要**です。
-
-Copilot での導入は Marketplace（`marketplace.json` を置いた Git リポジトリ）経由です。
+Copilot Plugin は、`plugin.json` を持つディレクトリに Custom Agents・Skills・Hooks・MCP サーバー設定・LSP サーバー設定をまとめた配布単位です。Marketplace（`marketplace.json` を置いた Git リポジトリ）から導入します。
 
 ```powershell
 copilot plugin marketplace list
 copilot plugin marketplace browse awesome-copilot
 copilot plugin install database-data-management@awesome-copilot
-copilot plugin update --all
+copilot plugin list
+copilot plugin update database-data-management
 ```
 
 Copilot CLI には `copilot-plugins`（GitHub 公式コレクション）と `awesome-copilot` が既定で登録されています。リポジトリの `.github/copilot/settings.json` に `enabledPlugins` を書けば、そのリポジトリの開発者全員へ同じ構成を適用できます。
 
-**→ 2 つの形式の違い・`enabledPlugins`・Claude Code Plugin との比較は [GitHub Copilot Plugins](copilot/plugins.md) を参照**
+**→ 構成・`enabledPlugins`・Claude Code Plugin との比較は [GitHub Copilot Plugins](copilot/plugins.md) を参照**
 
 ---
 
 ### 3 つの仕組みの比較
 
-| 観点 | `npx skills` | `gh skill` | Agent Plugins 1.0 |
-|------|-------------|-----------|-------------------|
+| 観点 | `npx skills` | `gh skill` | Copilot Plugin |
+|------|-------------|-----------|----------------|
 | 主用途 | Skill の検索・導入 | Skill のライフサイクル管理 | 複数拡張の一括配布 |
 | 配布単位 | Skill | Skill | Plugin |
-| 更新追跡 | CLI 依存 | provenance（git tree SHA） | マニフェストの `version` / Marketplace のバージョン |
+| 更新追跡 | CLI 依存 | provenance（git tree SHA） | Marketplace のバージョン |
 | バージョン固定 | — | `--pin` / コミット SHA 指定 | Marketplace のバージョン / `source.sha`（commit SHA） |
-| 対応 Host | 複数エージェント | 複数エージェント | ChatGPT・Codex・Cursor・Copilot・Kiro・VS Code |
-| 含められる要素 | Skills | Skills | 可搬部分は **Skills / MCP の 2 種類**。Agents・Hooks・LSP はツール独自拡張 |
-| サプライチェーン対策 | 配布元の確認 | `preview` / pin / immutable releases | Marketplace と組織ポリシー（**署名検証は仕様未定義**） |
-| 提供元 | Community（Vercel） | Official（GitHub） | Official（複数ベンダー共同の標準） |
+| 対応 Host | 複数エージェント | 複数エージェント | 主に Copilot CLI / VS Code |
+| 含められる要素 | Skills | Skills | Skills / Agents / Hooks / MCP / LSP |
+| サプライチェーン対策 | 配布元の確認 | `preview` / pin / immutable releases | Marketplace と Enterprise ポリシー |
+| 提供元 | Vercel（コミュニティ） | GitHub（公式） | GitHub（公式） |
 
 ### 使い分けの目安
 
@@ -370,19 +361,145 @@ Copilot CLI には `copilot-plugins`（GitHub 公式コレクション）と `aw
 | 導入前に中身を確認する | `gh skill preview` |
 | バージョンを固定して事故を防ぐ | `gh skill install ...@<コミットSHA>` または `--pin <コミットSHA>` |
 | 自作 Skill を公開・配布する | `gh skill publish` |
-| チーム標準の拡張一式を配る | Agent Plugins（Copilot なら `enabledPlugins`） |
-| 複数のツールで同じ Plugin を使い回す | `plugin.json` に `$schema` を書いて可搬形式にする |
-| 組織で使えるリソースを制限する | Enterprise managed settings（Agent Finder / Plugins / MCP allowlists） |
+| チーム標準の拡張一式を配る | Copilot Plugin + `enabledPlugins` |
+| 組織で使えるリソースを制限する | Enterprise managed settings（Agent Finder / Plugins） |
 
 ---
 
-## 8. Skill / Plugin のセキュリティ
+## 8. Agent Plugins 1.0.0 — マルチベンダー共通のエージェント設定標準
 
-配布の仕組みが一気に整った一方で、**「入れてよい Skill か」を判断する仕組みは追いついていません**。2026 年 8 月時点の実像は、**標準化が進んだのは配布形式であり、安全性の担保は各クライアント任せのまま**という点にあります。
+2026 年 8 月、Amazon・Anysphere（Cursor）・Microsoft・OpenAI・Vercel が共同で **Agent Plugins 1.0.0** を公開しました。GitHub は 2026-08-12 に、VS Code・Copilot CLI・Copilot SDK・Copilot アプリでの対応を一般提供しています（全 Copilot プラン）。
+
+Agent Plugins は、`SKILL.md`（スキル定義）と `mcp.json`（MCP サーバー設定）をひとつのパッケージにまとめ、**異なる AI エージェント間で同じ設定を共有できる共通フォーマット**です。
+
+### 背景と位置づけ
+
+これまでエージェントごとに設定形式が異なり、たとえば GitHub Copilot で使っているスキルを Cursor や ChatGPT に持ち込むには個別の書き直しが必要でした。Agent Plugins 1.0.0 はこの断絶を解消し、「一度書いたらどのエージェントでも使える」パッケージを目指しています。
+
+ガバナンスは Technical Steering Committee が担い、憲章で **役職は企業ではなく個人が持ち、企業に議席を予約しない**こと、**単一ベンダーが Core Maintainer の過半数を占めないこと**が定められています。
+
+### 対応状況（2026-08-13 時点）
+
+| ツール | 対応状況 |
+|--------|---------|
+| GitHub Copilot（VS Code / CLI / Web） | 対応済み |
+| Cursor | 対応済み |
+| ChatGPT / OpenAI Codex | 対応済み |
+| AWS Kiro | 対応済み |
+| Google（Gemini 系エージェント） | 対応表明 |
+| Claude Code（Anthropic） | 現時点では静観 |
+
+### パッケージの構成
+
+Agent Plugin パッケージの最小構成は `plugin.json`（メタデータ）と `skills/<スキル名>/SKILL.md`（スキル定義）です。
+
+**v1 が標準化する構成要素は Skills と MCP サーバーの 2 種類だけ**で、配置場所は固定です。`plugin.json` で場所を上書きすることはできません。
+
+| 構成要素 | 固定の配置場所 |
+|---------|---------------|
+| Skills | `skills/` 直下の各サブディレクトリの `SKILL.md` |
+| MCP サーバー | プラグインルートの `mcp.json` |
+
+```text
+my-plugin/
+├── plugin.json              # パッケージのメタデータ
+├── skills/
+│   └── my-skill/
+│       └── SKILL.md         # スキル定義（既存の SKILL.md と同形式）
+├── mcp.json                 # MCP サーバー設定（任意）
+└── com.github.copilot/      # ツール独自拡張（任意・逆ドメイン名の名前空間）
+```
+
+`plugin.json` の例：
+
+```json
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "my-skill-pack",
+  "version": "1.0.0",
+  "description": "共通スキルパック"
+}
+```
+
+マニフェストで**注意が必要な点**が 2 つあります。
+
+- **`$schema` は必須**です。値は上記の正式な識別子でなければなりません。
+- **スキーマは閉じています。** 書ける最上位フィールドは `$schema` / `name` / `version` / `description` / `author` / `homepage` / `repository` / `license` / `keywords` / `extensions` の 10 個だけです。`skills` や `mcpServers` のような構成要素を指すフィールドは**仕様に存在せず**、クライアントは未知フィールドとして無視します。
+
+Agents・Hooks・LSP など v1 が扱わない要素は、`extensions` フィールドか、逆ドメイン名の名前空間ディレクトリ（GitHub Copilot なら `com.github.copilot/`）へ置きます。
+
+### GitHub Copilot での導入
+
+Agent Plugins 1.0.0 対応の Copilot Plugin は、既存の `copilot plugin` コマンドでそのまま導入できます。
+
+```powershell
+copilot plugin marketplace list
+copilot plugin install <plugin-name>@<marketplace>
+```
+
+VS Code では設定 UI または `.github/copilot/settings.json` の `enabledPlugins` で有効化します。詳しくは [GitHub Copilot Plugins](copilot/plugins.md) を参照してください。
+
+### Copilot Plugins との関係
+
+GitHub の Copilot Plugin（本ページ [7-3 節](#7-3-github-copilot-plugins--まとめて配る)）は Agent Plugins 1.0.0 に対応していますが、**Copilot Plugin なら自動的に可搬になるわけではありません**。
+
+GitHub の実装では `$schema` は**任意**で、これを書くことが**可搬形式へのオプトイン**にあたります。
+
+| | `$schema` を書く（可搬形式） | `$schema` を書かない（Copilot 独自形式） |
+|---|---|---|
+| 構成要素 | Skills と MCP サーバーのみ | Agents / Skills / Commands / Hooks / MCP / LSP |
+| 配置場所 | `skills/` と `mcp.json` に固定 | マニフェストのフィールドで上書き可（`.mcp.json` 等） |
+| 他エージェントでの利用 | できる | **できない** |
+
+Copilot 独自形式は Agent Plugins の**上位互換**です。したがって Copilot Plugin をほかのエージェント（Cursor・ChatGPT 等）で使いたい場合は、`$schema` を追加し、ファイルを標準のディレクトリ構成へ整える作業が必要です。既存 Plugin をそのまま使い続ける分には**移行は不要**です。
+
+**→ 2 つの形式の違いと移行の手順は [GitHub Copilot Plugins](copilot/plugins.md) を参照**
+
+---
+
+## 9. AIエージェントの実行基盤（ハーネス）
+
+ChatGPT の「チャットに答える」段階から、タスクを自律的に実行する「エージェント時代」への移行に伴い、エージェントの裏側で動く**実行基盤（ハーネス）**への注目が高まっています。
+
+「ハーネス（harness）」とは、AIモデルが外部ツールを呼び出したり、複数のステップを連鎖させたりするための仕組み全体を指す概念です。モデル本体とは別に、次の役割を担います。
+
+| 役割 | 内容 |
+|------|------|
+| ツール呼び出し | 検索、データ取得、API 実行などをモデルの指示で動かす |
+| 状態管理 | 会話履歴・タスク進捗・メモリを保持する |
+| ループ制御 | 「計画 → 実行 → 評価」のサイクルを繰り返す |
+| エラー処理 | ツール失敗・タイムアウトに対応し、再試行や代替ルートへ切り替える |
+| 出力整形 | モデルの生成結果を次のツールや人間が扱いやすい形式に変換する |
+
+### Microsoft Copilot Studio での実装例
+
+Microsoft Copilot Studio は、ハーネスの概念を GUI で構成できるプラットフォームです。トピック（会話フロー）とアクション（ツール呼び出し）を組み合わせることで、エージェントがどのように計画を立て、ツールを順番に呼び出し、結果をユーザーへ返すかを定義できます。
+
+| 役割 | Copilot Studio での対応 |
+|------|------------------------|
+| ツール呼び出し | コネクタ / Power Automate フロー / カスタム API |
+| 状態管理 | 会話変数・グローバル変数 |
+| ループ制御 | トピック内の条件分岐とリダイレクト |
+| エラー処理 | エスカレーション・フォールバック トピック |
+| 出力整形 | 応答メッセージのテンプレートと変数展開 |
+
+### ハーネスを意識する理由
+
+- **モデルの性能だけでは不十分**: 同じモデルでも、ハーネス設計の差が出力品質・コスト・レイテンシを大きく左右する。
+- **障害点の特定**: 問題が「モデルの判断ミス」か「ツール呼び出しの失敗」かを切り分けるには、ハーネスの構造を理解する必要がある。
+- **再利用と標準化**: スキルや MCP サーバーも、ハーネスに組み込まれる部品として設計すると再利用しやすい。
+
+> 詳しくは [なぜ今、AI に「ハーネス」が必要なのか（ギークフジワラ）](https://www.geekfujiwara.com/tech/powerplatform/8591/) を参照してください。
+
+---
+
+## 10. Skill / Plugin のセキュリティ
+
+[8 節](#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準)のとおり配布の仕組みは一気に整いましたが、**「入れてよい Skill か」を判断する仕組みは追いついていません**。2026 年 8 月時点の実像は、**標準化が進んだのは配布形式であり、安全性の担保は各クライアント任せのまま**という点にあります。
 
 Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**であり、スクリプトや MCP 接続を同梱できます。ライブラリの依存追加と同じ慎重さが必要です。
 
-### 8-1. オープン標準がまだ定義していないこと
+### 10-1. オープン標準がまだ定義していないこと
 
 Agent Plugins 1.0.0 は可搬なパッケージ形式を定めた一方で、安全性に関わる項目を**明示的に将来版へ先送り**しています。以下は仕様リポジトリの [Future Considerations](https://github.com/agentplugins/agent-plugins-spec/blob/main/FUTURE_CONSIDERATIONS.md) に記載された内容です。
 
@@ -399,7 +516,7 @@ Agent Plugins 1.0.0 は可搬なパッケージ形式を定めた一方で、安
 - 仕様はパスの**封じ込め規則**を定めていますが（パッケージ内のパスは Plugin ルート外へ解決してはならない）、これは配布物内のファイル参照に関する規則であり、**Plugin が起動したプロセスをサンドボックス化するものではない**と仕様自身が明示しています。
 - リモート MCP サーバーの `headers` は「**可視のパッケージデータであり、可搬なシークレット機構ではない**」と定義され、資格情報の埋め込みは禁止されています。非ループバックのエンドポイントは HTTPS 必須です。
 
-### 8-2. 導入前に何を確認するか
+### 10-2. 導入前に何を確認するか
 
 `gh skill` の節（7-1）で触れた確認手順は、Plugin にもそのまま当てはまります。
 
@@ -416,7 +533,7 @@ Agent Plugins 1.0.0 は可搬なパッケージ形式を定めた一方で、安
 
 第三者による Skill エコシステムの監査報告も複数出ています。攻撃手法と防御策の一覧は [awesome-agent-skills-security](https://github.com/LLMSecurity/awesome-agent-skills-security)（`提供元`: Community）にまとまっています。
 
-### 8-3. 組織で許可範囲を絞る
+### 10-3. 組織で許可範囲を絞る
 
 個々の確認に加えて、組織側で使える範囲を限定できます。**MCP allowlists**（2026-08-06 提供開始）は、利用してよい MCP サーバーを Enterprise のポリシーとして指定する仕組みです。
 
@@ -432,11 +549,11 @@ Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMa
 
 ---
 
-## 9. Skill が動く場所の広がり
+## 11. Skill が動く場所の広がり
 
 2026 年前半までは「エージェントとの**対話中**に Skill を使う」のが中心でしたが、7〜8 月にかけて**対話の外**へ広がりました。同じ `SKILL.md` を、レビューや IDE の常設機能として効かせられるようになっています。
 
-### 9-1. コードレビューに効かせる
+### 11-1. コードレビューに効かせる
 
 **Copilot code review** が Agent Skills と MCP に対応し、2026-07-29 に一般提供となりました。チーム独自のコーディング規約や社内ツールを、レビューの判断材料として持ち込めます。
 
@@ -462,7 +579,7 @@ Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMa
 
 レビューごとに選べるほか、組織管理者が既定値を設定できます（組織設定 → Copilot → Copilot code review）。使用されたレベルは、タイムラインと PR の概要コメントに表示されます。
 
-### 9-2. IDE・CLI 側の対応状況
+### 11-2. IDE・CLI 側の対応状況
 
 各ツールが Skill / Plugin を「設定ファイルを手で置くもの」から「**UI で管理するもの**」へ移しつつあります。
 
@@ -480,7 +597,7 @@ Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMa
 
 ---
 
-## 10. MCP の次期仕様
+## 12. MCP の次期仕様
 
 Skill と並ぶもう一方の柱である MCP も、2026-07-28 版の仕様で構造が変わりました。
 
@@ -506,8 +623,10 @@ GitHub MCP Server は正式リリース前に先行対応済みです。**tier 1
 | 毎回同じGUI操作をSkill化したい | Record & Replay |
 | APIのないデスクトップ／Web画面を直接操作したい | Computer Use / Browser Use |
 | Skillを検索・固定・公開したい | `gh skill` |
-| チームや組織へ拡張一式を配布したい | Agent Plugins |
+| チームや組織へ拡張一式を配布したい | Copilot Plugins |
+| 複数エージェント間でSkill・MCP設定を共有したい | Agent Plugins 1.0.0 対応パッケージ |
 | 必要な時だけツールを見つけさせたい | Agent Finder / ARD |
+| エージェントの内部動作・実行基盤を理解したい | ハーネスの概念（本ページ 9 節） |
 | 導入してよい Skill か判断したい | `gh skill preview` ＋ コミット SHA 固定 |
 | 組織で使える MCP サーバーを限定したい | MCP allowlists（managed settings） |
 | チームの規約をコードレビューに効かせたい | Copilot code review ＋ `.github/skills/` |
@@ -536,19 +655,29 @@ GitHub MCP Server は正式リリース前に先行対応済みです。**tier 1
 - [Finding and installing plugins for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-finding-installing) — Plugin の導入手順（公式）
 - [GitHub Copilot Plugins 日本語解説](copilot/plugins.md) — 本ガイド内の詳細ページ
 
-### Agent Plugins 1.0 とセキュリティ（本ページ 7-3・8 節）
+### Agent Plugins 1.0.0（本ページ 8 節）
 
-- [agentplugins/agent-plugins-spec](https://github.com/agentplugins/agent-plugins-spec) — Agent Plugins 仕様リポジトリ（公式）
+- [agentplugins/agent-plugins-spec](https://github.com/agentplugins/agent-plugins-spec) — 仕様リポジトリ（公式）
 - [Agent Plugins Specification 1.0.0](https://github.com/agentplugins/agent-plugins-spec/blob/main/spec/1.0.0.md) — 仕様本文（公式）
-- [Future Considerations](https://github.com/agentplugins/agent-plugins-spec/blob/main/FUTURE_CONSIDERATIONS.md) — v1.0.0 が扱わない領域（公式）
 - [Technical Charter](https://github.com/agentplugins/agent-plugins-spec/blob/main/GOVERNANCE.md) — ガバナンス（公式）
-- [Agent Plugins 1.0 in VS Code, Copilot CLI, and the Copilot app](https://github.blog/changelog/2026-08-12-agent-plugins-1-0-in-vs-code-copilot-cli-and-the-copilot-app/) — GitHub 実装の提供開始（公式）
-- [MCP allowlists in enterprise managed settings](https://github.blog/changelog/2026-08-06-mcp-allowlists-in-enterprise-managed-settings/) — MCP 許可リスト（公式）
+- [MAINTAINERS](https://github.com/agentplugins/agent-plugins-spec/blob/main/MAINTAINERS.md) — Core Maintainer 一覧（公式）
 - [Agent Skills specification](https://agentskills.io/specification) — `SKILL.md` 形式の仕様（公式）
+- [Agent Plugins 1.0 in VS Code, Copilot CLI, and the Copilot app](https://github.blog/changelog/2026-08-12-agent-plugins-1-0-in-vs-code-copilot-cli-and-the-copilot-app) — GitHub Changelog（公式）
+- [GitHub Copilot CLI plugin reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-plugin-reference) — `plugin.json` のフィールド定義（公式）
+- [「Agent Plugins 1.0.0」発表、異なるAIエージェント間でもスキルやMCPサーバ設定が共通化へ](https://www.publickey1.jp/blog/26/agent_plugins_100aimcpopenaiawsgoogle.html) — Publickey（解説記事）
+
+### AIエージェントの実行基盤（ハーネス）（本ページ 9 節）
+
+- [なぜ今、AI に「ハーネス」が必要なのか](https://www.geekfujiwara.com/tech/powerplatform/8591/) — ハーネスの概念と Microsoft Copilot Studio での実装例（ギークフジワラ）
+
+### Skill / Plugin のセキュリティ（本ページ 10 節）
+
+- [Future Considerations](https://github.com/agentplugins/agent-plugins-spec/blob/main/FUTURE_CONSIDERATIONS.md) — v1.0.0 が扱わない領域（公式）
+- [MCP allowlists in enterprise managed settings](https://github.blog/changelog/2026-08-06-mcp-allowlists-in-enterprise-managed-settings/) — MCP 許可リスト（公式）
 - [awesome-agent-skills-security](https://github.com/LLMSecurity/awesome-agent-skills-security) — 攻撃手法と防御策の一覧（コミュニティ）
 - [Agents 一覧](copilot/agents.md) — 導入前監査に使える `trojan-skill-hunter` の解説（本ガイド）
 
-### Skill が動く場所・MCP 次期仕様（本ページ 9・10 節）
+### Skill が動く場所・MCP 次期仕様（本ページ 11・12 節）
 
 - [Copilot code review: Agent skills and MCP now generally available](https://github.blog/changelog/2026-07-29-copilot-code-review-agent-skills-and-mcp-now-generally-available/) — レビューでの Skill / MCP 対応（公式）
 - [Copilot code review effort levels are generally available](https://github.blog/changelog/2026-08-07-copilot-code-review-effort-levels-are-generally-available/) — レビューの深さの選択（公式）

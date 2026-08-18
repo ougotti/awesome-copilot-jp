@@ -2,7 +2,7 @@
 
 > **対象ツール**: GitHub Copilot ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-17
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **242 個の Agents** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **243 個の Agents** を日本語で解説します。
 
 ## Agents とは
 
@@ -300,6 +300,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`gem-devops.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-devops.agent.md) | GEM DevOps エージェント | コンテナ・CI/CD・インフラデプロイ |
 | [`github-actions-node-upgrade.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/github-actions-node-upgrade.agent.md) | GitHub Actions Node ランタイムアップグレード | Actions の Node.js バージョン更新・メジャーバンプ |
 | [`aws-incident-triage.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/aws-incident-triage.agent.md) | AWS インシデントトリアージ（オンコール SRE） | CloudWatch アラームからの根本原因調査・障害切り分け |
+| [`cloud-saas-outage-triage.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/cloud-saas-outage-triage.agent.md) | クラウド・SaaS 障害トリアージ | コード変更前にクラウド／SaaS 側の障害か否かを切り分け |
 | [`python-win-arm64-gha-wheel-builder.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/python-win-arm64-gha-wheel-builder.agent.md) | Windows ARM64 Wheel ビルダー | `windows-11-arm` ランナーを使った Python パッケージのネイティブ ARM64 ビルド追加 |
 | [`gitmoji-setup.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gitmoji-setup.agent.md) | gitmoji セットアップ | gitmoji コミット運用の導入。既存フック・規約を調査してから方式を選ぶ |
 
@@ -617,7 +618,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 
 ## まとめ
 
-Agents は **242 ファイル** あり、以下のカテゴリに分類されます：
+Agents は **243 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な用途 |
 |---------|----------|---------|
