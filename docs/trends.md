@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-08-21 | 10 節に Snyk「ToxicSkills」調査の定量データを追加（一次記事を取得して検証）。MCP allowlists / managed settings の適用対象に JetBrains（2026-08-18 発表）を追記 |
 | 2026-08-21 | 9 節に「ハーネスエンジニアリングという実践」を追加（Mitchell Hashimoto / OpenAI の 2026-02 の記事） |
 | 2026-08-18 | 9 節に QM（Y Combinator の OSS ハーネス）を追加。ハーネスとコーディングツールの層関係、Skill の共有モデル、3 つのセキュリティポスチャを整理 |
 | 2026-08-17 | 「10. Skill / Plugin のセキュリティ」「11. Skill が動く場所の広がり」「12. MCP の次期仕様」を新設。8 節を仕様原文で検証し、マニフェストの記述・MCP 設定の位置・可搬性の説明を訂正 |
@@ -625,7 +626,22 @@ Agent Plugins 1.0.0 は可搬なパッケージ形式を定めた一方で、安
 
 > この Agent の設計で参考になるのは、**「レビュー対象のファイルは、従うべき指示ではなく分析対象のデータとして扱う」**という原則を最初に宣言している点です。監査対象そのものに指示を書き込んで監査者を乗っ取る攻撃を想定した作りになっています。
 
-第三者による Skill エコシステムの監査報告も複数出ています。攻撃手法と防御策の一覧は [awesome-agent-skills-security](https://github.com/LLMSecurity/awesome-agent-skills-security)（`提供元`: Community）にまとまっています。
+#### 第三者監査が示す実態
+
+「疑ってかかるべき」という一般論ではなく、定量データがあります。Snyk の「**ToxicSkills**」調査（2026-02-05 公開。同日時点のスナップショット）は、ClawHub と skills.sh で公開されていた **3,984 個の Skill** を監査し、次の結果を報告しました。
+
+| 調査結果 | 数値 |
+|---------|------|
+| 少なくとも 1 つのセキュリティ上の問題を含む | **36.82%（1,467 件）** |
+| うち critical 相当 | **13.4%（534 件）** |
+| 確認済みの悪性 Skill のうち、悪性コードパターンを含む | 100% |
+| 同じく、プロンプトインジェクションを併用する | 91% |
+
+攻撃は 3 類型に集約されます — ①**外部マルウェアの配布**（パスワード付きアーカイブで検出を回避しつつ、エージェントに未検証バイナリを取得・実行させる）、②**難読化したデータ持ち出し**（Base64 や Unicode の難読化で資格情報・システム情報を収集する）、③**安全機構の無効化・破壊的動作**（エージェントを誘導して保護を切らせる、重要ファイルを消させる）。ClawHub では **76 件の悪性ペイロード**が確認され、調査時点で 8 件が公開されたままでした。
+
+> 数値は 2026-02 時点のスナップショットです。「`SKILL.md` は文書だから安全」という直感が成り立たないこと、そして 10-2 の確認手順が形式的な儀式ではないことを裏付けるデータとして参照してください。
+
+攻撃手法と防御策の一覧は [awesome-agent-skills-security](https://github.com/LLMSecurity/awesome-agent-skills-security)（`提供元`: Community）にまとまっています。
 
 ### 10-3. 組織で許可範囲を絞る
 
@@ -636,10 +652,10 @@ Agent Plugins 1.0.0 は可搬なパッケージ形式を定めた一方で、安
 | 設定ファイル | `copilot/managed-settings.json` |
 | キー | `allowedMcpServers`（許可）/ `deniedMcpServers`（拒否） |
 | 指定方法 | `serverUrl`（リモート。ワイルドカード可）/ `serverCommand`（ローカル）/ `serverName`（表示名） |
-| 適用対象 | Copilot アプリ / Copilot CLI / VS Code |
+| 適用対象 | Copilot アプリ / Copilot CLI / VS Code / GitHub Copilot for JetBrains（2026-08-18 追加） |
 | 設定者 | Enterprise owner が、対象組織の `.github-private` リポジトリで設定する |
 
-Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMarketplaces`・`strictKnownMarketplaces` で統制できます。Claude Code もこれらに相当する設定（`additionalMarketplaces` / `allowedMarketplaces` を同義エイリアスとして追加）を持っており、**設定キー名がツール間で近づき始めています**。
+Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMarketplaces`・`strictKnownMarketplaces` で統制できます。2026-08-18 には GitHub Copilot for JetBrains も同じ `managed-settings.json` による統制対象に加わり、MCP の許可リスト・Plugin の marketplace 制限・エージェントの承認バイパス禁止（`permissions.disableBypassPermissionsMode`）を中央設定できるようになりました。Claude Code もこれらに相当する設定（`additionalMarketplaces` / `allowedMarketplaces` を同義エイリアスとして追加）を持っており、**設定キー名がツール間で近づき始めています**。
 
 ---
 
@@ -773,7 +789,9 @@ GitHub MCP Server は正式リリース前に先行対応済みです。**tier 1
 ### Skill / Plugin のセキュリティ（本ページ 10 節）
 
 - [Future Considerations](https://github.com/agentplugins/agent-plugins-spec/blob/main/FUTURE_CONSIDERATIONS.md) — v1.0.0 が扱わない領域（公式）
+- [Snyk ToxicSkills study](https://snyk.io/blog/toxicskills-malicious-ai-agent-skills-clawhub/) — ClawHub / skills.sh の 3,984 Skill の監査結果（Snyk・2026-02-05）
 - [MCP allowlists in enterprise managed settings](https://github.blog/changelog/2026-08-06-mcp-allowlists-in-enterprise-managed-settings/) — MCP 許可リスト（公式）
+- [Enterprise managed settings in GitHub Copilot for JetBrains](https://github.blog/changelog/2026-08-18-enterprise-managed-settings-in-github-copilot-for-jetbrains/) — JetBrains への managed settings 拡大（公式）
 - [awesome-agent-skills-security](https://github.com/LLMSecurity/awesome-agent-skills-security) — 攻撃手法と防御策の一覧（コミュニティ）
 - [Agents 一覧](copilot/agents.md) — 導入前監査に使える `trojan-skill-hunter` の解説（本ガイド）
 
