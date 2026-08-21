@@ -652,10 +652,10 @@ Agent Plugins 1.0.0 は可搬なパッケージ形式を定めた一方で、安
 | 設定ファイル | `copilot/managed-settings.json` |
 | キー | `allowedMcpServers`（許可）/ `deniedMcpServers`（拒否） |
 | 指定方法 | `serverUrl`（リモート。ワイルドカード可）/ `serverCommand`（ローカル）/ `serverName`（表示名） |
-| 適用対象 | Copilot アプリ / Copilot CLI / VS Code / JetBrains IDE（2026-08-18 追加） |
+| 適用対象 | Copilot アプリ / Copilot CLI / VS Code / GitHub Copilot for JetBrains（2026-08-18 追加） |
 | 設定者 | Enterprise owner が、対象組織の `.github-private` リポジトリで設定する |
 
-Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMarketplaces`・`strictKnownMarketplaces` で統制できます。2026-08-18 には JetBrains IDE も同じ `managed-settings.json` による統制対象に加わり、MCP の許可リスト・Plugin の marketplace 制限・エージェントの承認バイパス禁止（`permissions.disableBypassPermissionsMode`）を中央設定できるようになりました。Claude Code もこれらに相当する設定（`additionalMarketplaces` / `allowedMarketplaces` を同義エイリアスとして追加）を持っており、**設定キー名がツール間で近づき始めています**。
+Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMarketplaces`・`strictKnownMarketplaces` で統制できます。2026-08-18 には GitHub Copilot for JetBrains も同じ `managed-settings.json` による統制対象に加わり、MCP の許可リスト・Plugin の marketplace 制限・エージェントの承認バイパス禁止（`permissions.disableBypassPermissionsMode`）を中央設定できるようになりました。Claude Code もこれらに相当する設定（`additionalMarketplaces` / `allowedMarketplaces` を同義エイリアスとして追加）を持っており、**設定キー名がツール間で近づき始めています**。
 
 ---
 
