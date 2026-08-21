@@ -4,6 +4,8 @@
 
 ## 2026-08
 
+- **2026-08-21** [Skills 最新動向](docs/trends.md) の 9 節に「ハーネスエンジニアリングという実践」を追加。Mitchell Hashimoto の [My AI Adoption Journey](https://mitchellh.com/writing/my-ai-adoption-journey) の定義と、OpenAI の [Harness engineering](https://openai.com/index/harness-engineering/) の実証（数値は OpenAI の自己報告である旨を明記）を紹介
+  - 一次記事の URL・タイトルは各公式ドメインで確認。数値は複数の独立ソースが同一値を引用するもののみ採用し、それらと矛盾する「90% を AI が記述」という流通値は不採用。「Hashimoto が命名した」という断定も避け、「2 本の記事を機に広まった」とした
 - **2026-08-18** [Skills 最新動向](docs/trends.md) の 9 節（ハーネス）に **QM**（Y Combinator が MIT ライセンスで公開した OSS のハーネス）を追加。Copilot Studio（GUI・商用）との対比、ハーネスとコーディングツール（Pi / OpenCode / Codex / Claude Code）の層関係、スコープ所有＋付与による Skill 共有、3 つのセキュリティポスチャ（Strict / Auto / Dangerous と、全ポスチャに適用される事前宣言コマンドポリシー）を整理し、10 節「標準が定義していない領域」への橋渡しとした
   - 参照した公式情報: [yc-software/qm](https://github.com/yc-software/qm)（README / [SECURITY.md](https://github.com/yc-software/qm/blob/main/SECURITY.md) / LICENSE）
   - 二次情報で流通している「ハーネスエンジニアリングの命名者」「OpenAI の生産性実績」の 2 点は一次情報を確認できなかったため本文に記載していない。組織向けソフトであることと `状態: Experimental` を明示し、SECURITY.md が挙げる限界（公開・マルチテナント向けの堅牢な境界ではない／悪意ある運用者からは守らない／組織管理者は権限を持つコンテンツ読み取り者）も併記した

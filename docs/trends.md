@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-18
+> **対象ツール**: ツール横断 ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-21
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-08-21 | 9 節に「ハーネスエンジニアリングという実践」を追加（Mitchell Hashimoto / OpenAI の 2026-02 の記事） |
 | 2026-08-18 | 9 節に QM（Y Combinator の OSS ハーネス）を追加。ハーネスとコーディングツールの層関係、Skill の共有モデル、3 つのセキュリティポスチャを整理 |
 | 2026-08-17 | 「10. Skill / Plugin のセキュリティ」「11. Skill が動く場所の広がり」「12. MCP の次期仕様」を新設。8 節を仕様原文で検証し、マニフェストの記述・MCP 設定の位置・可搬性の説明を訂正 |
 | 2026-08-13 | 「Agent Plugins 1.0.0」を追加（マルチベンダー共通エージェント設定標準） |
@@ -472,6 +473,20 @@ ChatGPT の「チャットに答える」段階から、タスクを自律的に
 | エラー処理 | ツール失敗・タイムアウトに対応し、再試行や代替ルートへ切り替える |
 | 出力整形 | モデルの生成結果を次のツールや人間が扱いやすい形式に変換する |
 
+### ハーネスエンジニアリングという実践
+
+この領域には **ハーネスエンジニアリング（harness engineering）** という呼び名が付き、2026 年 2 月に相次いで公開された 2 本の記事を機に急速に広まりました。
+
+1 本目は Mitchell Hashimoto（Terraform / Ghostty の作者）の [My AI Adoption Journey](https://mitchellh.com/writing/my-ai-adoption-journey) です。実践の定義がシンプルです。
+
+> Anytime you find an agent makes a mistake, you take the time to engineer a solution such that the agent never makes that mistake again.
+
+エージェントの失敗をやり直しで済ませず、**同じ失敗が二度と起きないように環境の側を作り替える** — ルール、チェック、ガードレールを足していく営みをハーネスエンジニアリングと呼んでいます。
+
+2 本目は OpenAI の [Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/) です。OpenAI 自身の報告では、3 人のチームが**コードを 1 行も手書きせず**、環境の設計 — ルール、フィードバックループ、文書構造、依存の順序 — に回ることで、約 5 か月（2025-08〜2026-01）で約 100 万行・1,500 件のマージ済み PR を出荷したとされています。
+
+> エンジニアの仕事が「コードを書くこと」から「エージェントが確実に働ける環境を設計すること」へ移る、という主張の実証として引かれる事例です。数値は OpenAI の自己報告であり、そのまま一般化できる保証はありません。
+
 ### 実装を見る 2 つの入口
 
 ハーネスは概念だけでは掴みにくいため、性格の異なる実装を 2 つ並べます。
@@ -750,6 +765,8 @@ GitHub MCP Server は正式リリース前に先行対応済みです。**tier 1
 ### AIエージェントの実行基盤（ハーネス）（本ページ 9 節）
 
 - [なぜ今、AI に「ハーネス」が必要なのか](https://www.geekfujiwara.com/tech/powerplatform/8591/) — ハーネスの概念と Microsoft Copilot Studio での実装例（ギークフジワラ）
+- [My AI Adoption Journey](https://mitchellh.com/writing/my-ai-adoption-journey) — Mitchell Hashimoto によるハーネスエンジニアリングの定義（一次情報）
+- [Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/) — OpenAI の実証報告（公式）
 - [yc-software/qm](https://github.com/yc-software/qm) — QM のリポジトリと README（公式）
 - [QM の SECURITY.md](https://github.com/yc-software/qm/blob/main/SECURITY.md) — 脅威モデル・運用者の前提・既知の限界（公式）
 
