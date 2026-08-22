@@ -1,2 +1,8 @@
 __pycache__/
 *.pyc
+
+# 更新チェック・鮮度チェックスクリプトの出力
+new_files_report.json
+anthropics_skills_report.json
+dev_methods_report.json
+freshness_report.json
