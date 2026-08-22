@@ -4,6 +4,11 @@
 
 ## 2026-08
 
+- **2026-08-22** 非エンジニア向け（business/）ページを点検し、ユースケースを追補（#109）
+  - **手順の訂正**: Claude.ai のファイル作成（.docx / .xlsx / .pptx / .pdf）は[全プランで利用可能](https://support.claude.com/en/articles/12111783-create-and-edit-files-with-claude)（**無料プランを含む**）で、設定 → Capabilities の「コード実行とファイル作成」をオンにして使う、というのが現在の実態。「有料プランに標準搭載」としていた [README のクイックスタート](README.md#非エンジニア向けクイックスタート)・[事務・ビジネス活用ガイド](docs/business/README.md)・[事務・バックオフィス活用ガイド](docs/business/office-work.md) の記述を修正し、出力の受け取り方（ダウンロード／Google Drive 保存）も追記
+  - **シナリオ 3 件追加**（[シナリオ別ユースケース集](docs/business/use-cases.md)。既存の「用意するもの／頼みかた／受け取るもの／確認する項目」書式に準拠）— 「複数ファイルをまとめて要約し、比較表にする」「会議メモから議事録とタスク一覧まで一気に作る」（3 ステップの連続フロー）「PDF 帳票と転記済みデータを突き合わせる」（転記の検算）
+  - [生成AIを業務で安全に使う](docs/business/safety.md) から、エンジニア向けの [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md) への「もっと詳しく」リンクを追加（#106 と対）
+  - プロンプトテンプレートは出力形式の実現可能性（ファイル作成が対応する形式か）と制約文の妥当性を机上で点検。Claude.ai 上での実行確認は行っていない
 - **2026-08-22** [skills.sh ガイド](docs/dev-methods/skills-sh.md) の「注目のスキル集（Top 20）」をランキング非依存の構成へ再編（#108）。順位付けの見出しをやめ、**用途別（開発プロセス／Web フロントエンド／文書・データ）の表**へ組み替えた。インストール数・順位・掲載件数といった変動値は本文に書かず、確認日（2026-08-22）と出典リポジトリを明記する形に統一。CONTRIBUTING の「変化しやすい情報の扱い」にランキングの行を追加
 - **2026-08-22** upstream 監視の対象を拡張し、ページ鮮度の自動レポートを追加（#107）
   - `scripts/check_dev_methods_updates.py` を新設し、手動追従だった 5 リポジトリ（openai/skills・mattpocock/skills・obra/superpowers・vercel-labs/agent-skills・awslabs/aidlc-workflows）の新規追加を 1 スクリプトで検出。`.github/workflows/check-dev-methods-updates.yml` が毎週チェックし、対応 docs ページと `known-files.json` の更新キーを明記した Issue を起票する
