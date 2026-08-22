@@ -1,8 +1,30 @@
 # Awesome AI Skills JP
 
+[![CI](https://github.com/ougotti/awesome-copilot-jp/actions/workflows/ci.yml/badge.svg)](https://github.com/ougotti/awesome-copilot-jp/actions/workflows/ci.yml)
+
 > GitHub Copilot・Claude Code・Codex の **スキル／エージェント／カスタマイズ機能**を、日本語で体系的に解説するガイドです。
 > GitHub・OpenAI・Anthropic・AWS の公式リポジトリに加えて、mattpocock/skills・superpowers・skills.sh といった**コミュニティ資源**も対象にしています。
 > コードを書かない**事務・経理・金融・バックオフィス**向けの活用ガイドも収録しています。
+
+---
+
+## 🆕 最近の更新
+
+<!--
+  メンテナ向けの注記
+
+  この欄は「毎週更新されている生きたガイド」であることを README だけで伝えるためのものです。
+  CHANGELOG.md に追記したら、ここにも 1 行追加し、**最大 5 行**になるよう古い行を落としてください。
+  書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
+-->
+
+- **2026-08-22** ツール別入口ページへ 2026-08 の動向を反映（[Copilot](docs/copilot/README.md) / [Claude Code](docs/claude-code/basics.md) / [Codex](docs/codex/README.md)）。削除・別名化された Claude Code のコマンドも[スナップショットを更新](docs/claude-code/commands.md)
+- **2026-08-21** [Skills 最新動向](docs/trends.md) に Snyk「ToxicSkills」調査の定量データを追加（3,984 Skill の監査で 36.82% に問題）
+- **2026-08-21** [Skills 最新動向](docs/trends.md) に「ハーネスエンジニアリングという実践」を追加
+- **2026-08-18** [Skills 最新動向](docs/trends.md) のハーネス節に **QM**（Y Combinator の OSS ハーネス）を追加
+- **2026-08-17** [Skills 最新動向](docs/trends.md) に「Skill / Plugin のセキュリティ」「Skill が動く場所の広がり」「MCP の次期仕様」を新設
+
+**→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
 ---
 
