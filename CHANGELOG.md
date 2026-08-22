@@ -4,6 +4,11 @@
 
 ## 2026-08
 
+- **2026-08-22** [Skills 最新動向](docs/trends.md) を再構成（#106）。12 節・約 810 行まで肥大化していたため、恒常的な解説だった 2 節を独立ページへ分離した
+  - [AI エージェントの実行基盤（ハーネス）](docs/dev-methods/harness.md) を新設（旧 9 節）。概念・ハーネスエンジニアリング・Microsoft Copilot Studio / QM の実装・セキュリティポスチャを集約
+  - [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md) を新設（旧 10 節）。標準が未定義の領域・導入前の確認手順・Snyk の監査データ・組織での許可範囲の限定に加え、「導入の最低ライン」表を追加
+  - エンジニア向けの上記ページと、非エンジニア向けの [生成AIを業務で安全に使う](docs/business/safety.md) を相互リンク。[Agents 一覧](docs/copilot/agents.md) の `trojan-skill-hunter` からもセキュリティページへ導線を張った
+  - trends.md は要約＋リンクを残し、7 節以降をテーマ順（発見・配布 → 実行基盤 → 安全 → プロトコル）へ並べ替え。約 810 行 → 約 640 行
 - **2026-08-22** README に「🆕 最近の更新」欄と CI バッジを常設（#105）。冒頭 1 スクロール以内で直近の更新が分かるようにし、`ci.yml` に `main` への push トリガーを追加してバッジが既定ブランチの状態を示すようにした。運用ルール（CHANGELOG 追記時に README のハイライトも更新・上限 5 行）を [CHANGELOG の記録のルール](CHANGELOG.md#記録のルール) と [CONTRIBUTING の編集チェックリスト](CONTRIBUTING.md#編集チェックリスト) に明記
 - **2026-08-22** ツール別入口ページへ 2026-08 の動向を反映（#104）。trends.md にしか書かれていなかった GA 情報を、各ツールの手順・判断表へ落とし込んだ
   - [GitHub Copilot ガイド](docs/copilot/README.md) — Plugins の状態を `GA`（VS Code の Agent plugins が [2026-08-12 に一般提供](https://github.blog/changelog/2026-08-12-agent-plugins-1-0-in-vs-code-copilot-cli-and-the-copilot-app/)）へ更新し、「カスタマイズが効く場所 — レビューとエージェント」を新設（code review の Skill / MCP 活用と `.github/skills/` の配置、effort levels）。`plugins.md` への導線を追加

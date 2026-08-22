@@ -412,7 +412,7 @@ Cookbook Recipes は、GitHub Copilot SDK を使ったアプリケーション�
 
 レビューの深さ（**effort levels**）も選べます（2026-08-07 一般提供）。`Lite` は単純な変更向け、`Balanced` はより高い推論能力が要る変更向けで、組織管理者が既定値を設定できます（組織設定 → Copilot → Copilot code review）。使用されたレベルはタイムラインと PR の概要コメントに表示されます。
 
-**→ 経緯と他ツールの対応状況は [Skills 最新動向 11 節](../trends.md#11-skill-が動く場所の広がり) を参照**
+**→ 経緯と他ツールの対応状況は [Skills 最新動向 9 節](../trends.md#9-skill-が動く場所の広がり) を参照**
 
 ---
 
