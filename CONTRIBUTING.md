@@ -81,6 +81,7 @@ docs/
 | **収録件数** | 自動検証できるものだけ本文に書く。`scripts/check_catalog_counts.py` が `known-files.json` と照合している Instructions / Agents / Prompts の 3 つが該当。**それ以外の件数は本文に書かない** |
 | **コマンド一覧** | 付録ファイルへ分け、冒頭でスナップショットである旨と公式リファレンスを明示する（例: `docs/claude-code/commands.md`） |
 | **価格・プラン名・モデル名** | 本文に固定で書かず、公式ページへのリンクにする。書く場合はページ冒頭の「最終更新」日と併せて読める形にする |
+| **ランキング・人気順** | 本文に順位や参照数を書かない。順位で並べず**用途・カテゴリで整理**し、変動値が必要な場合のみ「取得日: YYYY-MM-DD」を明記して出典サイトへリンクする（例: `docs/dev-methods/skills-sh.md`） |
 | **提供状況** | `GA` / `Preview` / `Experimental` のラベルで示す。提供地域・OS の限定がある場合は本文冒頭か表に明記する |
 
 > 件数表記を変更するときは `python3 scripts/check_catalog_counts.py` が通ることを確認してください。CI でも検証されます。

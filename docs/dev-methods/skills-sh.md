@@ -1,6 +1,6 @@
 # skills.sh — Agent Skills ディスカバリーサイト
 
-> **対象ツール**: ツール横断（Claude Code・Codex・Cursor・OpenCode ほか 70+ エージェント対応） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-07-30
+> **対象ツール**: ツール横断（Claude Code・Codex・Cursor・OpenCode ほか 70+ エージェント対応） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-22
 
 > [skills.sh](https://skills.sh/) は、Agent Skills を検索・発見・導入するための公開ポータルサイトです。[vercel-labs/skills](https://github.com/vercel-labs/skills) が提供する `npx skills` CLI と連携しており、個人・企業・コミュニティが公開したスキル集を一元的に参照できます。
 
@@ -62,152 +62,62 @@ npx skills use vercel-labs/agent-skills --skill web-design-guidelines --agent cl
 
 ---
 
-## 注目のスキル集（Top 20）
+## 用途から選ぶ定番スキル
 
-以下は、[skills.sh](https://skills.sh/) で特に参照数が多く、実務での採用実績も豊富なスキルを 20 項目にまとめたものです。なお、一部の項目では複数の関連スキルをまとめて紹介しています。
+skills.sh のランキングは短期間で入れ替わります。ここでは**順位ではなく用途**で整理しています。掲載順に意味はありません。インストール数・順位・掲載件数といった変動値は本文に書かないため、「いま何が伸びているか」は [skills.sh](https://skills.sh/) で直接確認してください。
 
-### 開発プロセス系
+> 各スキルの説明は、**提供元リポジトリの README と `SKILL.md`（2026-08-22 確認）**に基づきます。収録スキルは追加・削除されることがあります。
 
-#### 1. grill-me（mattpocock/skills）
+### 開発プロセスを整える
 
-計画や設計の意思決定を、分岐が解決するまで質問で詰める。着手前に要件の抜けを防ぐ問答ループ。
+要件整理から実装・レビューまでの進め方を、エージェントに規律として与えるスキルです。**まとめて導入して流れごと変える**使い方が前提になります。
 
-```powershell
-npx skills add mattpocock/skills --skill grill-me
-```
+| 目的 | スキル | 提供元 | 導入 |
+|------|-------|-------|------|
+| 着手前に要件の抜けを潰す | `grill-me` | mattpocock/skills | `npx skills add mattpocock/skills --skill grill-me` |
+| 会話を仕様にして Issue へ出す | `to-spec` | mattpocock/skills | `npx skills add mattpocock/skills --skill to-spec` |
+| 仕様を依存関係付きのチケットへ分解する | `to-tickets` | mattpocock/skills | `npx skills add mattpocock/skills --skill to-tickets` |
+| 仕様どおりに実装させる（TDD とレビューを内包） | `implement` | mattpocock/skills | `npx skills add mattpocock/skills --skill implement` |
+| red-green-refactor を徹底する | `tdd` / `test-driven-development` | mattpocock/skills ／ obra/superpowers | `npx skills add mattpocock/skills --skill tdd` |
+| 規約と仕様準拠を分けてレビューする | `code-review` | mattpocock/skills | `npx skills add mattpocock/skills --skill code-review` |
+| 1 セッションに収まらない作業を地図にする | `wayfinder` | mattpocock/skills | `npx skills add mattpocock/skills --skill wayfinder` |
+| 設計を質問で深掘りしてから実装させる | `brainstorming` | obra/superpowers | `npx skills add obra/superpowers` |
+| 推測での修正をやめさせる | `systematic-debugging` | obra/superpowers | `npx skills add obra/superpowers` |
 
-#### 2. to-spec（mattpocock/skills）
+**→ 個々の解説は [mattpocock/skills](mattpocock-skills.md) ／ [superpowers](superpowers.md) を参照**
 
-現在の会話を仕様書としてまとめ、Issue tracker へ公開する。「話した内容」を「合意した仕様」に変換する。
+### Web フロントエンドの品質を上げる
 
-```powershell
-npx skills add mattpocock/skills --skill to-spec
-```
-
-#### 3. to-tickets（mattpocock/skills）
-
-仕様を依存関係付きの tracer-bullet 型チケットへ分解する。実装順序と依存グラフを自動生成する。
-
-```powershell
-npx skills add mattpocock/skills --skill to-tickets
-```
-
-#### 4. implement（mattpocock/skills）
-
-仕様やチケットを実装し、合意した境界で TDD とコードレビューを回す。`tdd` / `code-review` と組み合わせる。
+Vercel 公式の [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) は、まとめて導入して必要なものだけ残す使い方が向いています。
 
 ```powershell
-npx skills add mattpocock/skills --skill implement
-```
-
-#### 5. tdd（mattpocock/skills）
-
-red-green-refactor を垂直スライス単位で進める。TDD サイクルを強制するプロセス規律スキル。
-
-```powershell
-npx skills add mattpocock/skills --skill tdd
-```
-
-#### 6. code-review（mattpocock/skills）
-
-Standards（コーディング規約）と Spec（仕様準拠）の 2 軸を別々にレビューする。
-
-```powershell
-npx skills add mattpocock/skills --skill code-review
-```
-
-#### 7. wayfinder（mattpocock/skills）
-
-1 セッションでは収まらない大規模作業を、調査チケットの地図に整理する。長期タスクの羅針盤として機能する。
-
-```powershell
-npx skills add mattpocock/skills --skill wayfinder
-```
-
-#### 8. brainstorming（obra/superpowers）
-
-設計をソクラテス式の質問で深掘りし、承認なしに実装へ進ませない。superpowers フレームワークのエントリーポイント。
-
-```powershell
-npx skills add obra/superpowers
-```
-
-#### 9. test-driven-development（obra/superpowers）
-
-RED-GREEN-REFACTOR サイクルを Iron Law（鉄の掟）として強制する。テストなしのコードを書かせない。
-
-#### 10. systematic-debugging（obra/superpowers）
-
-再現→仮説→検証→修正の 4 フェーズでデバッグする。推測での修正を防ぐ体系的アプローチ。
-
----
-
-### Web 開発系（vercel-labs/agent-skills）
-
-```powershell
-# まとめてインストール
 npx skills add vercel-labs/agent-skills
 ```
 
-#### 11. react-best-practices
+| 目的 | スキル | 内容 |
+|------|-------|------|
+| React / Next.js の性能を直す | `react-best-practices` | ウォーターフォール排除・バンドルサイズ・再レンダリング最適化を 8 カテゴリで指導 |
+| UI のアクセシビリティと UX を監査する | `web-design-guidelines` | aria-label・フォームバリデーション・アニメーション・ダークモードなどを点検 |
+| デプロイ済みプロジェクトのコストを下げる | `vercel-optimize` | メトリクスを取得してから、指し示されたルートとファイルだけを調査する |
+| 文書の書き方を揃える | `writing-guidelines` | Vercel の文書規約（ボイス・構造・コード例・タイポグラフィ） |
+| ページ遷移アニメーションを実装する | `react-view-transitions` | `<ViewTransition>` / `addTransitionType` と App Router 統合 |
+| boolean prop の増殖を止める | `composition-patterns` | Compound Components / State Lifting / 内部 Composition |
 
-React / Next.js の性能最適化ルールを 40 以上収録。ウォーターフォール排除・バンドルサイズ削減・再レンダリング最適化を 8 カテゴリで網羅。
+> 上記のほか、upstream の README では `react-native-guidelines`・`vercel-deploy-claimable` も紹介されています。収録は入れ替わるため、導入時は `npx skills add vercel-labs/agent-skills` の選択画面か[リポジトリ](https://github.com/vercel-labs/agent-skills)で最新の一覧を確認してください。
 
-#### 12. web-design-guidelines
+### 文書・データを扱う
 
-UI コードのアクセシビリティ・性能・UX を 100 以上のルールで監査。aria-label・フォームバリデーション・アニメーション・ダークモードなど幅広く対応。
+| 目的 | スキル | 提供元 | 導入 |
+|------|-------|-------|------|
+| Word・PDF・PowerPoint・Excel を生成／編集する | `docx` / `pdf` / `pptx` / `xlsx` | anthropics/skills | `/plugin install document-skills@anthropic-agent-skills` |
+| Web 検索・スクレイピング・構造化抽出を足す | Firecrawl 公式プラグイン | Firecrawl | `npx -y firecrawl-cli@latest init --all --browser` |
 
-#### 13. vercel-optimize
+**→ 文書処理スキルの詳細は [Anthropic 公式スキル](../claude-code/official-skills.md) を参照**
 
-デプロイ済み Vercel プロジェクトのコスト・性能・キャッシュ・Functions 使用状況を監査し、問題箇所をランキング形式でレポートする。
+### 選ぶときの注意
 
-#### 14. writing-guidelines
-
-Vercel の文書作成規約（ボイス・構造・コードサンプル・タイポグラフィ）を 80 以上のルールでレビューする。ドキュメント品質の底上げに使う。
-
-#### 15. react-native-guidelines
-
-React Native / Expo 向けの性能・アーキテクチャ・プラットフォーム別パターンを 16 ルールで解説。FlashList・Reanimated・モノレポ構成に対応。
-
-#### 16. react-view-transitions
-
-React の View Transition API（`<ViewTransition>` / `addTransitionType`）を実装する。ページ遷移・共有要素アニメーション・Next.js App Router 統合まで対応。
-
-#### 17. composition-patterns
-
-boolean prop の増殖を避けるコンポーネント設計（Compound Components / State Lifting / 内部 Composition）を指導する。
-
-#### 18. vercel-deploy-claimable
-
-プロジェクトを Vercel へワンショットでデプロイし、プレビュー URL とクレーム URL を返す。claude.ai や Claude Desktop からの会話デプロイに使う。
-
----
-
-### ドキュメント作成系（anthropics/skills）
-
-```powershell
-# Claude Code プラグイン経由でインストール
-/plugin install document-skills@anthropic-agent-skills
-```
-
-#### 19. docx / pdf / pptx / xlsx（Anthropic 公式）
-
-Word・PDF・PowerPoint・Excel の生成・編集スキル。Claude.ai の有料プランで提供される文書作成機能のバックエンドとして実用されている。
-
-詳細は [Anthropic 公式スキル](../claude-code/official-skills.md) を参照してください。
-
----
-
-### Web データ取得系
-
-#### 20. firecrawl-claude-plugin
-
-Web 検索・スクレイピング・クロール・構造化データ抽出を Claude Code へ追加する Firecrawl 公式プラグイン。
-
-```powershell
-# Firecrawl CLIでまとめて導入
-npx -y firecrawl-cli@latest init --all --browser
-```
+- **入れるほど良いわけではありません。** カタログが膨らむとコンテキストを圧迫し、意図しないスキルが選ばれることもあります。使う分だけ有効にしてください
+- **導入前に中身を読む。** `SKILL.md` はエージェントの振る舞いを書き換える指示です（[Skill / Plugin のセキュリティ](skill-security.md)）
 
 ---
 
@@ -267,6 +177,7 @@ npx skills init my-custom-skill
 - [mattpocock/skills 日本語解説](mattpocock-skills.md) — 実務エンジニア向け開発プロセス Skills
 - [obra/superpowers 日本語解説](superpowers.md) — SDLC フレームワーク
 - [Anthropic 公式スキル](../claude-code/official-skills.md) — docx / pdf / pptx / xlsx 等の文書作成スキル
+- [Skill / Plugin のセキュリティ](skill-security.md) — 導入前に何を確認するか
 - [Skills 最新動向](../trends.md) — skills.sh を含む Agent Skills エコシステムの概要
 
 ---
