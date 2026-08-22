@@ -53,6 +53,8 @@ npx skills add mattpocock/skills -g
 npx skills use vercel-labs/agent-skills --skill web-design-guidelines --agent claude-code
 ```
 
+> **2026-08 時点の CLI の変更**: スキル選択画面に**一括選択**が追加され、`--skill '*'` のワイルドカード指定では内部用スキルが除外されるようになりました。skills.sh のパックから導入する場合は、対象スキルが**あらかじめ選択された状態**で表示されます。`npx skills update` は、upstream に新しく追加されたスキルを提示します。対応エージェントには **Posit Assistant** と **MiniMax Code** が加わり、プライベートリポジトリの認証も強化されています。
+
 ### インストール先パス（代表例）
 
 | スコープ | Claude Code | Codex |
