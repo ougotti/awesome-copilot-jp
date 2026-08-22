@@ -102,8 +102,23 @@ docs/
 | [github/awesome-copilot](https://github.com/github/awesome-copilot) | `.github/workflows/check-upstream-updates.yml` | `scripts/check_upstream_updates.py` | `instructions` / `agents` / `prompts` | `docs/copilot/instructions.md` / `docs/copilot/agents.md` / `docs/copilot/prompts.md` |
 | [anthropics/skills](https://github.com/anthropics/skills) | `.github/workflows/check-anthropics-skills-updates.yml` | `scripts/check_anthropics_skills_updates.py` | `anthropics_skills` | `docs/claude-code/official-skills.md` |
 | [anthropics/financial-services](https://github.com/anthropics/financial-services) | `.github/workflows/check-financial-services-updates.yml` | `scripts/check_financial_services_updates.py` | `financial_services_agents` / `financial_services_vertical` / `financial_services_partner` | `docs/business/financial-services.md` |
+| [openai/skills](https://github.com/openai/skills) | `.github/workflows/check-dev-methods-updates.yml` | `scripts/check_dev_methods_updates.py` | `openai_skills` | `docs/codex/catalog.md` |
+| [mattpocock/skills](https://github.com/mattpocock/skills) | 同上 | 同上 | `mattpocock_skills` | `docs/dev-methods/mattpocock-skills.md` |
+| [obra/superpowers](https://github.com/obra/superpowers) | 同上 | 同上 | `superpowers_skills` | `docs/dev-methods/superpowers.md` |
+| [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | 同上 | 同上 | `vercel_agent_skills` | `docs/dev-methods/skills-sh.md` |
+| [awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows) | 同上 | 同上 | `aidlc_extensions` | `docs/dev-methods/aidlc-workflows.md` |
 
-> 補足: `openai/skills`、`mattpocock/skills`、`obra/superpowers`、`awslabs/aidlc-workflows` は現時点で専用の自動更新チェック workflow がないため、必要に応じて手動で差分確認して更新してください。
+監視対象を増やすときは、`scripts/check_dev_methods_updates.py` の `TARGETS` に 1 エントリ（リポジトリ・監視パス・対応 docs・`known-files.json` のキー）を追加し、`scripts/known-files.json` に現在の一覧を登録してください。新しいスクリプトやワークフローを作る必要はありません。
+
+> 補足: [vercel-labs/skills](https://github.com/vercel-labs/skills)（`skills.sh` の CLI 本体）は「新規ファイルの追加」で変化を捉えられないため、監視対象は Vercel 公式 Skill 集の [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) にしています。CLI 側の変更は下記の鮮度チェックを起点に、リリースノートを確認して追従してください。
+
+### ページ鮮度の月次チェック
+
+`.github/workflows/check-page-freshness.yml` が毎月 1 日に `scripts/check_page_freshness.py` を実行し、**「最終更新」が 45 日を超えた `docs/` 配下のページ**を一覧にした Issue を起票します。
+
+- 内容が実態と合っているかを点検し、**差分がなければ「最終更新」の日付だけを更新**してください（点検した記録になります）
+- 内容を変更した場合は `CHANGELOG.md` と README の「🆕 最近の更新」にも追記します
+- しきい値を変えて試すときは、ワークフローの手動実行（`workflow_dispatch`）で `threshold_days` を指定できます
 
 ## 行動規範
 

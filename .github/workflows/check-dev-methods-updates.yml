@@ -1,0 +1,100 @@
+name: 手動追従 upstream の更新チェック
+
+on:
+  schedule:
+    # 毎週月曜 09:30 JST (00:30 UTC) に実行
+    - cron: '30 0 * * 1'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run（Issue を作成しない）'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  check-updates:
+    name: openai/skills ほか 5 リポジトリの新規追加をチェック
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v5
+
+      - name: Python セットアップ
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: 更新チェックスクリプトを実行
+        id: check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TRACKED_FILE: scripts/known-files.json
+        run: python scripts/check_dev_methods_updates.py
+
+      - name: 新規追加がある場合 Issue を作成
+        if: steps.check.outputs.has_new_items == 'true' && inputs.dry_run != 'true'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const report = JSON.parse(fs.readFileSync('dev_methods_report.json', 'utf8'));
+
+            const sections = [];
+            let total = 0;
+
+            for (const [key, target] of Object.entries(report)) {
+              if (!target.new || target.new.length === 0) continue;
+              total += target.new.length;
+
+              const items = target.new.map(p =>
+                `- [\`${p}\`](https://github.com/${target.repo}/tree/main/${p})`
+              ).join('\n');
+
+              sections.push([
+                `### ${target.repo}（${target.new.length} 件）`,
+                ``,
+                `対応 docs: [${target.label}](${target.docs})`,
+                `\`scripts/known-files.json\` の更新キー: \`${key}\``,
+                ``,
+                items,
+                ``,
+              ].join('\n'));
+            }
+
+            const body = [
+              `## 手動追従の upstream に新規追加がありました`,
+              ``,
+              `自動更新チェックの対象になっていなかった upstream に、合計 **${total} 件**の新規追加を検出しました。`,
+              `各リポジトリの対応 docs ページへの反映を検討してください。`,
+              ``,
+              ...sections,
+              `---`,
+              ``,
+              `### 対応方法`,
+              ``,
+              `1. 上記の \`SKILL.md\`（または拡張のルールファイル）を確認する`,
+              `2. 対応 docs ページに解説を追加する`,
+              `3. \`scripts/known-files.json\` の該当キーを更新する`,
+              `4. \`CHANGELOG.md\` と README の「🆕 最近の更新」に1行追記する`,
+              ``,
+              `> このIssueは [check-dev-methods-updates](../../actions/workflows/check-dev-methods-updates.yml) ワークフローにより自動生成されました。`,
+            ].join('\n');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[更新通知] 手動追従 upstream に ${total} 件の新規追加 (${new Date().toISOString().split('T')[0]})`,
+              body,
+              labels: ['upstream-update', 'documentation'],
+            });
+
+            console.log(`Issue created: ${total} new items found`);
+
+      - name: 新規追加なし（スキップ）
+        if: steps.check.outputs.has_new_items != 'true'
+        run: echo "新規追加はありませんでした。"

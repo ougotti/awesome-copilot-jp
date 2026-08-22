@@ -20,9 +20,9 @@
 
 - **2026-08-22** [Skills 最新動向](docs/trends.md) を再構成し、[ハーネス](docs/dev-methods/harness.md) と [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md) を独立ページとして新設
 - **2026-08-22** ツール別入口ページへ 2026-08 の動向を反映（[Copilot](docs/copilot/README.md) / [Claude Code](docs/claude-code/basics.md) / [Codex](docs/codex/README.md)）。削除・別名化された Claude Code のコマンドも[スナップショットを更新](docs/claude-code/commands.md)
+- **2026-08-22** 手動追従だった upstream 5 リポジトリの更新チェックと、月次のページ鮮度レポートを自動化
 - **2026-08-22** README に「最近の更新」欄と CI バッジを常設
 - **2026-08-21** [Skills 最新動向](docs/trends.md) に Snyk「ToxicSkills」調査の定量データを追加（3,984 Skill の監査で 36.82% に問題）
-- **2026-08-21** [Skills 最新動向](docs/trends.md) に「ハーネスエンジニアリングという実践」を追加
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 

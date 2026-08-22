@@ -1,0 +1,42 @@
+{
+  "base_date": "2026-10-01",
+  "threshold_days": 45,
+  "stale": [
+    {
+      "path": "docs/claude-code/official-skills.md",
+      "updated": "2026-07-29",
+      "days": 64
+    },
+    {
+      "path": "docs/copilot/prompts.md",
+      "updated": "2026-07-29",
+      "days": 64
+    },
+    {
+      "path": "docs/dev-methods/skills-sh.md",
+      "updated": "2026-07-30",
+      "days": 63
+    },
+    {
+      "path": "docs/business/README.md",
+      "updated": "2026-08-01",
+      "days": 61
+    },
+    {
+      "path": "docs/business/financial-services.md",
+      "updated": "2026-08-01",
+      "days": 61
+    },
+    {
+      "path": "docs/business/office-work.md",
+      "updated": "2026-08-01",
+      "days": 61
+    },
+    {
+      "path": "docs/business/use-cases.md",
+      "updated": "2026-08-01",
+      "days": 61
+    }
+  ],
+  "missing_header": []
+}
