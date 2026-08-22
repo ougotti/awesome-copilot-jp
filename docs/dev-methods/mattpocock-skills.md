@@ -1,6 +1,6 @@
 # mattpocock/skills - 実務エンジニア向け Agent Skills
 
-> **対象ツール**: ツール横断（Claude Code ほか Agent Skills 対応ツール） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-07-29
+> **対象ツール**: ツール横断（Claude Code ほか Agent Skills 対応ツール） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-22
 
 > [mattpocock/skills](https://github.com/mattpocock/skills) は、TypeScript教育者として知られる **Matt Pocock** 氏が実務で使うAgent Skills集です。「vibe coding」ではなく、要件の認識合わせ、仕様化、TDD、デバッグ、設計、レビューといったソフトウェア開発の基本を、小さく組み合わせ可能なSkillとしてエージェントへ与えます。
 
@@ -28,22 +28,24 @@ npx skills@latest add mattpocock/skills
 
 ### Claude Codeプラグイン
 
+Claude Code の公式マーケットプレイスに収録されているため、**マーケットプレイスの追加は不要**です。
+
 ```text
-/plugin marketplace add mattpocock/skills
-/plugin install mattpocock-skills@mattpocock
+/plugin install mattpocock-skills
 ```
 
 シェルから導入する場合：
 
 ```powershell
-claude plugin marketplace add mattpocock/skills
-claude plugin install mattpocock-skills@mattpocock
+claude plugins install mattpocock-skills
 ```
 
 | 導入方法 | 特徴 |
 |----------|------|
-| `npx skills` | プロジェクトへコピーされ、自分向けに編集できる。Codexなどにも導入可能 |
-| Claude Codeプラグイン | 読み取り専用の管理された一式として更新を追従する |
+| `npx skills` | プロジェクトへコピーされ、自分向けに編集できる。Codexなどにも導入可能。更新は `npx skills update` で任意のタイミングに取り込む |
+| Claude Codeプラグイン | 読み取り専用の管理された一式として更新を自動で追従する |
+
+> **両方入れない**こと。同じSkillが二重に入ります。Codexネイティブのプラグイン対応はロードマップ段階です（upstreamのADR 0002）。
 
 ---
 
@@ -90,6 +92,7 @@ claude plugin install mattpocock-skills@mattpocock
 | **codebase-design** | 小さなインターフェースの背後に多くの振る舞いを持つ深いモジュールを設計する |
 | **code-review** | StandardsとSpecの2軸を別々にレビューする |
 | **resolving-merge-conflicts** | merge / rebaseの競合を、両側の意図と一次情報からhunk単位で解決する |
+| **wizard** | 人手でしかできない手順（インフラ準備、資格情報やCIシークレットの設定、1回限りの移行）を対話型のbashウィザードとして生成する |
 
 ---
 
@@ -102,13 +105,15 @@ claude plugin install mattpocock-skills@mattpocock
 | **grill-me** | 計画や設計の意思決定を、分岐が解決するまで質問で詰める |
 | **handoff** | 現在の会話を、別エージェントが継続できるhandoff文書へ圧縮する |
 | **teach** | ディレクトリを状態保存に使い、複数セッションで概念を教える |
-| **writing-great-skills** | 予測可能なSkillを書くための語彙と設計原則を提供する |
+| **to-questionnaire** | 自分だけでは決められない判断を、答えられる相手へ渡すMarkdownの質問票にする |
+| **wait-what** | 相手の説明が腑に落ちなかった瞬間に使い、`CONTEXT.md` の語彙で噛み砕いて言い直させる |
 
 ### モデル呼び出し
 
 | Skill | 用途 |
 |-------|------|
-| **grilling** | `grill-me` / `grill-with-docs` が共通利用する深掘り質問ループ |
+| **grilling** | `grill-me` / `grill-with-docs` / `triage` / `wayfinder` / `improve-codebase-architecture` が共通利用する深掘り質問ループ |
+| **writing-for-agents** | Skill・AGENTS.md / CLAUDE.md など、エージェントが読む文書の書き方 |
 
 ---
 
@@ -152,4 +157,4 @@ implement
 
 ---
 
-> **更新基準日：2026年7月22日**。本ページは公式リポジトリのREADMEとSkill定義を元にした日本語解説です。
+> **更新基準日：2026年8月22日**。本ページは公式リポジトリのREADMEとSkill定義を元にした日本語解説です。

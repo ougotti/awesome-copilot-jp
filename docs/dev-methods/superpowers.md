@@ -1,6 +1,6 @@
 # obra/superpowers — コーディングエージェント向けスキルフレームワーク
 
-> **対象ツール**: ツール横断（Claude Code・Codex・Cursor・GitHub Copilot CLI ほか） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-07-29
+> **対象ツール**: ツール横断（Claude Code・Codex・Cursor・GitHub Copilot CLI ほか） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-22
 
 > [obra/superpowers](https://github.com/obra/superpowers) は Jesse Vincent 氏が開発した、AI コーディングエージェントに**ソフトウェア開発ライフサイクル（SDLC）の規律**を組み込むオープンソースのスキルフレームワークです。Claude Code、Codex、Cursor、GitHub Copilot CLI など多数のツールに対応しています。
 
@@ -27,6 +27,8 @@ superpowers は、AI コーディングエージェントが「すぐに実装�
 ---
 
 ## インストール方法
+
+導入手順は**ハーネス（実行基盤）ごとに違います**。複数のハーネスを使っているなら、それぞれに個別へ導入してください。以下は主要なものの抜粋で、upstream の README には Antigravity・Devin CLI・Factory Droid・Grok Build CLI・Kimi Code・Pi・Hermes Agent の手順もあります。
 
 ### Claude Code
 

@@ -1,6 +1,6 @@
 # Codex ガイド（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-01
+> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-22
 
 [openai/skills](https://github.com/openai/skills) は OpenAI が公開している Codex 用の公式スキルカタログです。指示・スクリプト・リソースをフォルダにまとめた「スキル」を追加することで、デプロイ・ブラウザ自動化・外部サービス連携といったワークフローを Codex に持たせられます。
 
@@ -100,6 +100,31 @@ Experimental は OpenAI による品質保証がありません。検証環境�
 
 ---
 
+## 5. Plugin でまとめて配る（2026-08 の追加）
+
+スキルを 1 つずつ入れるほかに、スキル・コネクタ・MCP サーバー・フックなどを束ねた **Plugin** を導入できます。Codex CLI 0.147.0（2026-08-07）で、可搬形式の Agent Plugin のインストールと、**ローカル / 個人 / ワークスペース / リモート**のカタログを横断した検索に対応しました。
+
+```text
+codex
+/plugins
+```
+
+CLI のプラグインブラウザは Marketplace ごとにタブが分かれ、詳細の確認・インストール・アンインストールと、インストール済みプラグインの有効・無効の切り替え（<kbd>Space</kbd>）ができます。
+
+| 項目 | 内容 |
+|------|------|
+| 使える場所 | Codex CLI（`/plugins`）と ChatGPT デスクトップアプリの Codex。**IDE 拡張は非対応** |
+| 同梱できる要素 | Skills / コネクタ / MCP サーバー / ブラウザ拡張 / フック / 定期タスクのテンプレート |
+| 導入後 | スキル導入時と同じく、**新しいセッションを開始してから**使う |
+| Cursor からの移行 | Cursor が管理している Skill をインポートできる（0.147.0） |
+| 注意 | フックは設定した時点で自動実行される。**有効化する前に中身を確認する** |
+
+> **入れすぎに注意**: Codex はコンテキストが逼迫すると Skill カタログを切り詰め、その旨を警告します。**使う分だけ有効にする**ほうが安定します（プラグインブラウザの <kbd>Space</kbd> で個別に無効化できます）。
+
+**→ 可搬形式（Agent Plugins 1.0.0）の仕様と他ツールの対応状況は [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準) を参照**
+
+---
+
 ## 外部アカウントが必要なスキル
 
 以下は Codex 単体では完結せず、**アカウントやコネクタ設定が前提**です。導入前に用意してください。
@@ -140,6 +165,7 @@ Experimental は OpenAI による品質保証がありません。検証環境�
 
 - [openai/skills リポジトリ](https://github.com/openai/skills) — 公式スキルカタログ
 - [Agent Skills – Codex 公式ドキュメント](https://developers.openai.com/codex/skills) — 公式スキル解説
+- [Plugins – Codex 公式ドキュメント](https://developers.openai.com/codex/plugins) — Plugin の導入・権限・Marketplace（公式）
 - [openai/codex リポジトリ](https://github.com/openai/codex) — Codex CLI 本体
 - [Codex CLI 公式ドキュメント](https://developers.openai.com/codex/cli) — CLI の使い方
 
