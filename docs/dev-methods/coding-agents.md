@@ -90,9 +90,21 @@ npm install -g @qwen-code/qwen-code@latest
 
 Anomaly が MIT で公開（リポジトリは [anomalyco/opencode](https://github.com/anomalyco/opencode)）。**特定のモデル提供元に紐づかない**ことが設計の中心にあります。
 
+導入はパッケージマネージャー経由が確実です（npm・Homebrew・Scoop などに対応）。
+
 ```bash
-curl -fsSL https://opencode.ai/install | bash
+npm install -g opencode-ai
 ```
+
+公式サイトのインストールスクリプトを使う場合は、**取得して中身を確認してから実行**してください。
+
+```bash
+curl -fsSL https://opencode.ai/install -o opencode-install.sh
+less opencode-install.sh          # 何をするスクリプトか確認する
+bash opencode-install.sh
+```
+
+> `curl ... | bash` の一行で済ませると、**実行するまで中身を確認できません**。配布元が正当でも、経路の差し替えに気づけない形になります。本ガイドが [Skill / Plugin のセキュリティ](skill-security.md) で述べている「導入前に中身を読む」は、インストールスクリプトにも同じく当てはまります。
 
 | 特徴 | 内容 |
 |------|------|
