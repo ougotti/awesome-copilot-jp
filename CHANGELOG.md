@@ -4,6 +4,35 @@
 
 ## 2026-08
 
+- **2026-08-22** dev-methods の upstream 点検で未反映だった 2 件を追補（#104 の残件）
+  - [obra/superpowers](docs/dev-methods/superpowers.md) — 「対応ツール」に **Devin CLI・Hermes Agent** を追加（[v6.3.0](https://github.com/obra/superpowers/releases) で対応。本文の導入手順一覧には既出だったが概要表に反映されていなかった）。スキル一覧に 2026-08 の変更を追記 — v6.2.0 で `testing-anti-patterns` が **`writing-good-tests` へ改名**（「やってはいけない例」から「良い例を先に示す 6 つのルール」へ）、v6.3.0 で依頼を **spike / bounded / architectural** に分類して手続きの重さを変える動作を追加
+  - [skills.sh ガイド](docs/dev-methods/skills-sh.md) — CLI（`npx skills`）の 2026-08 の変更を追記。一括選択の追加、`--skill '*'` からの内部スキル除外、パック導入時の事前選択、`update` での新規スキル提示、**Posit Assistant・MiniMax Code** 対応、プライベートリポジトリ認証の強化
+  - 二次情報にあった superpowers の「brainstorming three-path router」はリリースノートに該当記述がなく**不採用**とし、確認できた ceremony のスケーリングのみ記載
+- **2026-08-22** 非エンジニア向け（business/）ページを点検し、ユースケースを追補（#109）
+  - **手順の訂正**: Claude.ai のファイル作成（.docx / .xlsx / .pptx / .pdf）は[全プランで利用可能](https://support.claude.com/en/articles/12111783-create-and-edit-files-with-claude)（**無料プランを含む**）で、設定 → Capabilities の「コード実行とファイル作成」をオンにして使う、というのが現在の実態。「有料プランに標準搭載」としていた [README のクイックスタート](README.md#非エンジニア向けクイックスタート)・[事務・ビジネス活用ガイド](docs/business/README.md)・[事務・バックオフィス活用ガイド](docs/business/office-work.md) の記述を修正し、出力の受け取り方（ダウンロード／Google Drive 保存）も追記
+  - **シナリオ 3 件追加**（[シナリオ別ユースケース集](docs/business/use-cases.md)。既存の「用意するもの／頼みかた／受け取るもの／確認する項目」書式に準拠）— 「複数ファイルをまとめて要約し、比較表にする」「会議メモから議事録とタスク一覧まで一気に作る」（3 ステップの連続フロー）「PDF 帳票と転記済みデータを突き合わせる」（転記の検算）
+  - [生成AIを業務で安全に使う](docs/business/safety.md) から、エンジニア向けの [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md) への「もっと詳しく」リンクを追加（#106 と対）
+  - プロンプトテンプレートは出力形式の実現可能性（ファイル作成が対応する形式か）と制約文の妥当性を机上で点検。Claude.ai 上での実行確認は行っていない
+- **2026-08-22** [skills.sh ガイド](docs/dev-methods/skills-sh.md) の「注目のスキル集（Top 20）」をランキング非依存の構成へ再編（#108）。順位付けの見出しをやめ、**用途別（開発プロセス／Web フロントエンド／文書・データ）の表**へ組み替えた。インストール数・順位・掲載件数といった変動値は本文に書かず、確認日（2026-08-22）と出典リポジトリを明記する形に統一。CONTRIBUTING の「変化しやすい情報の扱い」にランキングの行を追加
+- **2026-08-22** upstream 監視の対象を拡張し、ページ鮮度の自動レポートを追加（#107）
+  - `scripts/check_dev_methods_updates.py` を新設し、手動追従だった 5 リポジトリ（openai/skills・mattpocock/skills・obra/superpowers・vercel-labs/agent-skills・awslabs/aidlc-workflows）の新規追加を 1 スクリプトで検出。`.github/workflows/check-dev-methods-updates.yml` が毎週チェックし、対応 docs ページと `known-files.json` の更新キーを明記した Issue を起票する
+  - `scripts/known-files.json` に 5 リポジトリの現在の一覧（計 91 件）を登録
+  - `scripts/check_page_freshness.py` と `.github/workflows/check-page-freshness.yml` を新設。毎月 1 日に「最終更新」が **45 日超**のページを一覧化した Issue を起票する（ヘッダーが無いページも報告）
+  - 監視対象一覧と鮮度チェックの対応フローを [CONTRIBUTING](CONTRIBUTING.md#新規ファイルの追跡) に追記
+- **2026-08-22** [Skills 最新動向](docs/trends.md) を再構成（#106）。12 節・約 810 行まで肥大化していたため、恒常的な解説だった 2 節を独立ページへ分離した
+  - [AI エージェントの実行基盤（ハーネス）](docs/dev-methods/harness.md) を新設（旧 9 節）。概念・ハーネスエンジニアリング・Microsoft Copilot Studio / QM の実装・セキュリティポスチャを集約
+  - [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md) を新設（旧 10 節）。標準が未定義の領域・導入前の確認手順・Snyk の監査データ・組織での許可範囲の限定に加え、「導入の最低ライン」表を追加
+  - エンジニア向けの上記ページと、非エンジニア向けの [生成AIを業務で安全に使う](docs/business/safety.md) を相互リンク。[Agents 一覧](docs/copilot/agents.md) の `trojan-skill-hunter` からもセキュリティページへ導線を張った
+  - trends.md は要約＋リンクを残し、7 節以降をテーマ順（発見・配布 → 実行基盤 → 安全 → プロトコル）へ並べ替え。約 810 行 → 約 640 行
+- **2026-08-22** README に「🆕 最近の更新」欄と CI バッジを常設（#105）。冒頭 1 スクロール以内で直近の更新が分かるようにし、`ci.yml` に `main` への push トリガーを追加してバッジが既定ブランチの状態を示すようにした。運用ルール（CHANGELOG 追記時に README のハイライトも更新・上限 5 行）を [CHANGELOG の記録のルール](CHANGELOG.md#記録のルール) と [CONTRIBUTING の編集チェックリスト](CONTRIBUTING.md#編集チェックリスト) に明記
+- **2026-08-22** ツール別入口ページへ 2026-08 の動向を反映（#104）。trends.md にしか書かれていなかった GA 情報を、各ツールの手順・判断表へ落とし込んだ
+  - [GitHub Copilot ガイド](docs/copilot/README.md) — Plugins の状態を `GA`（VS Code の Agent plugins が [2026-08-12 に一般提供](https://github.blog/changelog/2026-08-12-agent-plugins-1-0-in-vs-code-copilot-cli-and-the-copilot-app/)）へ更新し、「カスタマイズが効く場所 — レビューとエージェント」を新設（code review の Skill / MCP 活用と `.github/skills/` の配置、effort levels）。`plugins.md` への導線を追加
+  - [Claude Code のカスタマイズ機能](docs/claude-code/basics.md) — プラグイン節に「配布元と検証」（GitLab Marketplace 対応、`claude plugin validate` の frontmatter 検査、`headersHelper` の確認・フォルダ信頼・資格情報分離）と「Agent Plugins 1.0.0 との関係」を追加。サブエージェントの fork が既定で有効になった点を追記
+  - [コマンド一覧（付録）](docs/claude-code/commands.md) — [公式リファレンス](https://code.claude.com/docs/en/commands)でスナップショットを取り直し。削除・変更されたコマンド（`/settings` は存在しない、`/vim` は v2.1.92 で削除、`/pr-comments` は v2.1.91 で削除、`/cost` は `/usage` の別名、`/agents` は案内表示のみ）を明示し、`/context`・`/effort`・`/rewind`・`/fork`・`/plugin`・`/skills` 等を追加
+  - [Codex ガイド](docs/codex/README.md) — 「Plugin でまとめて配る」を新設（CLI 0.147.0 の `/plugins` ブラウザ、ローカル / 個人 / ワークスペース / リモートのカタログ横断、Cursor 管理 Skill のインポート、IDE 拡張は非対応、コンテキスト逼迫時のカタログ切り詰め）。[Agent Skills カタログ](docs/codex/catalog.md) に CLI 側の入手経路への導線を追加
+  - [mattpocock/skills](docs/dev-methods/mattpocock-skills.md) — upstream 差分に追従。Claude Code 公式マーケットプレイス収録により `marketplace add` が不要になった点、追加された Skill（`wizard` / `to-questionnaire` / `wait-what` / `writing-for-agents`）を反映
+  - [superpowers](docs/dev-methods/superpowers.md) / [AI-DLC ワークフロー](docs/dev-methods/aidlc-workflows.md) — 差分点検。superpowers は対応ハーネスの拡大（Antigravity・Devin CLI ほか）を注記、AI-DLC は補助ツール 2 件（Traceability / Code Reviewer）をリソース表へ追加
+  - 反映前に各公式 changelog の 2026-08-18 以降の差分を再点検（GitHub Copilot は Slack / Teams 連携と JetBrains の managed settings、Claude Code は 2.1.239、Codex CLI は 0.149.0 まで）。カスタマイズ機能に影響するものは上記に含めた
 - **2026-08-21** [Skills 最新動向](docs/trends.md) の 10 節に Snyk「ToxicSkills」調査の定量データを追加（#100 で保留していた項目）。前回調査時に 403 で到達できなかった[一次記事](https://snyk.io/blog/toxicskills-malicious-ai-agent-skills-clawhub/)を取得して検証 — 公開日 2026-02-05、監査対象 3,984 Skill（ClawHub / skills.sh）、36.82%（1,467 件）に問題・13.4%（534 件）が critical、悪性ペイロード 76 件（うち 8 件が調査時点で公開中）。二次情報で流通していた「30 件以上の悪性 Skill」「記事公開日 2026-04」は一次記事と食い違うため不採用。あわせて 10-3 の managed settings 適用対象に [JetBrains 対応（2026-08-18 発表）](https://github.blog/changelog/2026-08-18-enterprise-managed-settings-in-github-copilot-for-jetbrains/)を追記
   - 一次情報を確認できなかったもの: CSA research note（SKILL.md agent context poisoning）は本文・公開日とも取得できず（403）、検索経由の数値（1,184 件など）は不掲載のまま。Claude の「組織向け Skill 管理／パートナー Skill ディレクトリ」は公開日が 2025-12-18 と確認できたため、2026-08 の新規動向としては対象外
   - 各公式 changelog の 2026-08-18 以降の差分も点検（#104 の着手前確認）: GitHub は上記 JetBrains 対応のみ、Claude Code は 2.1.236〜2.1.238（2026-08-19〜2026-08-20。plugin marketplace / MCP の `headersHelper` に実行前確認とフォルダ信頼の必須化、資格情報の分離）、Codex CLI は 0.148.0〜0.149.0（2026-08-18〜2026-08-20。plugin マニフェスト処理の堅牢化、plugin の home スコープへの移動禁止、サンドボックスの fail-closed 化）。いずれもツール別ページへの反映は #104 で実施
@@ -50,3 +79,4 @@
 
 - upstream 更新チェック（check-upstream-updates / check-anthropics-skills-updates / check-financial-services-updates）の通知 Issue に対応して docs を更新したら、ここに1行追記します。
 - ページの新設・構成変更も1行で記録します。書式は `**YYYY-MM-DD** 変更内容（関連 Issue/PR）` です。
+- **ここに追記したら、[README の「🆕 最近の更新」](README.md#-最近の更新) にも 1 行追加してください。**上限は 5 行で、古い行から落とします。README しか見ない読者にも、直近 1〜2 週間で何が変わったかが伝わる状態を保つのが目的です。

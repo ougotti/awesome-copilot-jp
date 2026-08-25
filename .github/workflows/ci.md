@@ -11,6 +11,7 @@ Pull Requestに対して自動でコード品質チェックを行い、
 - Pull Requestが新規作成されたとき（`opened`）
 - Pull RequestにコミットがPushされたとき（`synchronize`）
 - Pull Requestが再オープンされたとき（`reopened`）
+- `main` ブランチへPushされたとき（`push`）— README の CI バッジが `main` の状態を示すために必要
 
 ## 実行内容
 
@@ -60,6 +61,9 @@ on:
       - opened
       - synchronize
       - reopened
+  push:
+    branches:
+      - main
 
 jobs:
   lint:

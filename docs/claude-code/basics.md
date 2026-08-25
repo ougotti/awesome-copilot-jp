@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-07-31
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-22
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -177,6 +177,8 @@ description: 現在のブランチのテストを生成して実行する
 
 レビュー専用・ドキュメント更新専用のように役割を分けると、大きなタスクを担当ごとの観点で進められます。
 
+> **2026-08 の変更**: サブエージェントの **fork が既定で有効**になりました（2.1.232）。`subagent_type: "fork"` のサブエージェントは親の会話とプロンプトキャッシュをそのまま引き継ぎ、対話セッションでのエージェント起動は既定でバックグラウンド実行になります。会話の続きを別観点で走らせたいときは、役割定義を書き起こすより fork のほうが速いことがあります。
+
 ---
 
 ## プラグイン
@@ -195,6 +197,22 @@ Skill・コマンド・サブエージェント・フック・MCP 設定をま�
 ```
 
 > GitHub Copilot 側の Plugin との違い（含められる要素、Marketplace の扱い、組織での強制方法）は [GitHub Copilot Plugins](../copilot/plugins.md#claude-code-の-plugin-marketplace-との比較) の比較表を参照してください。
+
+### 配布元と検証（2026-08 時点）
+
+| 項目 | 内容 |
+|------|------|
+| **GitLab の Marketplace** | `gitlab.com` のリポジトリ URL（nested subgroup を含む）を GitHub と同じように clone できる（2.1.232）。clone の認証に失敗したときのヒントも、実際の git ホスト名で表示される |
+| **`claude plugin validate`** | `.claude/skills` だけを持つプラグインも検査対象になり、frontmatter の解析に失敗する `SKILL.md` を報告する（2.1.233）。公開前の自己点検に使える |
+| **`headersHelper`** | url 形式の Marketplace やカタログエントリが、短命トークンなどの HTTP ヘッダーを生成するコマンドを実行できる（2.1.238）。実行前にコマンドが表示されて `[y/N]` の確認が入り、フォルダ信頼の受諾が必須で、資格情報の環境変数は継承されない |
+
+> バージョン番号は 2026-08 時点のスナップショットです。最新は [Claude Code の CHANGELOG](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md) を確認してください。
+
+### Agent Plugins 1.0.0 との関係
+
+2026 年 8 月に、Amazon・Anysphere（Cursor）・Microsoft・OpenAI・Vercel によるマルチベンダー共通仕様 **Agent Plugins 1.0.0** が公開され、GitHub Copilot・Cursor・Codex などが対応しました。一方 **Claude Code は現時点で対応を表明しておらず**、上記の `/plugin` はこれまでどおり Claude Code 独自形式のままです。共通仕様側が標準化しているのは Skills と MCP サーバーの 2 つだけなので、可搬性が要るなら **プラグイン単位ではなく `SKILL.md` 単位で共有する**ほうが現実的です。
+
+**→ 仕様の中身と各ツールの対応状況は [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準) を参照**
 
 ---
 

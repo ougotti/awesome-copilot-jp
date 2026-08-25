@@ -1,0 +1,100 @@
+name: ページ鮮度チェック
+
+on:
+  schedule:
+    # 毎月 1 日 09:00 JST (00:00 UTC) に実行
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run（Issue を作成しない）'
+        required: false
+        default: 'false'
+        type: boolean
+      threshold_days:
+        description: 'しきい値（日数）'
+        required: false
+        default: '45'
+        type: string
+
+jobs:
+  check-freshness:
+    name: 「最終更新」が 45 日超のページを一覧化
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v5
+
+      - name: Python セットアップ
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: 鮮度チェックスクリプトを実行
+        id: check
+        env:
+          FRESHNESS_DAYS: ${{ inputs.threshold_days || '45' }}
+        run: python scripts/check_page_freshness.py
+
+      - name: 鮮度切れがある場合 Issue を作成
+        if: steps.check.outputs.has_stale_pages == 'true' && inputs.dry_run != 'true'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const report = JSON.parse(fs.readFileSync('freshness_report.json', 'utf8'));
+
+            const rows = report.stale.map(item =>
+              `| [\`${item.path}\`](${item.path}) | ${item.updated} | ${item.days} 日 |`
+            ).join('\n');
+
+            const missing = report.missing_header.length
+              ? [
+                  ``,
+                  `### 「最終更新」ヘッダーが見つからないページ`,
+                  ``,
+                  ...report.missing_header.map(p => `- [\`${p}\`](${p})`),
+                  ``,
+                ]
+              : [];
+
+            const body = [
+              `## 「最終更新」が ${report.threshold_days} 日を超えたページ`,
+              ``,
+              `基準日 ${report.base_date} 時点で、**${report.stale.length} ページ**が ${report.threshold_days} 日を超えています。`,
+              `内容が実態と合っているかを点検し、変更がなければ「最終更新」だけを更新してください（点検した記録になります）。`,
+              ``,
+              `| ページ | 最終更新 | 経過 |`,
+              `|--------|---------|------|`,
+              rows,
+              ...missing,
+              ``,
+              `---`,
+              ``,
+              `### 対応方法`,
+              ``,
+              `1. 対象ページの手順・機能名・プラン名が公式の一次情報と一致するかを確認する`,
+              `2. 差分があれば本文を更新する`,
+              `3. ページ冒頭の「最終更新」を更新する`,
+              `4. 内容を変更した場合は \`CHANGELOG.md\` と README の「🆕 最近の更新」にも1行追記する`,
+              ``,
+              `> このIssueは [check-page-freshness](../../actions/workflows/check-page-freshness.yml) ワークフローにより自動生成されました。`,
+            ].join('\n');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[鮮度チェック] ${report.threshold_days} 日超のページ ${report.stale.length} 件 (${report.base_date})`,
+              body,
+              labels: ['documentation'],
+            });
+
+            console.log(`Issue created: ${report.stale.length} stale pages`);
+
+      - name: 鮮度切れなし（スキップ）
+        if: steps.check.outputs.has_stale_pages != 'true'
+        run: echo "しきい値を超えたページはありませんでした。"

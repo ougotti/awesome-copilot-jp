@@ -1,6 +1,6 @@
 # obra/superpowers — コーディングエージェント向けスキルフレームワーク
 
-> **対象ツール**: ツール横断（Claude Code・Codex・Cursor・GitHub Copilot CLI ほか） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-07-29
+> **対象ツール**: ツール横断（Claude Code・Codex・Cursor・GitHub Copilot CLI ほか） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-22
 
 > [obra/superpowers](https://github.com/obra/superpowers) は Jesse Vincent 氏が開発した、AI コーディングエージェントに**ソフトウェア開発ライフサイクル（SDLC）の規律**を組み込むオープンソースのスキルフレームワークです。Claude Code、Codex、Cursor、GitHub Copilot CLI など多数のツールに対応しています。
 
@@ -22,11 +22,13 @@ superpowers は、AI コーディングエージェントが「すぐに実装�
 | **作者** | Jesse Vincent（[Prime Radiant](https://primeradiant.com)） |
 | **リポジトリ** | [github.com/obra/superpowers](https://github.com/obra/superpowers) |
 | **ライセンス** | MIT |
-| **対応ツール** | Claude Code、Codex CLI/App、Cursor、Gemini CLI、OpenCode、GitHub Copilot CLI、Factory Droid |
+| **対応ツール** | Claude Code、Codex CLI/App、Cursor、Gemini CLI、OpenCode、GitHub Copilot CLI、Factory Droid、Devin CLI、Hermes Agent |
 
 ---
 
 ## インストール方法
+
+導入手順は**ハーネス（実行基盤）ごとに違います**。複数のハーネスを使っているなら、それぞれに個別へ導入してください。以下は主要なものの抜粋で、upstream の README には Antigravity・Devin CLI・Factory Droid・Grok Build CLI・Kimi Code・Pi・Hermes Agent の手順もあります。
 
 ### Claude Code
 
@@ -114,6 +116,8 @@ finishing-a-development-branch
 ## スキル一覧
 
 superpowers には 14 のスキルが含まれており、テスト・デバッグ・コラボレーション・メタの 4 カテゴリに分類されます。
+
+> **2026-08 の変更**: v6.2.0 で `testing-anti-patterns` が **`writing-good-tests` へ改名**され、「やってはいけない例」の列挙から「良い例を先に示す 6 つのルール」へ構成が変わりました。あわせて各スキルから要約・宣伝的な記述を削る圧縮が行われています。v6.3.0 では、依頼を **spike / bounded / architectural** に分類し、**タスクの規模に応じて手続きの重さを変える**動作が入りました。小さな修正にも重い設計プロセスが適用される問題への対処です。
 
 ### テスト（Testing）
 

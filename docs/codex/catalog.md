@@ -1,10 +1,12 @@
 # Codex Agent Skills カタログ
 
-> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-01
+> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-22
 
 [openai/skills](https://github.com/openai/skills) 収録スキルの全一覧です。導入手順・最初に試すスキル・3 層の違いは [Codex ガイド](README.md) を参照してください。
 
 > **表の読み方**: 「入力」「生成物」「人が確認すべき点」は、各スキルの用途から**本ガイドが整理した目安**です。正確な仕様と最新の収録内容は [openai/skills](https://github.com/openai/skills) の各 `SKILL.md` を確認してください。
+
+> **このページ以外の入手経路**: Codex CLI 0.147.0（2026-08-07）以降は、`/plugins` のプラグインブラウザから **ローカル / 個人 / ワークスペース / リモート**のカタログを横断して探せます。ここに載っているのは `openai/skills`（= Curated / Experimental）だけなので、社内 Marketplace で配られているものは CLI 側で確認してください（[導入手順](README.md#5-plugin-でまとめて配る2026-08-の追加)）。
 
 ---
 

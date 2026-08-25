@@ -1,6 +1,6 @@
 # awslabs/aidlc-workflows — AI 駆動開発ライフサイクル（AI-DLC）ワークフロー
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Amazon Q・Cursor ほか） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-07-29
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Amazon Q・Cursor ほか） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-22
 
 > [awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows) は AWS が公開した、AI エージェントを**検証可能・自己修正可能なエンジニアリングワークフロー**へと変える OSS プロジェクトです。GitHub Copilot、Claude Code、Amazon Q Developer、Cursor、Cline、Codex など主要なコーディングエージェントに対応しています。
 
@@ -319,6 +319,8 @@ uv run python run.py test
 | AWS DevOps ブログ | [AI-Driven Development Life Cycle（英語）](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/) |
 | メソッド定義ペーパー | [prod.d13rzhkk8cj2z0.amplifyapp.com（英語）](https://prod.d13rzhkk8cj2z0.amplifyapp.com/) |
 | デザインレビューツール | [aws-samples/sample-aidlc-design-reviewer（実験的）](https://github.com/aws-samples/sample-aidlc-design-reviewer) |
+| トレーサビリティツール | [aws-samples/sample-aidlc-traceability](https://github.com/aws-samples/sample-aidlc-traceability) |
+| コードレビューツール | [aws-samples/sample-aidlc-code-reviewer](https://github.com/aws-samples/sample-aidlc-code-reviewer) |
 | AWS 責任ある AI ポリシー | [aws.amazon.com/ai/responsible-ai/policy/（英語）](https://aws.amazon.com/ai/responsible-ai/policy/) |
 
 > [!IMPORTANT]

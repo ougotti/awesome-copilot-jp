@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-01
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-22
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -24,7 +24,7 @@ GitHub Copilot は GitHub が提供するコーディングアシスタントで
 | [Agents](#agents---専門家ペルソナ) | `.agent.md` | IDE / CLI | GA | 特定ドメインの専門家として振る舞うペルソナ | チャットで手動選択 |
 | [Skills](#skills---リソース同梱の複合ツール) | `SKILL.md` + 関連ファイル | IDE / CLI | GA | upstream の `skills/` で公開される、関連リソース同梱の自己完結型ツール | チャットで手動実行 |
 | [Collections](#collections---カスタマイズのセット) | `.collection.yml` | IDE | GA | 上記を組み合わせたキュレーション済みセット | プロジェクト単位で適用 |
-| [Plugins](#plugins---拡張をまとめた配布単位) | `plugin.json` + 各要素 | CLI / IDE | GA（CLI）／Preview（VS Code） | Agents / Skills / Hooks / MCP / LSP をまとめて配布・更新する単位 | インストール後は常時有効 |
+| [Plugins](#plugins---拡張をまとめた配布単位) | `plugin.json` + 各要素 | CLI / IDE | GA | Agents / Skills / Hooks / MCP / LSP をまとめて配布・更新する単位 | インストール後は常時有効 |
 | [Hooks](#hooks---セッションイベント駆動の自動アクション) | `hooks.json` + スクリプト | Cloud（コーディングエージェント） | GA | Copilot コーディングエージェントのセッションイベントで自動実行 | エージェントセッション中に自動 |
 | [Agentic Workflows](#agentic-workflows---ai-駆動のリポジトリ自動化) | `.md`（フロントマター + 自然言語） | Cloud（GitHub Actions） | GA | GitHub Actions 上で動く AI 自動化ワークフロー | スケジュール・イベントで自動実行 |
 | [Cookbook](#cookbook-recipes---実践的なコード例) | コードスニペット集 | — | GA | Copilot SDK を使ったコピー＆ペーストですぐ使えるコード例 | 実装の参考として随時 |
@@ -305,9 +305,12 @@ copilot plugin install database-data-management@awesome-copilot
 copilot plugin update database-data-management
 ```
 
-Copilot CLI には `copilot-plugins`（GitHub 公式コレクション）と `awesome-copilot` の 2 つの Marketplace が既定で登録されています。VS Code では **Agent plugins（Preview）** として利用できます。
+Copilot CLI には `copilot-plugins`（GitHub 公式コレクション）と `awesome-copilot` の 2 つの Marketplace が既定で登録されています。VS Code の **Agent plugins** は 2026-08-12 に一般提供となり、Copilot CLI・Copilot SDK・Copilot アプリと合わせて全 Copilot プランで使えます。
+
+同じ発表で、マルチベンダー共通の **Agent Plugins 1.0.0** への対応も一般提供となりました。ただし Copilot Plugin を書けば自動的に他エージェントへ持ち出せるわけではなく、`plugin.json` に `$schema` を書いて可搬形式へオプトインしたものだけが対象です。
 
 **→ 構成・Marketplace の作り方・Claude Code Plugin との比較は [plugins.md](plugins.md) を参照**
+**→ 可搬形式（Agent Plugins 1.0.0）と Copilot 独自形式の違い・移行手順は [plugins.md の「2 つの形式」](plugins.md#2-つの形式可搬形式とツール独自形式) と [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準) を参照**
 
 ---
 
@@ -390,6 +393,26 @@ Cookbook Recipes は、GitHub Copilot SDK を使ったアプリケーション�
 | **Go** | SDK セットアップ、ファイル操作、ベストプラクティス |
 | **Node.js (TypeScript)** | SDK セットアップ、非同期処理、ストリーミング |
 | **Python** | SDK セットアップ、エラーハンドリング、統合パターン |
+
+---
+
+## カスタマイズが効く場所 — レビューとエージェント
+
+カスタマイズは IDE のチャットの中だけのものではありません。同じ `SKILL.md` と MCP 設定を、**プルリクエストのレビュー**にも効かせられます（2026-07-29 一般提供）。
+
+| 項目 | 内容 |
+|------|------|
+| Skill の置き場所 | リポジトリの `.github/skills/<スキル名>/SKILL.md`（**コミットが必要**） |
+| MCP の設定 | リポジトリ設定 → Copilot → MCP servers |
+| 資格情報 | リポジトリ設定 → Secrets and variables → **Agents** |
+| 制約 | code review からの MCP ツール呼び出しは **read-only に限定**される |
+| 対象プラン | Pro / Pro+ / Business / Enterprise |
+
+> **置き場所を間違えやすい点**: ここで使う `.github/skills/` は、`copilot plugin install` や `gh skill install` が Skill を置く先とは**別系統**です。レビューに効かせたい Skill はリポジトリへコミットしてください。
+
+レビューの深さ（**effort levels**）も選べます（2026-08-07 一般提供）。`Lite` は単純な変更向け、`Balanced` はより高い推論能力が要る変更向けで、組織管理者が既定値を設定できます（組織設定 → Copilot → Copilot code review）。使用されたレベルはタイムラインと PR の概要コメントに表示されます。
+
+**→ 経緯と他ツールの対応状況は [Skills 最新動向 9 節](../trends.md#9-skill-が動く場所の広がり) を参照**
 
 ---
 

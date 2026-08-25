@@ -1,6 +1,6 @@
 # Claude Code ガイド
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-01
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-22
 
 [Claude Code](https://docs.anthropic.com/ja/docs/claude-code/overview) は Anthropic が提供するターミナルベースのコーディングエージェントです。GitHub Copilot が IDE 内のインライン補完に特化しているのに対し、ファイルシステム全体を横断する複雑なタスクをこなせるエージェントとして設計されています。
 
@@ -9,7 +9,7 @@
 | ドキュメント | 内容 |
 |-------------|------|
 | **[カスタマイズ機能](basics.md)** | CLAUDE.md、Agent Skills、カスタムコマンド、サブエージェント、フック、MCP と、その使い分け |
-| **[コマンド一覧（付録）](commands.md)** | 組み込みスラッシュコマンド、Web 版スキル、キーボードショートカットのスナップショット |
+| **[コマンド一覧（付録）](commands.md)** | 組み込みスラッシュコマンド、バンドルスキル、キーボードショートカットのスナップショット |
 | **[Anthropic 公式スキル](official-skills.md)** | [anthropics/skills](https://github.com/anthropics/skills) 収録スキル（docx / pdf / pptx / xlsx 等）の詳細解説 |
 
 ---
@@ -24,9 +24,12 @@
 | **サブエージェント** | 役割を分離した補助エージェント | 観点を分けて並行作業したい |
 | **フック（Hooks）** | `PreToolUse` / `PostToolUse` / `Stop` 等の自動実行 | 必ず挟みたい処理がある |
 | **MCP 連携** | GitHub、PostgreSQL、Slack などの外部ツール統合 | 外部サービスへ接続したい |
+| **プラグイン** | 上記をまとめて配布・更新する単位（Marketplace 経由） | チーム標準の拡張一式を配りたい |
 
 **→ 使い分けの判断表と設定方法は [カスタマイズ機能](basics.md) を参照**
 **→ 組み込みコマンドの一覧は [コマンド一覧（付録）](commands.md) を参照**
+
+> **2026-08 時点のトピック**: プラグイン Marketplace が GitLab（nested subgroup を含む）に対応し、`claude plugin validate` が `SKILL.md` の frontmatter エラーを報告するようになりました。サブエージェントの fork も既定で有効です。一方、マルチベンダー共通仕様の [Agent Plugins 1.0.0](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準) に Claude Code は現時点で対応を表明していません（[詳細](basics.md#agent-plugins-100-との関係)）。
 
 ---
 

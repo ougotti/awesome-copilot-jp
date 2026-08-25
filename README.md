@@ -1,8 +1,30 @@
 # Awesome AI Skills JP
 
+[![CI](https://github.com/ougotti/awesome-copilot-jp/actions/workflows/ci.yml/badge.svg)](https://github.com/ougotti/awesome-copilot-jp/actions/workflows/ci.yml)
+
 > GitHub Copilot・Claude Code・Codex の **スキル／エージェント／カスタマイズ機能**を、日本語で体系的に解説するガイドです。
 > GitHub・OpenAI・Anthropic・AWS の公式リポジトリに加えて、mattpocock/skills・superpowers・skills.sh といった**コミュニティ資源**も対象にしています。
 > コードを書かない**事務・経理・金融・バックオフィス**向けの活用ガイドも収録しています。
+
+---
+
+## 🆕 最近の更新
+
+<!--
+  メンテナ向けの注記
+
+  この欄は「毎週更新されている生きたガイド」であることを README だけで伝えるためのものです。
+  CHANGELOG.md に追記したら、ここにも 1 行追加し、**最大 5 行**になるよう古い行を落としてください。
+  書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
+-->
+
+- **2026-08-22** [Skills 最新動向](docs/trends.md) を再構成し、[ハーネス](docs/dev-methods/harness.md) と [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md) を独立ページとして新設
+- **2026-08-22** ツール別入口ページへ 2026-08 の動向を反映（[Copilot](docs/copilot/README.md) / [Claude Code](docs/claude-code/basics.md) / [Codex](docs/codex/README.md)）。削除・別名化された Claude Code のコマンドも[スナップショットを更新](docs/claude-code/commands.md)
+- **2026-08-22** 非エンジニア向けページを点検し、[ユースケース](docs/business/use-cases.md)を 3 件追加。Claude.ai のファイル作成は無料プランでも使える（設定 → Capabilities）点に手順を修正
+- **2026-08-22** 手動追従だった upstream 5 リポジトリの更新チェックと、月次のページ鮮度レポートを自動化
+- **2026-08-22** README に「最近の更新」欄と CI バッジを常設
+
+**→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
 ---
 
@@ -35,6 +57,7 @@
 | Skill を探して導入・更新する | CLI | [skills.sh ガイド](docs/dev-methods/skills-sh.md) ／ [Skills 最新動向](docs/trends.md) |
 | 開発プロセス（要件整理〜TDD〜レビュー）を改善する | CLI | [ツール横断の開発手法](#ツール横断の開発手法) |
 | チーム・組織の標準を作る | Repository / Enterprise | [Instructions 一覧](docs/copilot/instructions.md) ／ [Plugins](docs/copilot/plugins.md) |
+| 導入してよい Skill かを見極める | IDE / CLI | [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md) |
 
 > **はじめての方へ**: コードを書かない方は [非エンジニア向けクイックスタート](#非エンジニア向けクイックスタート)（ターミナル不要）から始めてください。
 
@@ -71,9 +94,9 @@
 
 **コードを書かない方向けの入口です。ターミナルやコマンドの知識は必要ありません。**
 
-1. **[Claude.ai](https://claude.ai) の有料プランに登録** — Word／Excel／PowerPoint／PDF を扱うスキルが最初から使えます。
+1. **[Claude.ai](https://claude.ai) に登録し、ファイル作成を有効にする** — 設定 → Capabilities（機能）で「コード実行とファイル作成」をオンにすると、Word／Excel／PowerPoint／PDF を作れるようになります。**無料プランでも利用できます**（Team / Enterprise は既定でオン）。
 2. **ファイルを添付して、日本語で頼むだけ** — 例：「この議事録メモを、決定事項と ToDo に分けた Word にして」
-3. **出力をダウンロードして確認・微修正** — 数値や固有名詞は必ず自分で確認しましょう。
+3. **出力をダウンロードして確認・微修正** — 生成されたファイルはダウンロードするか Google Drive へ保存できます。数値や固有名詞は必ず自分で確認しましょう。
 
 > 次に読むなら [シナリオ別ユースケース集](docs/business/use-cases.md) です。ターミナルを使う自動化まで進みたくなったら、[Claude Code ガイド](docs/claude-code/README.md)（CLI）へ移ってください。
 
@@ -111,10 +134,12 @@
 
 | ドキュメント | 提供元 | 状態 | 環境 | 内容 |
 |-------------|-------|------|------|------|
-| **[skills.sh ガイド](docs/dev-methods/skills-sh.md)** | Community | GA | CLI | Agent Skills の検索・導入ポータルと注目スキル |
+| **[skills.sh ガイド](docs/dev-methods/skills-sh.md)** | Community | GA | CLI | Agent Skills の検索・導入ポータルと用途別の定番スキル |
 | **[mattpocock/skills](docs/dev-methods/mattpocock-skills.md)** | Community | GA | CLI | 要件整理〜仕様化〜TDD〜レビューの手順スキル |
 | **[superpowers](docs/dev-methods/superpowers.md)** | Community | GA | CLI | SDLC スキルフレームワーク（複数ツール対応） |
 | **[AI-DLC ワークフロー](docs/dev-methods/aidlc-workflows.md)** | Official（AWS） | GA | CLI / IDE | 3 フェーズの AI 駆動開発ライフサイクル |
+| **[AI エージェントの実行基盤（ハーネス）](docs/dev-methods/harness.md)** | 本ガイド | — | CLI / Cloud | エージェントを動かす裏側の仕組みと実装例（Copilot Studio / QM） |
+| **[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md)** | 本ガイド | — | IDE / CLI | 導入前の確認手順、第三者監査の実態、組織での許可範囲の限定 |
 
 ### 共通・事務活用
 
