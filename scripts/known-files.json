@@ -586,10 +586,12 @@
     "write-coding-standards-from-file.prompt.md"
   ],
   "anthropics_skills": [
+    "academy-guide",
     "algorithmic-art",
     "brand-guidelines",
     "canvas-design",
     "claude-api",
+    "discernment-nudge",
     "doc-coauthoring",
     "docx",
     "frontend-design",
