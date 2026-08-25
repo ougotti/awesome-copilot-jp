@@ -4,6 +4,11 @@
 
 ## 2026-08
 
+- **2026-08-25** [コーディングエージェントの選び方](docs/dev-methods/coding-agents.md) を新設（#113）。Claude Code・Codex・Qwen Code・OpenCode・Bionic の 5 つを比較し、選定軸を整理した
+  - **「◯◯中心」という分類の訂正**: 各公式リポジトリ／ドキュメントで確認したところ、モデル系列による分類は既定値と開発元の立ち位置を指すもので、使えるモデルの制約とは限らない。[Qwen Code](https://github.com/QwenLM/qwen-code) は Qwen 専用ではなく OpenAI・Anthropic・Gemini・ローカルモデルに対応するマルチプロトコル構成（Gemini CLI v0.8.2 が出発点、Apache-2.0）、[OpenCode](https://github.com/anomalyco/opencode) は AI SDK / Models.dev 経由で 75+ プロバイダーとローカル実行に対応（MIT）。実務で効く差は「エージェント本体が OSS か」「推論がどこで走るか」「モデルの選択肢」の 3 点として整理した
+  - **Bionic は種類が違う点を明示**: [LM Studio の発表（2026-07-16）](https://lmstudio.ai/blog/introducing-lm-studio-bionic)で確認したとおり、他の 4 つがターミナル中心なのに対し Bionic は**デスクトップアプリ**。ローカル / LM Link / Secure Cloud の 3 つの実行先と Zero Data Retention を記載
+  - 共通化しつつある部分（`SKILL.md` / `AGENTS.md` / MCP / Agent Plugins 1.0.0）と、[ハーネス](docs/dev-methods/harness.md)との層の違いを整理し、相互リンクを追加
+  - 一次情報で確認できなかったもの: Bionic の **MCP / Skill 対応可否**と **macOS 以外のプラットフォーム対応**は公式発表に記載がないため、本文では「未確認」と明示して断定を避けた
 - **2026-08-25** upstream 追加スキル 2 件に追従（#114）。[Anthropic 公式スキル](docs/claude-code/official-skills.md) に「学習支援・応答の質」カテゴリを新設して解説を追加し、`scripts/known-files.json` の `anthropics_skills` を 17 → 19 件へ更新
   - `academy-guide` — 回答に [Claude Academy](https://academy.claude.com) の該当コースを最大 2 件添える。**まず質問に答える**こと、URL は取得したカタログの実データのみ使うこと、一致が弱ければ推奨しないこと（誤った推奨の損失を重く見る設計）を明記
   - `discernment-nudge` — 実行に移せる回答の後に、確認すべき点を突く質問を 2〜3 個添える。1 会話につき 1 回のみ発動し、単純な調べもの・創作・雑談・コード作成、ユーザーが既に裏取りを依頼済みの場合は発動しない
