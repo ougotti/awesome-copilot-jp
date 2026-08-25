@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-08-25** [コーディングエージェントの選び方](docs/dev-methods/coding-agents.md) を新設（Claude Code・Codex・Qwen Code・OpenCode・Bionic の比較）
 - **2026-08-25** [Anthropic 公式スキル](docs/claude-code/official-skills.md) に upstream 追加の 2 件（`academy-guide` / `discernment-nudge`）の解説を追加
 - **2026-08-22** [Skills 最新動向](docs/trends.md) を再構成し、[ハーネス](docs/dev-methods/harness.md) と [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md) を独立ページとして新設
 - **2026-08-22** ツール別入口ページへ 2026-08 の動向を反映（[Copilot](docs/copilot/README.md) / [Claude Code](docs/claude-code/basics.md) / [Codex](docs/codex/README.md)）。削除・別名化された Claude Code のコマンドも[スナップショットを更新](docs/claude-code/commands.md)
 - **2026-08-22** 非エンジニア向けページを点検し、[ユースケース](docs/business/use-cases.md)を 3 件追加。Claude.ai のファイル作成は無料プランでも使える（設定 → Capabilities）点に手順を修正
-- **2026-08-22** 手動追従だった upstream 5 リポジトリの更新チェックと、月次のページ鮮度レポートを自動化
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -54,6 +54,7 @@
 | 決算・経理・金融業務を効率化する | Chat UI | [金融サービス向けスキル](docs/business/financial-services.md) |
 | IDE でのコーディングを支援する | IDE | [GitHub Copilot ガイド](docs/copilot/README.md) |
 | ターミナルから開発作業を任せる | CLI | [Claude Code ガイド](docs/claude-code/README.md) ／ [Codex ガイド](docs/codex/README.md) |
+| **どのコーディングエージェントを使うか決める** | CLI / デスクトップ | [コーディングエージェントの選び方](docs/dev-methods/coding-agents.md) |
 | Skill を探して導入・更新する | CLI | [skills.sh ガイド](docs/dev-methods/skills-sh.md) ／ [Skills 最新動向](docs/trends.md) |
 | 開発プロセス（要件整理〜TDD〜レビュー）を改善する | CLI | [ツール横断の開発手法](#ツール横断の開発手法) |
 | チーム・組織の標準を作る | Repository / Enterprise | [Instructions 一覧](docs/copilot/instructions.md) ／ [Plugins](docs/copilot/plugins.md) |
@@ -134,6 +135,7 @@
 
 | ドキュメント | 提供元 | 状態 | 環境 | 内容 |
 |-------------|-------|------|------|------|
+| **[コーディングエージェントの選び方](docs/dev-methods/coding-agents.md)** | 本ガイド | — | CLI / デスクトップ | Claude Code・Codex・Qwen Code・OpenCode・Bionic の比較と選定軸 |
 | **[skills.sh ガイド](docs/dev-methods/skills-sh.md)** | Community | GA | CLI | Agent Skills の検索・導入ポータルと用途別の定番スキル |
 | **[mattpocock/skills](docs/dev-methods/mattpocock-skills.md)** | Community | GA | CLI | 要件整理〜仕様化〜TDD〜レビューの手順スキル |
 | **[superpowers](docs/dev-methods/superpowers.md)** | Community | GA | CLI | SDLC スキルフレームワーク（複数ツール対応） |
