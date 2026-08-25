@@ -4,6 +4,10 @@
 
 ## 2026-08
 
+- **2026-08-25** upstream 追加スキル 2 件に追従（#114）。[Anthropic 公式スキル](docs/claude-code/official-skills.md) に「学習支援・応答の質」カテゴリを新設して解説を追加し、`scripts/known-files.json` の `anthropics_skills` を 17 → 19 件へ更新
+  - `academy-guide` — 回答に [Claude Academy](https://academy.claude.com) の該当コースを最大 2 件添える。**まず質問に答える**こと、URL は取得したカタログの実データのみ使うこと、一致が弱ければ推奨しないこと（誤った推奨の損失を重く見る設計）を明記
+  - `discernment-nudge` — 実行に移せる回答の後に、確認すべき点を突く質問を 2〜3 個添える。1 会話につき 1 回のみ発動し、単純な調べもの・創作・雑談・コード作成、ユーザーが既に裏取りを依頼済みの場合は発動しない
+  - この 2 件は成果物を作らず**応答の作法そのものを定義する**タイプで、既存 4 カテゴリのいずれにも収まらないため新カテゴリを立てた。内容は各 `SKILL.md` のフロントマターと本文で確認
 - **2026-08-22** dev-methods の upstream 点検で未反映だった 2 件を追補（#104 の残件）
   - [obra/superpowers](docs/dev-methods/superpowers.md) — 「対応ツール」に **Devin CLI・Hermes Agent** を追加（[v6.3.0](https://github.com/obra/superpowers/releases) で対応。本文の導入手順一覧には既出だったが概要表に反映されていなかった）。スキル一覧に 2026-08 の変更を追記 — v6.2.0 で `testing-anti-patterns` が **`writing-good-tests` へ改名**（「やってはいけない例」から「良い例を先に示す 6 つのルール」へ）、v6.3.0 で依頼を **spike / bounded / architectural** に分類して手続きの重さを変える動作を追加
   - [skills.sh ガイド](docs/dev-methods/skills-sh.md) — CLI（`npx skills`）の 2026-08 の変更を追記。一括選択の追加、`--skill '*'` からの内部スキル除外、パック導入時の事前選択、`update` での新規スキル提示、**Posit Assistant・MiniMax Code** 対応、プライベートリポジトリ認証の強化

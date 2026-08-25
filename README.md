@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-08-25** [Anthropic 公式スキル](docs/claude-code/official-skills.md) に upstream 追加の 2 件（`academy-guide` / `discernment-nudge`）の解説を追加
 - **2026-08-22** [Skills 最新動向](docs/trends.md) を再構成し、[ハーネス](docs/dev-methods/harness.md) と [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md) を独立ページとして新設
 - **2026-08-22** ツール別入口ページへ 2026-08 の動向を反映（[Copilot](docs/copilot/README.md) / [Claude Code](docs/claude-code/basics.md) / [Codex](docs/codex/README.md)）。削除・別名化された Claude Code のコマンドも[スナップショットを更新](docs/claude-code/commands.md)
 - **2026-08-22** 非エンジニア向けページを点検し、[ユースケース](docs/business/use-cases.md)を 3 件追加。Claude.ai のファイル作成は無料プランでも使える（設定 → Capabilities）点に手順を修正
 - **2026-08-22** 手動追従だった upstream 5 リポジトリの更新チェックと、月次のページ鮮度レポートを自動化
-- **2026-08-22** README に「最近の更新」欄と CI バッジを常設
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
