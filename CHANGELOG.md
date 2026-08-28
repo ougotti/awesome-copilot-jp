@@ -4,6 +4,12 @@
 
 ## 2026-08
 
+- **2026-08-28** [ループエンジニアリング](docs/dev-methods/loop-engineering.md) を新設（#117）。人がプロンプトを打ち続けるのをやめ、エージェントを回すループの側を設計する実践を、一次情報をもとに整理した
+  - **用語の位置づけ**: Addy Osmani（Google Chrome）が [Loop Engineering](https://addyosmani.com/blog/loop-engineering/)（2026-06-07）で命名。ハーネスエンジニアリングの「1 つ上の階」にあたるとされ、プロンプト → コンテキスト → ハーネス → ループの 4 層として整理した
+  - **命名の経緯を原典で確認**: 二次情報では「きっかけは Boris Cherny の発言」「Peter Steinberger の発言」で記述が割れていたが、原典には**両方が引用**されている。本文でも両方を併記した
+  - 構成要素（自動実行・ワークツリー・スキル・コネクタ・サブエージェント・外部状態）、ループの 4 つの型、機械が判定できる停止条件の作り方、落とし穴（無人の誤り・理解の負債・思考の放棄）を記載。内側のループはエージェント、外側のループは人という分担は [Own the Outer Loop](https://addyosmani.com/blog/own-the-outer-loop/)（2026-07-15）に基づく
+  - [ハーネス](docs/dev-methods/harness.md) に「ループとの関係」を追加し、[Skills 最新動向](docs/trends.md) 10 節へ要約と誘導を追記して相互リンクした
+  - 不採用としたもの: ReAct（2022）との対比は二次情報にのみ現れ原典に記述がないため書かない。`/schedule` は[公式コマンドリファレンス](https://code.claude.com/docs/en/commands)に掲載がないためコマンド名としては書かない（`/goal` と `/loop` は掲載を確認）
 - **2026-08-25** [コーディングエージェントの選び方](docs/dev-methods/coding-agents.md) を新設（#113）。Claude Code・Codex・Qwen Code・OpenCode・Bionic の 5 つを比較し、選定軸を整理した
   - **「◯◯中心」という分類の訂正**: 各公式リポジトリ／ドキュメントで確認したところ、モデル系列による分類は既定値と開発元の立ち位置を指すもので、使えるモデルの制約とは限らない。[Qwen Code](https://github.com/QwenLM/qwen-code) は Qwen 専用ではなく OpenAI・Anthropic・Gemini・ローカルモデルに対応するマルチプロトコル構成（Gemini CLI v0.8.2 が出発点、Apache-2.0）、[OpenCode](https://github.com/anomalyco/opencode) は AI SDK / Models.dev 経由で 75+ プロバイダーとローカル実行に対応（MIT）。実務で効く差は「エージェント本体が OSS か」「推論がどこで走るか」「モデルの選択肢」の 3 点として整理した
   - **Bionic は種類が違う点を明示**: [LM Studio の発表（2026-07-16）](https://lmstudio.ai/blog/introducing-lm-studio-bionic)で確認したとおり、他の 4 つがターミナル中心なのに対し Bionic は**デスクトップアプリ**。ローカル / LM Link / Secure Cloud の 3 つの実行先と Zero Data Retention を記載
