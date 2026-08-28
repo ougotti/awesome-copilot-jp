@@ -136,6 +136,7 @@ Claude Code には、ループを組むための機能がひととおり揃っ�
 
 - [AI エージェントの実行基盤（ハーネス）](harness.md) — ループが動く土台。ハーネスが弱いとループはその弱点を増幅する
 - [Skills 最新動向](../trends.md) — ハーネスを含む横断的な動向
+- [オントロジー](ontology.md) — ループに渡す業務知識そのものを定義する
 - [コーディングエージェントの選び方](coding-agents.md) — ループの中で実際に作業するツールの比較
 - [Skill / Plugin のセキュリティ](skill-security.md) — 無人で回すループに何を触らせてよいかの線引き
 - [Claude Code のカスタマイズ機能](../claude-code/basics.md) — `SKILL.md`・フック・MCP の設定

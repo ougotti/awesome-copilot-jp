@@ -143,6 +143,7 @@ QM は**組織向けソフトであり、デスクトップアプリではあり
 
 - [ループエンジニアリング](loop-engineering.md) — ハーネスの 1 つ上の階。エージェントを目標へ向けて回す反復サイクルの設計
 - [Skills 最新動向](../trends.md) — 本ページの要約と、その他のテーマの動向
+- [オントロジー](ontology.md) — ハーネス越しにエージェントへ渡す「業務の意味」の定義
 - [Skill / Plugin のセキュリティ](skill-security.md) — 標準が定義していない権限・承認・サンドボックスをどう埋めるか
 - [Claude Code のカスタマイズ機能](../claude-code/basics.md) ／ [Codex ガイド](../codex/README.md) — ハーネスから見れば差し替え可能な「コーディングツール」層の解説
 - [コーディングエージェントの選び方](coding-agents.md) — その「コーディングツール」層に何があるかの比較（Claude Code / Codex / Qwen Code / OpenCode / Bionic）

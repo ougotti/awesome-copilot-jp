@@ -4,6 +4,12 @@
 
 ## 2026-08
 
+- **2026-08-28** [オントロジー](docs/dev-methods/ontology.md) を新設（#118）。業務の意味（語彙・関係・規則）を機械が読める形で定義し、AI エージェントへ渡す方法を整理した
+  - **スコープを限定**: 哲学・情報科学一般としてのオントロジー論ではなく「AI エージェントに業務知識を渡す手段」に絞った。README の「扱わない = 生成AIの一般論」との整合を取るため
+  - **用語の切り分け**: 二次情報で混同が多いため、オントロジー（語彙と規則の**定義**）／ナレッジグラフ（実体と関係の**データ**）／RAG（引いて渡す）／GraphRAG（たどって渡す）を表で先に分けた。標準は W3C の [RDF](https://www.w3.org/TR/rdf11-concepts/) と [OWL 2](https://www.w3.org/TR/owl2-overview/)
+  - **実装例 2 件**: [AWS Context Ontology Accelerator](https://github.com/aws/context-ontology-accelerator)（Apache-2.0、2026-07-31 公開。Scan → Model → Serve、MCP / REST で提供）と [Palantir Foundry Ontology](https://www.palantir.com/docs/foundry/ontology/overview)（意味的要素と動的要素を含む運用レイヤー）。**AI が草案を作り人が承認する**、**エージェントは統制された層の上で動く**という共通点を軸に整理
+  - 「いつ不要か」を判断表に含め、維持担当を置けない場合はやめる、狭い範囲なら `SKILL.md` で足りる、と明記した
+  - 不採用としたもの: Microsoft の企業向けオントロジー基盤・NTT データ LITRON / GRAG AI は日本語の二次情報にのみ現れ一次情報を特定できなかったため書かない（Microsoft からは GraphRAG のみ扱う）。導入企業数・市場規模・製品順位も本文に書かない
 - **2026-08-28** [ループエンジニアリング](docs/dev-methods/loop-engineering.md) を新設（#117）。人がプロンプトを打ち続けるのをやめ、エージェントを回すループの側を設計する実践を、一次情報をもとに整理した
   - **用語の位置づけ**: Addy Osmani（Google Chrome）が [Loop Engineering](https://addyosmani.com/blog/loop-engineering/)（2026-06-07）で命名。ハーネスエンジニアリングの「1 つ上の階」にあたるとされ、プロンプト → コンテキスト → ハーネス → ループの 4 層として整理した
   - **命名の経緯を原典で確認**: 二次情報では「きっかけは Boris Cherny の発言」「Peter Steinberger の発言」で記述が割れていたが、原典には**両方が引用**されている。本文でも両方を併記した
