@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-08-28** [オントロジー](docs/dev-methods/ontology.md) を新設（業務の意味を定義してエージェントに渡す方法。AWS Context Ontology Accelerator / Palantir Ontology）
+- **2026-08-28** [ループエンジニアリング](docs/dev-methods/loop-engineering.md) を新設（エージェントを回すループの設計・停止条件・落とし穴）
 - **2026-08-25** [コーディングエージェントの選び方](docs/dev-methods/coding-agents.md) を新設（Claude Code・Codex・Qwen Code・OpenCode・Bionic の比較）
 - **2026-08-25** [Anthropic 公式スキル](docs/claude-code/official-skills.md) に upstream 追加の 2 件（`academy-guide` / `discernment-nudge`）の解説を追加
 - **2026-08-22** [Skills 最新動向](docs/trends.md) を再構成し、[ハーネス](docs/dev-methods/harness.md) と [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md) を独立ページとして新設
-- **2026-08-22** ツール別入口ページへ 2026-08 の動向を反映（[Copilot](docs/copilot/README.md) / [Claude Code](docs/claude-code/basics.md) / [Codex](docs/codex/README.md)）。削除・別名化された Claude Code のコマンドも[スナップショットを更新](docs/claude-code/commands.md)
-- **2026-08-22** 非エンジニア向けページを点検し、[ユースケース](docs/business/use-cases.md)を 3 件追加。Claude.ai のファイル作成は無料プランでも使える（設定 → Capabilities）点に手順を修正
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -141,6 +141,8 @@
 | **[superpowers](docs/dev-methods/superpowers.md)** | Community | GA | CLI | SDLC スキルフレームワーク（複数ツール対応） |
 | **[AI-DLC ワークフロー](docs/dev-methods/aidlc-workflows.md)** | Official（AWS） | GA | CLI / IDE | 3 フェーズの AI 駆動開発ライフサイクル |
 | **[AI エージェントの実行基盤（ハーネス）](docs/dev-methods/harness.md)** | 本ガイド | — | CLI / Cloud | エージェントを動かす裏側の仕組みと実装例（Copilot Studio / QM） |
+| **[ループエンジニアリング](docs/dev-methods/loop-engineering.md)** | 本ガイド | — | CLI / Cloud | エージェントを目標へ向けて回すループの設計・停止条件・落とし穴 |
+| **[オントロジー](docs/dev-methods/ontology.md)** | 本ガイド | — | CLI / Cloud | 業務の意味（語彙・関係・規則）を定義してエージェントに渡す方法と実装例 |
 | **[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md)** | 本ガイド | — | IDE / CLI | 導入前の確認手順、第三者監査の実態、組織での許可範囲の限定 |
 
 ### 共通・事務活用
