@@ -18,6 +18,7 @@
 | 規則違反の検出をさせたい（この状態遷移は許されるか） | **要る**。論理的な制約として書ける |
 | 文書を検索して要約させたい | 不要。素直に RAG で足りる |
 | 対象が 1 チームの狭い範囲で、用語のゆれがない | 不要。`SKILL.md` やプロジェクト文書で足りる（[Claude Code のカスタマイズ機能](../claude-code/basics.md)） |
+| `SKILL.md` では足りないが、形式的な定義を組むほどでもない | 中間がある。Markdown をそのまま知識の源にする[記憶層](#形式的な定義を作らない選択肢--gbrain)で始める |
 | 定義を継続的に維持する担当を置けない | **やめる**。放置されたオントロジーは、古い定義で誤りを量産する |
 
 ---
@@ -57,14 +58,16 @@ GraphRAG については、[Microsoft Research の解説（2024-02-13）](https:
 
 ---
 
-## 実装を見る 2 つの入口
+## 実装を見る 3 つの入口
 
-| | AWS Context Ontology Accelerator | Palantir Foundry Ontology |
-|---|---|---|
-| 形態 | ソースを読める OSS（Apache-2.0） | 商用プラットフォームの中核機能 |
-| 位置づけ | 既存データからオントロジーを作る「加速装置」 | データ・ロジック・アクション・権限を統合する運用レイヤー |
-| エージェントへの提供 | MCP サーバー / REST API | Ontology が公開するオブジェクト・関数・アクション |
-| `提供元` / `状態` | Official（AWS） / GA（[2026-07-31 公開](https://aws.amazon.com/about-aws/whats-new/2026/07/aws-context--ontology-accelarator-generally-available/)） | Official（Palantir） / GA |
+規模と前提がまるで違う 3 つを並べます。前の 2 つは組織で形式的な定義を作る側、3 つ目は**それを作らずに済ませる側**です。
+
+| | AWS Context Ontology Accelerator | Palantir Foundry Ontology | GBrain |
+|---|---|---|---|
+| 形態 | ソースを読める OSS（Apache-2.0） | 商用プラットフォームの中核機能 | 個人が公開した OSS（MIT） |
+| 位置づけ | 既存データからオントロジーを作る「加速装置」 | データ・ロジック・アクション・権限を統合する運用レイヤー | Markdown を源に知識グラフが自動で組み上がる記憶層 |
+| エージェントへの提供 | MCP サーバー / REST API | Ontology が公開するオブジェクト・関数・アクション | MCP（stdio / HTTP）/ CLI |
+| `提供元` / `状態` | Official（AWS） / GA（[2026-07-31 公開](https://aws.amazon.com/about-aws/whats-new/2026/07/aws-context--ontology-accelarator-generally-available/)） | Official（Palantir） / GA | Community（個人 OSS） / Experimental |
 
 ### AWS Context Ontology Accelerator
 
@@ -85,6 +88,25 @@ GraphRAG については、[Microsoft Research の解説（2024-02-13）](https:
 [公式ドキュメント](https://www.palantir.com/docs/foundry/ontology/overview)は、Ontology を「組織のデジタルツイン」と定義し、**意味的要素（オブジェクト・プロパティ・リンク）と動的要素（アクション・関数・動的セキュリティ）の両方を含む**としています。単なるセマンティックレイヤーではなく、データ・ロジック・アクション・権限を一体で扱う運用レイヤーという位置づけです。
 
 エージェントは生データではなく、この統制された層の上で動きます。**何を読めて、何を実行できて、誰の権限で動くのか**が層の側で決まる、という設計は、OSS 側の実装を読むときの比較軸としても使えます。
+
+---
+
+### 形式的な定義を作らない選択肢 — GBrain
+
+[GBrain](https://github.com/garrytan/gbrain) は、Y Combinator の CEO である Garry Tan が 2026 年 4 月に MIT ライセンスで公開した、エージェント向けの知識・記憶層です。**OWL / RDF で語彙を定義する手前で止める**点が、前の 2 つと決定的に違います。
+
+| 観点 | 内容 |
+|------|------|
+| 知識の置き場所 | 通常の git リポジトリ（brain repo）の **Markdown ファイルが正**。検索用に PGLite または Postgres へ同期する |
+| グラフの作りかた | エンティティ参照を抽出して型付きの関係（`works_at` など）を自動で張る。**書き込みごとの LLM 呼び出しがない**ため、広く索引を張ってもコストが跳ねない |
+| 2 つの問い方 | `gbrain search` は上位ページを返す（速い・LLM コストなし）。`gbrain think` は根拠付きで統合した答えと、**まだ分かっていないことの指摘**を返す |
+| エージェントからの接続 | 大半の操作を MCP ツール（stdio / HTTP）として公開。Claude Code・Codex・Cursor 等から使える |
+
+**`gbrain think` が「まだ分かっていないこと」を返す**設計は、このページの他の実装と同じ方向を向いています。答えられない範囲を答えらしく埋めないことが、統制された知識層の要件だからです。
+
+一方で、これは**単一の担当者が自分の知識を管理する前提**の作りです。組織の共通語彙を全社で合意し、権限つきで運用したい場合は、前の 2 つが対象になります。
+
+> 導入時の注意: **GBrain は npm で配布されていません。** npm 上の同名パッケージは無関係な別物で、入れると PATH 上の正規バイナリを隠してしまいます（[Skill / Plugin のセキュリティ](skill-security.md#5-同名の別パッケージという入口)）。開発は速く、バージョンの動きも大きいため、導入手順は[リポジトリ](https://github.com/garrytan/gbrain)の README を一次情報として確認してください。
 
 ---
 
@@ -113,3 +135,4 @@ GraphRAG については、[Microsoft Research の解説（2024-02-13）](https:
 - [aws/context-ontology-accelerator](https://github.com/aws/context-ontology-accelerator) — リポジトリと README（Apache-2.0）
 - [Ontology Overview](https://www.palantir.com/docs/foundry/ontology/overview) — Palantir 公式ドキュメント
 - [GraphRAG: Unlocking LLM discovery on narrative private data](https://www.microsoft.com/en-us/research/blog/graphrag-unlocking-llm-discovery-on-narrative-private-data/) — Microsoft Research（2024-02-13）
+- [garrytan/gbrain](https://github.com/garrytan/gbrain) — GBrain のリポジトリと README（MIT、一次情報）

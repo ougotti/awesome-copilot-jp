@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-08-22
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-08-29
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -78,6 +78,24 @@ Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMa
 
 ---
 
+## 5. 同名の別パッケージという入口
+
+ここまでは「入れた Skill の中身が危ないか」の話でした。もう 1 つ、**入れたつもりのものが別物だった**という入口があります。
+
+[GBrain](https://github.com/garrytan/gbrain)（エージェント向けの知識・記憶層。[オントロジー](ontology.md#形式的な定義を作らない選択肢--gbrain) で解説）の README は、この点を明示的に警告しています。**GBrain は npm で配布されていません。** npm 上の `gbrain` は無関係な別パッケージで、`npm install -g gbrain` や `bun add -g gbrain` で入れると、PATH 上の正規のバイナリを隠してしまいます。正しい導入は GitHub から直接で、`gbrain doctor` がこの状態を検出して修復手順を出します。
+
+この形は、悪意の有無にかかわらず成立します。名前が同じというだけで、**エージェントが呼ぶコマンドの実体が入れ替わる**からです。Skill や MCP サーバーの導入手順にも同じことが言えます。
+
+| 確認すること | 具体的に |
+|-------------|---------|
+| 配布元が公式かどうか | README が指定する配布元と、自分が打とうとしているコマンドが一致しているか。「npm にあるはず」と推測で補わない |
+| コマンドの実体 | `which <コマンド>` で、想定した場所のバイナリが呼ばれているか |
+| 診断コマンドの有無 | 提供側が `doctor` 相当を用意していれば、導入直後に一度実行する |
+
+エージェントに導入作業を任せる場合はより重要です。エージェントは一般的なパッケージマネージャの手順を推測で埋めがちで、**公式が配布していない場所から同名の別物を入れてしまう**ことがあります。
+
+---
+
 ## まとめ — 導入の最低ライン
 
 | 場面 | 最低限やること |
@@ -86,6 +104,7 @@ Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMa
 | リポジトリへコミットする | コミット SHA で固定する・レビューで差分を読む（`trojan-skill-hunter` を併用） |
 | チーム・組織へ配る | `managed-settings.json` で Marketplace と MCP サーバーを限定する・承認バイパスを禁止する |
 | ハーネスごと持ち込む | 権限・承認・サンドボックスの既定値を確認する（[AI エージェントの実行基盤（ハーネス）](harness.md)） |
+| コマンドを 1 つ入れる | 配布元が公式かを README で確認する・`which` で実体を見る（[5 節](#5-同名の別パッケージという入口)） |
 
 ---
 
@@ -105,4 +124,5 @@ Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMa
 - [Enterprise managed settings in GitHub Copilot for JetBrains](https://github.blog/changelog/2026-08-18-enterprise-managed-settings-in-github-copilot-for-jetbrains/) — JetBrains への managed settings 拡大（公式）
 - [gh skill マニュアル](https://cli.github.com/manual/gh_skill) — `gh skill preview` などのサブコマンド（公式）
 - [awesome-agent-skills-security](https://github.com/LLMSecurity/awesome-agent-skills-security) — 攻撃手法と防御策の一覧（コミュニティ）
+- [garrytan/gbrain](https://github.com/garrytan/gbrain) — npm 上の同名別パッケージへの警告と `gbrain doctor`（README、一次情報）
 
