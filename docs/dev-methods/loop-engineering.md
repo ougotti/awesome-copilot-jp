@@ -106,9 +106,9 @@ Claude Code には、ループを組むための機能がひととおり揃っ�
 | やること | 使うもの |
 |---------|---------|
 | 条件が満たされるまで作業を続けさせる | `/goal`（[Commands](https://code.claude.com/docs/en/commands) / [Goal](https://code.claude.com/docs/en/goal)） |
-| プロンプトを一定間隔で繰り返す | `/loop`（[Run prompts on a schedule](https://code.claude.com/docs/en/scheduled-tasks)） |
+| プロンプトを一定間隔で繰り返す | `/loop`（[Commands](https://code.claude.com/docs/en/commands) / [Run prompts on a schedule](https://code.claude.com/docs/en/scheduled-tasks)） |
 | プロジェクト知識を固定する | `SKILL.md`（[Claude Code のカスタマイズ機能](../claude-code/basics.md)） |
-| 外部ツールへつなぐ | MCP サーバー・プラグイン（[Plugins](../copilot/plugins.md)） |
+| 外部ツールへつなぐ | [MCP サーバー](../claude-code/basics.md#mcpmodel-context-protocol統合) ／ [プラグイン](../claude-code/basics.md#プラグイン) |
 | 検証役を分ける | サブエージェント |
 
 コマンド一覧のスナップショットは [Claude Code コマンド一覧](../claude-code/commands.md) にありますが、この領域は更新が速いため、実際に使えるものはセッション中の `/help` で確認するのが確実です。
