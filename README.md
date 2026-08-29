@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-08-29** [Skills 最新動向](docs/trends.md) に「エージェントに渡す知識（オントロジー）」の節を追加し、ハーネス・セキュリティと同じ扱いに整理
 - **2026-08-28** [オントロジー](docs/dev-methods/ontology.md) を新設（業務の意味を定義してエージェントに渡す方法。AWS Context Ontology Accelerator / Palantir Ontology）
 - **2026-08-28** [ループエンジニアリング](docs/dev-methods/loop-engineering.md) を新設（エージェントを回すループの設計・停止条件・落とし穴）
 - **2026-08-25** [コーディングエージェントの選び方](docs/dev-methods/coding-agents.md) を新設（Claude Code・Codex・Qwen Code・OpenCode・Bionic の比較）
 - **2026-08-25** [Anthropic 公式スキル](docs/claude-code/official-skills.md) に upstream 追加の 2 件（`academy-guide` / `discernment-nudge`）の解説を追加
-- **2026-08-22** [Skills 最新動向](docs/trends.md) を再構成し、[ハーネス](docs/dev-methods/harness.md) と [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md) を独立ページとして新設
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
