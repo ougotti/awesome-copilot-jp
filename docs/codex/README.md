@@ -1,6 +1,6 @@
 # Codex ガイド（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-30
+> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル）／ デスクトップ（ChatGPT アプリ）／ Chat UI（ChatGPT・ChatGPT Work） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-30
 
 [openai/skills](https://github.com/openai/skills) は OpenAI が公開している Codex 用の公式スキルカタログです。指示・スクリプト・リソースをフォルダにまとめた「スキル」を追加することで、デプロイ・ブラウザ自動化・外部サービス連携といったワークフローを Codex に持たせられます。
 
