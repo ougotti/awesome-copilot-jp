@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-08-30** [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md) に統制の 3 段階（導入前・推論前・実行後）を追加し、[Copilot Plugins](docs/copilot/plugins.md) に Customize タブと marketplace の自動更新を追記
 - **2026-08-30** [Codex ガイド](docs/codex/README.md) に Scheduled tasks と他エージェントからの取り込みを追加。[Skills 最新動向](docs/trends.md) 13 節へ 2026-08-22 の MCP ロードマップを反映
 - **2026-08-29** [オントロジー](docs/dev-methods/ontology.md) に GBrain（形式的な定義を作らない記憶層）を追加し、[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md) に「同名の別パッケージ」の注意を新設
 - **2026-08-29** [Skills 最新動向](docs/trends.md) に「エージェントに渡す知識（オントロジー）」の節を追加し、ハーネス・セキュリティと同じ扱いに整理
 - **2026-08-28** [オントロジー](docs/dev-methods/ontology.md) を新設（業務の意味を定義してエージェントに渡す方法。AWS Context Ontology Accelerator / Palantir Ontology）
-- **2026-08-28** [ループエンジニアリング](docs/dev-methods/loop-engineering.md) を新設（エージェントを回すループの設計・停止条件・落とし穴）
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 

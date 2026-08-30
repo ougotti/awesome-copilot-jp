@@ -4,6 +4,12 @@
 
 ## 2026-08
 
+- **2026-08-30** 2026-08 後半の動向のうち **P1（Copilot のカスタマイズ運用・Claude の統制範囲）**を反映（#128）
+  - **[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md) に「5. 統制が効く 3 つの段階」を新設** — 導入前（スキャン）・推論前（allow / deny 判定）・実行後（セッションの監査）。**中身が安全な Skill でも、渡される入力や実行される文脈まではスキャンできない**ため導入前だけでは埋まらない、という論点を軸にした。いずれも組織向けプラン前提で、個人利用では導入前チェックが主役である点も明記。既存の「同名の別パッケージ」は 6 節へ繰り下げ
+  - **[Claude Code のカスタマイズ機能](docs/claude-code/basics.md) に Claude 固有の設定と条件** — Skill / Plugin セキュリティスキャン（Enterprise・Beta・2026-08-06）、Inference hooks（Claude Enterprise・Beta・2026-08-05。claude.ai / Cowork / Claude Code の対象プロンプトが判定を待つ。リクエストは署名され、拒否は Activity Feed に記録）、Compliance API（利用者のマシン上のセッション取得が 2026-08-26 に**ベータ終了**）。判定サーバーが落ちたときの挙動を決めておく必要と、監査範囲の周知の要否も添えた
+  - **[GitHub Copilot Plugins](docs/copilot/plugins.md) に Customize タブ（GA）と marketplace の自動更新** — `extraKnownMarketplaces` の marketplace ごとに `autoUpdate: true`（2026-08-26、Copilot Business / Enterprise）。**自動更新の対象でも `strictKnownMarketplaces` の allowlist で許可されている必要がある**点と、**自動更新とコミット SHA 固定は目的が違う**（継続更新か再現性か）点を判断材料として整理
+  - [Skills 最新動向](docs/trends.md) 12 節に統制の 3 段階の要約を追記
+  - **訂正**: Issue #128 は Compliance API のセッション取得を新機能としていたが、一次情報では 2026-08-03 にベータ提供され **2026-08-26 にベータ終了**したもの。日付と状態をそれに合わせた
 - **2026-08-30** 2026-08 後半の動向のうち **P0（Codex の自動化・エージェント間移行・MCP ロードマップ）**を反映（#128）
   - **[Codex ガイド](docs/codex/README.md) に 2 節追加** — Scheduled tasks（時刻ベースと、Gmail / Slack / GitHub のイベントベース）と、他エージェントからの取り込み。**1 タスクで複数のイベントトリガーは使えるが、イベントトリガーと時刻ベースのスケジュールは併用できない**点、イベントトリガーがデスクトップアプリと CLI では使えない点、対象プランとワークスペースでの有効化が前提である点を明記
   - **取り込み後の点検を手順として記載** — 公式ドキュメントがツール制限・MCP 認証・Hooks・Plugins・プロンプトテンプレートは手動フォローを要する場合があると明記しているため。CLI `/import` の取り込み元は Claude Code と Cursor（Cowork はデスクトップのみ）、直近 30 日・最大 50 chat

@@ -1,6 +1,6 @@
 # GitHub Copilot Plugins
 
-> **対象ツール**: GitHub Copilot（CLI / VS Code） ｜ **実行環境**: CLI（ターミナル）, IDE（VS Code） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-17
+> **対象ツール**: GitHub Copilot（Copilot アプリ / CLI / VS Code） ｜ **実行環境**: Chat UI（Copilot アプリ）／ CLI（ターミナル）／ IDE（VS Code） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-30
 
 Plugin は、Custom Agents・Skills・Hooks・MCP サーバー設定・LSP サーバー設定を **1 つの配布単位** にまとめる仕組みです。Skill を 1 個ずつ配る代わりに、チームやプロジェクトに必要な拡張一式をまとめて配布・更新できます。
 
@@ -148,6 +148,10 @@ copilot plugin enable database-data-management    # 再度有効化
 copilot plugin uninstall database-data-management
 ```
 
+> **組織で自動更新する**（2026-08-26 提供開始）: Enterprise の `managed-settings.json` で、`extraKnownMarketplaces` の marketplace ごとに `autoUpdate: true` を指定すると、その marketplace 由来の Plugin が自動更新されます。**自動更新の対象でも、実効的な `strictKnownMarketplaces` の allowlist で許可されている必要があります。** Copilot Business / Copilot Enterprise で GA、対応する面は Copilot アプリ・Copilot CLI・VS Code です。
+>
+> 自動更新と[コミット SHA での固定](#インストール先とバージョン固定)は目的が違います。**組織が管理する marketplace を継続的に最新へ保つなら自動更新**、**再現性を優先して意図しない変更を防ぐなら SHA 固定**です。同じ marketplace に両方を求めることはできないため、どちらを優先するかを先に決めてください。
+
 ### 4. 独自の Marketplace を登録する
 
 ```powershell
@@ -186,6 +190,14 @@ Marketplace の `marketplace.json` では、各 Plugin の `source` に GitHub �
 リポジトリ側の設定ファイルをコミットしておけば、クローンした開発者が同じ Plugin 構成で作業を始められます。Copilot cloud agent（クラウド上のコーディングエージェント）は、この `enabledPlugins` を使う宣言的な方法のみに対応しています。既定で登録されていない Marketplace から導入したい場合は、同じ設定ファイルの `extraKnownMarketplaces` フィールドにも追加してください。
 
 Enterprise では **managed settings** により、利用してよい Plugin を組織のポリシーとして強制し、自動インストールする Plugin を指定することもできます（VS Code・Copilot CLI・Copilot アプリが対象）。
+
+---
+
+## Customize タブ（GA）
+
+2026-08 に Copilot アプリの **Customize タブが GA** になり、**MCP サーバー・Plugin・Skill・Canvas を 1 か所で管理**できるようになりました。Copilot CLI 側も `/plugin`・`/mcp`・`/skills` の管理体験が更新されています。
+
+導入の入口が増えたことより、**入れたものを後から一覧・棚卸しできる場所ができた**ことのほうが実務では効きます。増えすぎた拡張はコンテキストを圧迫するため、定期的に見直してください。
 
 ---
 
@@ -256,6 +268,8 @@ VS Code では **Agent plugins** として一般提供され、「Agent Plugins 
 
 - [About GitHub Copilot plugins](https://docs.github.com/en/copilot/concepts/agents/about-plugins) — Plugin の概念と構成（公式）
 - [Finding and installing plugins for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-finding-installing) — 検索・導入手順（公式）
+- [Enterprise-managed settings: autoUpdate for plugin marketplaces](https://github.blog/changelog/2026-08-26-enterprise-managed-settings-now-support-autoupdate-for-plugin-marketplaces/) — marketplace 単位の自動更新（公式・2026-08-26）
+- [GitHub Copilot weekly releases — August 24](https://github.blog/changelog/2026-08-28-github-copilot-weekly-releases-august-24/) — Customize タブの GA と CLI の管理体験（公式）
 - [Creating a plugin marketplace for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-marketplace) — Marketplace の作り方（公式）
 - [GitHub Copilot CLI plugin reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-plugin-reference) — `copilot plugin` コマンドリファレンス（公式）
 - [github/copilot-plugins](https://github.com/github/copilot-plugins) — 公式 Plugin コレクション

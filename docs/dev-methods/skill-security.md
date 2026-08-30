@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-08-29
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-08-30
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -78,7 +78,25 @@ Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMa
 
 ---
 
-## 5. 同名の別パッケージという入口
+## 5. 統制が効く 3 つの段階
+
+ここまでは「入れる前に読む」「組織で許可範囲を絞る」という**導入前**の話でした。2026 年 8 月には、その前後へ統制の範囲が広がっています。Claude（Enterprise プラン）を例に取ると、3 つの段階に整理できます。
+
+| 段階 | 何をするか | 例 |
+|------|-----------|-----|
+| **導入前** | 入れてよいものかを検査する | Skill / Plugin のセキュリティスキャン（第三者製の Skill・Plugin をアップロード・編集の時点で検査） |
+| **推論前** | 実行される直前に許可・拒否を判定する | Inference hooks（組織の AI セキュリティサーバーが allow / deny を返すまで待つ） |
+| **実行後** | 何が行われたかを後から確認する | Compliance API（セッションのトランスクリプトを取得する） |
+
+**導入前だけでは埋まらない穴がある**、というのがこの並びの意味です。中身が安全な Skill でも、渡される入力や実行される文脈まではスキャンできません。推論前の判定と実行後の監査は、そこを埋める層です。
+
+一方で、いずれも**組織向けプランと事前設定が前提**です。個人利用では [2 節](#2-導入前に何を確認するか)の導入前チェックが引き続き主役になります。
+
+**→ Claude での具体的な設定・利用条件は [Claude Code のカスタマイズ機能](../claude-code/basics.md#組織での統制--導入前推論前実行後) を参照**
+
+---
+
+## 6. 同名の別パッケージという入口
 
 ここまでは「入れた Skill の中身が危ないか」の話でした。もう 1 つ、**入れたつもりのものが別物だった**という入口があります。
 
@@ -104,7 +122,8 @@ Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMa
 | リポジトリへコミットする | コミット SHA で固定する・レビューで差分を読む（`trojan-skill-hunter` を併用） |
 | チーム・組織へ配る | `managed-settings.json` で Marketplace と MCP サーバーを限定する・承認バイパスを禁止する |
 | ハーネスごと持ち込む | 権限・承認・サンドボックスの既定値を確認する（[AI エージェントの実行基盤（ハーネス）](harness.md)） |
-| コマンドを 1 つ入れる | 配布元が公式かを README で確認する・`which` で実体を見る（[5 節](#5-同名の別パッケージという入口)） |
+| コマンドを 1 つ入れる | 配布元が公式かを README で確認する・`which` で実体を見る（[6 節](#6-同名の別パッケージという入口)） |
+| 組織で全社に展開する | 導入前の検査に加え、**推論前の許可判定と実行後の監査**まで設計する（[5 節](#5-統制が効く-3-つの段階)。いずれも組織向けプランが前提） |
 
 ---
 
@@ -124,5 +143,7 @@ Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMa
 - [Enterprise managed settings in GitHub Copilot for JetBrains](https://github.blog/changelog/2026-08-18-enterprise-managed-settings-in-github-copilot-for-jetbrains/) — JetBrains への managed settings 拡大（公式）
 - [gh skill マニュアル](https://cli.github.com/manual/gh_skill) — `gh skill preview` などのサブコマンド（公式）
 - [awesome-agent-skills-security](https://github.com/LLMSecurity/awesome-agent-skills-security) — 攻撃手法と防御策の一覧（コミュニティ）
+- [Inference hooks](https://platform.claude.com/docs/en/manage-claude/inference-hooks) — 推論前の allow / deny 判定（Anthropic 公式）
+- [Compliance API — session transcripts](https://platform.claude.com/docs/en/manage-claude/compliance-sessions) — 実行後のセッション取得（Anthropic 公式）
 - [garrytan/gbrain](https://github.com/garrytan/gbrain) — npm 上の同名別パッケージへの警告と `gbrain doctor`（README、一次情報）
 
