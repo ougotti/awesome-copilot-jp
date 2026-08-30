@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-22
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-30
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -285,6 +285,26 @@ fi
 
 ---
 
+## 組織での統制 — 導入前・推論前・実行後
+
+Claude Enterprise では、Skill や Plugin の「入れる前の確認」に加えて、**推論の直前**と**実行の後**にも統制をかけられます。3 つの段階の考え方は [Skill / Plugin のセキュリティ 5 節](../dev-methods/skill-security.md#5-統制が効く-3-つの段階) にまとめています。ここでは Claude 側の設定と利用条件を扱います。
+
+| 段階 | 機能 | 状態 | 何ができるか |
+|------|------|------|-------------|
+| 導入前 | Skill / Plugin のセキュリティスキャン | Beta（Enterprise プラン、2026-08-06） | 第三者製の Skill・Plugin を、**アップロードまたは編集された時点**で悪意ある内容がないか自動検査する |
+| 推論前 | Inference hooks | Beta（Claude Enterprise、2026-08-05） | 組織の AI セキュリティサーバーを指定すると、**claude.ai・Cowork・Claude Code の対象プロンプトが、サーバーの allow / deny 判定が返るまで推論に進まない**。リクエストは署名され、失敗時の挙動は設定可能。**拒否はすべて Activity Feed に記録される** |
+| 実行後 | Compliance API のセッション取得 | 利用者のマシン上のセッション取得は 2026-08-26 に**ベータを終了**（Cowork / Claude Code） | 組織横断でセッションを一覧し、個別セッションのメタデータとトランスクリプトを取得する。既存の Compliance Access Key と `read:compliance_user_data` スコープを使う |
+
+### 導入時に確認すること
+
+- **いずれも Enterprise 向け**です。個人・チームプランでは使えません
+- **Inference hooks は自組織でセキュリティサーバーを用意する前提**です。判定サーバーが落ちたときの挙動（通すのか止めるのか）を設定で決めておく必要があります
+- Compliance API で取得できるのは**利用者のマシン上で動いたセッションを含みます**。監査の範囲と、従業員への周知の要否を法務・人事と確認してください
+
+> 3 つとも「入れてよい Skill か」を人が読む作業を置き換えるものではありません。**スキャンは既知の悪意を検出する仕組み**であり、[導入前に中身を読む](../dev-methods/skill-security.md#2-導入前に何を確認するか)必要は変わりません。
+
+---
+
 ## 設定ファイル（settings.json）
 
 `.claude/settings.json`（プロジェクト）または `~/.claude/settings.json`（ユーザー）で動作を制御します。
@@ -389,5 +409,8 @@ CLAUDE.md              # プロジェクトの前提・規約
 - [Extend Claude with skills](https://code.claude.com/docs/en/slash-commands) — Agent Skills の作成と運用
 - [Interactive mode](https://code.claude.com/docs/en/interactive-mode) — キーボードショートカット・対話機能のリファレンス
 - [CLI reference](https://code.claude.com/docs/en/cli-reference) — CLI の起動オプション
+- [Inference hooks](https://platform.claude.com/docs/en/manage-claude/inference-hooks) — 推論前の allow / deny 判定（公式）
+- [Compliance API — Retrieve session transcripts](https://platform.claude.com/docs/en/manage-claude/compliance-sessions) — セッションのトランスクリプト取得（公式）
+- [Claude apps release notes](https://support.claude.com/en/articles/12138966-release-notes) — Skill / Plugin セキュリティスキャンの提供状況（公式）
 - [MCP 公式サイト](https://modelcontextprotocol.io/) — Model Context Protocol の仕様
 - [MCP サーバー一覧](https://github.com/modelcontextprotocol/servers) — 公式・コミュニティ MCP サーバー
