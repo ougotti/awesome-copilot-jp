@@ -1,6 +1,6 @@
 # ループエンジニアリング
 
-> **対象ツール**: ツール横断（Claude Code・Codex 等） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-29
+> **対象ツール**: ツール横断（Claude Code・Codex 等） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-30
 
 > エージェントに毎ターン指示を出す代わりに、**エージェントに指示を出し続ける「ループ」の側を設計する**実践を **ループエンジニアリング（loop engineering）** と呼びます。2026-06-07 に Addy Osmani（Google Chrome）が [Loop Engineering](https://addyosmani.com/blog/loop-engineering/) で命名しました。このページは概念、ループの構成要素、停止条件の作り方、そして落とし穴をまとめた解説です。ループが動く土台については [AI エージェントの実行基盤（ハーネス）](harness.md) を参照してください。
 
@@ -84,6 +84,26 @@ Osmani はループエンジニアリングをハーネスエンジニアリン�
 
 組み合わせると、たとえば「24 時間ごとに `bug` ラベルの Issue を確認し、あれば目標型ループでテストが通るまで修正する」という形になります。
 
+### 製品機能としての起動条件 — Codex の Scheduled tasks
+
+時間型・能動型の起動は、自分でスケジューラを組まなくても製品側で用意されています。Codex の [Scheduled tasks](../codex/README.md#6-定期イベントで動かすscheduled-tasks) は、時刻ベースの繰り返しに加えて **Gmail・Slack・GitHub のイベント**を起点にできます。**1 タスクで複数のイベントトリガーは使えますが、イベントトリガーと時刻ベースのスケジュールは併用できません。**
+
+ここで役割を分けて考えると設計が楽になります — **Skill が手順の定義**、**Plugin が外部接続**、**Scheduled task が起動条件**、**worktree やサンドボックスが実行境界**です。ループの部品をどこに置くかの目安になります。
+
+### 実行した知識を次の周回へ戻す — Runme + WebMCP
+
+OpenAI が公開している Codex の事例は、**無人実行そのものより「実行で得た知識を次回へ戻すこと」に価値を置いた**ループです。Runme のノートブックを軸に、次の順で回ります。
+
+1. ノートブックに目的と過去の文脈を置く
+2. Codex が計画を書き、**人が承認するまで実行を待つ**
+3. 実行したコマンド・出力・解釈・失敗した経路を同じノートブックに残す
+4. 生成された索引ファイル経由で、共有・検索できるようにする
+5. 次回の実行が、前回の判断と結果を再利用する
+
+技術的な要は **WebMCP** です。静的なクライアントサイドの Web アプリが、**専用の MCP サーバーを立てずに**ブラウザ側の限定されたツールをエージェントへ公開できます。
+
+この事例が示すのは、[外部状態](#ループの構成要素)と[承認境界](#落とし穴)を両立させる形です。人は「計画が実行に足るか」と「結果を出荷してよいか」を判断し、繰り返しの実行と記録はループが担います。
+
 ---
 
 ## 停止条件の作り方
@@ -150,4 +170,6 @@ Claude Code には、ループを組むための機能がひととおり揃っ�
 - [Own the Outer Loop](https://addyosmani.com/blog/own-the-outer-loop/) — 内側のループと外側のループの分担（2026-07-15、一次情報）
 - [Practical Loop Engineering](https://addyosmani.com/blog/practical-loop-engineering/) — ループの型と停止条件の実務（2026-08-14、一次情報）
 - [Loop, Harness, Context Engineering: The Terms Explained](https://www.codecentric.de/en/knowledge-hub/blog/loop-harness-context-engineering-explained) — 用語階層の整理（codecentric、2026-07-05）
+- [Automating repetitive work at OpenAI with Codex](https://developers.openai.com/blog/automating-repetitive-work-at-openai-with-codex) — Runme + WebMCP による反復作業のループ化（OpenAI 公式）
+- [Scheduled tasks](https://learn.chatgpt.com/docs/automations) — 時刻・イベントでの起動と、その前提条件（公式）
 - [Claude Code Commands](https://code.claude.com/docs/en/commands) — `/goal`・`/loop` の公式リファレンス
