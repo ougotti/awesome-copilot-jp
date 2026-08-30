@@ -4,6 +4,13 @@
 
 ## 2026-08
 
+- **2026-08-30** 2026-08 後半の動向のうち **P0（Codex の自動化・エージェント間移行・MCP ロードマップ）**を反映（#128）
+  - **[Codex ガイド](docs/codex/README.md) に 2 節追加** — Scheduled tasks（時刻ベースと、Gmail / Slack / GitHub のイベントベース）と、他エージェントからの取り込み。**1 タスクで複数のイベントトリガーは使えるが、イベントトリガーと時刻ベースのスケジュールは併用できない**点、イベントトリガーがデスクトップアプリと CLI では使えない点、対象プランとワークスペースでの有効化が前提である点を明記
+  - **取り込み後の点検を手順として記載** — 公式ドキュメントがツール制限・MCP 認証・Hooks・Plugins・プロンプトテンプレートは手動フォローを要する場合があると明記しているため。CLI `/import` の取り込み元は Claude Code と Cursor（Cowork はデスクトップのみ）、直近 30 日・最大 50 chat
+  - **[コーディングエージェントの選び方](docs/dev-methods/coding-agents.md) に「乗り換えるときに見る軸」を新設** — 定義の可搬性・作業の継続性・同期方式・再認証の要否・対応する面の 5 軸。乗り換えコストが下がるほど、取り込みが運ぶ Hooks や MCP 設定の確認が重要になる点を添えた
+  - **[ループエンジニアリング](docs/dev-methods/loop-engineering.md) に実例 2 件** — Codex の Scheduled tasks（起動条件の製品実装）と、OpenAI が公開した Runme + WebMCP の事例。後者は**無人実行より「実行で得た知識を次回へ戻すこと」に価値を置いた**ループで、計画の承認は人が持つ。WebMCP により専用 MCP サーバーなしでブラウザ側の限定ツールを公開できる
+  - **[Skills 最新動向](docs/trends.md) 13 節に MCP ロードマップ（2026-08-22）** — 5 つの重点領域を、2026-07-28 の確定仕様と**区別して**追加。progressive discovery が 7-2 節の Agent Finder / ARD と同じ方向である点を横断的に説明し、ロードマップは方向性の表明で確定仕様ではないと明記
+  - 一次情報での確認結果は #128 のコメントに記録。Runme + WebMCP の記事はページ上に公開日の表示がないため**日付を書かない**方針とし、Codex CLI 0.147.0（2026-08-03〜07）とデスクトップの Import（08-11）は Issue が想定した日付範囲より前だった
 - **2026-08-29** [GBrain](https://github.com/garrytan/gbrain) への言及を 3 ページに追加（#126）。Y Combinator の CEO である Garry Tan が 2026 年 4 月に MIT で公開した、エージェント向けの知識・記憶層
   - **位置づけ**: [オントロジー](docs/dev-methods/ontology.md) の実装例を 2 件から 3 件へ。AWS Context Ontology Accelerator と Palantir Foundry Ontology が「組織で形式的な定義を作る側」なのに対し、GBrain は **OWL / RDF で語彙を定義する手前で止める**側として対比した。判断表にも「`SKILL.md` では足りないが形式的な定義を組むほどでもない」中間の行を追加
   - **中身**: Markdown の git リポジトリが正で、PGLite / Postgres へ同期する。エンティティ抽出に**書き込みごとの LLM 呼び出しがない**。`gbrain search`（上位ページ）と `gbrain think`（根拠付きの統合回答と、まだ分かっていないことの指摘）の 2 つの問い方。接続は MCP（stdio / HTTP）と CLI
