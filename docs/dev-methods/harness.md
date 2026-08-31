@@ -1,8 +1,8 @@
 # AI エージェントの実行基盤（ハーネス）
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-08-28
+> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-08-31
 
-> エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
+> エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
 
 ---
 
@@ -32,16 +32,17 @@ ChatGPT の「チャットに答える」段階から、タスクを自律的に
 
 > エンジニアの仕事が「コードを書くこと」から「エージェントが確実に働ける環境を設計すること」へ移る、という主張の実証として引かれる事例です。数値は OpenAI の自己報告であり、そのまま一般化できる保証はありません。
 
-## 実装を見る 2 つの入口
+## 実装を見る 3 つの入口
 
-ハーネスは概念だけでは掴みにくいため、性格の異なる実装を 2 つ並べます。
+ハーネスは概念だけでは掴みにくいため、性格の異なる実装を 3 つ並べます。
 
-| | Microsoft Copilot Studio | QM（Y Combinator） |
-|---|---|---|
-| 形態 | GUI・ローコードで構成する商用プラットフォーム | ソースを読める OSS（MIT） |
-| 想定利用者 | 業務担当者・開発者 | 組織のプラットフォームエンジニア |
-| 見えるもの | 設計の**考え方**を GUI 上で追える | 設計の**実装**をコードで追える |
-| `提供元` / `状態` | Official（Microsoft） / GA | Official（Y Combinator） / **Experimental** |
+| | Microsoft Copilot Studio | QM（Y Combinator） | Kiro Crew（AWS） |
+|---|---|---|---|
+| 形態 | GUI・ローコードで構成する商用プラットフォーム | ソースを読める OSS（MIT） | ソースを読める OSS（Apache-2.0）＋公式ビルドの配布 |
+| 想定利用者 | 業務担当者・開発者 | 組織のプラットフォームエンジニア | 個人・チームの開発者 |
+| 見えるもの | 設計の**考え方**を GUI 上で追える | 設計の**実装**をコードで追える | **常駐して動き続ける**前提の設計を実装で追える |
+| 重心 | 業務フローの構成 | 組織のスコープと権限 | セッションをまたぐ継続と起動条件 |
+| `提供元` / `状態` | Official（Microsoft） / GA | Official（Y Combinator） / **Experimental** | Official（AWS） / GA |
 
 ## Microsoft Copilot Studio での実装例
 
@@ -121,6 +122,56 @@ QM は**組織向けソフトであり、デスクトップアプリではあり
 
 > 初期段階の OSS のため、構成・コマンド・要件は変わります。導入時は必ず [リポジトリ](https://github.com/yc-software/qm) の最新の記述を確認してください。
 
+## Kiro Crew — 常駐して動き続けるハーネス
+
+[Kiro Crew](https://kiro.dev/crew/) は、AWS が 2026-08-04 に Apache-2.0 で公開したハーネスです。Amazon 社内で使われていた仕組み（MeshClaw）を OSS として出したもので、製品ページの説明は次のとおりです。
+
+> Kiro Crew is the persistent, open source development workspace that remembers your context, learns how you work, and coordinates across your unique tools and workflows.
+
+QM が**組織のスコープと権限**を中心に据えるのに対し、Kiro Crew の軸は**対話が終わっても作業が終わらないこと**です。同じ「ソースを読める OSS ハーネス」でも、設計の出発点が違います。
+
+### 層の関係 — Kiro CLI を下敷きにする
+
+Kiro Crew は **Agent Client Protocol（ACP）** 経由で `kiro-cli` を駆動します。QM が Claude Code・Codex・OpenCode・Pi を差し替え可能な部品として扱ったのと同じ構図で、こちらは下位に自社の CLI を固定した形です。
+
+| 層 | 担うもの |
+|----|---------|
+| ハーネス（Kiro Crew） | 永続セッション、メモリ、スケジュール、チャネルへの配送、サンドボックス、監査 |
+| コーディングツール（`kiro-cli`） | 実際のエージェントループ |
+| モデル | 推論（Kiro アカウントのサインインを使う） |
+
+`.kiro` 配下の steering files・カスタムエージェント・Skill は**そのまま引き継がれます**。すでに Kiro を使っているなら、定義を書き直さずに常駐側へ持ち上げられます。
+
+### 人がいない時間に動かすための部品
+
+| 部品 | 内容 |
+|------|------|
+| 永続セッション | 並行する独立したセッションを持ち、常駐プロセスの再起動後も再開できる。過去のセッションを検索して文脈を引き継ぐ |
+| スケジュール実行 | タイムゾーンを解釈する定期ジョブを、指定した面へ届ける |
+| ハートビート監視 | 作業が終わるまで見張る。メッセージイベントや**認証済み webhook** にも反応する |
+| 長時間タスク | タスク仕様を渡すと、手順の計画・実行・結果の検証・失敗時の再試行まで行う |
+| メモリ | 好み・進行中の文脈・要約された履歴・持続的な教訓を保持し、**訂正や失敗が以降の挙動を変える** |
+
+入口はデスクトップアプリ・Web ダッシュボード・CLI（`kirocrew`）に加えて、Slack・Discord・Teams などのチャネルがあります。**同じ実行環境へ別の面から入る**設計で、QM が Slack をプラグインとして扱うのと同じ考え方です。
+
+**→ 「いつ起動するか」の設計は [ループエンジニアリング](loop-engineering.md#oss-側の起動条件--kiro-crew) を参照**
+
+### セキュリティ — 分離の強さを選ぶ
+
+Linux と macOS では `kiro-cli` を **namespace / Seatbelt による分離**の中で動かせます。強さは **standard / strict / off** から選びます。セキュリティイベントとツールの実行履歴は記録され、`kirocrew security events` / `audit` / `verify` で確認できます。
+
+QM が Strict / Auto / Dangerous という**渡す内容の選別**の強さを選ばせるのに対し、Kiro Crew は**プロセス分離**の強さを選ばせます。着眼点は違いますが、どちらも「既定でどこまで許すか」を運用者に決めさせる設計です。無人で回すほどこの既定値が効いてきます（[ループエンジニアリング](loop-engineering.md)）。
+
+### 導入の前提 — OSS だが「自前で完結」ではない
+
+- 本体は Apache-2.0 の OSS で追加の費用はかからないが、**動かすには Kiro のプランが必要**。エージェントの利用は Kiro アカウントの枠を消費する
+- Kiro Crew 自体はアカウントの仕組みを持たず、モデルアクセスは `kiro-cli` のサインインに委ねられる
+- 公式の記述に Preview / Beta の表記はなく、既定の更新チャネルも安定版のため、本ガイドでは `状態`: GA として扱う（チャネルの構成は変わるため、[公式ドキュメント](https://kiro.dev/docs/crew/)を参照）
+
+QM が「自前のクラウド・Postgres・インフラ担当者」を前提にするのに対し、Kiro Crew は**手元のマシンで動かせる代わりに、モデルの提供をベンダーに依存**します。同じ OSS ハーネスでも、組織へ入れるときに確認する項目はここまで違います。
+
+> 導入手順・対応 OS の細目・コマンドは変わります。導入時は [リポジトリ](https://github.com/kirodotdev/KiroCrew) と [公式ドキュメント](https://kiro.dev/docs/crew/) を一次情報として確認してください。
+
 ## ハーネスを意識する理由
 
 - **ループの土台になる**: 無人で回すループは、ハーネスが用意した権限・サンドボックス・観測の範囲でしか安全にならない（[ループエンジニアリング](loop-engineering.md)）。
@@ -155,4 +206,8 @@ QM は**組織向けソフトであり、デスクトップアプリではあり
 - [Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/) — OpenAI の実証報告（公式）
 - [yc-software/qm](https://github.com/yc-software/qm) — QM のリポジトリと README（公式）
 - [QM の SECURITY.md](https://github.com/yc-software/qm/blob/main/SECURITY.md) — 脅威モデル・運用者の前提・既知の限界（公式）
+- [Kiro Crew](https://kiro.dev/crew/) — 製品ページと FAQ（前提となるプラン・対応 OS。公式）
+- [Introducing Kiro Crew](https://kiro.dev/blog/introducing-kiro-crew/) — 公開時の発表（公式・2026-08-04）
+- [kirodotdev/KiroCrew](https://github.com/kirodotdev/KiroCrew) — リポジトリと README（公式・Apache-2.0）
+- [Kiro Crew ドキュメント](https://kiro.dev/docs/crew/) — 機能・設定・セキュリティの一次情報（公式）
 

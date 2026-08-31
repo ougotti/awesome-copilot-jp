@@ -4,6 +4,13 @@
 
 ## 2026-08
 
+- **2026-08-31** [Kiro Crew](https://kiro.dev/crew/)（AWS が 2026-08-04 に Apache-2.0 で公開した常駐型のハーネス）への言及を 4 ページに追加（#134）
+  - **[ハーネス](docs/dev-methods/harness.md) に実装例として追加** — 実装を見る入口を 2 つから 3 つへ。Agent Client Protocol 経由で `kiro-cli` を駆動する層関係、`.kiro` 配下の steering files・カスタムエージェント・Skill をそのまま引き継ぐ点、永続セッション／定期ジョブ／ハートビート／長時間タスク／メモリという部品、namespace / Seatbelt による分離（standard / strict / off）と監査コマンドを整理
+  - **QM との違いを軸にした** — QM が「組織のスコープと権限」を中心に据え、自前のクラウド・Postgres・インフラ担当者を前提にするのに対し、Kiro Crew は「セッションをまたぐ継続」が軸で手元のマシンで動く。**本体は無償の OSS でも動かすには Kiro のプランが必要**で、モデルの提供はベンダーに依存する点を導入判断として明記
+  - **[ループエンジニアリング](docs/dev-methods/loop-engineering.md) に「OSS 側の起動条件」を追加** — Codex の Scheduled tasks との違いは、起動条件の実装を読めることと、常駐したセッションが起動条件を受け取る（エージェントの側が終わらない）こと。長時間タスクを任せるほど停止条件を渡す側で決める必要が増す点を添えた
+  - **[コーディングエージェントの選び方](docs/dev-methods/coding-agents.md) は比較表に足さず**、「エージェントとハーネスの関係」で層が違うことを明示。Kiro Crew は 6 つ目のコーディングエージェントではない
+  - [Skills 最新動向](docs/trends.md) 10 節に要約を追加し、8 節に Kiro の製品構成（IDE / `kiro-cli` / Crew）の補足を追記
+
 - **2026-08-30** 2026-08 後半の動向のうち **P1（Copilot のカスタマイズ運用・Claude の統制範囲）**を反映（#128）
   - **[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md) に「5. 統制が効く 3 つの段階」を新設** — 導入前（スキャン）・推論前（allow / deny 判定）・実行後（セッションの監査）。**中身が安全な Skill でも、渡される入力や実行される文脈まではスキャンできない**ため導入前だけでは埋まらない、という論点を軸にした。いずれも組織向けプラン前提で、個人利用では導入前チェックが主役である点も明記。既存の「同名の別パッケージ」は 6 節へ繰り下げ
   - **[Claude Code のカスタマイズ機能](docs/claude-code/basics.md) に Claude 固有の設定と条件** — Skill / Plugin セキュリティスキャン（Enterprise・Beta・2026-08-06）、Inference hooks（Claude Enterprise・Beta・2026-08-05。claude.ai / Cowork / Claude Code の対象プロンプトが判定を待つ。リクエストは署名され、拒否は Activity Feed に記録）、Compliance API（利用者のマシン上のセッション取得が 2026-08-26 に**ベータ終了**）。判定サーバーが落ちたときの挙動を決めておく必要と、監査範囲の周知の要否も添えた

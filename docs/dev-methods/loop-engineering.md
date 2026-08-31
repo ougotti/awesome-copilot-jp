@@ -1,6 +1,6 @@
 # ループエンジニアリング
 
-> **対象ツール**: ツール横断（Claude Code・Codex 等） ｜ **実行環境**: CLI / デスクトップ / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-30
+> **対象ツール**: ツール横断（Claude Code・Codex 等） ｜ **実行環境**: CLI / デスクトップ / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-31
 
 > エージェントに毎ターン指示を出す代わりに、**エージェントに指示を出し続ける「ループ」の側を設計する**実践を **ループエンジニアリング（loop engineering）** と呼びます。2026-06-07 に Addy Osmani（Google Chrome）が [Loop Engineering](https://addyosmani.com/blog/loop-engineering/) で命名しました。このページは概念、ループの構成要素、停止条件の作り方、そして落とし穴をまとめた解説です。ループが動く土台については [AI エージェントの実行基盤（ハーネス）](harness.md) を参照してください。
 
@@ -90,6 +90,22 @@ Osmani はループエンジニアリングをハーネスエンジニアリン�
 
 ここで役割を分けて考えると設計が楽になります — **Skill が手順の定義**、**Plugin が外部接続**、**Scheduled task が起動条件**、**worktree やサンドボックスが実行境界**です。ループの部品をどこに置くかの目安になります。
 
+### OSS 側の起動条件 — Kiro Crew
+
+同じ「起動条件を製品側に持たせる」形は OSS でも出てきました。AWS が 2026-08-04 に Apache-2.0 で公開した [Kiro Crew](harness.md#kiro-crew--常駐して動き続けるハーネス) は、常駐したまま次の 3 つで起動します。
+
+| 型 | Kiro Crew での実装 |
+|----|------------------|
+| 時間型 | タイムゾーンを解釈する定期ジョブ。結果は指定した面（Web ダッシュボード・Slack 等のチャネル）へ届く |
+| 能動型 | 認証済み webhook とメッセージイベント |
+| 能動型（監視） | ハートビート。作業が終わるか、人の判断が要る状態になるまで見張り続ける |
+
+Codex の Scheduled tasks との違いは 2 点です。**起動条件の実装を読める**こと、そして**エージェントの側が終わらない**ことです。Scheduled tasks は起動のたびにタスクを立てますが、Kiro Crew は常駐したセッションが起動条件を受け取り、メモリと過去のセッションを引き継ぎます。
+
+長時間タスクは計画・実行・検証・失敗時の再試行までツール側が回すため、**[停止条件](#停止条件の作り方)を渡す側で決めておく必要はむしろ大きくなります**。「終わるまで」ではなく、機械が判定できる条件と上限を仕様に書いてください。
+
+> 本体は無償の OSS ですが、**動かすには Kiro のプランが必要**です（エージェントの利用は Kiro アカウントの枠を消費します）。
+
 ### 実行した知識を次の周回へ戻す — Runme + WebMCP
 
 OpenAI が公開している Codex の事例は、**無人実行そのものより「実行で得た知識を次回へ戻すこと」に価値を置いた**ループです。Runme のノートブックを軸に、次の順で回ります。
@@ -172,4 +188,5 @@ Claude Code には、ループを組むための機能がひととおり揃っ�
 - [Loop, Harness, Context Engineering: The Terms Explained](https://www.codecentric.de/en/knowledge-hub/blog/loop-harness-context-engineering-explained) — 用語階層の整理（codecentric、2026-07-05）
 - [Automating repetitive work at OpenAI with Codex](https://developers.openai.com/blog/automating-repetitive-work-at-openai-with-codex) — Runme + WebMCP による反復作業のループ化（OpenAI 公式）
 - [Scheduled tasks](https://learn.chatgpt.com/docs/automations) — 時刻・イベントでの起動と、その前提条件（公式）
+- [Kiro Crew ドキュメント](https://kiro.dev/docs/crew/) — 定期ジョブ・ハートビート・webhook による起動（公式）
 - [Claude Code Commands](https://code.claude.com/docs/en/commands) — `/goal`・`/loop` の公式リファレンス
