@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-30
+> **対象ツール**: ツール横断 ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-31
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-08-31 | 10 節に Kiro Crew（AWS が 2026-08-04 に Apache-2.0 で公開した常駐型ハーネス）を追加し、[ハーネス](dev-methods/harness.md) と [ループエンジニアリング](dev-methods/loop-engineering.md) へ反映。8 節に Kiro の製品構成（IDE / CLI / Crew）の補足を追記 |
 | 2026-08-30 | 13 節に 2026-08-22 公開の MCP ロードマップ（5 つの重点領域）を追加し、確定仕様との区別を明示。Codex の Scheduled tasks / 他エージェントからの取り込みを[ループエンジニアリング](dev-methods/loop-engineering.md)と[Codex ガイド](codex/README.md)へ反映。12 節に統制の 3 段階（導入前・推論前・実行後）を追記 |
 | 2026-08-29 | 「11. エージェントに渡す知識（オントロジー）」を新設し、[オントロジー](dev-methods/ontology.md) へ誘導（従来の 11・12 節は 12・13 節へ繰り下げ）。ハーネス・セキュリティと同じ「要約 + 独立ページ」の扱いに揃えた |
 | 2026-08-28 | 10 節にループエンジニアリング（Addy Osmani が 2026-06-07 に命名）の要約を追加し、独立ページ [ループエンジニアリング](dev-methods/loop-engineering.md) へ誘導 |
@@ -397,6 +398,8 @@ Agent Plugins は、`SKILL.md`（スキル定義）と `mcp.json`（MCP サー�
 | Google（Gemini 系エージェント） | 対応表明 |
 | Claude Code（Anthropic） | 現時点では静観 |
 
+> 表の「AWS Kiro」は、エージェント型 IDE（Kiro IDE）・CLI（`kiro-cli`）・常駐ワークスペース（[Kiro Crew](dev-methods/harness.md#kiro-crew--常駐して動き続けるハーネス)）の総称です。Kiro Crew は `kiro-cli` を下敷きにし、`.kiro` 配下の設定をそのまま引き継ぎます。
+
 ### パッケージの構成
 
 Agent Plugin パッケージの最小構成は `plugin.json`（メタデータ）と `skills/<スキル名>/SKILL.md`（スキル定義）です。
@@ -519,9 +522,11 @@ Copilot 独自形式は Agent Plugins の**上位互換**です。したがっ�
 
 2026 年前半の動きは 2 つあります。1 つは **ハーネスエンジニアリング**という実践の広まり（エージェントの失敗をやり直しで済ませず、同じ失敗が起きないよう環境の側を作り替える）。もう 1 つは実装の公開で、**QM**（Y Combinator が 2026 年 7 月末に MIT ライセンスで公開した組織向けハーネス。`状態`: Experimental）はソースを読める実装例として参考になります。QM の設計では、Claude Code や Codex といったコーディングツールは**ハーネスから見れば差し替え可能な部品**にあたり、認証・スコープ・権限・cron・監査はハーネス側が引き受けます。
 
+実装はベンダー側からも出ました。**Kiro Crew**（AWS が 2026-08-04 に Apache-2.0 で公開。`提供元`: Official / `状態`: GA）は、Agent Client Protocol 経由で `kiro-cli` を駆動する**常駐型のハーネス**です。永続セッションとメモリ、定期ジョブ・ハートビート・認証済み webhook による起動、namespace / Seatbelt による分離（standard / strict / off）と監査コマンドを備え、Slack や Discord からも同じ実行環境へ入れます。ただし**本体が無償の OSS でも、動かすには Kiro のプランが必要**で、モデルの提供はベンダーに依存します。「OSS のハーネス」でも自前で完結するとは限らない、という点は導入判断で確認してください。
+
 2026 年半ばには、この 1 つ上の階として **ループエンジニアリング**（loop engineering）という呼び名が加わりました。Addy Osmani（Google Chrome）が [Loop Engineering](https://addyosmani.com/blog/loop-engineering/)（2026-06-07）で命名したもので、**人がプロンプトを打ち続けるのをやめ、エージェントを目標へ向けて回すループの側を設計する**という実践です。自動実行・ワークツリー・スキル・コネクタ・サブエージェント・外部状態を組み合わせ、機械が判定できる停止条件で止めます。ループはハーネスの上で回るため、**ハーネスが弱ければループは同じ誤りを繰り返し増幅します**。
 
-**→ 概念、Microsoft Copilot Studio と QM の実装、セキュリティポスチャ、導入の前提は [AI エージェントの実行基盤（ハーネス）](dev-methods/harness.md) を参照**
+**→ 概念、Microsoft Copilot Studio・QM・Kiro Crew の実装、セキュリティポスチャ、導入の前提は [AI エージェントの実行基盤（ハーネス）](dev-methods/harness.md) を参照**
 **→ ループの構成要素・停止条件の作り方・落とし穴は [ループエンジニアリング](dev-methods/loop-engineering.md) を参照**
 
 ---
@@ -648,6 +653,9 @@ GitHub MCP Server は正式リリース前に先行対応済みです。**tier 1
 - [Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/) — OpenAI の実証報告（公式）
 - [yc-software/qm](https://github.com/yc-software/qm) — QM のリポジトリと README（公式）
 - [QM の SECURITY.md](https://github.com/yc-software/qm/blob/main/SECURITY.md) — 脅威モデル・運用者の前提・既知の限界（公式）
+- [Introducing Kiro Crew](https://kiro.dev/blog/introducing-kiro-crew/) — Kiro Crew の公開時の発表（公式・2026-08-04）
+- [kirodotdev/KiroCrew](https://github.com/kirodotdev/KiroCrew) — リポジトリと README（公式・Apache-2.0）
+- [Kiro Crew](https://kiro.dev/crew/) — 製品ページと FAQ（前提となるプラン・対応 OS。公式）
 
 ### Skill / Plugin のセキュリティ（本ページ 11 節・詳細は [解説ページ](dev-methods/skill-security.md)）
 
