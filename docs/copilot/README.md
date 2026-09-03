@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-22
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-03
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -310,7 +310,7 @@ Copilot CLI には `copilot-plugins`（GitHub 公式コレクション）と `aw
 同じ発表で、マルチベンダー共通の **Agent Plugins 1.0.0** への対応も一般提供となりました。ただし Copilot Plugin を書けば自動的に他エージェントへ持ち出せるわけではなく、`plugin.json` に `$schema` を書いて可搬形式へオプトインしたものだけが対象です。
 
 **→ 構成・Marketplace の作り方・Claude Code Plugin との比較は [plugins.md](plugins.md) を参照**
-**→ 可搬形式（Agent Plugins 1.0.0）と Copilot 独自形式の違い・移行手順は [plugins.md の「2 つの形式」](plugins.md#2-つの形式可搬形式とツール独自形式) と [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準) を参照**
+**→ 可搬形式と Copilot 独自形式の選び分けは [plugins.md の「2 つの形式」](plugins.md#2-つの形式可搬形式とツール独自形式)、インストール前に可搬かを判定する手順は [プラグインの可搬性](../dev-methods/plugin-portability.md) を参照**
 
 ---
 

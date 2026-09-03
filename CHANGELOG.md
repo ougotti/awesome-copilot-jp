@@ -4,6 +4,13 @@
 
 ## 2026-09
 
+- **2026-09-03** プラグインの可搬性（`$schema` による判定）を独立ページへ切り出し（#143）
+  - **[プラグインの可搬性](docs/dev-methods/plugin-portability.md) を新設** — 仕様の解説ではなく「**インストールしようとしている Plugin は他のエージェントへ持っていけるか**」を主題にした。`plugin.json` の場所 → `$schema` → 最上位フィールド → MCP 設定のパス → `agents/` などの有無、という 5 段階の判定手順を表にし、**1 と 2 で決まり 3〜5 は裏づけ**である点を明示。可搬形式が課す 3 つの制約（構成要素は Skills と MCP の 2 種類・マニフェストは 10 フィールドで閉じている・マニフェストはプラグインルート固定）と、標準が用意した逃げ道（`extensions` と逆ドメイン名の名前空間ディレクトリ）を [仕様 1.0.0 の原文](https://github.com/agentplugins/agent-plugins-spec/blob/main/spec/1.0.0.md)で検証して整理した
+  - **ベンダー公式プラグインでの実物の対比を追加** — `aws/agent-toolkit-for-aws` の `aws-core` は `$schema` を持ち、Claude Code 固有の Hooks を `extensions` の `com.anthropic.claude-code` へ逃がすことで**マニフェスト本体を 10 フィールドに収めている**。一方 `microsoft/power-platform-skills` の `power-pages` は `.claude-plugin/plugin.json` と `.mcp.json` で、ルートに `plugin.json` がない。**どちらも「複数エージェント向け」と案内しているのに結果が割れる**ことを、優劣ではなく判定の実例として示した（確認日 2026-09-03）
+  - **[Skills 最新動向](docs/trends.md) 8 節を要約 + リンクへ縮小** — ハーネス・セキュリティ・オントロジーで採った型に揃えた。**対応状況表は 8 節に据え置き**（陳腐化の速さが可搬性の仕組みとは違うため）
+  - **[Copilot Plugins](docs/copilot/plugins.md) の冒頭 2 節を Copilot 固有の話へ絞った** — 8 節とほぼ同じだった 2 形式の比較表とガバナンス表を、選び分けの判断表 1 つ + リンクへ置き換え。「オープン標準が保証しないこと」の表も [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md) と重複していたため要約 + リンクにした
+  - **[コーディングエージェントの選び方](docs/dev-methods/coding-agents.md) の「定義の可搬性」から新ページへ接続** — 乗り換えの軸から、そのまま判定手順へ進める導線にした
+
 - **2026-09-03** 手動追従 upstream の新規追加 4 件を反映（#133）
   - **[Codex Agent Skills カタログ](docs/codex/catalog.md) の System 層に `openai-docs` を追加** — Curated 層と同じスキルが System 層（同梱・インストール不要）にも収録された。公式ドキュメントの MCP サーバーを一次情報とし、Codex 自身に関する質問はマニュアル取得用ヘルパーを先に使う作りである点、**MCP サーバーが未設定だと公式ドメインの Web 検索にフォールバックする**ため参照元の確認が要る点を添えた。Curated 層の行にも同梱済みである旨を明記
   - **[skills.sh ガイド](docs/dev-methods/skills-sh.md) の Vercel 公式スキル集に 3 件追加** — `react-native-skills`（React Native / Expo の性能規約）・`deploy-to-vercel`（状態を判定してデプロイ経路を選ぶ）・`vercel-cli-with-tokens`（トークン認証での CLI 運用）。**デプロイ系 2 件は認証情報が必要で既定はプレビュー配信**である点を注記に分け、節の見出しを「Web・モバイルの品質を上げ、デプロイまでつなぐ」へ変更

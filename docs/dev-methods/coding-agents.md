@@ -1,6 +1,6 @@
 # コーディングエージェントの選び方
 
-> **対象ツール**: ツール横断（Claude Code・Codex・Qwen Code・OpenCode・Bionic） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-31
+> **対象ツール**: ツール横断（Claude Code・Codex・Qwen Code・OpenCode・Bionic） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-03
 
 > ターミナルやデスクトップで動く「コーディングエージェント」は、2026 年時点で選択肢が増えました。よく「Claude Code は Claude 中心、Codex は OpenAI 中心」のようにモデル系列で語られますが、**その分類は実態を半分しか説明していません**。本ページでは、何が本当に違うのかを整理します。
 
@@ -142,7 +142,7 @@ LM Studio が 2026-07-16 に公開した、**オープンモデル向けのデ�
 | `SKILL.md`（Agent Skills） | Claude Code・Codex・Qwen Code・OpenCode が対応。同じ Skill を複数ツールで使い回せる |
 | `AGENTS.md` | プロジェクトの前提を書く共通ファイルとして普及 |
 | MCP | 外部サービス接続の共通規格。上記 4 ツールが対応 |
-| [Agent Plugins 1.0.0](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準) | Skill と MCP 設定をまとめる可搬形式。Codex・GitHub Copilot・Cursor が対応（Claude Code は独自形式のまま） |
+| [Agent Plugins 1.0.0](plugin-portability.md) | Skill と MCP 設定をまとめる可搬形式。Codex・GitHub Copilot・Cursor が対応（Claude Code は独自形式のまま） |
 
 **→ Skill の探し方・導入は [skills.sh ガイド](skills-sh.md)、導入前の安全確認は [Skill / Plugin のセキュリティ](skill-security.md) を参照**
 
@@ -158,7 +158,7 @@ LM Studio が 2026-07-16 に公開した、**オープンモデル向けのデ�
 
 | 軸 | 確認すること |
 |----|-------------|
-| 定義の可搬性 | Instructions / Skills / Plugins を持ち出せるか |
+| 定義の可搬性 | Instructions / Skills / Plugins を持ち出せるか（Plugin は [`plugin.json` を見れば判定できます](plugin-portability.md#判定手順)） |
 | 作業の継続性 | プロジェクト・chat・セッションを再開できるか |
 | 同期方式 | 一度だけコピーするのか、自動同期を続けられるのか |
 | 再認証の要否 | 取り込んだ Plugin / コネクタで認証をやり直す必要があるか |

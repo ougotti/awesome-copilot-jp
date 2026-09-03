@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-31
+> **対象ツール**: ツール横断 ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-03
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-03 | 8 節の可搬性の説明（パッケージの構成・`$schema` によるオプトイン）を独立ページ [プラグインの可搬性](dev-methods/plugin-portability.md) へ分離し、本節には要約とリンクを残した。対応状況表は寿命が違うため 8 節に据え置き |
 | 2026-08-31 | 10 節に Kiro Crew（AWS が 2026-08-04 に Apache-2.0 で公開した常駐型ハーネス）を追加し、[ハーネス](dev-methods/harness.md) と [ループエンジニアリング](dev-methods/loop-engineering.md) へ反映。8 節に Kiro の製品構成（IDE / CLI / Crew）の補足を追記 |
 | 2026-08-30 | 13 節に 2026-08-22 公開の MCP ロードマップ（5 つの重点領域）を追加し、確定仕様との区別を明示。Codex の Scheduled tasks / 他エージェントからの取り込みを[ループエンジニアリング](dev-methods/loop-engineering.md)と[Codex ガイド](codex/README.md)へ反映。12 節に統制の 3 段階（導入前・推論前・実行後）を追記 |
 | 2026-08-29 | 「11. エージェントに渡す知識（オントロジー）」を新設し、[オントロジー](dev-methods/ontology.md) へ誘導（従来の 11・12 節は 12・13 節へ繰り下げ）。ハーネス・セキュリティと同じ「要約 + 独立ページ」の扱いに揃えた |
@@ -385,7 +386,7 @@ Agent Plugins は、`SKILL.md`（スキル定義）と `mcp.json`（MCP サー�
 
 これまでエージェントごとに設定形式が異なり、たとえば GitHub Copilot で使っているスキルを Cursor や ChatGPT に持ち込むには個別の書き直しが必要でした。Agent Plugins 1.0.0 はこの断絶を解消し、「一度書いたらどのエージェントでも使える」パッケージを目指しています。
 
-ガバナンスは Technical Steering Committee が担い、憲章で **役職は企業ではなく個人が持ち、企業に議席を予約しない**こと、**単一ベンダーが Core Maintainer の過半数を占めないこと**が定められています。
+ガバナンスは Technical Steering Committee が担い、憲章で **役職は企業ではなく個人が持ち、企業に議席を予約しない**こと、**単一ベンダーが Core Maintainer の過半数を占めないこと**が定められています。Core Maintainer の所属は Amazon / Cursor / Microsoft / OpenAI / Vercel で、現在の顔ぶれは仕様リポジトリの [MAINTAINERS](https://github.com/agentplugins/agent-plugins-spec/blob/main/MAINTAINERS.md) に記録されます。
 
 ### 対応状況（2026-08-13 時点）
 
@@ -402,18 +403,11 @@ Agent Plugins は、`SKILL.md`（スキル定義）と `mcp.json`（MCP サー�
 
 ### パッケージの構成
 
-Agent Plugin パッケージの最小構成は `plugin.json`（メタデータ）と `skills/<スキル名>/SKILL.md`（スキル定義）です。
-
-**v1 が標準化する構成要素は Skills と MCP サーバーの 2 種類だけ**で、配置場所は固定です。`plugin.json` で場所を上書きすることはできません。
-
-| 構成要素 | 固定の配置場所 |
-|---------|---------------|
-| Skills | `skills/` 直下の各サブディレクトリの `SKILL.md` |
-| MCP サーバー | プラグインルートの `mcp.json` |
+Agent Plugin パッケージの最小構成は `plugin.json`（メタデータ）と `skills/<スキル名>/SKILL.md`（スキル定義）です。**v1 が標準化する構成要素は Skills と MCP サーバーの 2 種類だけ**で、配置場所は固定です。マニフェストは 10 フィールドで閉じており、`$schema` は必須です。Agents・Hooks・LSP など v1 が扱わない要素は、`extensions` フィールドか逆ドメイン名の名前空間ディレクトリへ置きます。
 
 ```text
 my-plugin/
-├── plugin.json              # パッケージのメタデータ
+├── plugin.json              # パッケージのメタデータ（`$schema` は必須）
 ├── skills/
 │   └── my-skill/
 │       └── SKILL.md         # スキル定義（既存の SKILL.md と同形式）
@@ -421,23 +415,7 @@ my-plugin/
 └── com.github.copilot/      # ツール独自拡張（任意・逆ドメイン名の名前空間）
 ```
 
-`plugin.json` の例：
-
-```json
-{
-  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "my-skill-pack",
-  "version": "1.0.0",
-  "description": "共通スキルパック"
-}
-```
-
-マニフェストで**注意が必要な点**が 2 つあります。
-
-- **`$schema` は必須**です。値は上記の正式な識別子でなければなりません。
-- **スキーマは閉じています。** 書ける最上位フィールドは `$schema` / `name` / `version` / `description` / `author` / `homepage` / `repository` / `license` / `keywords` / `extensions` の 10 個だけです。`skills` や `mcpServers` のような構成要素を指すフィールドは**仕様に存在せず**、クライアントは未知フィールドとして無視します。
-
-Agents・Hooks・LSP など v1 が扱わない要素は、`extensions` フィールドか、逆ドメイン名の名前空間ディレクトリ（GitHub Copilot なら `com.github.copilot/`）へ置きます。
+**→ 制約の詳細と、インストール前に可搬かを判定する手順は [プラグインの可搬性](dev-methods/plugin-portability.md) を参照**
 
 ### GitHub Copilot での導入
 
@@ -454,17 +432,9 @@ VS Code では設定 UI または `.github/copilot/settings.json` の `enabledPl
 
 GitHub の Copilot Plugin（本ページ [7-3 節](#7-3-github-copilot-plugins--まとめて配る)）は Agent Plugins 1.0.0 に対応していますが、**Copilot Plugin なら自動的に可搬になるわけではありません**。
 
-GitHub の実装では `$schema` は**任意**で、これを書くことが**可搬形式へのオプトイン**にあたります。
+GitHub の実装では `$schema` は**任意**で、これを書くことが**可搬形式へのオプトイン**にあたります。書かなければ従来どおり Copilot 独自形式（Agents / Skills / Commands / Hooks / MCP / LSP を含む上位互換）として動くため、既存 Plugin をそのまま使い続ける分には**移行は不要**です。
 
-| | `$schema` を書く（可搬形式） | `$schema` を書かない（Copilot 独自形式） |
-|---|---|---|
-| 構成要素 | Skills と MCP サーバーのみ | Agents / Skills / Commands / Hooks / MCP / LSP |
-| 配置場所 | `skills/` と `mcp.json` に固定 | マニフェストのフィールドで上書き可（`.mcp.json` 等） |
-| 他エージェントでの利用 | できる | **できない** |
-
-Copilot 独自形式は Agent Plugins の**上位互換**です。したがって Copilot Plugin をほかのエージェント（Cursor・ChatGPT 等）で使いたい場合は、`$schema` を追加し、ファイルを標準のディレクトリ構成へ整える作業が必要です。既存 Plugin をそのまま使い続ける分には**移行は不要**です。
-
-**→ 2 つの形式の違いと移行の手順は [GitHub Copilot Plugins](copilot/plugins.md) を参照**
+**→ 2 つの形式の違い・判定手順・ベンダー公式プラグインでの実例は [プラグインの可搬性](dev-methods/plugin-portability.md)、Copilot 側の操作手順は [GitHub Copilot Plugins](copilot/plugins.md) を参照**
 
 ---
 
