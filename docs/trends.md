@@ -432,7 +432,7 @@ VS Code では設定 UI または `.github/copilot/settings.json` の `enabledPl
 
 GitHub の Copilot Plugin（本ページ [7-3 節](#7-3-github-copilot-plugins--まとめて配る)）は Agent Plugins 1.0.0 に対応していますが、**Copilot Plugin なら自動的に可搬になるわけではありません**。
 
-GitHub の実装では `$schema` は**任意**で、これを書くことが**可搬形式へのオプトイン**にあたります。書かなければ従来どおり Copilot 独自形式（Agents / Skills / Commands / Hooks / MCP / LSP を含む上位互換）として動くため、既存 Plugin をそのまま使い続ける分には**移行は不要**です。
+GitHub の実装では `$schema` は**任意**で、**プラグインルート直下の `plugin.json`** にこれを書くことが**可搬形式へのオプトイン**にあたります（Copilot は `.github/plugin/` 等のマニフェストも認識しますが、標準が見るのはルート直下だけです）。書かなければ従来どおり Copilot 独自形式（Agents / Skills / Commands / Hooks / MCP / LSP を含む上位互換）として動くため、既存 Plugin をそのまま使い続ける分には**移行は不要**です。
 
 **→ 2 つの形式の違い・判定手順・ベンダー公式プラグインでの実例は [プラグインの可搬性](dev-methods/plugin-portability.md)、Copilot 側の操作手順は [GitHub Copilot Plugins](copilot/plugins.md) を参照**
 

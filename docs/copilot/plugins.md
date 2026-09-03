@@ -10,14 +10,16 @@ Plugin は、Custom Agents・Skills・Hooks・MCP サーバー設定・LSP サ�
 
 ## 2 つの形式：可搬形式とツール独自形式
 
-2026-08-06 に **Agent Plugins 1.0.0** というベンダー中立のオープン標準が公開され、Plugin には**形式が 2 つある**状態になりました。**`plugin.json` に正式な `$schema` を書けば可搬形式**、書かなければ従来どおりの **Copilot 独自形式**です。
+2026-08-06 に **Agent Plugins 1.0.0** というベンダー中立のオープン標準が公開され、Plugin には**形式が 2 つある**状態になりました。**プラグインルート直下の `plugin.json` に正式な `$schema` を書けば可搬形式**、書かなければ従来どおりの **Copilot 独自形式**です。
+
+**場所も条件です。** Copilot はマニフェストを `.plugin/plugin.json` や `.github/plugin/plugin.json` でも認識しますが、標準が見るのは**ルート直下の `plugin.json` だけ**です。そこに置かなければ、`$schema` を書いても可搬にはなりません。
 
 Copilot 独自形式は可搬形式の**上位互換**にあたります。可搬形式で使える構成要素は Skills と MCP サーバーの 2 種類だけで配置場所も固定されるのに対し、Copilot 独自形式では Agents / Commands / Hooks / LSP まで含められ、配置場所もマニフェストで上書きできます。GitHub の実装では `$schema` は任意なので、**既存 Plugin の移行は不要**です。
 
 | 判断 | 選ぶ形式 |
 |------|---------|
 | Copilot だけで使い、機能をすべて使いたい | Copilot 独自形式（`$schema` を書かない） |
-| Cursor・ChatGPT・Kiro などへ持ち出したい | 可搬形式（`$schema` を書き、構成を標準の配置へ整える） |
+| Cursor・ChatGPT・Kiro などへ持ち出したい | 可搬形式（**ルート直下の** `plugin.json` に `$schema` を書き、構成を標準の配置へ整える） |
 
 **→ 可搬形式が課す制約・逃げ道（`extensions` と逆ドメイン名の名前空間）・インストール前に可搬かを判定する手順は [プラグインの可搬性](../dev-methods/plugin-portability.md)、標準の成り立ちとガバナンス・各ツールの対応状況は [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準) を参照**
 
