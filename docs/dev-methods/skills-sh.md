@@ -1,6 +1,6 @@
 # skills.sh — Agent Skills ディスカバリーサイト
 
-> **対象ツール**: ツール横断（Claude Code・Codex・Cursor・OpenCode ほか 70+ エージェント対応） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-22
+> **対象ツール**: ツール横断（Claude Code・Codex・Cursor・OpenCode ほか 70+ エージェント対応） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-03
 
 > [skills.sh](https://skills.sh/) は、Agent Skills を検索・発見・導入するための公開ポータルサイトです。[vercel-labs/skills](https://github.com/vercel-labs/skills) が提供する `npx skills` CLI と連携しており、個人・企業・コミュニティが公開したスキル集を一元的に参照できます。
 
@@ -68,7 +68,7 @@ npx skills use vercel-labs/agent-skills --skill web-design-guidelines --agent cl
 
 skills.sh のランキングは短期間で入れ替わります。ここでは**順位ではなく用途**で整理しています。掲載順に意味はありません。インストール数・順位・掲載件数といった変動値は本文に書かないため、「いま何が伸びているか」は [skills.sh](https://skills.sh/) で直接確認してください。
 
-> 各スキルの説明は、**提供元リポジトリの README と `SKILL.md`（2026-08-22 確認）**に基づきます。収録スキルは追加・削除されることがあります。
+> 各スキルの説明は、**提供元リポジトリの README と `SKILL.md`**に基づきます（2026-08-22 確認。Vercel 公式スキル集のみ 2026-09-03 に再確認）。収録スキルは追加・削除されることがあります。
 
 ### 開発プロセスを整える
 
@@ -88,7 +88,7 @@ skills.sh のランキングは短期間で入れ替わります。ここでは*
 
 **→ 個々の解説は [mattpocock/skills](mattpocock-skills.md) ／ [superpowers](superpowers.md) を参照**
 
-### Web フロントエンドの品質を上げる
+### Web・モバイルの品質を上げ、デプロイまでつなぐ
 
 Vercel 公式の [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) は、まとめて導入して必要なものだけ残す使い方が向いています。
 
@@ -104,8 +104,13 @@ npx skills add vercel-labs/agent-skills
 | 文書の書き方を揃える | `writing-guidelines` | Vercel の文書規約（ボイス・構造・コード例・タイポグラフィ） |
 | ページ遷移アニメーションを実装する | `react-view-transitions` | `<ViewTransition>` / `addTransitionType` と App Router 統合 |
 | boolean prop の増殖を止める | `composition-patterns` | Compound Components / State Lifting / 内部 Composition |
+| React Native / Expo の性能を直す | `react-native-skills` | FlashList による仮想化・アニメーション・ネイティブナビゲーションなどを優先度付きの規約で指導 |
+| 会話からそのままデプロイする | `deploy-to-vercel` | git 連携と CLI 認証の状態を判定してデプロイ経路を選び、プレビュー URL を返す |
+| トークン認証で CLI を運用する | `vercel-cli-with-tokens` | `VERCEL_TOKEN` を環境変数から読み、デプロイ・環境変数・ログ・ドメインを操作する |
 
-> 上記のほか、upstream の README では `react-native-guidelines`・`vercel-deploy-claimable` も紹介されています。収録は入れ替わるため、導入時は `npx skills add vercel-labs/agent-skills` の選択画面か[リポジトリ](https://github.com/vercel-labs/agent-skills)で最新の一覧を確認してください。
+> **デプロイ系の 2 つは Vercel アカウントと認証情報が必要です。** `deploy-to-vercel` は対話ログイン、`vercel-cli-with-tokens` はアクセストークンを前提にした運用向けで、いずれも既定はプレビュー配信です。**本番へ反映する指示になっていないか**を実行前に確認してください。
+
+> upstream の README では、`react-native-skills`・`deploy-to-vercel` が旧名の `react-native-guidelines`・`vercel-deploy-claimable` として紹介されています（2026-09-03 時点）。収録は入れ替わるため、導入時は `npx skills add vercel-labs/agent-skills` の選択画面か[リポジトリ](https://github.com/vercel-labs/agent-skills)で最新の一覧を確認してください。
 
 ### 文書・データを扱う
 

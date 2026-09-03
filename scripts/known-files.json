@@ -672,6 +672,7 @@
     "skills/.curated/winui-app",
     "skills/.curated/yeet",
     "skills/.system/imagegen",
+    "skills/.system/openai-docs",
     "skills/.system/plugin-creator",
     "skills/.system/skill-creator",
     "skills/.system/skill-installer"
@@ -721,8 +722,11 @@
   ],
   "vercel_agent_skills": [
     "skills/composition-patterns",
+    "skills/deploy-to-vercel",
     "skills/react-best-practices",
+    "skills/react-native-skills",
     "skills/react-view-transitions",
+    "skills/vercel-cli-with-tokens",
     "skills/vercel-optimize",
     "skills/web-design-guidelines",
     "skills/writing-guidelines"
