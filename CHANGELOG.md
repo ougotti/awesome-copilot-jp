@@ -2,6 +2,14 @@
 
 本ガイドの主な更新を時系列で記録します。upstream の新規スキル検出への対応と、ガイド本体の構成変更・解説追加をここにまとめます。
 
+## 2026-09
+
+- **2026-09-03** 手動追従 upstream の新規追加 4 件を反映（#133）
+  - **[Codex Agent Skills カタログ](docs/codex/catalog.md) の System 層に `openai-docs` を追加** — Curated 層と同じスキルが System 層（同梱・インストール不要）にも収録された。公式ドキュメントの MCP サーバーを一次情報とし、Codex 自身に関する質問はマニュアル取得用ヘルパーを先に使う作りである点、**MCP サーバーが未設定だと公式ドメインの Web 検索にフォールバックする**ため参照元の確認が要る点を添えた。Curated 層の行にも同梱済みである旨を明記
+  - **[skills.sh ガイド](docs/dev-methods/skills-sh.md) の Vercel 公式スキル集に 3 件追加** — `react-native-skills`（React Native / Expo の性能規約）・`deploy-to-vercel`（状態を判定してデプロイ経路を選ぶ）・`vercel-cli-with-tokens`（トークン認証での CLI 運用）。**デプロイ系 2 件は認証情報が必要で既定はプレビュー配信**である点を注記に分け、節の見出しを「Web・モバイルの品質を上げ、デプロイまでつなぐ」へ変更
+  - **旧名の注記を更新** — upstream の README が `react-native-guidelines`・`vercel-deploy-claimable` の旧名で紹介している状態に合わせ、ディレクトリ名との対応が分かるよう書き換えた
+  - `scripts/known-files.json` の `openai_skills` / `vercel_agent_skills` を更新
+
 ## 2026-08
 
 - **2026-08-31** [Kiro Crew](https://kiro.dev/crew/)（AWS が 2026-08-04 に Apache-2.0 で公開した常駐型のハーネス）への言及を 4 ページに追加（#134）
