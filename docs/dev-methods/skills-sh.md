@@ -1,6 +1,6 @@
 # skills.sh — Agent Skills ディスカバリーサイト
 
-> **対象ツール**: ツール横断（Claude Code・Codex・Cursor・OpenCode ほか 70+ エージェント対応） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-05
+> **対象ツール**: ツール横断（Claude Code・Codex・Cursor・OpenCode ほか 70+ エージェント対応） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-05
 
 > [skills.sh](https://skills.sh/) は、Agent Skills を検索・発見・導入するための公開ポータルサイトです。[vercel-labs/skills](https://github.com/vercel-labs/skills) が提供する `npx skills` CLI と連携しており、個人・企業・コミュニティが公開したスキル集を一元的に参照できます。
 
