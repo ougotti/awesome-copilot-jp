@@ -4,6 +4,14 @@
 
 ## 2026-09
 
+- **2026-09-05** クラウド 3 社のベンダー公式スキルと Anthropic の公式ディレクトリを扱う（#142・#141）
+  - **[Claude Code のカスタマイズ機能](docs/claude-code/basics.md) に公式ディレクトリ `claude-plugins-official` を追加** — 配置先は `official-skills.md`（`anthropics/skills` というスキル集の解説）ではなく `basics.md` のプラグイン節にした。両者は「スキル集」と「プラグインのディレクトリ」で役割が違うため。**初回に対話モードで起動したときに自動追加される**挙動は Claude Code 公式ドキュメントで確認した。**「公式ディレクトリにある = Anthropic 製・検証済み」ではない**点は、リポジトリ README の「Anthropic は同梱される MCP サーバー・ファイル・ソフトウェアを管理しておらず、意図どおり動くことも変わらないことも保証できない」という記述を根拠に明記。判断材料として、公式名が第三者マーケットプレイスに予約されていることと、**自動更新が既定で有効**（第三者・ローカルは既定でオフ）で再現性を優先するなら切る必要があることを添えた。エントリ総数は本文に書いていない
+  - **[Skills 最新動向](docs/trends.md) 8 節に「ベンダー公式スキルの登場」を新設** — AWS・Microsoft・Google の公式リポジトリを提供元・ライセンス・状態で整理。**状態は提供元ごとに違う**（`aws/agent-toolkit-for-aws` は GA と明記、`google/skills` は「under active development」、Microsoft はプラグインごとに異なるためリポジトリ参照）。「標準ができたこと」より「標準を使う側が動き出したこと」を軸にし、読者の行動は `plugin.json` を見ることに集約した
+  - **[プラグインの可搬性](docs/dev-methods/plugin-portability.md) の実例表を 3 列へ拡張** — `microsoft/azure-skills` の `azure` を追加。この `plugin.json` は `skills` / `mcpServers` / `hooks` を持ち、**仕様が「構成要素を指すフィールドは存在しない」と定めているもの**の実例になる。あわせて `google/skills` が `plugin.json` を持たず `SKILL.md` を直接配る形であること（＝この判定表の対象外）を注記
+  - **[Copilot Instructions](docs/copilot/instructions.md) ／ [Copilot Prompts](docs/copilot/prompts.md) の Power Platform 節から 1 行リンク（#141）** — #142 のコメントの方針どおり、#141 は網羅解説ではなくリンク追加へ縮小した
+  - **8 節の「Claude Code は静観」を再確認** — Claude Code のプラグイン公式ドキュメントに Agent Plugins 1.0.0 への言及はなく、記載されるプラグイン構成も `.claude-plugin/plugin.json` のままだったため、記述を維持した。公式ディレクトリが `$schema` 付きのプラグイン（`aws-core`）をホストしていることとは別の話である点を書き分けた
+  - 一次情報の確認（2026-09-05）: 4 リポジトリすべての `plugin.json` を取得し、`$schema` があるのは `aws-core` のみであることを確認。`claude-plugins-official` は `.claude-plugin/marketplace.json` と README、自動追加・自動更新・予約名は Claude Code 公式ドキュメントで確認した
+
 - **2026-09-03** プラグインの可搬性（`$schema` による判定）を独立ページへ切り出し（#143）
   - **[プラグインの可搬性](docs/dev-methods/plugin-portability.md) を新設** — 仕様の解説ではなく「**インストールしようとしている Plugin は他のエージェントへ持っていけるか**」を主題にした。`plugin.json` の場所 → `$schema` → 最上位フィールド → MCP 設定のパス → `agents/` などの有無、という 5 段階の判定手順を表にし、**1 と 2 で決まり 3〜5 は裏づけ**である点を明示。可搬形式が課す 3 つの制約（構成要素は Skills と MCP の 2 種類・マニフェストは 10 フィールドで閉じている・マニフェストはプラグインルート固定）と、標準が用意した逃げ道（`extensions` と逆ドメイン名の名前空間ディレクトリ）を [仕様 1.0.0 の原文](https://github.com/agentplugins/agent-plugins-spec/blob/main/spec/1.0.0.md)で検証して整理した
   - **ベンダー公式プラグインでの実物の対比を追加** — `aws/agent-toolkit-for-aws` の `aws-core` は `$schema` を持ち、Claude Code 固有の Hooks を `extensions` の `com.anthropic.claude-code` へ逃がすことで**マニフェスト本体を 10 フィールドに収めている**。一方 `microsoft/power-platform-skills` の `power-pages` は `.claude-plugin/plugin.json` と `.mcp.json` で、ルートに `plugin.json` がない。**どちらも「複数エージェント向け」と案内しているのに結果が割れる**ことを、優劣ではなく判定の実例として示した（確認日 2026-09-03）

@@ -1,6 +1,6 @@
 # プラグインの可搬性 — インストール前に `plugin.json` を見る
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・Cursor・Kiro ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-03
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・Cursor・Kiro ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-05
 
 > 「マルチエージェント対応」と書かれた Plugin が、実際に他のエージェントへ持っていけるとは限りません。ベンダー中立のオープン標準 **Agent Plugins 1.0.0** に乗っているかどうかは、`plugin.json` を 1 つ開けば判定できます。このページは、その判定手順と、判定した結果で何が変わるかを 1 か所にまとめた解説です。標準そのものの成り立ちと各ツールの対応状況は [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準)、Copilot での操作手順は [GitHub Copilot Plugins](../copilot/plugins.md) を参照してください。
 
@@ -86,20 +86,25 @@ v1 が標準化する構成要素はこの 2 つで、配置場所は固定で�
 
 ## 実物で見る
 
-いずれもクラウドベンダー公式のプラグイン集で、複数のエージェント向けに配っていますが、可搬性の結果は割れます（確認日: 2026-09-03）。
+いずれもクラウドベンダー公式のプラグイン集で、複数のエージェント向けに配っていますが、可搬性の結果は割れます（確認日: 2026-09-05）。
 
-| | [aws/agent-toolkit-for-aws](https://github.com/aws/agent-toolkit-for-aws) の `aws-core` | [microsoft/power-platform-skills](https://github.com/microsoft/power-platform-skills) の `power-pages` |
-|---|---|---|
-| 提供元 | `Official`（Amazon Web Services） | `Official`（Microsoft） |
-| `plugin.json` の場所 | プラグインルート直下 | `.claude-plugin/` の下のみ |
-| `$schema` | **あり**（1.0.0 の正式な識別子） | **なし** |
-| MCP 設定 | `mcp.json`（ルート） | `.mcp.json` |
-| Hooks | `extensions` の `com.anthropic.claude-code` から、同名ディレクトリ配下の `hooks.json` を指す | `hooks/` にそのまま |
-| 判定 | **可搬形式** | 可搬形式ではない |
+| | [aws/agent-toolkit-for-aws](https://github.com/aws/agent-toolkit-for-aws) の `aws-core` | [microsoft/azure-skills](https://github.com/microsoft/azure-skills) の `azure` | [microsoft/power-platform-skills](https://github.com/microsoft/power-platform-skills) の `power-pages` |
+|---|---|---|---|
+| 提供元 | `Official`（Amazon Web Services） | `Official`（Microsoft） | `Official`（Microsoft） |
+| `plugin.json` の場所 | プラグインルート直下 | `.claude-plugin/` の下のみ | `.claude-plugin/` の下のみ |
+| `$schema` | **あり**（1.0.0 の正式な識別子） | **なし** | **なし** |
+| 最上位フィールド | 10 個の範囲に収まっている | `skills` / `mcpServers` / `hooks` で場所を指定 | 10 個の範囲だが `$schema` を欠く |
+| MCP 設定 | `mcp.json`（ルート） | `.mcp.json`（`mcpServers` で指定） | `.mcp.json` |
+| Hooks | `extensions` の `com.anthropic.claude-code` から、同名ディレクトリ配下の `hooks.json` を指す | `hooks` フィールドで `hooks/claude-hooks.json` を指す | `hooks/` にそのまま |
+| 判定 | **可搬形式** | 可搬形式ではない | 可搬形式ではない |
 
 `aws-core` は、逃げ道の使い方の実例になっています。Claude Code 固有の Hooks を捨てるのでも、標準の外側に置くのでもなく、`extensions` の逆ドメイン名の下へ寄せることで、**マニフェスト本体は 10 フィールドの範囲に収めたまま**です。あわせて `.claude-plugin/` / `.codex-plugin/` / `.cursor-plugin/` の互換シムも併置しており、標準に未対応のクライアントからも読める形にしています。
 
-`power-pages` 側は、README に Claude Code と GitHub Copilot の両方が挙がっていても、パッケージとしては Claude Code 独自形式です。**これは欠陥ではなく選択です** — Agents・Hooks・MCP を含む構成は v1 の範囲に収まらないため、可搬形式に寄せれば機能を落とすことになります。読者にとって重要なのは優劣ではなく、**「両対応」と書いてあっても可搬とは限らない**という事実のほうです。
+Microsoft の 2 つは、README に Claude Code と GitHub Copilot の両方が挙がっていても、パッケージとしては Claude Code 独自形式です。とくに `azure` の `skills` / `mcpServers` / `hooks` は、**仕様が「構成要素を指すフィールドは存在しない」と定めているもの**にあたります（判定手順の 3）。
+
+**これは欠陥ではなく選択です** — Agents・Hooks・MCP を含む構成は v1 の範囲に収まらないため、可搬形式に寄せれば機能を落とすことになります。読者にとって重要なのは優劣ではなく、**「両対応」と書いてあっても可搬とは限らない**という事実のほうです。
+
+> 判定の前提が当てはまらない配り方もあります。[google/skills](https://github.com/google/skills) は `plugin.json` を持たず、`skills/` 配下の `SKILL.md` を直接配る形です（`.claude-plugin/marketplace.json` は別リポジトリのプラグインを指すカタログ）。**プラグインではなく Skill 単位で配られているものは、この判定表の対象外**です。`SKILL.md` 自体は [Agent Skills 仕様](https://agentskills.io/specification) に沿うかぎり、もともと複数のエージェントで読めます。
 
 ## 可搬にしても解決しないこと
 
@@ -129,4 +134,5 @@ v1 が標準化する構成要素はこの 2 つで、配置場所は固定で�
 - [Agent Skills specification](https://agentskills.io/specification) — `SKILL.md` 形式の仕様（公式）
 - [GitHub Copilot CLI plugin reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-plugin-reference) — Copilot 独自形式のマニフェスト項目（公式）
 - [aws/agent-toolkit-for-aws](https://github.com/aws/agent-toolkit-for-aws) — 可搬形式の実例（公式・Apache-2.0）
-- [microsoft/power-platform-skills](https://github.com/microsoft/power-platform-skills) — 独自形式の実例（公式・MIT）
+- [microsoft/azure-skills](https://github.com/microsoft/azure-skills) ／ [microsoft/power-platform-skills](https://github.com/microsoft/power-platform-skills) — 独自形式の実例（公式・MIT）
+- [google/skills](https://github.com/google/skills) — プラグインではなく Skill 単位で配る例（公式・Apache-2.0）
