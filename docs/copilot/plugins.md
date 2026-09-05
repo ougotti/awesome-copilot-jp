@@ -1,6 +1,6 @@
 # GitHub Copilot Plugins
 
-> **対象ツール**: GitHub Copilot（Copilot アプリ / CLI / VS Code） ｜ **実行環境**: Chat UI（Copilot アプリ）／ CLI（ターミナル）／ IDE（VS Code） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-30
+> **対象ツール**: GitHub Copilot（Copilot アプリ / CLI / VS Code） ｜ **実行環境**: Chat UI（Copilot アプリ）／ CLI（ターミナル）／ IDE（VS Code） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-03
 
 Plugin は、Custom Agents・Skills・Hooks・MCP サーバー設定・LSP サーバー設定を **1 つの配布単位** にまとめる仕組みです。Skill を 1 個ずつ配る代わりに、チームやプロジェクトに必要な拡張一式をまとめて配布・更新できます。
 
@@ -10,47 +10,20 @@ Plugin は、Custom Agents・Skills・Hooks・MCP サーバー設定・LSP サ�
 
 ## 2 つの形式：可搬形式とツール独自形式
 
-2026-08-06 に **Agent Plugins 1.0.0** というベンダー中立のオープン標準が公開され、Plugin には**形式が 2 つある**状態になりました。まずここを押さえると、以降の構成の説明が読み分けられます。
+2026-08-06 に **Agent Plugins 1.0.0** というベンダー中立のオープン標準が公開され、Plugin には**形式が 2 つある**状態になりました。**プラグインルート直下の `plugin.json` に正式な `$schema` を書けば可搬形式**、書かなければ従来どおりの **Copilot 独自形式**です。
 
-| | 可搬形式（Agent Plugins 1.0.0） | Copilot 独自形式（従来） |
-|---|---|---|
-| 目的 | 1 つ作って**複数のツールで使い回す** | Copilot の機能をすべて使う |
-| 切り替え方 | `plugin.json` に正式な `$schema` を書く | `$schema` を書かない |
-| マニフェスト | 項目が固定（`$schema` / `name` / `version` / `description` / `author` / `homepage` / `repository` / `license` / `keywords` / `extensions` のみ） | Copilot 独自の項目を書ける |
-| 構成要素 | **Skills と MCP サーバーの 2 種類だけ** | Agents / Skills / Commands / Hooks / MCP / LSP |
-| 配置場所 | 固定（`skills/` と `mcp.json`）。マニフェストで上書き不可 | マニフェストのフィールドで上書き可 |
-| Agents・Hooks・LSP | 逆ドメイン名の名前空間へ置く（Copilot なら `com.github.copilot/`） | そのまま置ける |
+**場所も条件です。** Copilot はマニフェストを `.plugin/plugin.json` や `.github/plugin/plugin.json` でも認識しますが、標準が見るのは**ルート直下の `plugin.json` だけ**です。そこに置かなければ、`$schema` を書いても可搬にはなりません。
 
-**`$schema` が切り替えスイッチです。** GitHub の実装では `$schema` は任意であり、書かなければ従来どおり Copilot 独自形式として動きます。そのため **既存 Plugin の移行は不要**です。可搬形式へ寄せる場合の作業は、`$schema` の追加と、ファイルを標準のディレクトリ構成へ整えることが中心になります。
+Copilot 独自形式は可搬形式の**上位互換**にあたります。可搬形式で使える構成要素は Skills と MCP サーバーの 2 種類だけで配置場所も固定されるのに対し、Copilot 独自形式では Agents / Commands / Hooks / LSP まで含められ、配置場所もマニフェストで上書きできます。GitHub の実装では `$schema` は任意なので、**既存 Plugin の移行は不要**です。
 
-### 可搬形式の最小構成
+| 判断 | 選ぶ形式 |
+|------|---------|
+| Copilot だけで使い、機能をすべて使いたい | Copilot 独自形式（`$schema` を書かない） |
+| Cursor・ChatGPT・Kiro などへ持ち出したい | 可搬形式（**ルート直下の** `plugin.json` に `$schema` を書き、構成を標準の配置へ整える） |
 
-```text
-hello-plugin/
-  plugin.json
-  skills/
-    greet/
-      SKILL.md
-```
+**→ 可搬形式が課す制約・逃げ道（`extensions` と逆ドメイン名の名前空間）・インストール前に可搬かを判定する手順は [プラグインの可搬性](../dev-methods/plugin-portability.md)、標準の成り立ちとガバナンス・各ツールの対応状況は [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準) を参照**
 
-```json
-{
-  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "hello-plugin"
-}
-```
-
-`skills/` の**直下の子ディレクトリ**に `SKILL.md` があるものだけが Skill として認識されます（それより深い階層は探索されません）。`SKILL.md` の書式自体は [Agent Skills 仕様](https://agentskills.io/specification) が定めます。
-
-### 標準側のガバナンス
-
-| 項目 | 内容 |
-|------|------|
-| 意思決定 | Technical Steering Committee（Core Maintainer ＋ Lead Core Maintainer） |
-| 役職の持ち主 | **企業ではなく個人**。企業に議席を予約しない |
-| 制約 | **単一ベンダーが Core Maintainer の過半数を占めることを禁止** |
-| Core Maintainer の所属 | Amazon / Cursor / Microsoft / OpenAI / Vercel |
-| 対応クライアント | ChatGPT・Codex・Cursor・GitHub Copilot・Kiro・VS Code |
+以降の構成・コマンド・Marketplace の説明は、**Copilot 独自形式**を前提にしています。
 
 ---
 
@@ -70,7 +43,7 @@ hello-plugin/
 
 ## Plugin の構成（Copilot 独自形式）
 
-以下は **`$schema` を書かない場合**の構成です。可搬形式では構成要素が Skills と MCP の 2 種類に限られ、配置場所も固定になります（前節を参照）。
+以下は **`$schema` を書かない場合**の構成です。可搬形式では構成要素が Skills と MCP の 2 種類に限られ、配置場所も固定になります（[2 つの形式](#2-つの形式可搬形式とツール独自形式)を参照）。
 
 Plugin の必須要素は `plugin.json` マニフェストの `name` フィールドだけです。マニフェスト自体は `plugin.json`（ルート）のほか `.plugin/plugin.json` や `.github/plugin/plugin.json`、`.claude-plugin/plugin.json` でも認識されます。以下の要素は、必要なものだけを含められます。
 
@@ -236,17 +209,9 @@ VS Code では **Agent plugins** として一般提供され、「Agent Plugins 
 
 ### オープン標準が保証しないこと
 
-可搬形式にしても、安全性が標準側で担保されるわけではありません。Agent Plugins 1.0.0 は次の項目を**将来版へ先送り**しています。
+可搬形式にしても、安全性が標準側で担保されるわけではありません。Agent Plugins 1.0.0 は、信頼モデル・権限・サンドボックス・**出自の検証（暗号署名）**・シークレットの扱い・組織ポリシー・監査ログを、いずれも明示的に将来版へ先送りしています。仕様が定めるパスの封じ込め規則も、**Plugin が起動したプロセスをサンドボックス化するものではない**と仕様自身が明示しています。
 
-| 未定義の領域 | v1.0.0 の状態 |
-|-------------|--------------|
-| 信頼モデル・権限・サンドボックス | 定義しない。Plugin が何にアクセスするかを宣言する欄がない |
-| **出自の検証** | 規定しない。**暗号署名の検証は将来版の検討事項** |
-| シークレットの扱い | 規定しない。MCP の資格情報の渡し方はクライアント任せ |
-| 組織ポリシー | 扱わない。許可リストは各ツールの独自機能に依存する |
-| 監査ログ | インストール・更新等のイベントスキーマは標準化されていない |
-
-2 点補足します。仕様が定めるパスの封じ込め規則（パッケージ内のパスは Plugin ルート外へ解決してはならない）は、**Plugin が起動したプロセスをサンドボックス化するものではない**と仕様自身が明示しています。また、リモート MCP サーバーの `headers` は「可視のパッケージデータであり、可搬なシークレット機構ではない」と定義され、**資格情報の埋め込みは禁止**されています。
+**→ 未定義の領域の一覧と、導入前に何を確認するかは [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#1-オープン標準がまだ定義していないこと) を参照**
 
 ### MCP サーバーを組織で限定する
 
