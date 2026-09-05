@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-05** クラウド 3 社のベンダー公式スキルを [Skills 最新動向](docs/trends.md) 8 節に整理し、Anthropic の公式ディレクトリ `claude-plugins-official` を [Claude Code のカスタマイズ機能](docs/claude-code/basics.md) に追加
 - **2026-09-03** [プラグインの可搬性](docs/dev-methods/plugin-portability.md) を新設し、[Skills 最新動向](docs/trends.md) 8 節と [Copilot Plugins](docs/copilot/plugins.md) に重複していた `$schema` の説明を要約 + リンクへ集約
 - **2026-09-03** [Codex Agent Skills カタログ](docs/codex/catalog.md) の System 層に `openai-docs` を追加し、[skills.sh ガイド](docs/dev-methods/skills-sh.md) に Vercel 公式スキル 3 件（React Native・デプロイ 2 件）を追記
 - **2026-08-31** [ハーネス](docs/dev-methods/harness.md) に Kiro Crew（AWS の常駐型 OSS ハーネス）を追加し、[ループエンジニアリング](docs/dev-methods/loop-engineering.md) に OSS 側の起動条件を追記
 - **2026-08-30** [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md) に統制の 3 段階（導入前・推論前・実行後）を追加し、[Copilot Plugins](docs/copilot/plugins.md) に Customize タブと marketplace の自動更新を追記
-- **2026-08-30** [Codex ガイド](docs/codex/README.md) に Scheduled tasks と他エージェントからの取り込みを追加。[Skills 最新動向](docs/trends.md) 13 節へ 2026-08-22 の MCP ロードマップを反映
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 

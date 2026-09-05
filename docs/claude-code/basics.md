@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-30
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-05
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -197,6 +197,26 @@ Skill・コマンド・サブエージェント・フック・MCP 設定をま�
 ```
 
 > GitHub Copilot 側の Plugin との違い（含められる要素、Marketplace の扱い、組織での強制方法）は [GitHub Copilot Plugins](../copilot/plugins.md#claude-code-の-plugin-marketplace-との比較) の比較表を参照してください。
+
+### 公式ディレクトリ `claude-plugins-official`
+
+Anthropic が管理する公式のプラグインディレクトリです。**初回に対話モードで起動したときに自動で追加される**ため、多くの場合は登録操作なしで `/plugin` の Discover から探せます。ネットワークやポリシーで追加されなかった場合は、自分で登録します。
+
+```text
+/plugin marketplace add anthropics/claude-plugins-official
+/plugin install <plugin-name>@claude-plugins-official
+```
+
+**「公式ディレクトリにある」＝「Anthropic 製」ではありません。** リポジトリは Anthropic 内製のプラグインと、パートナー・コミュニティ製のプラグインを別のディレクトリに分けて収録しており、実際に AWS・Microsoft・Google などのエントリが並んでいます。README も「**Anthropic は同梱される MCP サーバー・ファイル・ソフトウェアを管理しておらず、意図どおり動くことも、変わらないことも保証できない**」と明記しています。導入前に配布元を確認する必要は、ここでも変わりません。
+
+判断材料になる性質を 2 つ挙げます。
+
+| 性質 | 内容 |
+|------|------|
+| **名前が予約されている** | `claude-plugins-official` をはじめとする公式マーケットプレイス名は、第三者のマーケットプレイスが名乗れません。公式を騙る配布元を防ぐ仕組みで、予約名で登録済みだったものは読み込まれなくなります |
+| **自動更新が既定で有効** | 公式マーケットプレイスは自動更新が既定でオンです（第三者・ローカル開発の配布元は既定でオフ）。エントリ側はコミット SHA で固定されていますが、**ディレクトリが更新されれば追従します**。再現性を優先するなら `/plugin` の Marketplaces から自動更新を切ってください |
+
+> [anthropics/skills](official-skills.md) はスキル集そのもの、`claude-plugins-official` は**プラグインを集めたディレクトリ**で、役割が違います。前者を使うには `/plugin marketplace add anthropics/skills` の登録が要ります。
 
 ### 配布元と検証（2026-08 時点）
 

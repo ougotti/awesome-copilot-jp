@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-03
+> **対象ツール**: ツール横断 ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-05
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-05 | 8 節に「ベンダー公式スキルの登場」を追加（AWS・Microsoft・Google の公式リポジトリと、可搬形式に乗っているかが提供元で割れる実態）。Anthropic の公式ディレクトリ `claude-plugins-official` への言及を [Claude Code のカスタマイズ機能](claude-code/basics.md#公式ディレクトリ-claude-plugins-official) に新設し、8 節から誘導 |
 | 2026-09-03 | 8 節の可搬性の説明（パッケージの構成・`$schema` によるオプトイン）を独立ページ [プラグインの可搬性](dev-methods/plugin-portability.md) へ分離し、本節には要約とリンクを残した。対応状況表は寿命が違うため 8 節に据え置き |
 | 2026-08-31 | 10 節に Kiro Crew（AWS が 2026-08-04 に Apache-2.0 で公開した常駐型ハーネス）を追加し、[ハーネス](dev-methods/harness.md) と [ループエンジニアリング](dev-methods/loop-engineering.md) へ反映。8 節に Kiro の製品構成（IDE / CLI / Crew）の補足を追記 |
 | 2026-08-30 | 13 節に 2026-08-22 公開の MCP ロードマップ（5 つの重点領域）を追加し、確定仕様との区別を明示。Codex の Scheduled tasks / 他エージェントからの取り込みを[ループエンジニアリング](dev-methods/loop-engineering.md)と[Codex ガイド](codex/README.md)へ反映。12 節に統制の 3 段階（導入前・推論前・実行後）を追記 |
@@ -435,6 +436,24 @@ GitHub の Copilot Plugin（本ページ [7-3 節](#7-3-github-copilot-plugins--
 GitHub の実装では `$schema` は**任意**で、**プラグインルート直下の `plugin.json`** にこれを書くことが**可搬形式へのオプトイン**にあたります（Copilot は `.github/plugin/` 等のマニフェストも認識しますが、標準が見るのはルート直下だけです）。書かなければ従来どおり Copilot 独自形式（Agents / Skills / Commands / Hooks / MCP / LSP を含む上位互換）として動くため、既存 Plugin をそのまま使い続ける分には**移行は不要**です。
 
 **→ 2 つの形式の違い・判定手順・ベンダー公式プラグインでの実例は [プラグインの可搬性](dev-methods/plugin-portability.md)、Copilot 側の操作手順は [GitHub Copilot Plugins](copilot/plugins.md) を参照**
+
+### ベンダー公式スキルの登場（2026-09 時点）
+
+2026 年後半に入り、**クラウド 3 社が自社サービス向けの Skill / Plugin を公式に配りはじめました**。標準ができたことより、標準を使う側が動き出したことのほうが、読者にとっては実務上の変化です。
+
+| 提供元 | リポジトリ | ライセンス | 状態 |
+|--------|-----------|-----------|------|
+| `Official`（AWS） | [aws/agent-toolkit-for-aws](https://github.com/aws/agent-toolkit-for-aws) | Apache-2.0 | GA と明記 |
+| `Official`（Microsoft） | [microsoft/azure-skills](https://github.com/microsoft/azure-skills) ／ [microsoft/power-platform-skills](https://github.com/microsoft/power-platform-skills) | MIT | プラグインごとに異なる（リポジトリを確認） |
+| `Official`（Google） | [google/skills](https://github.com/google/skills) | Apache-2.0 | README が「under active development」と明記 |
+
+**ただし、配り方は揃っていません。** 同じ「複数のエージェントで使える」という案内でも、可搬形式（Agent Plugins 1.0.0）に乗っているものと、乗っていないものが混在します。AWS の `aws-core` は `plugin.json` に `$schema` を持ち、Claude Code 固有の Hooks を `extensions` へ逃がしていますが、Microsoft の 2 つは `.claude-plugin/plugin.json` で `$schema` を持ちません。Google の `google/skills` はそもそもプラグインではなく `SKILL.md` の集まりで、`.claude-plugin/marketplace.json` は別リポジトリのプラグインを指すカタログとして機能しています。
+
+**読者の行動は 1 つです — インストール前に `plugin.json` を見る。** 提供元が大手であることは、可搬性の根拠にも安全性の根拠にもなりません。
+
+**→ 判定手順と実物での対比は [プラグインの可搬性](dev-methods/plugin-portability.md#判定手順) を参照**
+
+なお、これらのプラグインの入口としては **Anthropic が管理する公式ディレクトリ [`claude-plugins-official`](https://github.com/anthropics/claude-plugins-official)** が使われています。Claude Code の初回起動時に自動で追加され、AWS・Microsoft・Google のエントリもここに並びます。**公式ディレクトリにあることは Anthropic 製である証明でも、検証済みである証明でもない**（README が明記）点は、[Claude Code のカスタマイズ機能](claude-code/basics.md#公式ディレクトリ-claude-plugins-official) にまとめました。
 
 ---
 
