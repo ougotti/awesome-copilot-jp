@@ -1,6 +1,6 @@
 # Instructions 一覧と活用ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-05
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-05
 
 > [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **200 個の Instructions** を日本語で解説します。
 
@@ -435,7 +435,7 @@ applyTo: "**/*.py"
 | [`power-platform-connector.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/power-platform-connector.instructions.md) | Power Platform カスタムコネクタ | コネクタ開発 |
 | [`power-platform-mcp-development.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/power-platform-mcp-development.instructions.md) | Power Platform MCP 開発 | MCP 連携 |
 
-> 同じ領域に、Microsoft 公式のプラグイン marketplace [microsoft/power-platform-skills](https://github.com/microsoft/power-platform-skills)（`Official`・MIT）もあります。Claude Code 独自形式のため他のエージェントへは持ち出せません（[判定手順](../dev-methods/plugin-portability.md#実物で見る)）。
+> 同じ領域に、Microsoft 公式のプラグイン marketplace [microsoft/power-platform-skills](https://github.com/microsoft/power-platform-skills)（`Official`・MIT）もあります。可搬形式（Agent Plugins 1.0.0）ではないため**使えるクライアントは限られます**が、マニフェストは `.claude-plugin/plugin.json` にあり Copilot も認識する場所です。見分け方は [プラグインの可搬性](../dev-methods/plugin-portability.md#判定手順) を参照してください。
 
 #### Power BI
 
