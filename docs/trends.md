@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-05 | 7 節に「7-4. APM」を新設し、比較表を 4 つへ拡張して**「命令的か宣言的か」**の軸を立てた。`npx skills` の提供元表記に、ベンダー公式スキルの導入経路にもなっている実態の注記を追加 |
 | 2026-09-05 | 8 節に「ベンダー公式スキルの登場」を追加（AWS・Microsoft・Google の公式リポジトリと、可搬形式に乗っているかが提供元で割れる実態）。Anthropic の公式ディレクトリ `claude-plugins-official` への言及を [Claude Code のカスタマイズ機能](claude-code/basics.md#公式ディレクトリ-claude-plugins-official) に新設し、8 節から誘導 |
 | 2026-09-03 | 8 節の可搬性の説明（パッケージの構成・`$schema` によるオプトイン）を独立ページ [プラグインの可搬性](dev-methods/plugin-portability.md) へ分離し、本節には要約とリンクを残した。対応状況表は寿命が違うため 8 節に据え置き |
 | 2026-08-31 | 10 節に Kiro Crew（AWS が 2026-08-04 に Apache-2.0 で公開した常駐型ハーネス）を追加し、[ハーネス](dev-methods/harness.md) と [ループエンジニアリング](dev-methods/loop-engineering.md) へ反映。8 節に Kiro の製品構成（IDE / CLI / Crew）の補足を追記 |
@@ -235,13 +236,14 @@ skills.shで公開されている注目スキル集の一覧と導入方法は�
 
 > `gh skill` / Agent Finder・ARD / Agent Plugins 1.0
 
-ここまでの 6 テーマが「どんな Skill があるか」だとすれば、本節は **「Skill をどう探し、安全に導入し、更新・固定・配布するか」** です。この運用面を埋める仕組みが 3 つ揃いました。
+ここまでの 6 テーマが「どんな Skill があるか」だとすれば、本節は **「Skill をどう探し、安全に導入し、更新・固定・配布するか」** です。この運用面を埋める仕組みが揃ってきました。
 
 | 仕組み | 役割 | 提供元 | 状態 |
 |--------|------|--------|------|
 | `gh skill` | GitHub CLI による Skill のライフサイクル管理（検索・確認・導入・更新・公開） | Official（GitHub） | Preview（2026-04-16 提供開始、GitHub CLI v2.90.0 以降） |
 | Agent Finder / ARD | 必要になった時点で MCP サーバー・Skill・Canvas・Agent・Tool を Registry から発見する | Official（GitHub） | GA（2026-06-17 提供開始、全 Copilot プラン） |
 | Agent Plugins 1.0 | Agent Skills と MCP サーバーを 1 つの配布単位にまとめる**ベンダー中立のオープン標準** | Official（複数ベンダー共同の標準） | GA（2026-08-06 仕様公開、GitHub 実装は 2026-08-12） |
+| APM（Agent Package Manager） | `apm.yml` に依存を宣言し、`apm install` で各エージェントへ展開する**マニフェスト方式の依存管理** | [下記注記](#7-4-apm--宣言でチームの環境を再現する)を参照 | 0.x 系（本文にバージョンは書きません。[リリース](https://github.com/microsoft/apm/releases)を確認してください） |
 
 ---
 
@@ -351,18 +353,47 @@ Copilot CLI には `copilot-plugins`（GitHub 公式コレクション）と `aw
 
 ---
 
-### 3 つの仕組みの比較
+### 7-4. APM — 宣言でチームの環境を再現する
 
-| 観点 | `npx skills` | `gh skill` | Copilot Plugin |
-|------|-------------|-----------|----------------|
-| 主用途 | Skill の検索・導入 | Skill のライフサイクル管理 | 複数拡張の一括配布 |
-| 配布単位 | Skill | Skill | Plugin |
-| 更新追跡 | CLI 依存 | provenance（git tree SHA） | Marketplace のバージョン |
-| バージョン固定 | — | `--pin` / コミット SHA 指定 | Marketplace のバージョン / `source.sha`（commit SHA） |
-| 対応 Host | 複数エージェント | 複数エージェント | 主に Copilot CLI / VS Code |
-| 含められる要素 | Skills | Skills | Skills / Agents / Hooks / MCP / LSP |
-| サプライチェーン対策 | 配布元の確認 | `preview` / pin / immutable releases | Marketplace と Enterprise ポリシー |
-| 提供元 | Vercel（コミュニティ） | GitHub（公式） | GitHub（公式） |
+[microsoft/apm](https://github.com/microsoft/apm)（Agent Package Manager）は、**`apm.yml` に依存を宣言して `apm install` で各エージェントへ展開する**依存管理ツールです。Skill・プラグイン・エージェント定義・MCP サーバー・instructions・prompts・hooks を 1 つのマニフェストにまとめ、`apm.lock` で解決結果を固定します。
+
+**既存の 3 つとの決定的な違いは「命令的か宣言的か」です。** `npx skills add` / `gh skill install` / `copilot plugin install` はどれも「いま入れる」コマンドですが、APM は**リポジトリに再現可能な宣言を置く**ので、clone した開発者が同じ構成で作業を始められます。`package.json` や `requirements.txt` と同じ発想です。
+
+主要なコーディングエージェントを広くカバーし、instructions は `AGENTS.md` / `CLAUDE.md` へコンパイルされます。対応先の一覧は変化が速いため、[公式ドキュメント](https://microsoft.github.io/apm/)で確認してください。
+
+```bash
+apm install                       # apm.yml のとおりに全エージェントを構成する
+apm install microsoft/azure-skills   # 個別に追加する（apm.yml に永続化される）
+```
+
+導入は Homebrew（`brew install microsoft/apm/apm`）・pip（`pip install apm-cli`）・Scoop のほか、`aka.ms` のインストーラースクリプトを `sh` へパイプする方法が案内されています。**パイプ実行はスクリプトの中身を読まずに実行する形になる**ため、[Skill / Plugin のセキュリティ](dev-methods/skill-security.md)の観点ではパッケージマネージャー経由を選ぶか、スクリプトを取得して中身を確認してから実行してください。
+
+> **提供元ラベルについて。** このガイドでは `Official` / `Community` のどちらかを断定せず、**事実を併記します**。リポジトリは Microsoft の GitHub organization 配下にあり、LICENSE の著作権表記は Microsoft Corporation、SECURITY.md は Microsoft 標準のもの、配布も `aka.ms` と `microsoft/*` のパッケージチャネルです。一方で **README 自身が「open-source, community-driven」と名乗り**、Maintainer として個人 2 名（うち 1 名は Microsoft 以外の所属）が挙がっています。Microsoft の製品として提供・サポートされるという記述は見当たりませんでした（確認日: 2026-09-05）。**組織で採用を検討する場合は、サポート体制を提供元ラベルではなくリポジトリの実態で判断してください。**
+
+**実際に使われている例**として、[microsoft/azure-skills](https://github.com/microsoft/azure-skills) の README は導入手順の先頭に APM を挙げ、`apm install microsoft/azure-skills` の 1 コマンドで複数のエージェントへ入ることを案内しています。
+
+---
+
+### 4 つの仕組みの比較
+
+**最初に見る軸は「命令的か宣言的か」です。** 手元にいま入れたいのか、リポジトリに構成を残して再現したいのかで、選ぶものが変わります。
+
+| 観点 | `npx skills` | `gh skill` | Copilot Plugin | APM |
+|------|-------------|-----------|----------------|-----|
+| **方式** | **命令的**（いま入れる） | **命令的**（いま入れる） | **命令的**（`enabledPlugins` を書けば宣言的） | **宣言的**（マニフェストが正） |
+| **マニフェスト** | なし | なし | `enabledPlugins`（有効化のみ） | `apm.yml` + `apm.lock` |
+| 主用途 | Skill の検索・導入 | Skill のライフサイクル管理 | 複数拡張の一括配布 | チームの環境の再現 |
+| 配布単位 | Skill | Skill | Plugin | 依存ツリー（Skill / Plugin / MCP ほか） |
+| 更新追跡 | CLI 依存 | provenance（git tree SHA） | Marketplace のバージョン | ロックファイル |
+| バージョン固定 | — | `--pin` / コミット SHA 指定 | Marketplace のバージョン / `source.sha`（commit SHA） | `apm.lock`（解決結果を固定） |
+| 対応 Host | 複数エージェント | 複数エージェント | 主に Copilot CLI / VS Code | 複数エージェント |
+| 含められる要素 | Skills | Skills | Skills / Agents / Hooks / MCP / LSP | 上記に instructions / prompts を加えた範囲 |
+| サプライチェーン対策 | 配布元の確認 | `preview` / pin / immutable releases | Marketplace と Enterprise ポリシー | ロックファイルの整合性・ポリシーファイル |
+| 提供元 | Vercel（[下記の注記](#提供元の表記について)） | GitHub（公式） | GitHub（公式） | [7-4 節の注記](#7-4-apm--宣言でチームの環境を再現する)を参照 |
+
+#### 提供元の表記について
+
+`npx skills` の CLI 本体を提供しているのは Vercel ですが、**「コミュニティ向けの発見ツール」という理解だけでは実態と合わなくなっています**。[8 節](#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準)のとおりクラウド 3 社が公式スキルを配りはじめており、その **README がいずれも `npx skills add` を導入手順として案内しています**（`google/skills`・`aws/agent-toolkit-for-aws`・`microsoft/azure-skills` で確認、2026-09-05）。発見ポータルであると同時に、ベンダー公式スキルの導入経路にもなっている、というのが現在の位置づけです。
 
 ### 使い分けの目安
 
@@ -374,6 +405,7 @@ Copilot CLI には `copilot-plugins`（GitHub 公式コレクション）と `aw
 | 自作 Skill を公開・配布する | `gh skill publish` |
 | チーム標準の拡張一式を配る | Copilot Plugin + `enabledPlugins` |
 | 組織で使えるリソースを制限する | Enterprise managed settings（Agent Finder / Plugins） |
+| **チームの環境を再現可能にする** | **APM（`apm.yml` をリポジトリにコミットし、`apm install` で復元）** |
 
 ---
 

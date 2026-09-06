@@ -4,6 +4,13 @@
 
 ## 2026-09
 
+- **2026-09-05** 導入経路の比較に APM（Agent Package Manager）を追加（#144）
+  - **[Skills 最新動向](docs/trends.md) 7 節に「7-4. APM — 宣言でチームの環境を再現する」を新設** — `apm.yml` に依存を宣言して `apm install` で各エージェントへ展開する方式。既存 3 つとの決定的な違いを**「命令的か宣言的か」**と定め、比較表を 4 列へ拡張して「方式」「マニフェスト」の 2 行を先頭に置いた。「使い分けの目安」にも「チームの環境を再現可能にする」→ APM の行を追加
+  - **提供元ラベルは断定せず、事実を併記した** — issue で最も慎重に決めるべき点とされていた箇所。**Microsoft 側の事実**（`microsoft` org 配下・LICENSE の著作権表記が Microsoft Corporation・SECURITY.md が Microsoft 標準・配布が `aka.ms` と `microsoft/*` チャネル）と、**コミュニティ側の事実**（README 自身が「open-source, community-driven」と名乗る・Maintainer は個人 2 名でうち 1 名は Microsoft 以外の所属）の両方を並べ、Microsoft の製品として提供・サポートされる旨の記述は見当たらなかったことを明記。組織導入時はラベルではなくリポジトリの実態で判断するよう促した
+  - **`npx skills` の提供元表記に注記を追加** — CLI の提供元が Vercel であることは変わらないが、`google/skills`・`aws/agent-toolkit-for-aws`・`microsoft/azure-skills` の README がいずれも `npx skills add` を導入手順として案内しており、**発見ポータルであると同時にベンダー公式スキルの導入経路にもなっている**実態を書いた（確認日 2026-09-05）
+  - **[skills.sh ガイド](docs/dev-methods/skills-sh.md) の冒頭の位置づけを更新** — 同じ趣旨を 1 段落で追記し、宣言的に再現したい場合の選択肢として APM へリンク
+  - **バージョン番号と対応ハーネス数は本文に書いていない**（CONTRIBUTING の「変化しやすい情報」）。対応先はリリースと公式ドキュメントへのリンクに寄せた。`curl | sh` 形式のインストーラーは、パッケージマネージャー経由を選ぶかスクリプトを確認してから実行するよう [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md) の観点を添えて紹介した
+
 - **2026-09-05** クラウド 3 社のベンダー公式スキルと Anthropic の公式ディレクトリを扱う（#142・#141）
   - **[Claude Code のカスタマイズ機能](docs/claude-code/basics.md) に公式ディレクトリ `claude-plugins-official` を追加** — 配置先は `official-skills.md`（`anthropics/skills` というスキル集の解説）ではなく `basics.md` のプラグイン節にした。両者は「スキル集」と「プラグインのディレクトリ」で役割が違うため。**初回に対話モードで起動したときに自動追加される**挙動は Claude Code 公式ドキュメントで確認した。**「公式ディレクトリにある = Anthropic 製・検証済み」ではない**点は、リポジトリ README の「Anthropic は同梱される MCP サーバー・ファイル・ソフトウェアを管理しておらず、意図どおり動くことも変わらないことも保証できない」という記述を根拠に明記。判断材料として、公式名が第三者マーケットプレイスに予約されていることと、**自動更新が既定で有効**（第三者・ローカルは既定でオフ）で再現性を優先するなら切る必要があることを添えた。エントリ総数は本文に書いていない
   - **[Skills 最新動向](docs/trends.md) 8 節に「ベンダー公式スキルの登場」を新設** — AWS・Microsoft・Google の公式リポジトリを提供元・ライセンス・状態で整理。**状態は提供元ごとに違う**（`aws/agent-toolkit-for-aws` は GA と明記、`google/skills` は「under active development」、Microsoft はプラグインごとに異なるためリポジトリ参照）。「標準ができたこと」より「標準を使う側が動き出したこと」を軸にし、読者の行動は `plugin.json` を見ることに集約した
