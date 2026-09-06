@@ -4,6 +4,14 @@
 
 ## 2026-09
 
+- **2026-09-06** trends.md に A2A の Agentic AI Foundation 合流（2026-08-17）を反映（#139）
+  - **[Skills 最新動向](docs/trends.md) 13 節に「エージェント間プロトコルの統治の集約」を追加** — A2A（Google 開発）が、MCP・goose・AGENTS.md を創設プロジェクトとする AAIF（Agentic AI Foundation、Linux Foundation 傘下、2025-12-09 発足）に hosted project として合流した事実を追加。**MCP はエージェントとツールの接続、A2A はエージェントとエージェントの連携**という役割の違いを、AAIF 自身の整理に沿って書いた
+  - **一次情報で裏取り** — issue 作成時点でブロックされていた `linuxfoundation.org`・`aaif.io` が今回は取得できた。AAIF 設立の公式プレスリリース（2025-12-09）と、A2A 合流を発表した AAIF 自身のブログ記事（`aaif.io/blog/a2a-joins-aaif`、2026-08-17 付、AAIF CTO と Google Cloud VP の引用あり）の両方を取得して確認した。二次情報（Forbes・Axios 等）は日付の裏取りにのみ使い、本文の根拠には一次情報を用いた
+  - **数字は本文に書いていない**（CONTRIBUTING の「変化しやすい情報」）。「150 組織以上」は書かず、最新状況を確認できる `aaif.io/projects/agent2agent` へのリンクに置き換えた
+  - **ロードマップと確定した組織変更を区別した** — 13 節が既に「2026-08-22 の MCP ロードマップは方向性の表明であって確定仕様ではない」と書いている扱いに揃え、A2A の AAIF 合流は**既に起きた組織上の事実**として書いた
+  - **読者の判断材料を明記** — 「いま何かを変える必要があるか」に対し、A2A・MCP いずれも API に破壊的変更はなく、A2A を使っていない読者は対応不要である旨を書いた
+  - **7-2 節から接続** — Agent Finder / ARD の「Catalog に A2A エージェントも含められる」という既存記述から 13 節へのリンクを追加した
+
 - **2026-09-05** 導入経路の比較に APM（Agent Package Manager）を追加（#144）
   - **[Skills 最新動向](docs/trends.md) 7 節に「7-4. APM — 宣言でチームの環境を再現する」を新設** — `apm.yml` に依存を宣言して `apm install` で各エージェントへ展開する方式。既存 3 つとの決定的な違いを**「命令的か宣言的か」**と定め、比較表を 4 列へ拡張して「方式」「マニフェスト」の 2 行を先頭に置いた。「使い分けの目安」にも「チームの環境を再現可能にする」→ APM の行を追加
   - **提供元ラベルは断定せず、事実を併記した** — issue で最も慎重に決めるべき点とされていた箇所。**Microsoft 側の事実**（`microsoft` org 配下・LICENSE の著作権表記が Microsoft Corporation・SECURITY.md が Microsoft 標準・配布が `aka.ms` と `microsoft/*` チャネル）と、**コミュニティ側の事実**（README 自身が「open-source, community-driven」と名乗る・Maintainer は個人 2 名でうち 1 名は Microsoft 以外の所属）の両方を並べ、Microsoft の製品として提供・サポートされる旨の記述は見当たらなかったことを明記。組織導入時はラベルではなくリポジトリの実態で判断するよう促した

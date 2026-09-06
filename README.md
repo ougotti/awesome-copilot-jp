@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-06** [Skills 最新動向](docs/trends.md) 13 節に A2A の Agentic AI Foundation 合流（2026-08-17）を反映し、MCP との役割の違いを整理
 - **2026-09-05** [Skills 最新動向](docs/trends.md) 7 節に APM（マニフェスト方式の依存管理）を追加し、導入経路の比較を「命令的か宣言的か」の軸で 4 つに整理
 - **2026-09-05** クラウド 3 社のベンダー公式スキルを [Skills 最新動向](docs/trends.md) 8 節に整理し、Anthropic の公式ディレクトリ `claude-plugins-official` を [Claude Code のカスタマイズ機能](docs/claude-code/basics.md) に追加
 - **2026-09-03** [プラグインの可搬性](docs/dev-methods/plugin-portability.md) を新設し、[Skills 最新動向](docs/trends.md) 8 節と [Copilot Plugins](docs/copilot/plugins.md) に重複していた `$schema` の説明を要約 + リンクへ集約
 - **2026-09-03** [Codex Agent Skills カタログ](docs/codex/catalog.md) の System 層に `openai-docs` を追加し、[skills.sh ガイド](docs/dev-methods/skills-sh.md) に Vercel 公式スキル 3 件（React Native・デプロイ 2 件）を追記
-- **2026-08-31** [ハーネス](docs/dev-methods/harness.md) に Kiro Crew（AWS の常駐型 OSS ハーネス）を追加し、[ループエンジニアリング](docs/dev-methods/loop-engineering.md) に OSS 側の起動条件を追記
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
