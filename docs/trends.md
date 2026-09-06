@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-06 | 「14. 仕様駆動開発（SDD）」を新設し、独立ページ [仕様駆動開発（SDD）](dev-methods/spec-driven.md) へ要約 + 誘導した（AI-DLC はその実装の 1 つという位置づけに整理） |
 | 2026-09-06 | 13 節に A2A の AAIF 合流（2026-08-17）を追加。MCP と A2A の役割の違い（ツール接続とエージェント間連携）を整理し、7-2 節の ARD の A2A への言及からつないだ |
 | 2026-09-05 | 7 節に「7-4. APM」を新設し、比較表を 4 つへ拡張して**「命令的か宣言的か」**の軸を立てた。`npx skills` の提供元表記に、ベンダー公式スキルの導入経路にもなっている実態の注記を追加 |
 | 2026-09-05 | 8 節に「ベンダー公式スキルの登場」を追加（AWS・Microsoft・Google の公式リポジトリと、可搬形式に乗っているかが提供元で割れる実態）。Anthropic の公式ディレクトリ `claude-plugins-official` への言及を [Claude Code のカスタマイズ機能](claude-code/basics.md#公式ディレクトリ-claude-plugins-official) に新設し、8 節から誘導 |
@@ -40,7 +41,7 @@
 
 > `Versel` ではなく、正式な表記は **Vercel** です。
 
-> 「[7. Skill の発見・配布・更新](#7-skill-の発見配布更新)」以降は動画チャプター外の追補です。[配布と発見の仕組み](#7-skill-の発見配布更新)、[共通パッケージ標準](#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準)、[Skill が動く場所](#9-skill-が動く場所の広がり)、[実行基盤](#10-aiエージェントの実行基盤ハーネス)、[エージェントに渡す知識](#11-エージェントに渡す知識オントロジー)、[導入時の安全性](#12-skill--plugin-のセキュリティ)、[MCP の次期仕様](#13-mcp-の次期仕様)を扱います。
+> 「[7. Skill の発見・配布・更新](#7-skill-の発見配布更新)」以降は動画チャプター外の追補です。[配布と発見の仕組み](#7-skill-の発見配布更新)、[共通パッケージ標準](#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準)、[Skill が動く場所](#9-skill-が動く場所の広がり)、[実行基盤](#10-aiエージェントの実行基盤ハーネス)、[エージェントに渡す知識](#11-エージェントに渡す知識オントロジー)、[導入時の安全性](#12-skill--plugin-のセキュリティ)、[MCP の次期仕様](#13-mcp-の次期仕様)、[仕様駆動開発](#14-仕様駆動開発sdd)を扱います。
 
 ---
 
@@ -60,6 +61,7 @@
 | 渡す知識 | オントロジー / ナレッジグラフ | 業務の語彙・関係・規則を定義してエージェントへ渡す（[解説](dev-methods/ontology.md)） | 用語のゆれ・根拠の説明が要る業務 |
 | 安全性 | `gh skill preview` / MCP allowlists | 導入前の内容確認と、組織での許可範囲の限定（[解説](dev-methods/skill-security.md)） | 業務利用・組織展開の前提 |
 | 実行される場所 | Copilot code review / IDE の Skill 管理 | 対話の外（レビュー・IDE の常設機能）での実行 | 規約の自動適用と定常運用 |
+| 仕様駆動開発（SDD） | GitHub Spec Kit / AI-DLC | 仕様 → 計画 → タスクという構造化された手順（[解説](dev-methods/spec-driven.md)） | 機能開発を仕様から実行可能にしたい場合 |
 
 ---
 
@@ -630,6 +632,18 @@ MCP のロードマップが**ツールと接続する側**の話であるのに
 
 ---
 
+## 14. 仕様駆動開発（SDD）
+
+Skill・MCP・ハーネスがエージェントを**動かす**側の話だとすれば、こちらは動かす前に**何を作るか**を決める側の話です。仕様を先に書き、それを実装の入力にする**仕様駆動開発（Spec-Driven Development, SDD）**は、[github/spec-kit](https://github.com/github/spec-kit) が v1.0.0 に達したことで、主要なコーディングエージェント 30 以上に対応する実践として定着しつつあります。
+
+コアワークフローは `/speckit.constitution`（原則の確立）→ `/speckit.specify`（何を作るか）→ `/speckit.plan`（どう作るか）→ `/speckit.tasks`（タスク分解）→ `/speckit.implement`（実装）→ `/speckit.converge`（仕様との整合を確認）の順で進みます。受け入れ基準を曖昧さなく書く記法として **EARS（Easy Approach to Requirements Syntax）** が広く使われています。
+
+[AI-DLC ワークフロー](dev-methods/aidlc-workflows.md)（AWS Labs）も同じ問題意識（AI エージェントに構造化された手順を強制する）を持つ実装の 1 つです。機能単位で仕様を積み重ねたいか、プロジェクト全体を 3 フェーズで管理したいかで、選ぶものが変わります。
+
+**→ ワークフローの詳細・EARS の記法・AI-DLC との選び方の軸は [仕様駆動開発（SDD）](dev-methods/spec-driven.md) を参照**
+
+---
+
 ## 使い分け
 
 | やりたいこと | 第一候補 |
@@ -717,6 +731,12 @@ MCP のロードマップが**ツールと接続する側**の話であるのに
 - [GitHub Copilot for JetBrains expands BYOK capabilities](https://github.blog/changelog/2026-07-14-github-copilot-for-jetbrains-expands-byok-capabilities/) — JetBrains の Plugin 管理と agent provider（公式）
 - [Claude Code changelog](https://code.claude.com/docs/en/changelog) — Claude Code の更新（公式）
 - [Codex changelog](https://learn.chatgpt.com/docs/changelog) — Codex の更新（公式）
+
+### 仕様駆動開発（本ページ 14 節・詳細は [解説ページ](dev-methods/spec-driven.md)）
+
+- [github/spec-kit](https://github.com/github/spec-kit) — リポジトリ本体（公式）
+- [spec-driven.md](https://github.com/github/spec-kit/blob/main/spec-driven.md) — SDD 方法論の解説文書（公式）
+- [EARS: Easy Approach to Requirements Syntax](https://alistairmavin.com/ears/) — 提唱者による公式解説（一次情報）
 
 ---
 

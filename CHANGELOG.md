@@ -4,6 +4,14 @@
 
 ## 2026-09
 
+- **2026-09-06** 仕様駆動開発（SDD）の解説ページを新設（#137）
+  - **[仕様駆動開発（SDD）](docs/dev-methods/spec-driven.md) を新設** — SDD とは何か（仕様がコードに従うのではなくコードが仕様に従う、という上下関係の反転）から、[github/spec-kit](https://github.com/github/spec-kit) のコアワークフロー（`/speckit.constitution` → `/speckit.specify` → `/speckit.plan` → `/speckit.tasks` → `/speckit.implement` → `/speckit.converge`）、`.specify/` のテンプレート優先順位（プロジェクトローカル > プリセット > Extension > コア）まで整理した
+  - **EARS（Easy Approach to Requirements Syntax）を一次情報で裏取り** — issue が「二次情報でしか確認できていない」としていた出典を、提唱者 Alistair Mavin 本人による公式解説ページ（2009 年発表）を取得して確認した。5 つのパターン（Ubiquitous / Event-driven / State-driven / Optional feature / Unwanted behaviour）を整理し、**spec-kit 自体には EARS への直接の言及がない**こともあわせて明記した
+  - **AI-DLC との関係を「SDD の実装の 1 つ」として整理** — [aidlc-workflows.md](docs/dev-methods/aidlc-workflows.md) から新ページへ相互リンクし、「機能単位で明示的な収束確認をしたいか」「プロジェクト全体を 3 フェーズで管理したいか」という選び方の軸を立てた。片方の焼き直しにしないよう、提供元・単位・起動方法・拡張性・収束の確認方法を表で対比した
+  - **`AGENTS.md` との関係は断定しなかった** — 公式ドキュメントに明示的な記述が見当たらなかったため、「別のファイルとして併存する」という確認できた事実だけを書いた
+  - **[Skills 最新動向](docs/trends.md) に「14. 仕様駆動開発（SDD）」を新設** — ハーネス・オントロジー・セキュリティと同じ「要約 + 独立ページ」の型に揃えた。全体像の表にも 1 行追加
+  - **件数・バージョン番号は本文に書いていない**（CONTRIBUTING の「変化しやすい情報」）。対応エージェント数は `specify integration list` または公式の対応表へのリンクに置き換えた
+
 - **2026-09-06** trends.md に A2A の Agentic AI Foundation 合流（2026-08-17）を反映（#139）
   - **[Skills 最新動向](docs/trends.md) 13 節に「エージェント間プロトコルの統治の集約」を追加** — A2A（Google 開発）が、MCP・goose・AGENTS.md を創設プロジェクトとする AAIF（Agentic AI Foundation、Linux Foundation 傘下、2025-12-09 発足）に hosted project として合流した事実を追加。**MCP はエージェントとツールの接続、A2A はエージェントとエージェントの連携**という役割の違いを、AAIF 自身の整理に沿って書いた
   - **一次情報で裏取り** — issue 作成時点でブロックされていた `linuxfoundation.org`・`aaif.io` が今回は取得できた。AAIF 設立の公式プレスリリース（2025-12-09）と、A2A 合流を発表した AAIF 自身のブログ記事（`aaif.io/blog/a2a-joins-aaif`、2026-08-17 付、AAIF CTO と Google Cloud VP の引用あり）の両方を取得して確認した。二次情報（Forbes・Axios 等）は日付の裏取りにのみ使い、本文の根拠には一次情報を用いた
