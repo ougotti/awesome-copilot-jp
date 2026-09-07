@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-07 | 10 節に OpenTelemetry GenAI semantic conventions（Claude Code・Codex CLI・VS Code Copilot Chat の対応状況）を追加し、[ハーネス](dev-methods/harness.md) へ誘導。[コーディングエージェントの選び方](dev-methods/coding-agents.md) に非同期・クラウド型（Jules・Antigravity）との軸を追加 |
 | 2026-09-07 | 「15. Skill / エージェントの評価（evals）」を新設し、独立ページ [Skill / エージェントの評価（evals）](dev-methods/evals.md) へ要約 + 誘導した（`skill-security.md` の「導入前」に対する「導入後」の話として位置づけ） |
 | 2026-09-06 | 「14. 仕様駆動開発（SDD）」を新設し、独立ページ [仕様駆動開発（SDD）](dev-methods/spec-driven.md) へ要約 + 誘導した（AI-DLC はその実装の 1 つという位置づけに整理） |
 | 2026-09-06 | 13 節に A2A の AAIF 合流（2026-08-17）を追加。MCP と A2A の役割の違い（ツール接続とエージェント間連携）を整理し、7-2 節の ARD の A2A への言及からつないだ |
@@ -554,7 +555,9 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 
 2026 年半ばには、この 1 つ上の階として **ループエンジニアリング**（loop engineering）という呼び名が加わりました。Addy Osmani（Google Chrome）が [Loop Engineering](https://addyosmani.com/blog/loop-engineering/)（2026-06-07）で命名したもので、**人がプロンプトを打ち続けるのをやめ、エージェントを目標へ向けて回すループの側を設計する**という実践です。自動実行・ワークツリー・スキル・コネクタ・サブエージェント・外部状態を組み合わせ、機械が判定できる停止条件で止めます。ループはハーネスの上で回るため、**ハーネスが弱ければループは同じ誤りを繰り返し増幅します**。
 
-**→ 概念、Microsoft Copilot Studio・QM・Kiro Crew の実装、セキュリティポスチャ、導入の前提は [AI エージェントの実行基盤（ハーネス）](dev-methods/harness.md) を参照**
+動かす仕組みが揃うほど、**動かした後に何が見えるか**も問われます。OpenTelemetry の **GenAI semantic conventions**（モデル呼び出し・ツール呼び出し・トークン交換を標準化した `gen_ai.*` 属性）に、Claude Code・Codex CLI・VS Code Copilot Chat がいずれも OTel（メトリクス／ログ／トレース）を出力できます。ただし `gen_ai.*` 属性への準拠を明記しているのは Claude Code と VS Code Copilot Chat で、**Codex CLI の公式ドキュメントには明記がありません**。
+
+**→ 概念、Microsoft Copilot Studio・QM・Kiro Crew の実装、セキュリティポスチャ、導入の前提、OpenTelemetry での可観測性は [AI エージェントの実行基盤（ハーネス）](dev-methods/harness.md) を参照**
 **→ ループの構成要素・停止条件の作り方・落とし穴は [ループエンジニアリング](dev-methods/loop-engineering.md) を参照**
 
 ---
@@ -726,6 +729,7 @@ SkillsBench（[arXiv:2602.12670](https://arxiv.org/abs/2602.12670)）は、複�
 - [Introducing Kiro Crew](https://kiro.dev/blog/introducing-kiro-crew/) — Kiro Crew の公開時の発表（公式・2026-08-04）
 - [kirodotdev/KiroCrew](https://github.com/kirodotdev/KiroCrew) — リポジトリと README（公式・Apache-2.0）
 - [Kiro Crew](https://kiro.dev/crew/) — 製品ページと FAQ（前提となるプラン・対応 OS。公式）
+- [Inside the LLM Call: GenAI Observability with OpenTelemetry](https://opentelemetry.io/blog/2026/genai-observability/) — GenAI semantic conventions の解説（OpenTelemetry 公式）
 
 ### Skill / Plugin のセキュリティ（本ページ 11 節・詳細は [解説ページ](dev-methods/skill-security.md)）
 

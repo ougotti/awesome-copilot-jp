@@ -1,6 +1,6 @@
 # コーディングエージェントの選び方
 
-> **対象ツール**: ツール横断（Claude Code・Codex・Qwen Code・OpenCode・Bionic） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-03
+> **対象ツール**: ツール横断（Claude Code・Codex・Qwen Code・OpenCode・Bionic・Jules・Antigravity） ｜ **実行環境**: CLI / デスクトップ / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-07
 
 > ターミナルやデスクトップで動く「コーディングエージェント」は、2026 年時点で選択肢が増えました。よく「Claude Code は Claude 中心、Codex は OpenAI 中心」のようにモデル系列で語られますが、**その分類は実態を半分しか説明していません**。本ページでは、何が本当に違うのかを整理します。
 
@@ -178,10 +178,29 @@ LM Studio が 2026-07-16 に公開した、**オープンモデル向けのデ�
 
 ---
 
+## 対話しながら回すか、投げて PR をレビューするか
+
+ここまでの 5 つは、いずれも**対話しながら手元（またはそのセッション）でループを回す同期型**のエージェントです。2026 年後半には、これとは違う使い方をする**非同期・クラウド型**のエージェントも実務に入ってきました。
+
+**Jules**（Google Labs、Official／`状態`: GA）は、GitHub のリポジトリと issue（または Web 画面）からタスクを渡すと、リポジトリを **Google Cloud VM へ clone**し、計画を立てて複数ファイルの変更を行い、テストを実行して PR を作成します。IDE 統合を持たず、**その場で対話するのではなく「投げて後で確認する」**運用が前提です。承認ゲートは計画時と PR レビュー時の 2 か所にあります。
+
+**Antigravity**（Google、Official／`状態`: Preview、2025-11-20 発表）は逆の方向から同じ問題に近づきます。エディタ（AI 駆動の IDE）に非同期実行の管理面を持ち込み、**Manager View** で複数エージェントを別ワークスペースで並行して走らせ、状態・生成物（Artifacts：計画・パッチ・ログ・スクリーンショット）・承認待ちの項目を 1 つの画面から確認します。対応モデルは Gemini 3 Pro・Claude Sonnet 4.5・GPT-OSS、macOS / Windows / Linux で動作します。
+
+| 軸 | 対話・同期型（Claude Code / Codex / Qwen Code / OpenCode / Bionic） | 投げてレビュー（Jules） | 並行監視（Antigravity の Manager View） |
+|----|---|---|---|
+| 主な使い方 | その場で指示し、応答を見ながら進める | タスクを渡し、後で PR を確認する | 複数タスクを並行して投げ、1 画面で監視する |
+| 実行場所 | 手元の端末（ローカルまたは自分のクラウド） | Google Cloud VM（提供元管理） | エディタから起動し、バックグラウンドで実行 |
+| 承認ゲート | 各操作ごと（Hooks 等、ツール依存） | 計画時・PR 時の 2 か所 | エージェントごとの承認待ちを Manager View 上で処理 |
+
+この軸は、[ループエンジニアリング](loop-engineering.md)が扱う「どの停止条件で、どこまで無人で回すか」という論点の一部でもあります。**同期・非同期のどちらが優れているかという話ではなく、承認をどのタイミングで挟むかという設計の違いです。** [乗り換えるときに見る軸](#乗り換えるときに見る軸)は主に同期型を前提にしているため、非同期型を検討する場合はこの表の承認ゲートの位置を先に確認してください。
+
+---
+
 ## 関連ドキュメント
 
 - [Claude Code ガイド](../claude-code/README.md) ／ [Codex ガイド](../codex/README.md) — 本ページで扱った 2 つの詳細
 - [AI エージェントの実行基盤（ハーネス）](harness.md) — エージェントの外側の層
+- [ループエンジニアリング](loop-engineering.md) — 非同期型の停止条件・承認ゲートの設計と同じ論点
 - [Skill / Plugin のセキュリティ](skill-security.md) — どのエージェントでも共通の導入前チェック
 - [skills.sh ガイド](skills-sh.md) — Skill の検索・導入
 - [Skills 最新動向](../trends.md) — エコシステム全体の動き
@@ -193,6 +212,8 @@ LM Studio が 2026-07-16 に公開した、**オープンモデル向けのデ�
 - [OpenCode ドキュメント](https://opencode.ai/docs/) — 設定・プロバイダー一覧（公式）
 - [Introducing LM Studio Bionic](https://lmstudio.ai/blog/introducing-lm-studio-bionic) — Bionic の発表記事（公式・2026-07-16）
 - [Claude Code 公式ドキュメント](https://code.claude.com/docs/) ／ [Codex 公式ドキュメント](https://developers.openai.com/codex/cli)
+- [Jules](https://jules.google/) — Google Labs の公式サイト（ワークフロー・利用方法）
+- [Build with Google Antigravity](https://developers.googleblog.com/build-with-google-antigravity-our-new-agentic-development-platform/) — 公開時の発表記事（公式・2025-11-20）
 
 ---
 
