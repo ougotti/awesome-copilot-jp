@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-07** [AI エージェントの実行基盤（ハーネス）](docs/dev-methods/harness.md) に OpenTelemetry GenAI semantic conventions の対応状況を追加し、[コーディングエージェントの選び方](docs/dev-methods/coding-agents.md) に非同期・クラウド型（Jules・Antigravity）との軸を追加
 - **2026-09-07** [Skill / エージェントの評価（evals）](docs/dev-methods/evals.md) を新設し、退行の典型パターン・測り方の最小手順・`skill-eval-harness` を整理
 - **2026-09-06** [仕様駆動開発（SDD）](docs/dev-methods/spec-driven.md) を新設し、GitHub Spec Kit のワークフロー・EARS・AI-DLC との選び方の軸を整理
 - **2026-09-06** [Skills 最新動向](docs/trends.md) 13 節に A2A の Agentic AI Foundation 合流（2026-08-17）を反映し、MCP との役割の違いを整理
 - **2026-09-05** [Skills 最新動向](docs/trends.md) 7 節に APM（マニフェスト方式の依存管理）を追加し、導入経路の比較を「命令的か宣言的か」の軸で 4 つに整理
-- **2026-09-05** クラウド 3 社のベンダー公式スキルを [Skills 最新動向](docs/trends.md) 8 節に整理し、Anthropic の公式ディレクトリ `claude-plugins-official` を [Claude Code のカスタマイズ機能](docs/claude-code/basics.md) に追加
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -136,13 +136,13 @@
 
 | ドキュメント | 提供元 | 状態 | 環境 | 内容 |
 |-------------|-------|------|------|------|
-| **[コーディングエージェントの選び方](docs/dev-methods/coding-agents.md)** | 本ガイド | — | CLI / デスクトップ | Claude Code・Codex・Qwen Code・OpenCode・Bionic の比較と選定軸 |
+| **[コーディングエージェントの選び方](docs/dev-methods/coding-agents.md)** | 本ガイド | — | CLI / デスクトップ / Cloud | Claude Code・Codex・Qwen Code・OpenCode・Bionic の比較と選定軸。Jules・Antigravity との同期/非同期の軸 |
 | **[skills.sh ガイド](docs/dev-methods/skills-sh.md)** | Community | GA | CLI | Agent Skills の検索・導入ポータルと用途別の定番スキル |
 | **[mattpocock/skills](docs/dev-methods/mattpocock-skills.md)** | Community | GA | CLI | 要件整理〜仕様化〜TDD〜レビューの手順スキル |
 | **[superpowers](docs/dev-methods/superpowers.md)** | Community | GA | CLI | SDLC スキルフレームワーク（複数ツール対応） |
 | **[AI-DLC ワークフロー](docs/dev-methods/aidlc-workflows.md)** | Official（AWS） | GA | CLI / IDE | 3 フェーズの AI 駆動開発ライフサイクル |
 | **[仕様駆動開発（SDD）](docs/dev-methods/spec-driven.md)** | Community | GA | CLI | GitHub Spec Kit のワークフローと EARS、AI-DLC との選び方の軸 |
-| **[AI エージェントの実行基盤（ハーネス）](docs/dev-methods/harness.md)** | 本ガイド | — | CLI / Cloud | エージェントを動かす裏側の仕組みと実装例（Copilot Studio / QM） |
+| **[AI エージェントの実行基盤（ハーネス）](docs/dev-methods/harness.md)** | 本ガイド | — | CLI / Cloud | エージェントを動かす裏側の仕組みと実装例（Copilot Studio / QM）、OpenTelemetry による可観測性 |
 | **[ループエンジニアリング](docs/dev-methods/loop-engineering.md)** | 本ガイド | — | CLI / Cloud | エージェントを目標へ向けて回すループの設計・停止条件・落とし穴 |
 | **[オントロジー](docs/dev-methods/ontology.md)** | 本ガイド | — | CLI / Cloud | 業務の意味（語彙・関係・規則）を定義してエージェントに渡す方法と実装例 |
 | **[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md)** | 本ガイド | — | IDE / CLI | 導入前の確認手順、第三者監査の実態、組織での許可範囲の限定 |

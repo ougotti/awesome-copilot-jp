@@ -1,6 +1,6 @@
 # AI エージェントの実行基盤（ハーネス）
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-08-31
+> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-07
 
 > エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
 
@@ -182,6 +182,22 @@ QM が「自前のクラウド・Postgres・インフラ担当者」を前提に
 
 > 詳しくは [なぜ今、AI に「ハーネス」が必要なのか（ギークフジワラ）](https://www.geekfujiwara.com/tech/powerplatform/8591/) を参照してください。
 
+## 動かした後に何が見えるか — OpenTelemetry GenAI Semantic Conventions
+
+ハーネスがツール呼び出し・ループ・エラー処理を引き受けるとして、**動かした後に何が起きたかを外から見る**仕組みも必要になります。ここでベンダー横断の共通スキーマとして広がっているのが OpenTelemetry の **GenAI semantic conventions** です。モデル呼び出し・ツール呼び出し・トークン交換を標準化された属性（`gen_ai.request.model`・`gen_ai.usage.input_tokens` / `output_tokens`・`gen_ai.response.finish_reasons` など）で記録し、既定ではメタデータのみを出力して機微な内容（プロンプト本文やツール引数）を含めません。トレースは `invoke_agent`（エージェント全体）を親に、モデル呼び出しが `chat`、ツール実行が `execute_tool` の子スパンになる階層構造を取ります。
+
+主要なコーディングツールの対応状況は次のとおりです（いずれもオプトインで、既定は無効）。
+
+| ツール | 対応シグナル | GenAI semantic conventions |
+|-------|-------------|---------------------------|
+| Claude Code | メトリクス・イベント（ログ）が正式対応、トレースはベータ（`CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`） | 明記あり（`gen_ai.*` 属性を `claude_code.llm_request` 等のスパンに付与） |
+| Codex CLI | メトリクス・ログ（イベント）。`config.toml` の `[otel]` で設定 | 公式ドキュメントに明記なし |
+| VS Code Copilot Chat | トレース・メトリクス・イベント | 明記あり（`gen_ai.*` に加え `github.copilot.*` の拡張名前空間） |
+
+> **対応の深さはツールごとに違い、変化も速い領域です。** 上表は各公式ドキュメントの確認日（2026-09-07）時点のもので、導入時は必ず最新の記述を確認してください。
+
+この「動かした後に何が見えるか」は、[Skill / Plugin のセキュリティ 5 節「統制が効く 3 つの段階」](skill-security.md#5-統制が効く-3-つの段階)の**実行後（監査）**と直結します。あちらが「セッションのトランスクリプトを取得する」という組織向け機能（Compliance API）を扱うのに対し、ここでの OpenTelemetry は**ベンダー中立の計測データ**（メトリクス・ログ・トレース）を自分たちの監視基盤（OTLP 対応バックエンド）へ流す仕組みです。両者は排他ではなく、組織で使える統制の手段が違う層として併存します。
+
 ## ループとの関係
 
 ハーネスの 1 つ上の階には、エージェントを目標へ向けて何度も回す **ループ** の設計があります。ハーネスが「エージェントが動く環境」を決めるのに対し、ループは「その環境で何を、いつまで繰り返すか」を決めます。両者は独立ではありません。**ループはハーネスの上で回るため、ハーネスが弱ければループはその弱点を繰り返し踏み、誤りを増幅します**。無人で回す前に、権限・サンドボックス・観測がハーネス側で揃っているかを先に確認してください。
@@ -211,4 +227,8 @@ QM が「自前のクラウド・Postgres・インフラ担当者」を前提に
 - [Introducing Kiro Crew](https://kiro.dev/blog/introducing-kiro-crew/) — 公開時の発表（公式・2026-08-04）
 - [kirodotdev/KiroCrew](https://github.com/kirodotdev/KiroCrew) — リポジトリと README（公式・Apache-2.0）
 - [Kiro Crew ドキュメント](https://kiro.dev/docs/crew/) — 機能・設定・セキュリティの一次情報（公式）
+- [Inside the LLM Call: GenAI Observability with OpenTelemetry](https://opentelemetry.io/blog/2026/genai-observability/) — GenAI semantic conventions の解説（OpenTelemetry 公式）
+- [Claude Code Monitoring](https://code.claude.com/docs/en/monitoring-usage) — OTel メトリクス・イベント・トレース（ベータ）の設定（公式）
+- [Codex CLI Advanced Configuration — `[otel]`](https://learn.chatgpt.com/docs/config-file/config-advanced) — Codex の OTel 設定（公式）
+- [Monitor agent usage with OpenTelemetry](https://code.visualstudio.com/docs/agents/guides/monitoring-agents) — VS Code Copilot Chat の OTel 対応（公式）
 

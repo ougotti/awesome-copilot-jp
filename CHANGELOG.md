@@ -4,6 +4,14 @@
 
 ## 2026-09
 
+- **2026-09-07** 既存ページの拡張候補 2 件（可観測性 / 非同期クラウド型エージェント）に対応（#140）
+  - **[AI エージェントの実行基盤（ハーネス）](docs/dev-methods/harness.md) に「動かした後に何が見えるか — OpenTelemetry GenAI Semantic Conventions」を新設** — issue の提案どおり、新規ページではなく既存ページへ節を追加した（差分を小さく保つため）。OpenTelemetry 公式ブログを一次情報として取得し（issue 作成時点では egress ポリシーでブロックされていたが、今回のセッションでは取得できた）、Claude Code・Codex CLI・VS Code Copilot Chat それぞれの公式ドキュメントを直接確認して対応状況（メトリクス／ログ／トレース、`gen_ai.*` 属性への準拠）を比較表にした
+  - **`skill-security.md` 5 節（統制が効く 3 段階）と接続** — OpenTelemetry（ベンダー中立の計測データを自分の監視基盤へ流す）と Compliance API（組織向けプランでのセッション監査）が排他ではなく別の層であることを明記した
+  - **[コーディングエージェントの選び方](docs/dev-methods/coding-agents.md) に「対話しながら回すか、投げて PR をレビューするか」を新設** — issue の提案どおり、Jules・Antigravity を既存の比較表へ行として追加せず、**同期/非同期という軸**を立てて既存の「エージェントとハーネスの関係」「乗り換えるときに見る軸」の後に配置した。Jules（Google Labs、公式サイトを一次情報として確認、2026-05-19 GA）と Antigravity（Google、公式発表記事を確認、2025-11-20 Preview 公開）の一次情報を取得し、優劣やスコアではなく「主な使い方・実行場所・承認ゲート」の 3 点で整理した（CONTRIBUTING の「変化しやすい情報」を踏まえ、比較は事実の分類に留めた）
+  - **一次情報の確認（2026-09-07）**: OpenTelemetry 公式ブログ、Claude Code 公式ドキュメント（`code.claude.com/docs/en/monitoring-usage`）、Codex CLI 公式ドキュメント（`learn.chatgpt.com/docs/config-file/config-advanced`）、VS Code 公式ドキュメント（`code.visualstudio.com/docs/agents/guides/monitoring-agents`）、Jules 公式サイト（`jules.google/`）、Antigravity 公式発表記事（`developers.googleblog.com`）をそれぞれ直接取得して確認した
+  - **CHANGELOG.md と README の「🆕 最近の更新」・「ツール横断の開発手法」表に追記**
+  - これで issue #137〜#144 の一連の対応が完了
+
 - **2026-09-07** Skill / エージェントの評価（evals）の解説ページを新設（#138）
   - **[Skill / エージェントの評価（evals）](docs/dev-methods/evals.md) を新設** — [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md)が扱う「**導入前**に入れてよいか」に対して、「**導入後**に実際に効いているか」を測る話として位置づけた。退行の典型パターン（①発火しない ②過剰に発火する ③手順を飛ばす ④余計なファイルを残す）、測り方の最小手順（成功の定義 → タスク集合の作成 → あり/なし比較 → 決定論的採点 → 変更のたびに回す）、道具（Codex の `codex exec --json` / `--output-schema`、`adewale/skill-eval-harness`）を整理した
   - **issue が「egress ポリシーでブロックされ未取得」としていた一次情報を取得** — OpenAI「Testing Agent Skills Systematically with Evals」、LangChain「Evaluating Skills」（Robert Xu、2026-03-05）の両方を今回のセッションでは取得でき、正確な引用（`description` が呼び出し精度を決める、という主張の原文）を根拠にした
