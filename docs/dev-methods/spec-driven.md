@@ -1,6 +1,6 @@
 # 仕様駆動開発（SDD） — 仕様を実行可能な入力にする
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Cursor・Codex ほか 30+ エージェント対応） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-06
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Cursor・Codex ほか多数のエージェントに対応） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-07
 
 > このページは [github/spec-kit](https://github.com/github/spec-kit) のスナップショットです。コマンド名・生成されるディレクトリ構成・対応エージェントの一覧はバージョンで変わります。導入時は必ず [公式リポジトリ](https://github.com/github/spec-kit) と [公式ドキュメント](https://github.github.io/spec-kit/) を確認してください。実行環境は Python 3.11+ と [uv](https://docs.astral.sh/uv/)（または pipx）が前提の CLI です。
 
@@ -18,7 +18,7 @@ AI コーディングエージェントの力を借りて初めて現実的に�
 
 ## GitHub Spec Kit のワークフロー
 
-**GitHub Spec Kit**（[github/spec-kit](https://github.com/github/spec-kit)、MIT ライセンス）は、SDD を具体的なコマンド列として実装したツールキットです。2026 年に v1.0.0 に達し、30 以上のコーディングエージェントに対応しています（対応エージェントの一覧は `specify integration list` または [公式の対応表](https://github.github.io/spec-kit/reference/integrations.html) で確認してください。件数は変わりやすいため本文には固定で書きません）。
+**GitHub Spec Kit**（[github/spec-kit](https://github.com/github/spec-kit)、MIT ライセンス）は、SDD を具体的なコマンド列として実装したツールキットです。2026 年に v1.0.0 に達し、主要なコーディングエージェントを広くカバーしています。対応エージェントの一覧は `specify integration list` または [公式の対応表](https://github.github.io/spec-kit/reference/integrations.html) で確認してください（件数は変わりやすいため本文には書きません）。
 
 コア・ワークフローは次の順で進みます。
 
@@ -35,7 +35,7 @@ AI コーディングエージェントの力を借りて初めて現実的に�
 
 補助コマンドとして、`/speckit.clarify`（`/speckit.plan` の前に未確定な部分を明確化）・`/speckit.analyze`（`/speckit.tasks` の後、`/speckit.implement` の前にアーティファクト間の整合性を分析）・`/speckit.checklist`（要件の完全性・明確性・一貫性を検証するチェックリストを生成する、「英語のための単体テスト」）があります。
 
-エージェントによってコマンドの呼び出し方が異なります。多くのエージェントは `/speckit.*` のスラッシュコマンドを公開しますが、Codex CLI と Claude Code の skills mode では `$speckit-*`、GitHub Copilot CLI では `/agents` でエージェントを選ぶか、プロンプト内で直接名前を呼びます。
+エージェントによってコマンドの呼び出し方が異なります。多くのエージェントは `/speckit.*` のスラッシュコマンドを公開しますが、一部は別の呼び出し方（skills mode でのコマンド名、CLI 独自のエージェント選択方法など）を使います。導入するエージェントでの正確な呼び出し方は、[公式の対応表](https://github.github.io/spec-kit/reference/integrations.html) を確認してください。
 
 > spec-kit は**バグ修正**（`assess → fix → test`）と**アイデア評価**（`intake → research → define → shape → decide`）用の opt-in extension も同梱しています。いずれも `specify extension add <name>` で追加するオプトイン機能で、コア・ワークフローとは別に案内されています。
 

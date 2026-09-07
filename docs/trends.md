@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-06
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-07
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -634,7 +634,7 @@ MCP のロードマップが**ツールと接続する側**の話であるのに
 
 ## 14. 仕様駆動開発（SDD）
 
-Skill・MCP・ハーネスがエージェントを**動かす**側の話だとすれば、こちらは動かす前に**何を作るか**を決める側の話です。仕様を先に書き、それを実装の入力にする**仕様駆動開発（Spec-Driven Development, SDD）**は、[github/spec-kit](https://github.com/github/spec-kit) が v1.0.0 に達したことで、主要なコーディングエージェント 30 以上に対応する実践として定着しつつあります。
+Skill・MCP・ハーネスがエージェントを**動かす**側の話だとすれば、こちらは動かす前に**何を作るか**を決める側の話です。仕様を先に書き、それを実装の入力にする**仕様駆動開発（Spec-Driven Development, SDD）**は、[github/spec-kit](https://github.com/github/spec-kit) が v1.0.0 に達したことで、主要なコーディングエージェントを広くカバーする実践として定着しつつあります。
 
 コアワークフローは `/speckit.constitution`（原則の確立）→ `/speckit.specify`（何を作るか）→ `/speckit.plan`（どう作るか）→ `/speckit.tasks`（タスク分解）→ `/speckit.implement`（実装）→ `/speckit.converge`（仕様との整合を確認）の順で進みます。受け入れ基準を曖昧さなく書く記法として **EARS（Easy Approach to Requirements Syntax）** が広く使われています。
 
