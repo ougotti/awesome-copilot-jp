@@ -1,6 +1,6 @@
 # Agents 一覧と活用ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-07
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-07
 
 > [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **244 個の Agents** を日本語で解説します。
 

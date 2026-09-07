@@ -136,7 +136,7 @@
 
 | ドキュメント | 提供元 | 状態 | 環境 | 内容 |
 |-------------|-------|------|------|------|
-| **[コーディングエージェントの選び方](docs/dev-methods/coding-agents.md)** | 本ガイド | — | CLI / デスクトップ / Cloud | Claude Code・Codex・Qwen Code・OpenCode・Bionic の比較と選定軸。Jules・Antigravity との同期/非同期の軸 |
+| **[コーディングエージェントの選び方](docs/dev-methods/coding-agents.md)** | 本ガイド | — | CLI / デスクトップ / IDE / Cloud | Claude Code・Codex・Qwen Code・OpenCode・Bionic の比較と選定軸。Jules・Antigravity との同期/非同期の軸 |
 | **[skills.sh ガイド](docs/dev-methods/skills-sh.md)** | Community | GA | CLI | Agent Skills の検索・導入ポータルと用途別の定番スキル |
 | **[mattpocock/skills](docs/dev-methods/mattpocock-skills.md)** | Community | GA | CLI | 要件整理〜仕様化〜TDD〜レビューの手順スキル |
 | **[superpowers](docs/dev-methods/superpowers.md)** | Community | GA | CLI | SDLC スキルフレームワーク（複数ツール対応） |
