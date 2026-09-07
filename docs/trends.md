@@ -555,7 +555,7 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 
 2026 年半ばには、この 1 つ上の階として **ループエンジニアリング**（loop engineering）という呼び名が加わりました。Addy Osmani（Google Chrome）が [Loop Engineering](https://addyosmani.com/blog/loop-engineering/)（2026-06-07）で命名したもので、**人がプロンプトを打ち続けるのをやめ、エージェントを目標へ向けて回すループの側を設計する**という実践です。自動実行・ワークツリー・スキル・コネクタ・サブエージェント・外部状態を組み合わせ、機械が判定できる停止条件で止めます。ループはハーネスの上で回るため、**ハーネスが弱ければループは同じ誤りを繰り返し増幅します**。
 
-動かす仕組みが揃うほど、**動かした後に何が見えるか**も問われます。OpenTelemetry の **GenAI semantic conventions**（モデル呼び出し・ツール呼び出し・トークン交換を標準化した `gen_ai.*` 属性）に、Claude Code・Codex CLI・VS Code Copilot Chat がいずれも対応しました。対応の深さ（メトリクス／ログ／トレース）はツールごとに異なります。
+動かす仕組みが揃うほど、**動かした後に何が見えるか**も問われます。OpenTelemetry の **GenAI semantic conventions**（モデル呼び出し・ツール呼び出し・トークン交換を標準化した `gen_ai.*` 属性）に、Claude Code・Codex CLI・VS Code Copilot Chat がいずれも OTel（メトリクス／ログ／トレース）を出力できます。ただし `gen_ai.*` 属性への準拠を明記しているのは Claude Code と VS Code Copilot Chat で、**Codex CLI の公式ドキュメントには明記がありません**。
 
 **→ 概念、Microsoft Copilot Studio・QM・Kiro Crew の実装、セキュリティポスチャ、導入の前提、OpenTelemetry での可観測性は [AI エージェントの実行基盤（ハーネス）](dev-methods/harness.md) を参照**
 **→ ループの構成要素・停止条件の作り方・落とし穴は [ループエンジニアリング](dev-methods/loop-engineering.md) を参照**

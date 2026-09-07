@@ -1,6 +1,6 @@
 # コーディングエージェントの選び方
 
-> **対象ツール**: ツール横断（Claude Code・Codex・Qwen Code・OpenCode・Bionic・Jules・Antigravity） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-07
+> **対象ツール**: ツール横断（Claude Code・Codex・Qwen Code・OpenCode・Bionic・Jules・Antigravity） ｜ **実行環境**: CLI / デスクトップ / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-07
 
 > ターミナルやデスクトップで動く「コーディングエージェント」は、2026 年時点で選択肢が増えました。よく「Claude Code は Claude 中心、Codex は OpenAI 中心」のようにモデル系列で語られますが、**その分類は実態を半分しか説明していません**。本ページでは、何が本当に違うのかを整理します。
 
