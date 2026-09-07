@@ -1,8 +1,8 @@
 # Agents 一覧と活用ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-17
+> **対象ツール**: GitHub Copilot ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-07
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **243 個の Agents** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **244 個の Agents** を日本語で解説します。
 
 ## Agents とは
 
@@ -494,6 +494,14 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`comet-opik.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/comet-opik.agent.md) | Comet Opik | ML 実験管理 |
 | [`python-notebook-sample-builder.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/python-notebook-sample-builder.agent.md) | Python Notebook サンプルビルダー | Azure・AI 機能の Jupyter Notebook 作成 |
 | [`spark-performance.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/spark-performance.agent.md) | PySpark パフォーマンスエキスパート | PySpark ボトルネック診断・分散実行アンチパターン修正 |
+| [`research-harness-engineer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/research-harness-engineer.agent.md) | リサーチ評価ハーネスエンジニア | ML/リサーチコードの評価基盤構築、ベンチマーク再現性検証 |
+
+**[research-harness-engineer.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/research-harness-engineer.agent.md)** の特徴:
+- 「リサーチコードの典型的な失敗はクラッシュではなく、良く見えて間違っている数値」という前提に立つ
+- 手法の実装前に単一の評価エントリポイント（ハーネス）をまず作り、指標とデータ分割の唯一の真実源にする
+- 定数出力・未学習モデルなどのヌルモデルを候補手法より先にスコアリングし、壊れたハーネスを早期検知する
+- 改善を主張する前に公開ベンチマークの再現を求め、ファイル単位ではなく独立性の単位でキャリブレーション/評価データを分離する
+- 信頼区間付きのペア差分で報告し、ゼロをまたぐ差分はノイズ、未再現の結果はカウントしないという保守的な報告姿勢を取る
 
 ---
 
@@ -618,7 +626,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 
 ## まとめ
 
-Agents は **243 ファイル** あり、以下のカテゴリに分類されます：
+Agents は **244 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な用途 |
 |---------|----------|---------|
@@ -634,7 +642,7 @@ Agents は **243 ファイル** あり、以下のカテゴリに分類されま
 | Power Platform・BI | 約 10 | Power BI, Power Platform |
 | Microsoft 365 | 約 5 | M365 Copilot エージェント |
 | テスト | 約 18 | TDD, Playwright, Polyglot テスト自動化、モバイル E2E |
-| AI・機械学習 | 約 6 | Python AI/ML, Notebook サンプル, PySpark |
+| AI・機械学習 | 約 7 | Python AI/ML, Notebook サンプル, PySpark, 評価ハーネス |
 | 移行・モダナイゼーション | 約 14 | レガシー刷新、React 18/19 移行、Oracle→PostgreSQL |
 | 外部サービス連携 | 約 14 | 各種 SaaS 連携、科学論文検索 |
 | 高度なモード | 約 8 | Beast モード、高性能推論 |

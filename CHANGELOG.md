@@ -4,6 +4,11 @@
 
 ## 2026-09
 
+- **2026-09-07** upstream 新規ファイル 2 件（devcontainers instructions / research-harness-engineer agent）に追従（#150）
+  - **[Instructions 一覧](docs/copilot/instructions.md)** の「開発環境・ツール」に `devcontainers.instructions.md`（Dev Container 設定ファイルのレビュー・作成規約 12 項目）を追加
+  - **[Agents 一覧](docs/copilot/agents.md)** の「AI・機械学習」に `research-harness-engineer.agent.md`（リサーチ評価ハーネスエンジニア）を追加
+  - `scripts/known-files.json` の `instructions` / `agents` を更新（201 / 244 件に）
+
 - **2026-09-07** 既存ページの拡張候補 2 件（可観測性 / 非同期クラウド型エージェント）に対応（#140）
   - **[AI エージェントの実行基盤（ハーネス）](docs/dev-methods/harness.md) に「動かした後に何が見えるか — OpenTelemetry GenAI Semantic Conventions」を新設** — issue の提案どおり、新規ページではなく既存ページへ節を追加した（差分を小さく保つため）。OpenTelemetry 公式ブログを一次情報として取得し（issue 作成時点では egress ポリシーでブロックされていたが、今回のセッションでは取得できた）、Claude Code・Codex CLI・VS Code Copilot Chat それぞれの公式ドキュメントを直接確認して対応状況（メトリクス／ログ／トレース、`gen_ai.*` 属性への準拠）を比較表にした
   - **`skill-security.md` 5 節（統制が効く 3 段階）と接続** — OpenTelemetry（ベンダー中立の計測データを自分の監視基盤へ流す）と Compliance API（組織向けプランでのセッション監査）が排他ではなく別の層であることを明記した
