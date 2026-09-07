@@ -4,6 +4,15 @@
 
 ## 2026-09
 
+- **2026-09-07** Skill / エージェントの評価（evals）の解説ページを新設（#138）
+  - **[Skill / エージェントの評価（evals）](docs/dev-methods/evals.md) を新設** — [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md)が扱う「**導入前**に入れてよいか」に対して、「**導入後**に実際に効いているか」を測る話として位置づけた。退行の典型パターン（①発火しない ②過剰に発火する ③手順を飛ばす ④余計なファイルを残す）、測り方の最小手順（成功の定義 → タスク集合の作成 → あり/なし比較 → 決定論的採点 → 変更のたびに回す）、道具（Codex の `codex exec --json` / `--output-schema`、`adewale/skill-eval-harness`）を整理した
+  - **issue が「egress ポリシーでブロックされ未取得」としていた一次情報を取得** — OpenAI「Testing Agent Skills Systematically with Evals」、LangChain「Evaluating Skills」（Robert Xu、2026-03-05）の両方を今回のセッションでは取得でき、正確な引用（`description` が呼び出し精度を決める、という主張の原文）を根拠にした
+  - **SkillsBench は arXiv アブストラクトを直接取得して確認** — 検索結果の要約に出た数値は一次情報と食い違ったため使わず、`arxiv.org/abs/2602.12670` のアブストラクト本文を直接取得して確認できた事実（平均では改善するが、ドメイン・構成により効果の大きさは大きくばらつく）だけを書いた。CONTRIBUTING の「変化しやすい情報」に沿い、タスク数・ドメイン数・スコアの具体値は本文に固定せず、確認先へのリンクに委ねた
+  - **`harness.md` との用語の衝突を明示的に整理** — 「実行基盤としてのハーネス」（エージェントを動かす裏側の仕組み）と「評価用ハーネス」（実行結果を採点する測定用の足場）が同じ語を指すことを明記し、両ページから相互リンクした
+  - **`skill-security.md` と「導入前 / 導入後」の役割分担を相互リンク** — 双方の「関連ドキュメント」に追加
+  - **[Skills 最新動向](docs/trends.md) に「15. Skill / エージェントの評価（evals）」を新設** — 既存の「要約 + 独立ページ」の型に揃え、全体像・使い分け・参考リンクの各表にも反映
+  - **CHANGELOG.md と README の「🆕 最近の更新」に追記**（5 行を維持）
+
 - **2026-09-06** 仕様駆動開発（SDD）の解説ページを新設（#137）
   - **[仕様駆動開発（SDD）](docs/dev-methods/spec-driven.md) を新設** — SDD とは何か（仕様がコードに従うのではなくコードが仕様に従う、という上下関係の反転）から、[github/spec-kit](https://github.com/github/spec-kit) のコアワークフロー（`/speckit.constitution` → `/speckit.specify` → `/speckit.plan` → `/speckit.tasks` → `/speckit.implement` → `/speckit.converge`）、`.specify/` のテンプレート優先順位（プロジェクトローカル > プリセット > Extension > コア）まで整理した
   - **EARS（Easy Approach to Requirements Syntax）を一次情報で裏取り** — issue が「二次情報でしか確認できていない」としていた出典を、提唱者 Alistair Mavin 本人による公式解説ページ（2009 年発表）を取得して確認した。5 つのパターン（Ubiquitous / Event-driven / State-driven / Optional feature / Unwanted behaviour）を整理し、**spec-kit 自体には EARS への直接の言及がない**こともあわせて明記した
