@@ -4,6 +4,8 @@
 
 > [awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows) は AWS が公開した、AI エージェントを**検証可能・自己修正可能なエンジニアリングワークフロー**へと変える OSS プロジェクトです。GitHub Copilot、Claude Code、Amazon Q Developer、Cursor、Cline、Codex など主要なコーディングエージェントに対応しています。
 
+> AI-DLC は、**仕様駆動開発（SDD）という手法の実装の 1 つ**という位置づけです。SDD そのものの見取り図と、GitHub Spec Kit との選び方の軸は [仕様駆動開発（SDD）](spec-driven.md#ai-dlc-との関係--どちらを選ぶか) を参照してください。
+
 ## AI-DLC とは
 
 AI-DLC（AI-Driven Development Life Cycle）は、AIコーディングエージェントが「すぐ実装しようとする」「計画なしに進める」「品質チェックを省略する」といった問題行動を、**ルールファイル（ワークフロー定義）によって構造的に防ぐ**インテリジェントなソフトウェア開発ワークフローです。
