@@ -196,6 +196,7 @@ QM が「自前のクラウド・Postgres・インフラ担当者」を前提に
 - [Skills 最新動向](../trends.md) — 本ページの要約と、その他のテーマの動向
 - [オントロジー](ontology.md) — ハーネス越しにエージェントへ渡す「業務の意味」の定義
 - [Skill / Plugin のセキュリティ](skill-security.md) — 標準が定義していない権限・承認・サンドボックスをどう埋めるか
+- [Skill / エージェントの評価（evals）](evals.md) — 同じ「ハーネス」という語で呼ばれる**評価用ハーネス**（実行結果を採点する測定用の足場）との違いを整理
 - [Claude Code のカスタマイズ機能](../claude-code/basics.md) ／ [Codex ガイド](../codex/README.md) — ハーネスから見れば差し替え可能な「コーディングツール」層の解説
 - [コーディングエージェントの選び方](coding-agents.md) — その「コーディングツール」層に何があるかの比較（Claude Code / Codex / Qwen Code / OpenCode / Bionic）
 

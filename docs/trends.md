@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-07 | 「15. Skill / エージェントの評価（evals）」を新設し、独立ページ [Skill / エージェントの評価（evals）](dev-methods/evals.md) へ要約 + 誘導した（`skill-security.md` の「導入前」に対する「導入後」の話として位置づけ） |
 | 2026-09-06 | 「14. 仕様駆動開発（SDD）」を新設し、独立ページ [仕様駆動開発（SDD）](dev-methods/spec-driven.md) へ要約 + 誘導した（AI-DLC はその実装の 1 つという位置づけに整理） |
 | 2026-09-06 | 13 節に A2A の AAIF 合流（2026-08-17）を追加。MCP と A2A の役割の違い（ツール接続とエージェント間連携）を整理し、7-2 節の ARD の A2A への言及からつないだ |
 | 2026-09-05 | 7 節に「7-4. APM」を新設し、比較表を 4 つへ拡張して**「命令的か宣言的か」**の軸を立てた。`npx skills` の提供元表記に、ベンダー公式スキルの導入経路にもなっている実態の注記を追加 |
@@ -41,7 +42,7 @@
 
 > `Versel` ではなく、正式な表記は **Vercel** です。
 
-> 「[7. Skill の発見・配布・更新](#7-skill-の発見配布更新)」以降は動画チャプター外の追補です。[配布と発見の仕組み](#7-skill-の発見配布更新)、[共通パッケージ標準](#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準)、[Skill が動く場所](#9-skill-が動く場所の広がり)、[実行基盤](#10-aiエージェントの実行基盤ハーネス)、[エージェントに渡す知識](#11-エージェントに渡す知識オントロジー)、[導入時の安全性](#12-skill--plugin-のセキュリティ)、[MCP の次期仕様](#13-mcp-の次期仕様)、[仕様駆動開発](#14-仕様駆動開発sdd)を扱います。
+> 「[7. Skill の発見・配布・更新](#7-skill-の発見配布更新)」以降は動画チャプター外の追補です。[配布と発見の仕組み](#7-skill-の発見配布更新)、[共通パッケージ標準](#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準)、[Skill が動く場所](#9-skill-が動く場所の広がり)、[実行基盤](#10-aiエージェントの実行基盤ハーネス)、[エージェントに渡す知識](#11-エージェントに渡す知識オントロジー)、[導入時の安全性](#12-skill--plugin-のセキュリティ)、[MCP の次期仕様](#13-mcp-の次期仕様)、[仕様駆動開発](#14-仕様駆動開発sdd)、[評価（evals）](#15-skill--エージェントの評価evals)を扱います。
 
 ---
 
@@ -62,6 +63,7 @@
 | 安全性 | `gh skill preview` / MCP allowlists | 導入前の内容確認と、組織での許可範囲の限定（[解説](dev-methods/skill-security.md)） | 業務利用・組織展開の前提 |
 | 実行される場所 | Copilot code review / IDE の Skill 管理 | 対話の外（レビュー・IDE の常設機能）での実行 | 規約の自動適用と定常運用 |
 | 仕様駆動開発（SDD） | GitHub Spec Kit / AI-DLC | 仕様 → 計画 → タスクという構造化された手順（[解説](dev-methods/spec-driven.md)） | 機能開発を仕様から実行可能にしたい場合 |
+| 評価（evals） | SkillsBench / skill-eval-harness | 導入した Skill が実際に効いているかを測る仕組み（[解説](dev-methods/evals.md)） | Skill・Skill 変更の効果を継続的に確認したい場合 |
 
 ---
 
@@ -644,6 +646,18 @@ Skill・MCP・ハーネスがエージェントを**動かす**側の話だと�
 
 ---
 
+## 15. Skill / エージェントの評価（evals）
+
+[12 節](#12-skill--plugin-のセキュリティ)が「入れてよい Skill か」という**導入前**の話だとすれば、こちらは「**入れた Skill が実際に効いているか**」という導入後の話です。Skill は増やすほどコンテキストを圧迫し、意図しないものが選ばれることがあり（[7 節](#7-skill-の発見配布更新)・[skills.sh ガイド](dev-methods/skills-sh.md#選ぶときの注意)）、効果を継続的に確認する側の設計が必要になります。
+
+SkillsBench（[arXiv:2602.12670](https://arxiv.org/abs/2602.12670)、2026-02-13）は 87 タスク・8 ドメイン・18 の model-harness 構成で Curated Skills の効果を計測し、平均成功率が **33.9% → 50.5%（+16.6 ポイント）** 改善したと報告しています。ただし構成単位の改善幅は **+4.1 〜 +25.7 ポイントの範囲でばらつく**とも書かれており、「入れれば必ず伸びる」とは限りません。
+
+退行の典型は、①**発火しない**／②**過剰に発火する**（いずれも `description` の書き方が主因）、③**必要な手順を飛ばす**、④**余計なファイルを残す**の 4 パターンです。測り方の最小手順は、成功の定義を先に決め、実際の失敗を題材にしたタスク集合で「Skill あり / なし」を比較し、決定論的な採点を基本にして変更のたびに回す、という流れになります。
+
+**→ 退行パターンの詳細、測り方の手順、`skill-eval-harness` 等の道具、ハーネスとの用語の切り分けは [Skill / エージェントの評価（evals）](dev-methods/evals.md) を参照**
+
+---
+
 ## 使い分け
 
 | やりたいこと | 第一候補 |
@@ -666,6 +680,7 @@ Skill・MCP・ハーネスがエージェントを**動かす**側の話だと�
 | 組織で使える MCP サーバーを限定したい | MCP allowlists（managed settings） |
 | チームの規約をコードレビューに効かせたい | Copilot code review ＋ `.github/skills/` |
 | 手持ちの prompt ファイルを Skill にしたい | VS Code の AI Customizations から変換 |
+| 導入した Skill が効いているか測りたい | [Skill / エージェントの評価（evals）](dev-methods/evals.md)（`skill-eval-harness` ＋ 決定論的な採点） |
 
 ---
 
@@ -737,6 +752,13 @@ Skill・MCP・ハーネスがエージェントを**動かす**側の話だと�
 - [github/spec-kit](https://github.com/github/spec-kit) — リポジトリ本体（公式）
 - [spec-driven.md](https://github.com/github/spec-kit/blob/main/spec-driven.md) — SDD 方法論の解説文書（公式）
 - [EARS: Easy Approach to Requirements Syntax](https://alistairmavin.com/ears/) — 提唱者による公式解説（一次情報）
+
+### Skill / エージェントの評価（本ページ 15 節・詳細は [解説ページ](dev-methods/evals.md)）
+
+- [Testing Agent Skills Systematically with Evals](https://developers.openai.com/blog/eval-skills) — 8 段階の評価手順（OpenAI 公式）
+- [Evaluating Skills](https://www.langchain.com/blog/evaluating-skills) — Robert Xu、2026-03-05（LangChain 公式）
+- [adewale/skill-eval-harness](https://github.com/adewale/skill-eval-harness) — 決定論的な採点を行う比較用ハーネス（Community・MIT）
+- [SkillsBench](https://arxiv.org/abs/2602.12670) — arXiv:2602.12670、2026-02-13 投稿
 
 ---
 

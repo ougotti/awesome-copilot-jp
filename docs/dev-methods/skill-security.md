@@ -129,6 +129,7 @@ Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMa
 
 ## 関連ドキュメント
 
+- [Skill / エージェントの評価（evals）](evals.md) — このページの**導入前**チェックに対して、**導入後**に実際に効いているかを測る話
 - [生成AIを業務で安全に使う](../business/safety.md) — **コードを書かない方向け**。入力してよい情報、外部送信、出力後の確認項目
 - [Skills 最新動向](../trends.md) — 本ページの要約と、その他のテーマの動向
 - [AI エージェントの実行基盤（ハーネス）](harness.md) — 標準が定めていない権限・承認・サンドボックスが実際に決まる層
