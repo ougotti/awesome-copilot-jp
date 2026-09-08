@@ -71,3 +71,4 @@
 - [事務・バックオフィス活用ガイド](office-work.md) — 議事録・帳票・集計の実践
 - [金融サービス向けスキル](financial-services.md) — 金融・経理業務向けエージェント
 - [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md) — **Skill を導入するエンジニア向け**の安全ガイド
+- [エージェントに外部操作を与える手段の選び方](../dev-methods/tool-selection.md) — **エンジニア向け**。送信・購入・削除など不可逆な操作にどう承認を挟むか

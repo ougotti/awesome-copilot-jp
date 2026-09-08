@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-07
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-08
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-08 | 6 節（Computer Use / Browser Use）を要約 + 独立ページ [エージェントに外部操作を与える手段の選び方](dev-methods/tool-selection.md) へ誘導する形に整理し、Google の Gemini Computer Use（2026-06-24）を追記 |
 | 2026-09-07 | 10 節に OpenTelemetry GenAI semantic conventions（Claude Code・Codex CLI・VS Code Copilot Chat の対応状況）を追加し、[ハーネス](dev-methods/harness.md) へ誘導。[コーディングエージェントの選び方](dev-methods/coding-agents.md) に非同期・クラウド型（Jules・Antigravity）との軸を追加 |
 | 2026-09-07 | 「15. Skill / エージェントの評価（evals）」を新設し、独立ページ [Skill / エージェントの評価（evals）](dev-methods/evals.md) へ要約 + 誘導した（`skill-security.md` の「導入前」に対する「導入後」の話として位置づけ） |
 | 2026-09-06 | 「14. 仕様駆動開発（SDD）」を新設し、独立ページ [仕様駆動開発（SDD）](dev-methods/spec-driven.md) へ要約 + 誘導した（AI-DLC はその実装の 1 つという位置づけに整理） |
@@ -218,7 +219,7 @@ skills.shで公開されている注目スキル集の一覧と導入方法は�
 
 ## 6. Computer Use / Browser Use
 
-[Computer Use](https://learn.chatgpt.com/docs/computer-use) は、CodexまたはChatGPT WorkがGUIを見て、クリック、入力、メニュー操作、画面検証を行う機能です。CLIやMCPでは届かないデスクトップアプリや、APIのない画面操作に使います。
+[Computer Use](https://learn.chatgpt.com/docs/computer-use) は、CodexまたはChatGPT WorkがGUIを見て、クリック、入力、メニュー操作、画面検証を行う機能です。CLIやMCPでは届かないデスクトップアプリや、APIのない画面操作に使います。Google も 2026-06-24 に Gemini 3.5 Flash で同種の機能（ブラウザ・モバイル・デスクトップ横断）を発表しており、単一ベンダーの機能ではなくなっています。
 
 ### Browser Useとの関係
 
@@ -235,6 +236,8 @@ skills.shで公開されている注目スキル集の一覧と導入方法は�
 - **Windows** — アクティブなデスクトップを前景で操作するため、実行中はポインターやキーボード操作を占有する。
 
 > 対象サービスに専用Plugin、コネクタ、MCPがある場合は、データ取得や反復処理では構造化された連携を優先します。Computer Useは、画面を見なければ判断・操作できない場面に絞ると安定します。
+
+**→ API・connector・MCP・CLI・Computer Use をどの順で検討し、どこで承認を挟むかは [エージェントに外部操作を与える手段の選び方](dev-methods/tool-selection.md) を参照**
 
 ---
 
