@@ -5,10 +5,10 @@
 ## 2026-09
 
 - **2026-09-08** MCP と A2A の役割・併用方法を解説する新規ページを追加（#159）
-  - **[MCP と A2A — 役割の違いと併用方法](docs/dev-methods/agent-protocols.md) を新設** — 30秒で見分ける表、MCP（Tool/Resource/Prompt、2026-07-28版仕様のstateless core・認可強化）、A2A（Agent Card/Task/Message/Artifact/streaming、v1.0.1仕様）、両者を併用する構成例、Agent Plugins・Catalog・ハーネスとの境界、A2A導入判断、agent identity等の未解決事項を整理した
-  - **A2A の一次情報を直接確認** — [A2A Specification v1.0.1](https://a2a-protocol.org/latest/specification/)、[A2A Releases](https://github.com/a2aproject/A2A/releases)（最新安定版 v1.0.1、2026-05-28）、[Google Cloud の Linux Foundation への寄贈発表](https://developers.googleblog.com/google-cloud-donates-a2a-to-linux-foundation/)（2025-06-23、Open Source Summit North America）を取得し、Agent Card・Task・Message・Artifactの定義と認証・認可（仕様第7章）を正確な引用で裏付けた
-  - **MCP 2026-07-28版のリリースノート**（`blog.modelcontextprotocol.io/posts/2026-07-28/`）を取得し、stateless core への転換・`iss`パラメータ検証（RFC 9207）・Dynamic Client Registration非推奨化・Apps/Tasks拡張への移行を確認した
-  - `docs/trends.md` 13節「A2AがAAIFに合流」から新ページへ誘導を追加
+  - **[MCP と A2A — 役割の違いと併用方法](docs/dev-methods/agent-protocols.md) を新設** — 30 秒で見分ける表、MCP（Tool/Resource/Prompt、2026-07-28 版仕様のstateless core・認可強化）、A2A（Agent Card/Task/Message/Artifact/streaming、v1.0.1 仕様）、両者を併用する構成例、Agent Plugins・Catalog・ハーネスとの境界、A2A導入判断、agent identity等の未解決事項を整理した
+  - **A2A の一次情報を直接確認** — [A2A Specification v1.0.1](https://a2a-protocol.org/latest/specification/)、[A2A Releases](https://github.com/a2aproject/A2A/releases)（最新安定版 v1.0.1、2026-05-28）、[Google Cloud の Linux Foundation への寄贈発表](https://developers.googleblog.com/google-cloud-donates-a2a-to-linux-foundation/)（2025-06-23、Open Source Summit North America）を取得し、Agent Card・Task・Message・Artifactの定義と認証・認可（仕様第 7 章）を正確な引用で裏付けた
+  - **MCP 2026-07-28 版のリリースノート**（`blog.modelcontextprotocol.io/posts/2026-07-28/`）を取得し、stateless core への転換・`iss`パラメータ検証（RFC 9207）・Dynamic Client Registration非推奨化・Apps/Tasks拡張への移行を確認した
+  - `docs/trends.md` 13 節「A2AがAAIFに合流」から新ページへ誘導を追加
   - `harness.md` から相互リンクを追加
   - `CHANGELOG.md` と README の「🆕 最近の更新」・「ツール横断の開発手法」表に追記
 
