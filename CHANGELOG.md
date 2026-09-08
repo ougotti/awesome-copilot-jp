@@ -4,6 +4,15 @@
 
 ## 2026-09
 
+- **2026-09-08** エージェントに外部操作を与える手段の選び方を解説する新規ページを追加（#155）
+  - **[エージェントに外部操作を与える手段の選び方](docs/dev-methods/tool-selection.md) を新設** — API・connector・MCP・CLI・Computer Use を「最も構造化された、利用可能な手段を優先する」という原則で並べ、fallback の順序と権限が広がる境界での再承認、読み取り／入力／送信・購入・削除で分ける承認境界、方式ごとの完了確認の証跡を整理した
+  - **MCP の一次情報（2026-07-28 版仕様）を直接確認** — Tools / Resources / Prompts の 3 種類、`Hosts must obtain explicit user consent before invoking any tool` という同意の原則、**ツールの説明文（annotation）自体を信頼できるサーバー以外からは信用しない**という原則を正確な引用で裏付けた
+  - **OpenAI のブログ記事（`openai.com/index/designing-agents-to-resist-prompt-injection/`）は今回もセッションの egress ポリシーでブロックされ取得できなかった。** 代わりに同じ内容を扱う公式ドキュメント（`developers.openai.com/api/docs/guides/agent-builder-safety`）を取得し、`Pass untrusted inputs through user messages to limit their influence` / `always enable tool approvals so end users can review and confirm every operation` を一次情報として引用した
+  - **Google Gemini の Computer Use（2026-06-24 発表）を一次情報で確認** — ブラウザ・モバイル・デスクトップ横断の機能で、関数呼び出しを置き換えるのではなく補完する位置づけであることを公式発表から確認した
+  - **`docs/trends.md` 6 節（Computer Use / Browser Use）を要約 + 誘導に整理** — Computer Use 自体の機能解説は trends.md に残し、選び方の判断基準は新ページへ切り出した
+  - **`harness.md`・`skill-security.md`・`business/safety.md` から相互リンクを追加** — ハーネスのツール呼び出し節、Skill 導入前チェック、非エンジニア向け安全ガイドのそれぞれから、承認境界の考え方へ誘導した
+  - `CHANGELOG.md` と README の「🆕 最近の更新」・「ツール横断の開発手法」表に追記
+
 - **2026-09-07** upstream 新規ファイル 2 件（devcontainers instructions / research-harness-engineer agent）に追従（#150）
   - **[Instructions 一覧](docs/copilot/instructions.md)** の「開発環境・ツール」に `devcontainers.instructions.md`（Dev Container 設定ファイルのレビュー・作成規約 12 項目）を追加
   - **[Agents 一覧](docs/copilot/agents.md)** の「AI・機械学習」に `research-harness-engineer.agent.md`（リサーチ評価ハーネスエンジニア）を追加
