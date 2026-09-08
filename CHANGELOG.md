@@ -7,7 +7,7 @@
 - **2026-09-08** AIエージェントのID・認可・委任権限を解説する新規ページを追加（#158）
   - **[AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md) を新設** — 人間の代理・サービスアカウント・エージェント固有 ID の比較、認証／認可／委任／人間の承認の用語整理、OAuth scope・token audience・token passthrough 禁止・短寿命 token、サブエージェントへの権限委任、所有者・実行主体・承認者・監査者の責任分界、control plane が担う inventory・policy・telemetry・kill switch、最小構成チェックリストを整理した
   - **NIST の一次情報を直接確認** — [AI Agent Standards Initiative](https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure)（2026-02-17 発表）と[concept paper 発表](https://www.nist.gov/news-events/news/2026/02/new-concept-paper-identity-and-authority-software-agents)（2026-02-05 公開）を取得し、agent identity / authorization が標準化の重点分野として扱われている段階であることを確認した。技術的な詳細まではニュースページに掲載されていないため、その点は本文でも明記した
-  - **MCP Authorization / Security Best Practices（2025-11-25 版）を直接取得** — token passthrough が禁止される理由（下流の制御回避、監査trail の破壊、confused deputy 問題）、audience validation の必要性、scope minimization（段階的昇格、`insufficient_scope` エラー）を正確な引用で裏付けた
+  - **MCP Authorization / Security Best Practices（2025-11-25 版）を直接取得** — token passthrough が禁止される理由（下流の制御回避、監査トレイル（audit trail）の破壊、confused deputy 問題）、audience validation の必要性、scope minimization（段階的昇格、`insufficient_scope` エラー）を正確な引用で裏付けた
   - `docs/trends.md` 12 節、`skill-security.md` 4 節、`harness.md` から新ページへの誘導・相互リンクを追加。`agent-protocols.md` 7 節の未解決事項からも本ページへ集約するリンクに更新した
   - `CHANGELOG.md` と README の「🆕 最近の更新」（5 行を維持）・「ツール横断の開発手法」表に追記
 
