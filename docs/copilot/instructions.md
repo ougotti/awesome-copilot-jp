@@ -1,8 +1,8 @@
 # Instructions 一覧と活用ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-05
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-07
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **200 個の Instructions** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **201 個の Instructions** を日本語で解説します。
 
 ## Instructions とは
 
@@ -532,6 +532,7 @@ applyTo: "**/*.py"
 | ファイル名 | 概要 | 活用場面 |
 |-----------|------|---------|
 | [`devbox-image-definition.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/devbox-image-definition.instructions.md) | Devbox イメージ定義 | 開発環境構築 |
+| [`devcontainers.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/devcontainers.instructions.md) | Dev Container 設定ファイル（`devcontainer.json` 等）のレビュー・作成規約 12 項目 | Dev Container の構成・レビュー |
 | [`vsixtoolkit.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/vsixtoolkit.instructions.md) | VSIX Toolkit | VS Code 拡張開発 |
 | [`cmake-vcpkg.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/cmake-vcpkg.instructions.md) | CMake + vcpkg | C++ ビルド |
 | [`cpp-language-service-tools.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/cpp-language-service-tools.instructions.md) | C++ 言語サービスツール（IntelliSense 活用）規約 | C++ リファクタリング・コード解析 |
@@ -567,7 +568,7 @@ applyTo: "**/*.py"
 
 ## まとめ
 
-Instructions は **200 ファイル** あり、以下のカテゴリに分類されます：
+Instructions は **201 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な内容 |
 |---------|----------|---------|
@@ -580,6 +581,6 @@ Instructions は **200 ファイル** あり、以下のカテゴリに分類さ
 | Power Platform | 約 25 | Power BI, PCF, Power Apps |
 | MCP サーバー開発 | 約 10 | 各言語の MCP SDK |
 | Copilot SDK | 約 5 | Python, C#, Go, Node.js |
-| その他 | 約 41 | ワークフロー, ツール, 環境設定, AI/エージェント, draw.io, Markdown |
+| その他 | 約 42 | ワークフロー, ツール, 環境設定, AI/エージェント, draw.io, Markdown |
 
 チームのニーズに合わせて、必要な Instructions を `.github/instructions/` ディレクトリにコピーして活用してください。

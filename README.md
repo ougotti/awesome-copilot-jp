@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-07** [Instructions 一覧](docs/copilot/instructions.md) に `devcontainers.instructions.md`、[Agents 一覧](docs/copilot/agents.md) に `research-harness-engineer.agent.md` を追加（upstream 新規ファイル 2 件に追従）
 - **2026-09-07** [AI エージェントの実行基盤（ハーネス）](docs/dev-methods/harness.md) に OpenTelemetry GenAI semantic conventions の対応状況を追加し、[コーディングエージェントの選び方](docs/dev-methods/coding-agents.md) に非同期・クラウド型（Jules・Antigravity）との軸を追加
 - **2026-09-07** [Skill / エージェントの評価（evals）](docs/dev-methods/evals.md) を新設し、退行の典型パターン・測り方の最小手順・`skill-eval-harness` を整理
 - **2026-09-06** [仕様駆動開発（SDD）](docs/dev-methods/spec-driven.md) を新設し、GitHub Spec Kit のワークフロー・EARS・AI-DLC との選び方の軸を整理
 - **2026-09-06** [Skills 最新動向](docs/trends.md) 13 節に A2A の Agentic AI Foundation 合流（2026-08-17）を反映し、MCP との役割の違いを整理
-- **2026-09-05** [Skills 最新動向](docs/trends.md) 7 節に APM（マニフェスト方式の依存管理）を追加し、導入経路の比較を「命令的か宣言的か」の軸で 4 つに整理
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -112,8 +112,8 @@
 
 | ドキュメント | 提供元 | 状態 | 環境 | 内容 | 件数 |
 |-------------|-------|------|------|------|------|
-| **[Instructions 一覧](docs/copilot/instructions.md)** | Official | GA | IDE | ファイルパターン別に規約を自動適用するルール | 200 件 |
-| **[Agents 一覧](docs/copilot/agents.md)** | Official | GA | IDE | 特定ドメインの専門家ペルソナ定義 | 243 件 |
+| **[Instructions 一覧](docs/copilot/instructions.md)** | Official | GA | IDE | ファイルパターン別に規約を自動適用するルール | 201 件 |
+| **[Agents 一覧](docs/copilot/agents.md)** | Official | GA | IDE | 特定ドメインの専門家ペルソナ定義 | 244 件 |
 | **[Prompts / Skills 一覧](docs/copilot/prompts.md)** | Official | GA | IDE / CLI | `/` から呼ぶタスクテンプレートと Skills | 137 件 |
 | **[Plugins](docs/copilot/plugins.md)** | Official | GA | CLI / IDE | 拡張一式をまとめて配布する単位と Marketplace | — |
 
@@ -136,7 +136,7 @@
 
 | ドキュメント | 提供元 | 状態 | 環境 | 内容 |
 |-------------|-------|------|------|------|
-| **[コーディングエージェントの選び方](docs/dev-methods/coding-agents.md)** | 本ガイド | — | CLI / デスクトップ / Cloud | Claude Code・Codex・Qwen Code・OpenCode・Bionic の比較と選定軸。Jules・Antigravity との同期/非同期の軸 |
+| **[コーディングエージェントの選び方](docs/dev-methods/coding-agents.md)** | 本ガイド | — | CLI / デスクトップ / IDE / Cloud | Claude Code・Codex・Qwen Code・OpenCode・Bionic の比較と選定軸。Jules・Antigravity との同期/非同期の軸 |
 | **[skills.sh ガイド](docs/dev-methods/skills-sh.md)** | Community | GA | CLI | Agent Skills の検索・導入ポータルと用途別の定番スキル |
 | **[mattpocock/skills](docs/dev-methods/mattpocock-skills.md)** | Community | GA | CLI | 要件整理〜仕様化〜TDD〜レビューの手順スキル |
 | **[superpowers](docs/dev-methods/superpowers.md)** | Community | GA | CLI | SDLC スキルフレームワーク（複数ツール対応） |
