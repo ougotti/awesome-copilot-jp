@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-08 | 12 節に、独立ページ [AIエージェントのID・認可・委任権限](dev-methods/agent-identity.md) への誘導を追加。エージェント固有 ID・委任・OAuth scope・control plane を新ページに整理した |
 | 2026-09-08 | 13 節「A2A が AAIF に合流」に、独立ページ [MCP と A2A — 役割の違いと併用方法](dev-methods/agent-protocols.md) への誘導を追加。両プロトコルの中核概念・併用構成・導入判断を新ページに整理した |
 | 2026-09-08 | 6 節（Computer Use / Browser Use）を要約 + 独立ページ [エージェントに外部操作を与える手段の選び方](dev-methods/tool-selection.md) へ誘導する形に整理し、Google の Gemini Computer Use（2026-06-24）を追記 |
 | 2026-09-07 | 10 節に OpenTelemetry GenAI semantic conventions（Claude Code・Codex CLI・VS Code Copilot Chat の対応状況）を追加し、[ハーネス](dev-methods/harness.md) へ誘導。[コーディングエージェントの選び方](dev-methods/coding-agents.md) に非同期・クラウド型（Jules・Antigravity）との軸を追加 |
@@ -590,6 +591,7 @@ Snyk の「ToxicSkills」調査（2026-02-05 公開）は、ClawHub と skills.s
 
 **→ 未定義の領域、導入前チェック、監査データ、組織での絞り込みは [Skill / Plugin のセキュリティ](dev-methods/skill-security.md) を参照**
 **→ コードを書かない方向けの安全ガイドは [生成AIを業務で安全に使う](business/safety.md) を参照**
+**→ エージェント自身をどう認証し、権限をどこまで委任してよいかは [AIエージェントのID・認可・委任権限](dev-methods/agent-identity.md) を参照**
 
 ---
 
