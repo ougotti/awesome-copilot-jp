@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-08 | 13 節「A2A が AAIF に合流」に、独立ページ [MCP と A2A — 役割の違いと併用方法](dev-methods/agent-protocols.md) への誘導を追加。両プロトコルの中核概念・併用構成・導入判断を新ページに整理した |
 | 2026-09-08 | 6 節（Computer Use / Browser Use）を要約 + 独立ページ [エージェントに外部操作を与える手段の選び方](dev-methods/tool-selection.md) へ誘導する形に整理し、Google の Gemini Computer Use（2026-06-24）を追記 |
 | 2026-09-07 | 10 節に OpenTelemetry GenAI semantic conventions（Claude Code・Codex CLI・VS Code Copilot Chat の対応状況）を追加し、[ハーネス](dev-methods/harness.md) へ誘導。[コーディングエージェントの選び方](dev-methods/coding-agents.md) に非同期・クラウド型（Jules・Antigravity）との軸を追加 |
 | 2026-09-07 | 「15. Skill / エージェントの評価（evals）」を新設し、独立ページ [Skill / エージェントの評価（evals）](dev-methods/evals.md) へ要約 + 誘導した（`skill-security.md` の「導入前」に対する「導入後」の話として位置づけ） |
@@ -637,6 +638,8 @@ MCP のロードマップが**ツールと接続する側**の話であるのに
 **いま何かを変える必要があるかと言えば、多くの読者にとっては「まだない」が答えです。** これは**プロトコルの統治が一か所に集約された**という組織上の変化であり、A2A・MCP のいずれも既存の実装や API に破壊的変更はありません。A2A を使っていない・エージェント間連携を組んでいない読者は、現時点で対応すべきことはありません。A2A を採用している場合は、統治先が単一ベンダーではなく Linux Foundation 配下の中立財団へ移った、という点だけ把握しておけば十分です。
 
 > 数字（「150 組織以上」など）は変化が速いため本文では省略します。最新の対応状況は [aaif.io/projects/agent2agent](https://aaif.io/projects/agent2agent) を参照してください。
+
+**→ MCP・A2A それぞれの中核概念（Tool/Resource/Prompt、Agent Card/Task/Message/Artifact）と、両者を併用する構成例、導入判断は [MCP と A2A — 役割の違いと併用方法](dev-methods/agent-protocols.md) を参照**
 
 ---
 

@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-08** [MCP と A2A — 役割の違いと併用方法](docs/dev-methods/agent-protocols.md) を新設し、両プロトコルの中核概念・併用構成・導入判断を整理
 - **2026-09-08** [エージェントに外部操作を与える手段の選び方](docs/dev-methods/tool-selection.md) を新設し、API・connector・MCP・CLI・Computer Use の選び方とfallback・承認境界を整理
 - **2026-09-07** [Instructions 一覧](docs/copilot/instructions.md) に `devcontainers.instructions.md`、[Agents 一覧](docs/copilot/agents.md) に `research-harness-engineer.agent.md` を追加（upstream 新規ファイル 2 件に追従）
 - **2026-09-07** [AI エージェントの実行基盤（ハーネス）](docs/dev-methods/harness.md) に OpenTelemetry GenAI semantic conventions の対応状況を追加し、[コーディングエージェントの選び方](docs/dev-methods/coding-agents.md) に非同期・クラウド型（Jules・Antigravity）との軸を追加
 - **2026-09-07** [Skill / エージェントの評価（evals）](docs/dev-methods/evals.md) を新設し、退行の典型パターン・測り方の最小手順・`skill-eval-harness` を整理
-- **2026-09-06** [仕様駆動開発（SDD）](docs/dev-methods/spec-driven.md) を新設し、GitHub Spec Kit のワークフロー・EARS・AI-DLC との選び方の軸を整理
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -147,6 +147,7 @@
 | **[オントロジー](docs/dev-methods/ontology.md)** | 本ガイド | — | CLI / Cloud | 業務の意味（語彙・関係・規則）を定義してエージェントに渡す方法と実装例 |
 | **[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md)** | 本ガイド | — | IDE / CLI | 導入前の確認手順、第三者監査の実態、組織での許可範囲の限定 |
 | **[エージェントに外部操作を与える手段の選び方](docs/dev-methods/tool-selection.md)** | 本ガイド | — | CLI / IDE / Cloud | API・connector・MCP・CLI・Computer Use の選び方、fallback の昇格条件、承認境界 |
+| **[MCP と A2A — 役割の違いと併用方法](docs/dev-methods/agent-protocols.md)** | 本ガイド | — | CLI / IDE / Cloud | 両プロトコルの中核概念比較、併用構成例、A2A の導入判断 |
 | **[プラグインの可搬性](docs/dev-methods/plugin-portability.md)** | 本ガイド | — | IDE / CLI | `plugin.json` を見て、他のエージェントへ持ち出せる Plugin かを判定する手順 |
 | **[Skill / エージェントの評価（evals）](docs/dev-methods/evals.md)** | 本ガイド | — | CLI | 導入した Skill が実際に効いているかを測る、退行パターンと測り方の最小手順 |
 
