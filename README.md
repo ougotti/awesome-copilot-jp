@@ -146,7 +146,7 @@
 | **[ループエンジニアリング](docs/dev-methods/loop-engineering.md)** | 本ガイド | — | CLI / Cloud | エージェントを目標へ向けて回すループの設計・停止条件・落とし穴 |
 | **[オントロジー](docs/dev-methods/ontology.md)** | 本ガイド | — | CLI / Cloud | 業務の意味（語彙・関係・規則）を定義してエージェントに渡す方法と実装例 |
 | **[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md)** | 本ガイド | — | IDE / CLI | 導入前の確認手順、第三者監査の実態、組織での許可範囲の限定 |
-| **[エージェントに外部操作を与える手段の選び方](docs/dev-methods/tool-selection.md)** | 本ガイド | — | CLI / IDE / Cloud | API・connector・MCP・CLI・Computer Use の選び方、fallbackの昇格条件、承認境界 |
+| **[エージェントに外部操作を与える手段の選び方](docs/dev-methods/tool-selection.md)** | 本ガイド | — | CLI / IDE / Cloud | API・connector・MCP・CLI・Computer Use の選び方、fallback の昇格条件、承認境界 |
 | **[プラグインの可搬性](docs/dev-methods/plugin-portability.md)** | 本ガイド | — | IDE / CLI | `plugin.json` を見て、他のエージェントへ持ち出せる Plugin かを判定する手順 |
 | **[Skill / エージェントの評価（evals）](docs/dev-methods/evals.md)** | 本ガイド | — | CLI | 導入した Skill が実際に効いているかを測る、退行パターンと測り方の最小手順 |
 
