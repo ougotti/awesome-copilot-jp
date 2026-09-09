@@ -190,6 +190,52 @@ Codex は、Claude Code・Cursor などから設定と直近の作業を取り�
 
 ---
 
+## 8. サブエージェントへ作業を委任する
+
+Codex には **subagents** という機能があります。**専門化した複数のエージェントを並列実行し、結果を 1 つの応答へ集約する**仕組みで、コードベースの探索や複数手順にまたがる機能実装など、**並列化しやすい複雑なタスク**に向くと公式ドキュメントは説明しています。
+
+> **Skill とは別物です。** Skill は再利用できる手順・リソースの定義であり、subagent は**別の実行・会話コンテキストを持つ委任先**です。「Codex には Agents 相当の機能がなく Skill で代替する」という理解は誤りで、サブエージェントに Skill を使わせることもできます。
+
+### 利用できる場所
+
+| 面 | 内容 |
+|----|------|
+| ChatGPT Work | 対象アカウント向けに subagent のワークフローと活動を公開 |
+| Codex（ローカル） | 既定で subagent ワークフローが有効 |
+| ChatGPT デスクトップアプリ・Codex CLI・IDE 拡張機能 | エージェントの活動を表示（Subagents パネルで実行中・完了のスレッドを個別に確認できる） |
+
+> 各 subagent は独自にモデル・ツール呼び出しを行うため、**通常より利用量（トークン消費）が増えます**。
+
+### カスタムエージェントを定義する
+
+`~/.codex/agents/`（個人用）または `.codex/agents/`（プロジェクト範囲）に TOML ファイルを置きます。
+
+| フィールド | 内容 |
+|-----------|------|
+| `name` | エージェント名（必須） |
+| `description` | いつ使うかの人間向けガイダンス（必須） |
+| `developer_instructions` | エージェントの振る舞いを定義するコア指示（必須） |
+| `model` / `model_reasoning_effort` / `sandbox_mode` | 任意設定 |
+
+### 最小の依頼例（未検証）
+
+以下は公式ドキュメントに基づく依頼文の例です。**このガイドでは実行して確認していません。** 試す場合は、まず読み取り専用の調査で挙動と利用量を確認してください。
+
+```text
+実行場所: Codex CLI（プロジェクト直下）
+依頼:     このリポジトリを変更せず、README の内容とテスト構成の調査を
+          別々のサブエージェントに依頼して、それぞれ根拠となったファイル
+          パスとともにまとめてください。
+確認すること: Subagents パネルで各スレッドが個別に完了しているか、
+          まとめの根拠パスが実在するファイルを指しているか
+前提:     各 subagent が独自にモデル呼び出しを行うため、通常の依頼より
+          利用量が増えます
+```
+
+**→ 用語の違い全般は [ツール間の用語対照表](../../README.md#ツール間の用語対照表) を参照**
+
+---
+
 ## 外部アカウントが必要なスキル
 
 以下は Codex 単体では完結せず、**アカウントやコネクタ設定が前提**です。導入前に用意してください。
@@ -231,6 +277,7 @@ Codex は、Claude Code・Cursor などから設定と直近の作業を取り�
 - [openai/skills リポジトリ](https://github.com/openai/skills) — 公式スキルカタログ
 - [Agent Skills – Codex 公式ドキュメント](https://developers.openai.com/codex/skills) — 公式スキル解説
 - [Plugins – Codex 公式ドキュメント](https://developers.openai.com/codex/plugins) — Plugin の導入・権限・Marketplace（公式）
+- [Subagents – Codex 公式ドキュメント](https://learn.chatgpt.com/docs/agent-configuration/subagents) — Availability、カスタムエージェントの定義方法（公式・2026-09-09 確認）
 - [openai/codex リポジトリ](https://github.com/openai/codex) — Codex CLI 本体
 - [Codex CLI 公式ドキュメント](https://developers.openai.com/codex/cli) — CLI の使い方
 - [Scheduled tasks](https://learn.chatgpt.com/docs/automations) — 時刻・イベントでの起動、worktree、プラン要件（公式）

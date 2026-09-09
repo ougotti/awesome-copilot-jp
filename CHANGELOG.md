@@ -4,6 +4,21 @@
 
 ## 2026-09
 
+- **2026-09-09** READMEのCodex Agents説明を訂正し、用語表と入口ガイドを整合させる（#167）
+  - **`README.md` 用語対照表の Codex「Agents」列を修正** — 「—（相当機能はスキルで代替）」という誤記を、「サブエージェント（並列実行・独立した会話コンテキストへの委任）／カスタムエージェント（`.codex/agents/*.toml`）」に置き換え、`docs/codex/README.md` の新設節へリンクした
+  - **`docs/codex/README.md` に「8. サブエージェントへ作業を委任する」を新設** — subagent が並列実行・複数エージェントの結果集約であること、Skill（再利用する手順・リソース）とは別物で代替関係ではないこと、ChatGPT Work / Codex（ローカル）/ デスクトップアプリ・CLI・IDE拡張それぞれでの利用可否、`.codex/agents/*.toml` によるカスタムエージェント定義（`name`/`description`/`developer_instructions` が必須）を整理した
+  - **最小の依頼例を追加し、未検証と明記** — 実行場所・明示的な委任依頼・結果確認箇所・追加の利用量という前提を添えた読み取り専用の例を掲載し、このガイドでは実行して確認していない旨を明示した
+  - **Codex Subagents 公式ドキュメント（`learn.chatgpt.com/docs/agent-configuration/subagents`）を直接取得** — Availability・カスタムエージェントの必須フィールド・依頼文の例を正確に確認した
+  - `docs/dev-methods/coding-agents.md` は矛盾する記述がないことを確認し、変更していない（issueの対象範囲どおり）
+  - `CHANGELOG.md` と README の「🆕 最近の更新」（5 行を維持）に追記
+
+- **2026-09-09** MCP更新時の「利用者側の作業は不要」という断定を役割別の移行判断に修正（#166）
+  - **`docs/trends.md` 13 節を「MCP の次期仕様」から「MCP 2026-07-28 仕様と移行時の確認」に改題** — 「tier 1 SDK が後方互換を保っているため利用者側の作業は不要」という断定が、既製クライアントの利用者と SDK/サーバーの開発・運用者を同一視していたため、既製クライアント利用者・SDK利用の開発者・独自サーバー/gateway運用者・Tasks等の拡張利用者に分けた役割別の確認事項の表へ置き換えた
+  - **MCP 公式リリース記事（`blog.modelcontextprotocol.io/posts/2026-07-28/`）の SDKs 節を直接取得** — `there will be some migration cost, especially for developers that did depend on session identifiers` を正確な引用で確認し、tier 1 SDK（TypeScript/Python/Go/C#）が対応済みであっても無変更で動く保証ではないことを明記した
+  - **同記事の「No handshake or sessions」節も確認** — `dropping the protocol-level session doesn't force your application to be stateless` を引用し、stateless core でもアプリケーション状態は明示的なハンドルを tool から発行して保持できる、という 1 文を補って状態喪失との混同を防いだ
+  - 見出し変更に伴い、動画チャプター対応表の相互参照リンクと `agent-protocols.md` からの参照リンクのアンカーを更新した。`agent-protocols.md`・`agent-identity.md` 側に誤った断定がないことを確認したが、重複した新章は追加していない
+  - `CHANGELOG.md` と README の「🆕 最近の更新」（5 行を維持）に追記
+
 - **2026-09-09** 長時間タスクの信頼性設計を解説する新規ページを追加（#157）
   - **[長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md) を新設** — METR の time horizon と実際の実行時間の違い、ステップ数が増えると失敗が累積する理由、checkpoint 境界の設計、retry/timeout/backoff/fallback、冪等性・重複実行・外部副作用の扱い、中間成果物と終了条件の検証、pause/resume/cancel/rollback、reliability budget と段階的な人間承認、最小テストシナリオを整理した
   - **METR の一次情報を直接確認** — `the 50%-time horizon is the length of task in our suite... rather than the time an AI spends to complete the task` を正確な引用で確認し、「連続稼働できる時間」と「タスクの難易度」を混同しない記述にした
