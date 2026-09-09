@@ -4,6 +4,14 @@
 
 ## 2026-09
 
+- **2026-09-09** マルチエージェントを使う境界線を解説する新規ページを追加（#156）
+  - **[マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md) を新設** — 「まず単一エージェントで始める」を原則に、agent-as-tool（マネージャーが統合の責任を持つ）と supervisor/handoff（専門エージェントへ主導権を移譲する）の違い、peer/team による並列探索、向く仕事（独立調査・異なる専門性・比較可能な成果物）と向かない仕事（強い逐次依存・共有状態への同時書き込み・小さすぎるタスク）、通信・コンテキスト・コスト・権限・停止条件の設計項目、導入判断フローチャートを整理した
+  - **Claude Code の公式ドキュメント（code.claude.com/docs/en/sub-agents）を直接取得** — サブエージェントが独立した context window を持つこと、`tools`/`disallowedTools` による権限制限、既定で同時実行 20・ネスト深さ 3 層までの並列実行上限、メインの会話が読む前に最終報告をスキャンする（プロンプトインジェクション対策）ことを正確な引用で裏付けた
+  - **OpenAI Agents SDK（openai.github.io/openai-agents-python/multi_agent/）を取得** — agent-as-tool と handoff の定義・使い分けを原文で確認した。issue が挙げていた OpenAI の PDF ガイド（`a-practical-guide-to-building-agents.pdf`）はバイナリのため本文の解析ができず、代わりに同内容を扱う上記の公式ドキュメントページを一次情報として使用した
+  - **LangGraph の subgraphs ドキュメントを取得** — 状態の共有・分離の仕組みに加え、**複数のサブグラフ呼び出しを並行させるとチェックポイントの競合リスクがある**という、「向かない仕事」の節の根拠になる記述を確認した
+  - `coding-agents.md`・`harness.md`・`loop-engineering.md`・`agent-protocols.md`・`agent-identity.md`・`docs/trends.md`（10 節）から相互リンクを追加し、`agent-identity.md` の「別ページ、着手時点で未公開」というプレースホルダー記述を実リンクに更新した
+  - `CHANGELOG.md` と README の「🆕 最近の更新」（5 行を維持）・「ツール横断の開発手法」表に追記
+
 - **2026-09-09** 2026-08-29〜09-05 の最新動向（`ant apply` / Copilot のコンテキスト統制・PR 承認）を反映（#146）
   - **`docs/trends.md` に「7-5. `ant apply` — API 上のリソースを宣言で管理する」を新設** — [公式ドキュメント](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/apply)を直接取得し、対応する 5 種類のリソースとファイル形式、相対パスによる依存参照、`claude-lock.json` を**生成物ではなく resource identity / drift 管理**として整理。Agent Plugin（クライアントへの配布）・APM（ローカル依存）・`ant apply`（Claude API 上の desired state）のレイヤー差を比較表にした
   - **`docs/dev-methods/harness.md` に「宣言でリモートのエージェントを管理する — `ant apply`」を新設** — plan と承認、lockfile が記録する `origin` / リソース ID / 2 種類の hash、drift 検出時の既定挙動（`refusing to apply`）、`--dry-run` / `--yes` / `--force` / `--prune` / `--upgrade` の用途とリスク、CI 運用（PR では `--dry-run .`、既定ブランチでは `--yes .`、直列実行、失敗時も lockfile をコミット、Workload Identity Federation）を整理。人間が変更を止められる地点も明記した
