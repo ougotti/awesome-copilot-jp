@@ -4,6 +4,12 @@
 
 ## 2026-09
 
+- **2026-09-09** 会話内 UI（MCP Apps）の実践ガイドを新規ページとして追加（#165）
+  - **[MCP Apps — 会話内にUIを追加する](docs/dev-methods/mcp-apps.md) を新設** — tool 呼び出しの結果として UI を返す仕組み（`_meta.ui.resourceUri` → `ui://` resource → サンドボックス化された iframe → `ui/` プレフィックスの postMessage JSON-RPC）、テキストだけでは不便な場面、Computer Use との違い、架空データを使った最小例（前提→起動→ホスト接続→期待結果）、対応ホストの確認方法と非対応ホストでの fallback、データの見え方・外部通信・権限の境界（`_meta.ui.permissions` / `_meta.ui.csp`）、自分の tool に UI を付けるかの判断基準を整理した
+  - **公式サイトの Client support 節を直接確認し、「すべての MCP クライアントで動く」という誤解を避けた** — 2026-09 時点の対応ホスト（Claude・Claude Desktop・VS Code GitHub Copilot・Microsoft 365 Copilot・Goose・Postman・MCPJam・Archestra.AI）を列挙し、"Host support varies by client" という公式の明言を引用した
+  - [Skills 最新動向](docs/trends.md) 13 節と [MCP と A2A — 役割の違いと併用方法](docs/dev-methods/agent-protocols.md) に要約とリンクを追加
+  - 参照した公式情報: [MCP Apps Overview](https://modelcontextprotocol.io/extensions/apps/overview) / [Build a UI for an MCP Server](https://modelcontextprotocol.io/extensions/apps/build)
+
 - **2026-09-09** READMEのCodex Agents説明を訂正し、用語表と入口ガイドを整合させる（#167）
   - **`README.md` 用語対照表の Codex「Agents」列を修正** — 「—（相当機能はスキルで代替）」という誤記を、「サブエージェント（並列実行・独立した会話コンテキストへの委任）／カスタムエージェント（`.codex/agents/*.toml`）」に置き換え、`docs/codex/README.md` の新設節へリンクした
   - **`docs/codex/README.md` に「8. サブエージェントへ作業を委任する」を新設** — subagent が並列実行・複数エージェントの結果集約であること、Skill（再利用する手順・リソース）とは別物で代替関係ではないこと、ChatGPT Work / Codex（ローカル）/ デスクトップアプリ・CLI・IDE拡張それぞれでの利用可否、`.codex/agents/*.toml` によるカスタムエージェント定義（`name`/`description`/`developer_instructions` が必須）を整理した
@@ -11,7 +17,6 @@
   - **Codex Subagents 公式ドキュメント（`learn.chatgpt.com/docs/agent-configuration/subagents`）を直接取得** — Availability・カスタムエージェントの必須フィールド・依頼文の例を正確に確認した
   - `docs/dev-methods/coding-agents.md` は矛盾する記述がないことを確認し、変更していない（issueの対象範囲どおり）
   - `CHANGELOG.md` と README の「🆕 最近の更新」（5 行を維持）に追記
-
 - **2026-09-09** 長時間タスクの信頼性設計を解説する新規ページを追加（#157）
   - **[長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md) を新設** — METR の time horizon と実際の実行時間の違い、ステップ数が増えると失敗が累積する理由、checkpoint 境界の設計、retry/timeout/backoff/fallback、冪等性・重複実行・外部副作用の扱い、中間成果物と終了条件の検証、pause/resume/cancel/rollback、reliability budget と段階的な人間承認、最小テストシナリオを整理した
   - **METR の一次情報を直接確認** — `the 50%-time horizon is the length of task in our suite... rather than the time an AI spends to complete the task` を正確な引用で確認し、「連続稼働できる時間」と「タスクの難易度」を混同しない記述にした
