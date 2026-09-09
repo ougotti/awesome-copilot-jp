@@ -4,6 +4,17 @@
 
 ## 2026-09
 
+- **2026-09-09** 2026-08-29〜09-05 の最新動向（`ant apply` / Copilot のコンテキスト統制・PR 承認）を反映（#146）
+  - **`docs/trends.md` に「7-5. `ant apply` — API 上のリソースを宣言で管理する」を新設** — [公式ドキュメント](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/apply)を直接取得し、対応する 5 種類のリソースとファイル形式、相対パスによる依存参照、`claude-lock.json` を**生成物ではなく resource identity / drift 管理**として整理。Agent Plugin（クライアントへの配布）・APM（ローカル依存）・`ant apply`（Claude API 上の desired state）のレイヤー差を比較表にした
+  - **`docs/dev-methods/harness.md` に「宣言でリモートのエージェントを管理する — `ant apply`」を新設** — plan と承認、lockfile が記録する `origin` / リソース ID / 2 種類の hash、drift 検出時の既定挙動（`refusing to apply`）、`--dry-run` / `--yes` / `--force` / `--prune` / `--upgrade` の用途とリスク、CI 運用（PR では `--dry-run .`、既定ブランチでは `--yes .`、直列実行、失敗時も lockfile をコミット、Workload Identity Federation）を整理。人間が変更を止められる地点も明記した
+  - **`docs/trends.md` に「9-3. PR を merge-ready にするまで」を新設** — [公式の変更ログ](https://github.blog/changelog/2026-09-01-copilot-code-review-can-now-approve-pull-requests/)を取得し、`An approval assessment alone does not count toward merge requirements.` を引用して **approval assessment / Copilot approval / required approvals へのカウント**の 3 つを用語として分離した。Agent Merge（VS Code 1.136、Preview、`chat.agentMerge.enabled`）は **merge を実行する機能ではない**ことを明記
+  - **`docs/copilot/README.md` に「プルリクエストの承認をどこまで AI に任せるか」「組織の統制 — content exclusion」を新設** — 既定 OFF・Public Preview・enterprise / organization / repository の設定階層・最大 15 glob のパス限定・新規コミットでの dismiss、および content exclusion の対応面／非対応面（**VS Code の Edit mode / Agent mode は非対応**）、semantic information・symlink・リモートファイルシステムの制限を [GitHub 公式ドキュメント](https://docs.github.com/en/copilot/concepts/context/content-exclusion)から確認して記載
+  - **`docs/business/safety.md` に「「除外設定があるから安全」とは限らない」を追加** — 非エンジニア向けに、除外設定を唯一の防御線にしない理由（非対応の使い方・間接的に伝わる情報・別経路）を整理
+  - **`docs/dev-methods/skill-security.md` に 2 つの相互参照を追加** — content exclusion が MCP / Skill の別経路には効かないこと、記憶済み MCP 承認の app account スコープ化（Codex CLI 0.152.0）を、権限分離そのものと混同しない形で追記
+  - **`docs/codex/README.md` に Plugin CLI の remote marketplace 操作（0.153.0）と MCP tool 単位の `output_token_limit`（0.152.0）を追加** — `output_token_limit` は MCP サーバー全体ではなく **tool 単位**の設定であることを明記
+  - **一次情報との差分**: issue は「記憶した MCP 承認の app account 単位化」を 0.153.0 としていたが、今回取得した[公式 changelog](https://learn.chatgpt.com/docs/changelog) では **0.152.0** に記載されていたため、そちらに合わせた
+  - `README.md` の「🆕 最近の更新」（5 行を維持）と、更新した各ページの「最終更新」を 2026-09-09 に更新
+
 - **2026-09-08** AIエージェントのID・認可・委任権限を解説する新規ページを追加（#158）
   - **[AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md) を新設** — 人間の代理・サービスアカウント・エージェント固有 ID の比較、認証／認可／委任／人間の承認の用語整理、OAuth scope・token audience・token passthrough 禁止・短寿命 token、サブエージェントへの権限委任、所有者・実行主体・承認者・監査者の責任分界、control plane が担う inventory・policy・telemetry・kill switch、最小構成チェックリストを整理した
   - **NIST の一次情報を直接確認** — [AI Agent Standards Initiative](https://www.nist.gov/news-events/news/2026/02/announcing-ai-agent-standards-initiative-interoperable-and-secure)（2026-02-17 発表）と[concept paper 発表](https://www.nist.gov/news-events/news/2026/02/new-concept-paper-identity-and-authority-software-agents)（2026-02-05 公開）を取得し、agent identity / authorization が標準化の重点分野として扱われている段階であることを確認した。技術的な詳細まではニュースページに掲載されていないため、その点は本文でも明記した

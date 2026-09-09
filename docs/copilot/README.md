@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-03
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-09
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -416,6 +416,67 @@ Cookbook Recipes は、GitHub Copilot SDK を使ったアプリケーション�
 
 ---
 
+## プルリクエストの承認をどこまで AI に任せるか
+
+Copilot code review が **approving review を提出できる**ようになりました（2026-09-01、**Public Preview**。Pro / Pro+ / Max / Business / Enterprise）。ここは用語を混同しやすいので、3 つを分けて理解してください。
+
+| 用語 | 意味 | merge 要件を満たすか |
+|------|------|-------------------|
+| **approval assessment** | PR が承認に値するかという Copilot の判定。すべての Copilot review に表示される | **満たさない。** 公式の変更ログは "An approval assessment alone does not count toward merge requirements." と明記している |
+| **Copilot approval** | Copilot が GitHub 上で `APPROVED` のレビューを提出すること | 管理者が明示的に許可した場合のみ提出される（**既定は無効**） |
+| **required approvals へのカウント** | その approval をブランチ保護の必須承認数に数えるか | **さらに別の設定**（"Allow Copilot approvals to count toward merge requirements"） |
+
+### 設定階層とパス限定
+
+| 層 | 設定できること |
+|----|--------------|
+| Enterprise | ポリシーの選択（組織に委ねる / 特定組織で有効 / 全体で無効） |
+| Organization | 組織全体の既定。リポジトリへ決定権を委譲することもできる |
+| Repository | 個別の有効化と、**パスによる限定** |
+
+リポジトリでは、**変更ファイルがすべて指定した glob に一致する PR だけ**をカウント対象に絞れます（**最大 15 個の glob**）。
+
+### 承認後の挙動と、残る人間の責任
+
+approval 後に新しいコミットが push されると、**人間のレビュアーと同じように approval は dismiss** され、再レビューが必要になります。
+
+> **Public Preview である点と、既定が無効である点を前提に設計してください。** 高リスク領域は CODEOWNERS と必須の human reviewer を維持し、status checks を外さないでください。AI の approval を required approvals に数えるかどうかは、**責任分界を変える設定**です。段階的に導入し、まずはカウントさせない状態で assessment の精度を観察するのが安全です。
+
+なお、PR を merge 可能な状態へ持っていく**修復ループ**（VS Code 1.136 の **Agent Merge**、Preview）は、これとは別の機能です。merge の実行でも approval でもありません（[Skills 最新動向 9-3 節](../trends.md#9-3-pr-を-merge-ready-にするまで--修復ループと-ai-の-approval)）。
+
+---
+
+## 組織の統制 — content exclusion
+
+機密ファイルを Copilot のコンテキストから除外する **content exclusion** が、**Copilot app と Copilot CLI で一般提供（GA）** になりました（2026-09-02）。対象は **Copilot Business / Copilot Enterprise** です。
+
+除外したファイルは、インラインの提案に使われず、他ファイルへの提案にも影響せず、Copilot の応答にも Copilot code review にも使われません。
+
+### 対応している面・していない面
+
+**「app と CLI で GA」であって「全ての面で GA」ではありません。** ここを取り違えると、保護されていない経路が残ります。
+
+| 面 | 対応 |
+|----|------|
+| Copilot app / Copilot CLI | **GA**（2026-09-02） |
+| Visual Studio / VS Code / JetBrains | 対応 |
+| Vim・Neovim / Xcode / Eclipse | インライン補完のみ対応 |
+| GitHub Web / GitHub Mobile | 対応 |
+| **VS Code の Copilot Chat の Edit mode / Agent mode** | **非対応** |
+| Azure Data Studio、Xcode / Eclipse のチャット・エージェント | 非対応 |
+
+設定は、リポジトリ管理者・組織オーナー・Enterprise オーナーが行います。
+
+### 併せて確認すること
+
+- **semantic information** — IDE が型情報やシンボル定義として間接的に提供する内容は、除外ファイル由来でも使われる可能性があります
+- **symlink と、リモートファイルシステム上のリポジトリ** — 現時点では適用されません
+- **MCP / Skill は別経路** — content exclusion は Copilot のコンテキスト取り込みに対する制御です。MCP サーバーや Skill が別の経路でファイルを読む場合の防御は別途必要です（[Skill / Plugin のセキュリティ](../dev-methods/skill-security.md)）
+
+> **content exclusion だけを秘密情報の防御線にしないでください。** OS の権限、サンドボックス、secret scanning、MCP / Skill の allowlist と組み合わせた多層防御が前提です（[生成AIを業務で安全に使う](../business/safety.md)）。
+
+---
+
 ## クイックスタート
 
 ### 最小構成で始める
@@ -482,6 +543,10 @@ Instructions、Prompts、Agents は GitHub Copilot のすべてのプラン（Fr
 - [Cookbook](https://github.com/github/awesome-copilot/blob/main/cookbook/README.md) — Copilot SDK を活用した実践的コードレシピ集
 - [About GitHub Copilot plugins](https://docs.github.com/en/copilot/concepts/agents/about-plugins) — Plugin の概念と構成（公式）
 - [Manage agent skills with GitHub CLI](https://github.blog/changelog/2026-04-16-manage-agent-skills-with-github-cli/) — `gh skill` による Skill 管理（公式）
+- [Copilot code review can now approve pull requests](https://github.blog/changelog/2026-09-01-copilot-code-review-can-now-approve-pull-requests/) — approval assessment と approval の区別（公式・2026-09-01、Public Preview）
+- [Configuring code review by GitHub Copilot](https://docs.github.com/en/copilot/how-tos/copilot-on-github/set-up-copilot/configure-code-review) — 設定階層・パス限定（最大 15 glob）の一次情報（公式）
+- [Content exclusions generally available in Copilot app and CLI](https://github.blog/changelog/2026-09-02-content-exclusions-generally-available-in-copilot-app-and-cli/) — app / CLI での GA（公式・2026-09-02）
+- [Content exclusion for GitHub Copilot](https://docs.github.com/en/copilot/concepts/context/content-exclusion) — 対応面・非対応面と制限の一次情報（公式）
 
 ## 関連ドキュメント
 

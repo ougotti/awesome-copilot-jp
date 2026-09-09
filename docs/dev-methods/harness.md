@@ -1,6 +1,6 @@
 # AI エージェントの実行基盤（ハーネス）
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-07
+> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-09
 
 > エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
 
@@ -198,6 +198,62 @@ QM が「自前のクラウド・Postgres・インフラ担当者」を前提に
 
 この「動かした後に何が見えるか」は、[Skill / Plugin のセキュリティ 5 節「統制が効く 3 つの段階」](skill-security.md#5-統制が効く-3-つの段階)の**実行後（監査）**と直結します。あちらが「セッションのトランスクリプトを取得する」という組織向け機能（Compliance API）を扱うのに対し、ここでの OpenTelemetry は**ベンダー中立の計測データ**（メトリクス・ログ・トレース）を自分たちの監視基盤（OTLP 対応バックエンド）へ流す仕組みです。両者は排他ではなく、組織で使える統制の手段が違う層として併存します。
 
+## 宣言でリモートのエージェントを管理する — `ant apply`
+
+ここまでは「ハーネスをどう作るか・どう動かすか」でした。**動かすエージェントそのものの構成を、コードとしてレビュー・CI に乗せる**仕組みも登場しています。Anthropic の `ant apply`（`ant` CLI 1.30.0 以降、2026-09-03 のリリースノートで案内）は、Claude API 上の Agent・Environment・Skill・Memory Store・Deployment を、リポジトリ内のファイルから作成・更新します。
+
+> **層を取り違えないでください。** これは Claude Code へ Plugin を入れる機能ではなく、**Claude Platform / Managed Agents 側のリモートリソース**を管理する仕組みです。Agent Plugin（クライアントへの配布）・APM（ローカル依存の管理）との違いは [Skills 最新動向 7-5 節](../trends.md#7-5-ant-apply--api-上のリソースを宣言で管理する) に整理しています。
+
+### 何が「リソースのグラフ」になるか
+
+リソースは**相対パスで互いを参照**します。API が他リソースの ID を期待する箇所に、そのリソースのファイルへの相対パスを書くと、`ant apply` が依存順に作成して実際の ID を埋めます。エージェントが Skill を参照し、コーディネーターが配下のエージェントを参照し、Deployment が agent / environment / memory store を参照する、という構成をファイルだけで表現できます。
+
+GitHub URL（`https://github.com/<owner>/<repo>/tree/<branch>/<dir>`）で参照した Skill は、**解決済みのコミットに固定**されます。`--upgrade` を渡したときだけ再解決されます。
+
+### plan と承認
+
+対話的なターミナルでは、`ant apply` は**適用前に plan を表示して承認を求めます**。`d`（details）で、新規リソースのフィールドや更新の差分をフィールド単位で確認できます。
+
+### `claude-lock.json` は生成物ではない
+
+`claude-lock.json` を「ビルド成果物」と捉えると運用を誤ります。これは**どのファイルがどのリモートリソースなのか**（resource identity）と、**外部で変更されていないか**（drift）を管理する記録です。
+
+| 記録される内容 | 用途 |
+|---------------|------|
+| `origin`（base URL・組織 ID・ワークスペース ID） | 認証情報が別の組織／ワークスペースに解決される場合、`ant apply` は**拒否**する |
+| リソース ID | 次回の実行が、新規作成ではなく同じリソースの更新になる |
+| `hash` / `remote_hash` | 最後に送った内容と API が返した内容の指紋。ファイルの編集と、**これらのファイルの外で加えられた変更**の両方を検出する |
+
+**コミットしてください。** 手元と CI の後続実行が同じリソースを指すための唯一の手がかりです。
+
+### drift と破壊的な操作
+
+Console などファイルの外側でリソースが編集・アーカイブ・削除されていた場合、plan は `This plan cannot be applied:` と理由を表示し、**`refusing to apply` で終了します**。これが既定の安全側の挙動です。
+
+| フラグ | 用途 | 注意 |
+|-------|------|------|
+| `--dry-run` | plan を表示して終了。lockfile も書かない | plan がブロックされていても**終了コードは 0** |
+| `--yes` | 確認なしで適用。ターミナルがない環境では必須 | — |
+| `--force` | 外部で変更・アーカイブ・削除されたリソースにも適用する | **外部の変更を上書きする**、または置き換えを作成する |
+| `--prune` | lockfile にあるが、もうファイルで宣言されていないリソースを削除する | アーカイブ（Skill は削除）。**ファイル名の変更は「新規宣言 + 旧リソースの残存」**になるため、prune するまで両方残る |
+| `--upgrade` | GitHub URL 参照の Skill を再解決する | 固定していたコミットが動く |
+
+`--force` と `--prune` は破壊的になり得ます。通常のフローとは分けて扱ってください。
+
+なお `ant apply` は、Console や `ant beta:agents create` で作成した既存リソースを**引き取れません**（lockfile にあるものだけが管理対象で、既存エージェントと同じ内容のファイルを適用すると 2 つ目が作られます）。Console の **Export as code** でダウンロードした場合は `claude-lock.json` が同梱されるため、そちらは更新になります。
+
+### CI に載せるときの注意点
+
+ターミナルがない環境では、plan を表示して停止します。公式ドキュメントが示す運用は次のとおりです。
+
+- **PR では `ant apply --dry-run .`** を実行し、レビュアーに plan を見せる（情報提供のみ。plan がブロックされていても終了コードは 0）
+- **既定ブランチへの merge 後に `ant apply --yes .`** を実行する。ディレクトリを指定すること — 引数なしの `ant apply --yes` は lockfile が既に追跡しているファイルだけを対象にし、**新規追加ファイルを取りこぼす**
+- **途中で失敗した場合も、ジョブの最後に `claude-lock.json` をコミットする**。部分適用でも、作成済みのリソースは記録されているため
+- **同時に 1 つだけ実行する**。lockfile はロックされない
+- 認証は保存した API キーではなく [Workload Identity Federation](https://platform.claude.com/docs/en/manage-claude/workload-identity-federation) を使う
+
+**人間の責任境界**: plan の承認（対話時）とレビュー（`--dry-run` の出力）が、変更を止められる唯一の地点です。`--yes` で自動適用する経路には、その前段に PR レビューを置いてください。
+
 ## ループとの関係
 
 ハーネスの 1 つ上の階には、エージェントを目標へ向けて何度も回す **ループ** の設計があります。ハーネスが「エージェントが動く環境」を決めるのに対し、ループは「その環境で何を、いつまで繰り返すか」を決めます。両者は独立ではありません。**ループはハーネスの上で回るため、ハーネスが弱ければループはその弱点を繰り返し踏み、誤りを増幅します**。無人で回す前に、権限・サンドボックス・観測がハーネス側で揃っているかを先に確認してください。
@@ -234,4 +290,6 @@ QM が「自前のクラウド・Postgres・インフラ担当者」を前提に
 - [Claude Code Monitoring](https://code.claude.com/docs/en/monitoring-usage) — OTel メトリクス・イベント・トレース（ベータ）の設定（公式）
 - [Codex CLI Advanced Configuration — `[otel]`](https://learn.chatgpt.com/docs/config-file/config-advanced) — Codex の OTel 設定（公式）
 - [Monitor agent usage with OpenTelemetry](https://code.visualstudio.com/docs/agents/guides/monitoring-agents) — VS Code Copilot Chat の OTel 対応（公式）
+- [Manage resources as code with `ant apply`](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/apply) — リソースの種類・`claude-lock.json`・フラグ・CI 運用の一次情報（Anthropic 公式）
+- [Claude Platform リリースノート](https://platform.claude.com/docs/en/release-notes/overview) — `ant` CLI 1.30.0 / `ant apply` の公開（2026-09-03、公式）
 
