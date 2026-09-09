@@ -36,7 +36,7 @@ MCP の **Tasks**（2025-11-25 版仕様、experimental）は、この考え方�
 
 > Tasks are durable state machines that carry information about the underlying execution state of the request they wrap, and are intended for requestor polling and deferred result retrieval.
 
-タスクは `working` → `input_required` → `completed` / `failed` / `cancelled` という状態機械として管理され、一意な `taskId` を持ちます。**この「状態を持つ実行単位として扱う」という発想が、checkpoint 境界の設計そのものです。**
+タスクは常に `working` から始まり、一意な `taskId` を持つ状態機械として管理されます。そこから直接 `completed` / `failed` / `cancelled`（終了状態）へ遷移するのが基本ですが、受信側が追加入力を必要とする場合に限り、`input_required` という**任意の中間状態**を経由できます（`input_required` から `working` へ戻ることも、そのまま終了状態へ進むこともできます）。**この「状態を持つ実行単位として扱う」という発想が、checkpoint 境界の設計そのものです。**
 
 ---
 
