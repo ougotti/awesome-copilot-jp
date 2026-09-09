@@ -454,14 +454,14 @@ approval 後に新しいコミットが push されると、**人間のレビュ
 
 ### 対応している面・していない面
 
-**「app と CLI で GA」であって「全ての面で GA」ではありません。** ここを取り違えると、保護されていない経路が残ります。
+**「app・CLI・主要 IDE で GA」であって「全ての面で GA」ではありません。** GitHub Web / Mobile は Public Preview に留まり、VS Code の Edit mode / Agent mode は非対応です。ここを取り違えると、保護されていない経路が残ります。
 
 | 面 | 対応 |
 |----|------|
 | Copilot app / Copilot CLI | **GA**（2026-09-02） |
-| Visual Studio / VS Code / JetBrains | 対応 |
-| Vim・Neovim / Xcode / Eclipse | インライン補完のみ対応 |
-| GitHub Web / GitHub Mobile | 対応 |
+| Visual Studio / VS Code / JetBrains（インライン提案・チャット・エージェント） | **GA** |
+| Vim・Neovim / Xcode / Eclipse | **GA**（インライン提案のみ） |
+| GitHub Web / GitHub Mobile | **Public Preview**（チャット・エージェントのみ） |
 | **VS Code の Copilot Chat の Edit mode / Agent mode** | **非対応** |
 | Azure Data Studio、Xcode / Eclipse のチャット・エージェント | 非対応 |
 
