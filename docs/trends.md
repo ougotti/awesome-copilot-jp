@@ -9,6 +9,7 @@
 | 日付 | 変更内容 |
 |------|---------|
 | 2026-09-09 | 13 節を「MCP 2026-07-28 仕様と移行時の確認」に改題し、「tier 1 SDK が後方互換を保っているため利用者側の作業は不要」という断定を、既製クライアント利用者・SDK 開発者・独自サーバー運用者・拡張利用者で分けた役割別の確認事項の表へ置き換えた。stateless core でもアプリケーション状態は明示的なハンドルで保持できる点を補足した |
+| 2026-09-09 | 13 節「拡張」に、独立ページ [MCP Apps — 会話内にUIを追加する](dev-methods/mcp-apps.md) への誘導を追加。仕組み・最小例・対応ホストの確認と fallback・データ露出範囲を新ページに整理した |
 | 2026-09-09 | 10 節に、独立ページ [長時間タスクの信頼性設計](dev-methods/agent-reliability.md) への誘導を追加。time horizon と実行時間の違い、checkpoint・retry・冪等性・reliability budget を新ページに整理した |
 | 2026-09-09 | 10 節に、独立ページ [マルチエージェントを使う境界線](dev-methods/multi-agent.md) への誘導を追加。agent-as-tool・supervisor・peer/team の使い分けと、向く仕事・向かない仕事の判断基準を新ページに整理した |
 | 2026-09-09 | 7 節に「7-5. `ant apply`」を新設し、クライアントへの配布（Plugin / APM）と **Claude API 上のリソース管理**のレイヤー差を整理。9 節に「9-3. PR を merge-ready にするまで」を新設し、Agent Merge（VS Code 1.136、Preview）と Copilot approvals（2026-09-01、Public Preview）を、approval assessment / approval / required approval の区別とともに追加 |
@@ -677,6 +678,8 @@ GitHub MCP Server は正式リリース前に先行対応済みです。ただ�
 | **Tasks 等の拡張の利用者** | core と extension それぞれのバージョン・対応状況を照合する |
 
 **「最新 SDK に上げれば無変更で動く」という保証はありません。** 影響が及ぶのは主に、廃止されたセッション・ハンドシェイクの仕組みに直接依存していた実装です。
+
+**拡張の一つ「Apps」は、tool 呼び出しの結果として会話内にインタラクティブな UI（HTML/JS）を返せるようにするものです。** 対応ホストは Claude・Claude Desktop・VS Code GitHub Copilot など一部に限られ、「すべての MCP クライアントで動く」わけではありません。仕組み・最小例・対応ホストの確認方法・fallback の設計は [MCP Apps — 会話内にUIを追加する](dev-methods/mcp-apps.md) を参照してください。
 
 ### 次に来るもの — 2026-08-22 のロードマップ
 
