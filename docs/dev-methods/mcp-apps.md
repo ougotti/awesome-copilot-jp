@@ -134,7 +134,7 @@ UI は**サンドボックス化された iframe**内で動きます。境界は
 
 - [エージェントに外部操作を与える手段の選び方](tool-selection.md) — 承認境界（8 節）、Computer Use との違い（6 節）
 - [MCP と A2A — 役割の違いと併用方法](agent-protocols.md) — MCP の tool / resource / prompt の基本構造
-- [Skills 最新動向](../trends.md#13-mcp-の次期仕様) — MCP 2026-07-28 仕様全体と Apps・Tasks 拡張の位置づけ
+- [Skills 最新動向](../trends.md#13-mcp-2026-07-28-仕様と移行時の確認) — MCP 2026-07-28 仕様全体と Apps・Tasks 拡張の位置づけ
 
 ## 参考リンク
 

@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-09** [Skills 最新動向](docs/trends.md) 13 節を改題し、MCP更新時の「利用者側の作業は不要」という断定を役割別の移行判断の表に修正
 - **2026-09-09** [MCP Apps — 会話内にUIを追加する](docs/dev-methods/mcp-apps.md) を新設し、tool 結果として UI を返す仕組み・最小例・対応ホストの確認と fallback・データ露出範囲を整理
 - **2026-09-09** [ツール間の用語対照表](README.md#ツール間の用語対照表)のCodex Agents列を訂正し、[Codexガイド](docs/codex/README.md#8-サブエージェントへ作業を委任する)にサブエージェント／カスタムエージェントの解説と依頼例を追加
 - **2026-09-09** [長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md) を新設し、time horizon と実行時間の違い、checkpoint・retry・冪等性・reliability budgetの設計を整理
 - **2026-09-09** [マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md) を新設し、agent-as-tool・supervisor・peer/team の使い分けと向く仕事・向かない仕事の判断基準を整理
-- **2026-09-09** [Skills 最新動向](docs/trends.md) に `ant apply`（Agent Resources as Code）と PR の修復ループ／AI approval を追加し、[ハーネス](docs/dev-methods/harness.md)・[GitHub Copilot ガイド](docs/copilot/README.md)・[Codex ガイド](docs/codex/README.md) へ content exclusion・approval 設定・Plugin CLI の差分を反映
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 

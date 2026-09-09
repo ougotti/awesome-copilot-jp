@@ -4,6 +4,13 @@
 
 ## 2026-09
 
+- **2026-09-09** MCP更新時の「利用者側の作業は不要」という断定を役割別の移行判断に修正（#166）
+  - **`docs/trends.md` 13 節を「MCP の次期仕様」から「MCP 2026-07-28 仕様と移行時の確認」に改題** — 「tier 1 SDK が後方互換を保っているため利用者側の作業は不要」という断定が、既製クライアントの利用者と SDK/サーバーの開発・運用者を同一視していたため、既製クライアント利用者・SDK利用の開発者・独自サーバー/gateway運用者・Tasks等の拡張利用者に分けた役割別の確認事項の表へ置き換えた
+  - **MCP 公式リリース記事（`blog.modelcontextprotocol.io/posts/2026-07-28/`）の SDKs 節を直接取得** — `there will be some migration cost, especially for developers that did depend on session identifiers` を正確な引用で確認し、tier 1 SDK（TypeScript/Python/Go/C#）が対応済みであっても無変更で動く保証ではないことを明記した
+  - **同記事の「No handshake or sessions」節も確認** — `dropping the protocol-level session doesn't force your application to be stateless` を引用し、stateless core でもアプリケーション状態は明示的なハンドルを tool から発行して保持できる、という 1 文を補って状態喪失との混同を防いだ
+  - 見出し変更に伴い、動画チャプター対応表の相互参照リンクと `agent-protocols.md` からの参照リンクのアンカーを更新した。`agent-protocols.md`・`agent-identity.md` 側に誤った断定がないことを確認したが、重複した新章は追加していない
+  - `CHANGELOG.md` と README の「🆕 最近の更新」（5 行を維持）に追記
+
 - **2026-09-09** 会話内 UI（MCP Apps）の実践ガイドを新規ページとして追加（#165）
   - **[MCP Apps — 会話内にUIを追加する](docs/dev-methods/mcp-apps.md) を新設** — tool 呼び出しの結果として UI を返す仕組み（`_meta.ui.resourceUri` → `ui://` resource → サンドボックス化された iframe → `ui/` プレフィックスの postMessage JSON-RPC）、テキストだけでは不便な場面、Computer Use との違い、架空データを使った最小例（前提→起動→ホスト接続→期待結果）、対応ホストの確認方法と非対応ホストでの fallback、データの見え方・外部通信・権限の境界（`_meta.ui.permissions` / `_meta.ui.csp`）、自分の tool に UI を付けるかの判断基準を整理した
   - **公式サイトの Client support 節を直接確認し、「すべての MCP クライアントで動く」という誤解を避けた** — 2026-09 時点の対応ホスト（Claude・Claude Desktop・VS Code GitHub Copilot・Microsoft 365 Copilot・Goose・Postman・MCPJam・Archestra.AI）を列挙し、"Host support varies by client" という公式の明言を引用した
