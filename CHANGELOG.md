@@ -4,6 +4,13 @@
 
 ## 2026-09
 
+- **2026-09-09** VS Code 1.136の複数ルートでのエージェント運用ガイドを追加（#164）
+  - **[VS Code エディタウィンドウでの複数ルート運用](docs/copilot/multi-root.md) を新設** — 単一フォルダ・multi-root workspace・git worktree（Agents window）の違い、対応環境（Experimental）、`chat.agentHost.copilotAgent.multiRootEnabled` / `chat.agentHost.claudeAgent.multiRootEnabled` の設定、Agent hooks が単一 workspace folder に限定される制約と primary folder の選択、うまくいかない場合の確認事項、複数リポジトリの変更を個別に確認する重要性を整理した
+  - **VS Code 1.136 公式リリースノートを直接取得** — 対象が Agents window ではなくエディタウィンドウの Chat view であること、hooks が単一 workspace folder に限定されることを正確な引用で裏付けた
+  - **最小手順は実機で確認しておらず、「公式手順に基づく例／実機未検証」と明記** — instructions/Skill の検索範囲は hooks の記述から推測せず、未確認として扱った
+  - `docs/copilot/README.md`（ドキュメント一覧・関連ドキュメント）から誘導を追加し、trends.md の Agents window（git worktree）機能とは別機能であることを明記して混同を防いだ
+  - `CHANGELOG.md` と README の「🆕 最近の更新」（5 行を維持）・「GitHub Copilot」表に追記
+
 - **2026-09-09** 長時間タスクの信頼性設計を解説する新規ページを追加（#157）
   - **[長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md) を新設** — METR の time horizon と実際の実行時間の違い、ステップ数が増えると失敗が累積する理由、checkpoint 境界の設計、retry/timeout/backoff/fallback、冪等性・重複実行・外部副作用の扱い、中間成果物と終了条件の検証、pause/resume/cancel/rollback、reliability budget と段階的な人間承認、最小テストシナリオを整理した
   - **METR の一次情報を直接確認** — `the 50%-time horizon is the length of task in our suite... rather than the time an AI spends to complete the task` を正確な引用で確認し、「連続稼働できる時間」と「タスクの難易度」を混同しない記述にした

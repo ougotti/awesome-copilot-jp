@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-09** [VS Code エディタウィンドウでの複数ルート運用](docs/copilot/multi-root.md) を新設し、multi-root workspace（Experimental）の設定・hooks の読み込み元・確認手順を整理
 - **2026-09-09** [長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md) を新設し、time horizon と実行時間の違い、checkpoint・retry・冪等性・reliability budgetの設計を整理
 - **2026-09-09** [マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md) を新設し、agent-as-tool・supervisor・peer/team の使い分けと向く仕事・向かない仕事の判断基準を整理
 - **2026-09-09** [Skills 最新動向](docs/trends.md) に `ant apply`（Agent Resources as Code）と PR の修復ループ／AI approval を追加し、[ハーネス](docs/dev-methods/harness.md)・[GitHub Copilot ガイド](docs/copilot/README.md)・[Codex ガイド](docs/codex/README.md) へ content exclusion・approval 設定・Plugin CLI の差分を反映
 - **2026-09-08** [AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md) を新設し、エージェント固有ID・OAuth scope/token audience・委任・control planeの設計を整理
-- **2026-09-08** [MCP と A2A — 役割の違いと併用方法](docs/dev-methods/agent-protocols.md) を新設し、両プロトコルの中核概念・併用構成・導入判断を整理
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -116,6 +116,7 @@
 | **[Agents 一覧](docs/copilot/agents.md)** | Official | GA | IDE | 特定ドメインの専門家ペルソナ定義 | 244 件 |
 | **[Prompts / Skills 一覧](docs/copilot/prompts.md)** | Official | GA | IDE / CLI | `/` から呼ぶタスクテンプレートと Skills | 137 件 |
 | **[Plugins](docs/copilot/plugins.md)** | Official | GA | CLI / IDE | 拡張一式をまとめて配布する単位と Marketplace | — |
+| **[VS Code エディタウィンドウでの複数ルート運用](docs/copilot/multi-root.md)** | 本ガイド | Experimental | IDE | 複数フォルダ（multi-root workspace）を横断するエージェントセッションの設定・hooks の読み込み元 | — |
 
 ### Claude Code
 
