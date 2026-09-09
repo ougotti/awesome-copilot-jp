@@ -1,6 +1,6 @@
 # MCP Apps — 会話内にUIを追加する
 
-> **対象ツール**: ツール横断（Claude・Claude Desktop・VS Code GitHub Copilot ほか対応ホスト） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-09
+> **対象ツール**: ツール横断（Claude・Claude Desktop・VS Code GitHub Copilot ほか対応ホスト） ｜ **実行環境**: CLI / IDE / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-09
 
 [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview) は、MCP サーバーが tool 呼び出しの結果として**インタラクティブな UI**（HTML/JS）を返せるようにする拡張です。テキストの戻り値だけでは伝えづらい・操作しづらい場面を補う手段として、いつ使うか・どう作るか・対応していないホストでどうなるかを整理します。
 
@@ -19,7 +19,7 @@ tool の戻り値をテキスト（表・JSON の整形）で返せば大抵は�
 
 ---
 
-## 2. 30秒で見分ける表
+## 2. 30 秒で見分ける表
 
 | | 通常の tool 呼び出し（テキスト結果） | MCP Apps（UI resource） | Computer Use |
 |---|---|---|---|
@@ -52,7 +52,7 @@ MCP Apps は既存の MCP の tool・resource の仕組みに乗ります。新�
 **前提**
 
 - Node.js が動く CLI 環境（作業ディレクトリは任意の新規プロジェクトフォルダ）
-- Claude Code などのコーディングエージェントを使う場合、`/plugin marketplace add modelcontextprotocol/ext-apps` → `/plugin install mcp-apps@modelcontextprotocol-ext-apps` でスキルを導入すると雛形生成を任せられる（Claude Code 以外は `npx skills add modelcontextprotocol/ext-apps`）
+- Claude Code などのコーディングエージェントを使う場合、Claude Code のスラッシュコマンドとして `/plugin marketplace add modelcontextprotocol/ext-apps` → `/plugin install mcp-apps@modelcontextprotocol-ext-apps` を実行してスキルを導入すると雛形生成を任せられる（Claude Code 以外のエージェントでは、プロジェクトの作業ディレクトリでシェルコマンドとして `npx skills add modelcontextprotocol/ext-apps` を実行する）
 - 手動で組む場合は、`registerAppTool` / `registerAppResource`（サーバー側）と、UI 側の `App` クラス（`.connect()` でホストに接続し、`.ontoolresult` で tool 結果を受け取り、`.callServerTool()` でサーバーの別 tool を呼び戻す）を使う
 
 **起動**

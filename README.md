@@ -148,7 +148,7 @@
 | **[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md)** | 本ガイド | — | IDE / CLI | 導入前の確認手順、第三者監査の実態、組織での許可範囲の限定 |
 | **[エージェントに外部操作を与える手段の選び方](docs/dev-methods/tool-selection.md)** | 本ガイド | — | CLI / IDE / Cloud | API・connector・MCP・CLI・Computer Use の選び方、fallback の昇格条件、承認境界 |
 | **[MCP と A2A — 役割の違いと併用方法](docs/dev-methods/agent-protocols.md)** | 本ガイド | — | CLI / IDE / Cloud | 両プロトコルの中核概念比較、併用構成例、A2A の導入判断 |
-| **[MCP Apps — 会話内にUIを追加する](docs/dev-methods/mcp-apps.md)** | 本ガイド | — | CLI / IDE / Cloud | tool 結果として UI を返す仕組み、最小例、対応ホストの確認と fallback、データ露出範囲 |
+| **[MCP Apps — 会話内にUIを追加する](docs/dev-methods/mcp-apps.md)** | 本ガイド | — | CLI / IDE / Cloud / Chat UI | tool 結果として UI を返す仕組み、最小例、対応ホストの確認と fallback、データ露出範囲 |
 | **[AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md)** | 本ガイド | — | CLI / IDE / Cloud | エージェント固有ID・OAuth scope/token audience・委任権限・control planeの設計 |
 | **[マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md)** | 本ガイド | — | CLI / IDE / Cloud | agent-as-tool・supervisor・peer/teamの使い分け、向く仕事・向かない仕事、導入判断フローチャート |
 | **[長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md)** | 本ガイド | — | CLI / Cloud | time horizonと実行時間の違い、checkpoint・retry・冪等性・reliability budgetの設計、最小テストシナリオ |
