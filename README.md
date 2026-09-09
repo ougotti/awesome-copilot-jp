@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-09** [VS Code エディタウィンドウでの複数ルート運用](docs/copilot/multi-root.md) を新設し、multi-root workspace（Experimental）の設定・hooks の読み込み元・確認手順を整理
 - **2026-09-09** [Skills 最新動向](docs/trends.md) 13 節を改題し、MCP更新時の「利用者側の作業は不要」という断定を役割別の移行判断の表に修正
 - **2026-09-09** [MCP Apps — 会話内にUIを追加する](docs/dev-methods/mcp-apps.md) を新設し、tool 結果として UI を返す仕組み・最小例・対応ホストの確認と fallback・データ露出範囲を整理
 - **2026-09-09** [ツール間の用語対照表](README.md#ツール間の用語対照表)のCodex Agents列を訂正し、[Codexガイド](docs/codex/README.md#8-サブエージェントへ作業を委任する)にサブエージェント／カスタムエージェントの解説と依頼例を追加
 - **2026-09-09** [長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md) を新設し、time horizon と実行時間の違い、checkpoint・retry・冪等性・reliability budgetの設計を整理
-- **2026-09-09** [マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md) を新設し、agent-as-tool・supervisor・peer/team の使い分けと向く仕事・向かない仕事の判断基準を整理
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -116,6 +116,7 @@
 | **[Agents 一覧](docs/copilot/agents.md)** | Official | GA | IDE | 特定ドメインの専門家ペルソナ定義 | 244 件 |
 | **[Prompts / Skills 一覧](docs/copilot/prompts.md)** | Official | GA | IDE / CLI | `/` から呼ぶタスクテンプレートと Skills | 137 件 |
 | **[Plugins](docs/copilot/plugins.md)** | Official | GA | CLI / IDE | 拡張一式をまとめて配布する単位と Marketplace | — |
+| **[VS Code エディタウィンドウでの複数ルート運用](docs/copilot/multi-root.md)** | 本ガイド | Experimental | IDE | 複数フォルダ（multi-root workspace）を横断するエージェントセッションの設定・hooks の読み込み元 | — |
 
 ### Claude Code
 

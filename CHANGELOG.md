@@ -4,6 +4,13 @@
 
 ## 2026-09
 
+- **2026-09-09** VS Code 1.136の複数ルートでのエージェント運用ガイドを追加（#164）
+  - **[VS Code エディタウィンドウでの複数ルート運用](docs/copilot/multi-root.md) を新設** — 単一フォルダ・multi-root workspace・git worktree（Agents window）の違い、対応環境（Experimental）、`chat.agentHost.copilotAgent.multiRootEnabled` / `chat.agentHost.claudeAgent.multiRootEnabled` の設定、Agent hooks が単一 workspace folder に限定される制約と primary folder の選択、うまくいかない場合の確認事項、複数リポジトリの変更を個別に確認する重要性を整理した
+  - **VS Code 1.136 公式リリースノートを直接取得** — 対象が Agents window ではなくエディタウィンドウの Chat view であること、hooks が単一 workspace folder に限定されることを正確な引用で裏付けた
+  - **最小手順は実機で確認しておらず、「公式手順に基づく例／実機未検証」と明記** — instructions/Skill の検索範囲は hooks の記述から推測せず、未確認として扱った
+  - `docs/copilot/README.md`（ドキュメント一覧・関連ドキュメント）から誘導を追加し、trends.md の Agents window（git worktree）機能とは別機能であることを明記して混同を防いだ
+  - `CHANGELOG.md` と README の「🆕 最近の更新」（5 行を維持）・「GitHub Copilot」表に追記
+
 - **2026-09-09** MCP更新時の「利用者側の作業は不要」という断定を役割別の移行判断に修正（#166）
   - **`docs/trends.md` 13 節を「MCP の次期仕様」から「MCP 2026-07-28 仕様と移行時の確認」に改題** — 「tier 1 SDK が後方互換を保っているため利用者側の作業は不要」という断定が、既製クライアントの利用者と SDK/サーバーの開発・運用者を同一視していたため、既製クライアント利用者・SDK利用の開発者・独自サーバー/gateway運用者・Tasks等の拡張利用者に分けた役割別の確認事項の表へ置き換えた
   - **MCP 公式リリース記事（`blog.modelcontextprotocol.io/posts/2026-07-28/`）の SDKs 節を直接取得** — `there will be some migration cost, especially for developers that did depend on session identifiers` を正確な引用で確認し、tier 1 SDK（TypeScript/Python/Go/C#）が対応済みであっても無変更で動く保証ではないことを明記した

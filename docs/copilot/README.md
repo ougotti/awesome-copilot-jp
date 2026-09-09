@@ -12,6 +12,7 @@ GitHub Copilot は GitHub が提供するコーディングアシスタントで
 | **[Agents 一覧](agents.md)** | Copilot を特定ドメインの専門家ペルソナとして振る舞わせるエージェント定義の詳細解説 |
 | **[Prompts / Skills 一覧](prompts.md)** | `/` コマンドから呼び出せる再利用可能なタスクテンプレートおよび Skills の詳細解説 |
 | **[Plugins](plugins.md)** | Agents / Skills / Hooks / MCP / LSP を 1 つの単位で配布する Plugin と Marketplace の詳細解説 |
+| **[VS Code エディタウィンドウでの複数ルート運用](multi-root.md)** | 複数フォルダ（multi-root workspace）を横断するエージェントセッションの設定・hooks の読み込み元・確認手順（Experimental） |
 
 ---
 
@@ -550,5 +551,6 @@ Instructions、Prompts、Agents は GitHub Copilot のすべてのプラン（Fr
 
 ## 関連ドキュメント
 
+- [VS Code エディタウィンドウでの複数ルート運用](multi-root.md) — 複数フォルダを横断するエージェントセッションの設定と制約（Experimental）
 - ツール横断の開発手法: [superpowers](../dev-methods/superpowers.md) / [mattpocock/skills](../dev-methods/mattpocock-skills.md) / [AI-DLC ワークフロー](../dev-methods/aidlc-workflows.md) — GitHub Copilot（CLI・コーディングエージェント）にも対応した開発プロセス改善スキル
 - [ツール間の用語対照表](../../README.md#ツール間の用語対照表) — 「Skills」「Agents」がツールごとに何を指すかの整理
