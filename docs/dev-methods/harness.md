@@ -275,6 +275,7 @@ Console などファイルの外側でリソースが編集・アーカイブ・
 - [マルチエージェントを使う境界線](multi-agent.md) — 複数のエージェントを組織で運用する前に、そもそも複数体にすべきかを判断する
 - [Claude Code のカスタマイズ機能](../claude-code/basics.md) ／ [Codex ガイド](../codex/README.md) — ハーネスから見れば差し替え可能な「コーディングツール」層の解説
 - [コーディングエージェントの選び方](coding-agents.md) — その「コーディングツール」層に何があるかの比較（Claude Code / Codex / Qwen Code / OpenCode / Bionic）
+- [長時間タスクの信頼性設計](agent-reliability.md) — ハーネスが引き受ける状態管理・エラー処理を、checkpoint・再開・冪等性の観点で詳しく扱う
 
 ## 参考リンク
 

@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-09 | 10 節に、独立ページ [長時間タスクの信頼性設計](dev-methods/agent-reliability.md) への誘導を追加。time horizon と実行時間の違い、checkpoint・retry・冪等性・reliability budget を新ページに整理した |
 | 2026-09-09 | 10 節に、独立ページ [マルチエージェントを使う境界線](dev-methods/multi-agent.md) への誘導を追加。agent-as-tool・supervisor・peer/team の使い分けと、向く仕事・向かない仕事の判断基準を新ページに整理した |
 | 2026-09-09 | 7 節に「7-5. `ant apply`」を新設し、クライアントへの配布（Plugin / APM）と **Claude API 上のリソース管理**のレイヤー差を整理。9 節に「9-3. PR を merge-ready にするまで」を新設し、Agent Merge（VS Code 1.136、Preview）と Copilot approvals（2026-09-01、Public Preview）を、approval assessment / approval / required approval の区別とともに追加 |
 | 2026-09-08 | 12 節に、独立ページ [AIエージェントのID・認可・委任権限](dev-methods/agent-identity.md) への誘導を追加。エージェント固有 ID・委任・OAuth scope・control plane を新ページに整理した |
@@ -620,6 +621,7 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 **→ 概念、Microsoft Copilot Studio・QM・Kiro Crew の実装、セキュリティポスチャ、導入の前提、OpenTelemetry での可観測性は [AI エージェントの実行基盤（ハーネス）](dev-methods/harness.md) を参照**
 **→ ループの構成要素・停止条件の作り方・落とし穴は [ループエンジニアリング](dev-methods/loop-engineering.md) を参照**
 **→ サブエージェントや並列実行を「いつ使うべきか」という設計判断は [マルチエージェントを使う境界線](dev-methods/multi-agent.md) を参照**
+**→ 長時間・多段階のタスクで失敗が累積する問題と、checkpoint・再開・冪等性の設計は [長時間タスクの信頼性設計](dev-methods/agent-reliability.md) を参照**
 
 ---
 

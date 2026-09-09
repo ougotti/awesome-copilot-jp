@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-09** [長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md) を新設し、time horizon と実行時間の違い、checkpoint・retry・冪等性・reliability budgetの設計を整理
 - **2026-09-09** [マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md) を新設し、agent-as-tool・supervisor・peer/team の使い分けと向く仕事・向かない仕事の判断基準を整理
 - **2026-09-09** [Skills 最新動向](docs/trends.md) に `ant apply`（Agent Resources as Code）と PR の修復ループ／AI approval を追加し、[ハーネス](docs/dev-methods/harness.md)・[GitHub Copilot ガイド](docs/copilot/README.md)・[Codex ガイド](docs/codex/README.md) へ content exclusion・approval 設定・Plugin CLI の差分を反映
 - **2026-09-08** [AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md) を新設し、エージェント固有ID・OAuth scope/token audience・委任・control planeの設計を整理
 - **2026-09-08** [MCP と A2A — 役割の違いと併用方法](docs/dev-methods/agent-protocols.md) を新設し、両プロトコルの中核概念・併用構成・導入判断を整理
-- **2026-09-08** [エージェントに外部操作を与える手段の選び方](docs/dev-methods/tool-selection.md) を新設し、API・connector・MCP・CLI・Computer Use の選び方とfallback・承認境界を整理
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -150,6 +150,7 @@
 | **[MCP と A2A — 役割の違いと併用方法](docs/dev-methods/agent-protocols.md)** | 本ガイド | — | CLI / IDE / Cloud | 両プロトコルの中核概念比較、併用構成例、A2A の導入判断 |
 | **[AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md)** | 本ガイド | — | CLI / IDE / Cloud | エージェント固有ID・OAuth scope/token audience・委任権限・control planeの設計 |
 | **[マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md)** | 本ガイド | — | CLI / IDE / Cloud | agent-as-tool・supervisor・peer/teamの使い分け、向く仕事・向かない仕事、導入判断フローチャート |
+| **[長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md)** | 本ガイド | — | CLI / Cloud | time horizonと実行時間の違い、checkpoint・retry・冪等性・reliability budgetの設計、最小テストシナリオ |
 | **[プラグインの可搬性](docs/dev-methods/plugin-portability.md)** | 本ガイド | — | IDE / CLI | `plugin.json` を見て、他のエージェントへ持ち出せる Plugin かを判定する手順 |
 | **[Skill / エージェントの評価（evals）](docs/dev-methods/evals.md)** | 本ガイド | — | CLI | 導入した Skill が実際に効いているかを測る、退行パターンと測り方の最小手順 |
 

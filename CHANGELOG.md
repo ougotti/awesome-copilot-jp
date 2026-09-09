@@ -4,6 +4,15 @@
 
 ## 2026-09
 
+- **2026-09-09** 長時間タスクの信頼性設計を解説する新規ページを追加（#157）
+  - **[長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md) を新設** — METR の time horizon と実際の実行時間の違い、ステップ数が増えると失敗が累積する理由、checkpoint 境界の設計、retry/timeout/backoff/fallback、冪等性・重複実行・外部副作用の扱い、中間成果物と終了条件の検証、pause/resume/cancel/rollback、reliability budget と段階的な人間承認、最小テストシナリオを整理した
+  - **METR の一次情報を直接確認** — `the 50%-time horizon is the length of task in our suite... rather than the time an AI spends to complete the task` を正確な引用で確認し、「連続稼働できる時間」と「タスクの難易度」を混同しない記述にした
+  - **MCP Tasks（2025-11-25 版仕様、experimental）を直接取得** — タスクの状態機械（`working`/`input_required`/`completed`/`failed`/`cancelled`）、TTL によるリソース管理、キャンセル済みタスクが終了状態から遷移しない制約、エラー処理（プロトコルエラーとタスク実行エラーの区別）を正確な引用で裏付けた
+  - **LangGraph の Durable Execution ページ（`docs.langchain.com/oss/python/langgraph/durable-execution`）は取得を試みたが、Python/JavaScript のいずれもPersistenceページへリダイレクトされ、冪等性・副作用処理に関する記述を直接確認できなかった。** 代わりに実際に取得できた Persistence ページ（checkpointer/store の役割）を参考リンクとして使用した
+  - **OpenAI Agents SDK harness/sandbox の記事（`openai.com/index/the-next-evolution-of-the-agents-sdk/`）は今回もegressポリシー（403）でブロックされ取得できなかった。** 代替の一次情報は見つからなかったため、本文には反映せず参考リンクからも外した
+  - `loop-engineering.md`・`harness.md`・`evals.md`・`docs/trends.md`（10 節）から相互リンクを追加した
+  - `CHANGELOG.md` と README の「🆕 最近の更新」（5 行を維持）・「ツール横断の開発手法」表に追記
+
 - **2026-09-09** マルチエージェントを使う境界線を解説する新規ページを追加（#156）
   - **[マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md) を新設** — 「まず単一エージェントで始める」を原則に、agent-as-tool（マネージャーが統合の責任を持つ）と supervisor/handoff（専門エージェントへ主導権を移譲する）の違い、peer/team による並列探索、向く仕事（独立調査・異なる専門性・比較可能な成果物）と向かない仕事（強い逐次依存・共有状態への同時書き込み・小さすぎるタスク）、通信・コンテキスト・コスト・権限・停止条件の設計項目、導入判断フローチャートを整理した
   - **Claude Code の公式ドキュメント（code.claude.com/docs/en/sub-agents）を直接取得** — サブエージェントが独立した context window を持つこと、`tools`/`disallowedTools` による権限制限、既定で同時実行 20・ネスト深さ 3 層までの並列実行上限、メインの会話が読む前に最終報告をスキャンする（プロンプトインジェクション対策）ことを正確な引用で裏付けた
