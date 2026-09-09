@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-09** [Skills 最新動向](docs/trends.md) に `ant apply`（Agent Resources as Code）と PR の修復ループ／AI approval を追加し、[ハーネス](docs/dev-methods/harness.md)・[GitHub Copilot ガイド](docs/copilot/README.md)・[Codex ガイド](docs/codex/README.md) へ content exclusion・approval 設定・Plugin CLI の差分を反映
 - **2026-09-08** [AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md) を新設し、エージェント固有ID・OAuth scope/token audience・委任・control planeの設計を整理
 - **2026-09-08** [MCP と A2A — 役割の違いと併用方法](docs/dev-methods/agent-protocols.md) を新設し、両プロトコルの中核概念・併用構成・導入判断を整理
 - **2026-09-08** [エージェントに外部操作を与える手段の選び方](docs/dev-methods/tool-selection.md) を新設し、API・connector・MCP・CLI・Computer Use の選び方とfallback・承認境界を整理
 - **2026-09-07** [Instructions 一覧](docs/copilot/instructions.md) に `devcontainers.instructions.md`、[Agents 一覧](docs/copilot/agents.md) に `research-harness-engineer.agent.md` を追加（upstream 新規ファイル 2 件に追従）
-- **2026-09-07** [AI エージェントの実行基盤（ハーネス）](docs/dev-methods/harness.md) に OpenTelemetry GenAI semantic conventions の対応状況を追加し、[コーディングエージェントの選び方](docs/dev-methods/coding-agents.md) に非同期・クラウド型（Jules・Antigravity）との軸を追加
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 

@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-08
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-09
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-09 | 7 節に「7-5. `ant apply`」を新設し、クライアントへの配布（Plugin / APM）と **Claude API 上のリソース管理**のレイヤー差を整理。9 節に「9-3. PR を merge-ready にするまで」を新設し、Agent Merge（VS Code 1.136、Preview）と Copilot approvals（2026-09-01、Public Preview）を、approval assessment / approval / required approval の区別とともに追加 |
 | 2026-09-08 | 12 節に、独立ページ [AIエージェントのID・認可・委任権限](dev-methods/agent-identity.md) への誘導を追加。エージェント固有 ID・委任・OAuth scope・control plane を新ページに整理した |
 | 2026-09-08 | 13 節「A2A が AAIF に合流」に、独立ページ [MCP と A2A — 役割の違いと併用方法](dev-methods/agent-protocols.md) への誘導を追加。両プロトコルの中核概念・併用構成・導入判断を新ページに整理した |
 | 2026-09-08 | 6 節（Computer Use / Browser Use）を要約 + 独立ページ [エージェントに外部操作を与える手段の選び方](dev-methods/tool-selection.md) へ誘導する形に整理し、Google の Gemini Computer Use（2026-06-24）を追記 |
@@ -245,7 +246,7 @@ skills.shで公開されている注目スキル集の一覧と導入方法は�
 
 ## 7. Skill の発見・配布・更新
 
-> `gh skill` / Agent Finder・ARD / Agent Plugins 1.0
+> `gh skill` / Agent Finder・ARD / Agent Plugins 1.0 / APM / `ant apply`
 
 ここまでの 6 テーマが「どんな Skill があるか」だとすれば、本節は **「Skill をどう探し、安全に導入し、更新・固定・配布するか」** です。この運用面を埋める仕組みが揃ってきました。
 
@@ -255,6 +256,7 @@ skills.shで公開されている注目スキル集の一覧と導入方法は�
 | Agent Finder / ARD | 必要になった時点で MCP サーバー・Skill・Canvas・Agent・Tool を Registry から発見する | Official（GitHub） | GA（2026-06-17 提供開始、全 Copilot プラン） |
 | Agent Plugins 1.0 | Agent Skills と MCP サーバーを 1 つの配布単位にまとめる**ベンダー中立のオープン標準** | Official（複数ベンダー共同の標準） | GA（2026-08-06 仕様公開、GitHub 実装は 2026-08-12） |
 | APM（Agent Package Manager） | `apm.yml` に依存を宣言し、`apm install` で各エージェントへ展開する**マニフェスト方式の依存管理** | [下記注記](#7-4-apm--宣言でチームの環境を再現する)を参照 | 0.x 系（本文にバージョンは書きません。[リリース](https://github.com/microsoft/apm/releases)を確認してください） |
+| `ant apply` | **クライアントへの配布ではなく**、Claude API 上の Agent / Environment / Skill / Memory Store / Deployment を宣言ファイルと lockfile で管理する（[7-5 節](#7-5-ant-apply--api-上のリソースを宣言で管理する)） | Official（Anthropic） | `ant` CLI 1.30.0 以降（2026-09-03 のリリースノートで案内） |
 
 ---
 
@@ -419,6 +421,37 @@ apm install microsoft/azure-skills   # 個別に追加する（apm.yml に永続
 | チーム標準の拡張一式を配る | Copilot Plugin + `enabledPlugins` |
 | 組織で使えるリソースを制限する | Enterprise managed settings（Agent Finder / Plugins） |
 | **チームの環境を再現可能にする** | **APM（`apm.yml` をリポジトリにコミットし、`apm install` で復元）** |
+| **API 上に置いたエージェント自体をコードで管理する** | **`ant apply`（[7-5 節](#7-5-ant-apply--api-上のリソースを宣言で管理する)）** |
+
+---
+
+### 7-5. `ant apply` — API 上のリソースを宣言で管理する
+
+ここまでの 4 つは、いずれも**利用者の手元（クライアント）に何を入れるか**の話でした。2026-09-03 のリリースノートで案内された `ant apply`（`ant` CLI 1.30.0 以降）は**層が違います**。Claude API 上に存在する Agent・Environment・Skill・Memory Store・Deployment を、リポジトリ内の宣言ファイルから作成・更新する仕組みです。
+
+**この違いを取り違えないでください。**
+
+| 仕組み | 管理対象 |
+|--------|---------|
+| Agent Plugin | Skill / MCP / hooks 等を**クライアントへ配布する**移植可能パッケージ |
+| APM | **ローカルの**エージェント依存を宣言・導入するパッケージ管理 |
+| `ant apply` | **Claude API 上の** Agent / Environment / Skill / Memory Store / Deployment の desired state と resource identity |
+
+`ant apply` は Claude Code の Plugin インストール機能ではありません。Claude Platform / Managed Agents 側のリモートリソース管理です。
+
+| 対象リソース | ファイル形式 |
+|-------------|-------------|
+| Agent | `agents/` 配下の Markdown（frontmatter が設定、本文が system prompt） |
+| Environment | `environments/` 配下の YAML |
+| Memory Store | `memory_stores/` 配下の YAML |
+| Deployment | `deployments/` 配下の Markdown（frontmatter がリクエストボディ、本文が各セッションの最初のメッセージ） |
+| Skill | `SKILL.md` を持つディレクトリ（慣例として `skills/` 配下）。1 つのバンドルとしてアップロードされる |
+
+Skill 以外は YAML / JSON / Markdown のいずれでも書けます。リソース同士は**相対パスで参照**でき、`ant apply` が依存順に作成して実際の ID を埋めます。GitHub URL で参照した Skill は解決済みのコミットに固定され、`--upgrade` で再解決します。
+
+**運用上の要点は `claude-lock.json` です。** これは生成物ではなく、ファイルとリモートのリソース ID・origin（組織／ワークスペース）・ハッシュを対応づける**resource identity と drift 管理**の記録です。コミットしておくことで、次回の実行が同じリソースを更新します。Console など外側で変更されたリソースを検出すると、既定では `refusing to apply` で**適用を拒否**します。
+
+**→ plan / 承認、lockfile、drift、破壊的フラグ、CI 運用の詳細は [AI エージェントの実行基盤（ハーネス）](dev-methods/harness.md#宣言でリモートのエージェントを管理する--ant-apply) を参照**
 
 ---
 
@@ -547,6 +580,27 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 > **実務上の落とし穴**: Codex は、コンテキストが逼迫すると Skill カタログを切り詰め、その旨を警告します。Skill は入れるほど良いわけではなく、**使う分だけ有効にする**ほうが安定します。
 
 > 各ツールの機能は月次で更新されます。詳細と最新状態は、末尾の公式リリースノートを確認してください。
+
+### 9-3. PR を merge-ready にするまで — 修復ループと AI の approval
+
+2026 年 9 月には、レビューの前後にも動きがありました。**修復ループ → AI review → ポリシーに応じた approval → 人間の最終判断**という流れが、それぞれ別の機能として揃いつつあります。
+
+| 段階 | 機能 | 提供元・状態 |
+|------|------|-------------|
+| 修復ループ | **Agent Merge** — review feedback への対応、失敗したチェックと merge conflict の修正、workflow の再実行を、PR が merge 可能な状態になるまで繰り返す | VS Code 1.136（2026-09-02）、**Preview**。`chat.agentMerge.enabled` を有効化し、Agents window から開始する |
+| AI review | Copilot code review（[9-1 節](#9-1-コードレビューに効かせる)） | GA |
+| approval | **Copilot approvals** — Copilot が approving review を提出する | 2026-09-01、**Public Preview**。既定では**無効** |
+| 最終判断 | 人間のレビュアー | — |
+
+**用語を分けてください。** Copilot のレビューには **approval assessment**（PR が承認に値するかという Copilot の判定）が表示されますが、[公式の変更ログ](https://github.blog/changelog/2026-09-01-copilot-code-review-can-now-approve-pull-requests/)は次のように明記しています。
+
+> An approval assessment alone does not count toward merge requirements.
+
+つまり「Copilot が **approve できるか**」と「その approval を **required approvals に数えるか**」は別の設定であり、assessment が表示されること自体は merge 要件を満たしません。approval 後に新しいコミットが push されると、**人間のレビュアーと同じように approval は dismiss** されます。
+
+**Agent Merge は merge を実行する機能ではありません。** PR を「merge-ready にする」までが範囲です。Copilot approval・人間のレビューと同一視しないでください。
+
+**→ 設定階層・パス限定・責任分界の詳細は [GitHub Copilot ガイド](copilot/README.md#プルリクエストの承認をどこまで-ai-に任せるか) を参照**
 
 ---
 

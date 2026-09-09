@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-08-30
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-09
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -95,6 +95,20 @@ Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMa
 一方で、いずれも**組織向けプランと事前設定が前提**です。個人利用では [2 節](#2-導入前に何を確認するか)の導入前チェックが引き続き主役になります。
 
 **→ Claude での具体的な設定・利用条件は [Claude Code のカスタマイズ機能](../claude-code/basics.md#組織での統制--導入前推論前実行後) を参照**
+
+### コンテキストの除外は、Skill / MCP の統制と別に効く
+
+GitHub Copilot の **content exclusion** は、機密ファイルを Copilot のコンテキストへ取り込ませない組織設定です（Copilot app / CLI で 2026-09-02 に GA、Copilot Business / Enterprise）。ただし **これは「Copilot が取り込む経路」への制御であり、MCP サーバーや Skill が別の経路で同じファイルを読む場合の防御にはなりません。** VS Code の Copilot Chat の Edit mode / Agent mode は現時点で非対応であるなど、対応面にも差があります。本節の allowlist・推論前の判定と**組み合わせて**使ってください。
+
+**→ 対応面・非対応面の一覧は [GitHub Copilot ガイド](../copilot/README.md#組織の統制--content-exclusion) を参照**
+
+### 承認の記憶がどこまで及ぶか
+
+導入時の allowlist と同じく、**実行時に一度与えた承認がどの範囲で再利用されるか**も確認対象です。Codex CLI 0.152.0（2026-09-01）では、記憶された MCP tool の承認が**選択中の app account 単位**で扱われるようになりました。アカウントを切り替えれば、以前に与えた承認はそのまま引き継がれません。
+
+これは権限分離そのものではなく、**記憶済みの承認の適用範囲**の話です。過大評価せず、marketplace の出自確認（[6 節](#6-同名の別パッケージという入口)）と併せて扱ってください。
+
+**→ Codex の Plugin / MCP 運用は [Codex ガイド](../codex/README.md#5-plugin-でまとめて配る2026-08-の追加) を参照**
 
 ---
 
