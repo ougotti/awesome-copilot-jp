@@ -272,6 +272,7 @@ Console などファイルの外側でリソースが編集・アーカイブ・
 - [エージェントに外部操作を与える手段の選び方](tool-selection.md) — ハーネスが管理するツール呼び出しを、API・connector・MCP・CLI・Computer Use のどれで実装するかの判断基準
 - [MCP と A2A — 役割の違いと併用方法](agent-protocols.md) — ハーネスの上位にある「エージェントとツール」（MCP）・「エージェントとエージェント」（A2A）の層の違い
 - [AIエージェントのID・認可・委任権限](agent-identity.md) — ハーネスが引き受ける「認証・スコープ・権限」を、エージェント固有 ID・委任・control plane の観点で詳しく扱う
+- [マルチエージェントを使う境界線](multi-agent.md) — 複数のエージェントを組織で運用する前に、そもそも複数体にすべきかを判断する
 - [Claude Code のカスタマイズ機能](../claude-code/basics.md) ／ [Codex ガイド](../codex/README.md) — ハーネスから見れば差し替え可能な「コーディングツール」層の解説
 - [コーディングエージェントの選び方](coding-agents.md) — その「コーディングツール」層に何があるかの比較（Claude Code / Codex / Qwen Code / OpenCode / Bionic）
 - [長時間タスクの信頼性設計](agent-reliability.md) — ハーネスが引き受ける状態管理・エラー処理を、checkpoint・再開・冪等性の観点で詳しく扱う
