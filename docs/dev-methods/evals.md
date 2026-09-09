@@ -1,6 +1,6 @@
 # Skill / エージェントの評価（evals） — 入れた後に効いているかを測る
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-07
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-09
 
 > [Skill / Plugin のセキュリティ](skill-security.md)は「**導入前**に入れてよいものか」を扱います。このページはその先、「**導入後に実際に効いているか**」を測る話です。両者は別軸で、片方をやれば済むわけではありません。
 
@@ -65,6 +65,7 @@ LangChain の解説記事（“Evaluating Skills”, Robert Xu, 2026-03-05）は
 - [skills.sh ガイド](skills-sh.md) — Skill を増やしすぎない選び方
 - [Codex スキルカタログ](../codex/catalog.md) — `description` の書き方の具体例
 - [生成AIを業務で安全に使う](../business/safety.md) — 出力を受け取った後に人が確認する項目
+- [長時間タスクの信頼性設計](agent-reliability.md) — 「性能を測る」評価とは別軸の、「実行中の故障にどう耐えるか」という設計
 
 ## 参考リンク
 

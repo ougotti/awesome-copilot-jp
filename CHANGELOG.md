@@ -4,6 +4,15 @@
 
 ## 2026-09
 
+- **2026-09-09** 長時間タスクの信頼性設計を解説する新規ページを追加（#157）
+  - **[長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md) を新設** — METR の time horizon と実際の実行時間の違い、ステップ数が増えると失敗が累積する理由、checkpoint 境界の設計、retry/timeout/backoff/fallback、冪等性・重複実行・外部副作用の扱い、中間成果物と終了条件の検証、pause/resume/cancel/rollback、reliability budget と段階的な人間承認、最小テストシナリオを整理した
+  - **METR の一次情報を直接確認** — `the 50%-time horizon is the length of task in our suite... rather than the time an AI spends to complete the task` を正確な引用で確認し、「連続稼働できる時間」と「タスクの難易度」を混同しない記述にした
+  - **MCP Tasks（2025-11-25 版仕様、experimental）を直接取得** — タスクの状態機械（`working`/`input_required`/`completed`/`failed`/`cancelled`）、TTL によるリソース管理、キャンセル済みタスクが終了状態から遷移しない制約、エラー処理（プロトコルエラーとタスク実行エラーの区別）を正確な引用で裏付けた
+  - **LangGraph の Durable Execution ページ（`docs.langchain.com/oss/python/langgraph/durable-execution`）は取得を試みたが、Python/JavaScript のいずれもPersistenceページへリダイレクトされ、冪等性・副作用処理に関する記述を直接確認できなかった。** 代わりに実際に取得できた Persistence ページ（checkpointer/store の役割）を参考リンクとして使用した
+  - **OpenAI Agents SDK harness/sandbox の記事（`openai.com/index/the-next-evolution-of-the-agents-sdk/`）は今回もegressポリシー（403）でブロックされ取得できなかった。** 代替の一次情報は見つからなかったため、本文には反映せず参考リンクからも外した
+  - `loop-engineering.md`・`harness.md`・`evals.md`・`docs/trends.md`（10 節）から相互リンクを追加した
+  - `CHANGELOG.md` と README の「🆕 最近の更新」（5 行を維持）・「ツール横断の開発手法」表に追記
+
 - **2026-09-09** 2026-08-29〜09-05 の最新動向（`ant apply` / Copilot のコンテキスト統制・PR 承認）を反映（#146）
   - **`docs/trends.md` に「7-5. `ant apply` — API 上のリソースを宣言で管理する」を新設** — [公式ドキュメント](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/apply)を直接取得し、対応する 5 種類のリソースとファイル形式、相対パスによる依存参照、`claude-lock.json` を**生成物ではなく resource identity / drift 管理**として整理。Agent Plugin（クライアントへの配布）・APM（ローカル依存）・`ant apply`（Claude API 上の desired state）のレイヤー差を比較表にした
   - **`docs/dev-methods/harness.md` に「宣言でリモートのエージェントを管理する — `ant apply`」を新設** — plan と承認、lockfile が記録する `origin` / リソース ID / 2 種類の hash、drift 検出時の既定挙動（`refusing to apply`）、`--dry-run` / `--yes` / `--force` / `--prune` / `--upgrade` の用途とリスク、CI 運用（PR では `--dry-run .`、既定ブランチでは `--yes .`、直列実行、失敗時も lockfile をコミット、Workload Identity Federation）を整理。人間が変更を止められる地点も明記した
