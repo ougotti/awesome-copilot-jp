@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-09** [ツール間の用語対照表](README.md#ツール間の用語対照表)のCodex Agents列を訂正し、[Codexガイド](docs/codex/README.md#8-サブエージェントへ作業を委任する)にサブエージェント／カスタムエージェントの解説と依頼例を追加
 - **2026-09-09** [長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md) を新設し、time horizon と実行時間の違い、checkpoint・retry・冪等性・reliability budgetの設計を整理
 - **2026-09-09** [マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md) を新設し、agent-as-tool・supervisor・peer/team の使い分けと向く仕事・向かない仕事の判断基準を整理
 - **2026-09-09** [Skills 最新動向](docs/trends.md) に `ant apply`（Agent Resources as Code）と PR の修復ループ／AI approval を追加し、[ハーネス](docs/dev-methods/harness.md)・[GitHub Copilot ガイド](docs/copilot/README.md)・[Codex ガイド](docs/codex/README.md) へ content exclusion・approval 設定・Plugin CLI の差分を反映
 - **2026-09-08** [AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md) を新設し、エージェント固有ID・OAuth scope/token audience・委任・control planeの設計を整理
-- **2026-09-08** [MCP と A2A — 役割の違いと併用方法](docs/dev-methods/agent-protocols.md) を新設し、両プロトコルの中核概念・併用構成・導入判断を整理
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -174,7 +174,7 @@
 | 用語 | GitHub Copilot | Claude Code / Claude | Codex（OpenAI） |
 |------|----------------|----------------------|------------------|
 | **Skills** | `SKILL.md` + 関連リソース同梱の自己完結型ツール（upstream では旧 Prompts の移行先） | Agent Skills。[anthropics/skills](https://github.com/anthropics/skills) の公式スキル（docx / pdf 等）や [mattpocock/skills](https://github.com/mattpocock/skills) 等の手順スキル | Agent Skills。[openai/skills](https://github.com/openai/skills) の system / curated / experimental 3層カタログ |
-| **Agents** | 専門家ペルソナ定義（`.agent.md`） | サブエージェント（メインの会話から分離して動く補助エージェント） | —（相当機能はスキルで代替） |
+| **Agents** | 専門家ペルソナ定義（`.agent.md`） | サブエージェント（メインの会話から分離して動く補助エージェント） | サブエージェント（並列実行・独立した会話コンテキストへの委任）／カスタムエージェント（`.codex/agents/*.toml`）。[解説](docs/codex/README.md#8-サブエージェントへ作業を委任する) |
 | **Instructions** | ファイルパターン別にコーディング規約を自動適用（`.instructions.md`） | `CLAUDE.md` がほぼ同じ役割 | `AGENTS.md` がほぼ同じ役割 |
 | **Prompts** | `/` コマンドのタスクテンプレート（`.prompt.md`） | カスタムコマンド（`.claude/commands/`） | カスタムプロンプト（`~/.codex/prompts/`） |
 | **Hooks** | コーディングエージェントセッションのイベント駆動スクリプト（`hooks.json`） | `PreToolUse` / `PostToolUse` 等のイベント駆動自動化 | — |
