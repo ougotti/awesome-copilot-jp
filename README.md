@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-11** [AI-DLC Workflows](docs/dev-methods/aidlc-workflows.md)を現行手順へ更新し、[Power Apps Plansとの比較](docs/dev-methods/ai-dlc-power-platform.md)と[AI-DLC・AI-PDLC・AI BPRの用語整理](docs/dev-methods/ai-driven-lifecycle-terms.md)を分離
 - **2026-09-09** [VS Code エディタウィンドウでの複数ルート運用](docs/copilot/multi-root.md) を新設し、multi-root workspace（Experimental）の設定・hooks の読み込み元・確認手順を整理
 - **2026-09-09** [Skills 最新動向](docs/trends.md) 13 節を改題し、MCP更新時の「利用者側の作業は不要」という断定を役割別の移行判断の表に修正
 - **2026-09-09** [MCP Apps — 会話内にUIを追加する](docs/dev-methods/mcp-apps.md) を新設し、tool 結果として UI を返す仕組み・最小例・対応ホストの確認と fallback・データ露出範囲を整理
 - **2026-09-09** [ツール間の用語対照表](README.md#ツール間の用語対照表)のCodex Agents列を訂正し、[Codexガイド](docs/codex/README.md#8-サブエージェントへ作業を委任する)にサブエージェント／カスタムエージェントの解説と依頼例を追加
-- **2026-09-09** [長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md) を新設し、time horizon と実行時間の違い、checkpoint・retry・冪等性・reliability budgetの設計を整理
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -141,7 +141,9 @@
 | **[skills.sh ガイド](docs/dev-methods/skills-sh.md)** | Community | GA | CLI | Agent Skills の検索・導入ポータルと用途別の定番スキル |
 | **[mattpocock/skills](docs/dev-methods/mattpocock-skills.md)** | Community | GA | CLI | 要件整理〜仕様化〜TDD〜レビューの手順スキル |
 | **[superpowers](docs/dev-methods/superpowers.md)** | Community | GA | CLI | SDLC スキルフレームワーク（複数ツール対応） |
-| **[AI-DLC ワークフロー](docs/dev-methods/aidlc-workflows.md)** | Official（AWS） | GA | CLI / IDE | 3 フェーズの AI 駆動開発ライフサイクル |
+| **[AI-DLC Workflows](docs/dev-methods/aidlc-workflows.md)** | Official（AWS Labs） | GA | CLI / IDE | 5 フェーズを対話で進める AI 駆動開発ライフサイクルと日本語での試し方 |
+| **[Power Apps Plans と AI-DLC の比較](docs/dev-methods/ai-dlc-power-platform.md)** | 本ガイド | — | Cloud / CLI / IDE | Microsoft Power Platform の Plans と AI-DLC の役割、併用案、選び方 |
+| **[AI-DLC・AI-PDLC・AI BPR の用語整理](docs/dev-methods/ai-driven-lifecycle-terms.md)** | 本ガイド | — | CLI / IDE | AWS が公開する 3 つの取り組みの提供形態と対象範囲を分離 |
 | **[仕様駆動開発（SDD）](docs/dev-methods/spec-driven.md)** | Community | GA | CLI | GitHub Spec Kit のワークフローと EARS、AI-DLC との選び方の軸 |
 | **[AI エージェントの実行基盤（ハーネス）](docs/dev-methods/harness.md)** | 本ガイド | — | CLI / Cloud | エージェントを動かす裏側の仕組みと実装例（Copilot Studio / QM）、OpenTelemetry による可観測性 |
 | **[ループエンジニアリング](docs/dev-methods/loop-engineering.md)** | 本ガイド | — | CLI / Cloud | エージェントを目標へ向けて回すループの設計・停止条件・落とし穴 |

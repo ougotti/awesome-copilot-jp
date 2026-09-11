@@ -1,329 +1,162 @@
-# awslabs/aidlc-workflows — AI 駆動開発ライフサイクル（AI-DLC）ワークフロー
+# AI-DLC Workflows — 日本語で試すAI駆動開発ライフサイクル
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Amazon Q・Cursor ほか） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-08-22
+> **対象ツール**: AI-DLC Workflows（Codex・Claude Code・Kiro・Cursor・GitHub Copilotほか） ｜ **実行環境**: CLI / IDE ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-11
 
-> [awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows) は AWS が公開した、AI エージェントを**検証可能・自己修正可能なエンジニアリングワークフロー**へと変える OSS プロジェクトです。GitHub Copilot、Claude Code、Amazon Q Developer、Cursor、Cline、Codex など主要なコーディングエージェントに対応しています。
+> [awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows) は、AWS Labsが公開するAI駆動開発ライフサイクルのOSS実装です。AWSのマネージドサービスではありません。
 
-> AI-DLC は、**仕様駆動開発（SDD）という手法の実装の 1 つ**という位置づけです。SDD そのものの見取り図と、GitHub Spec Kit との選び方の軸は [仕様駆動開発（SDD）](spec-driven.md#ai-dlc-との関係--どちらを選ぶか) を参照してください。
+## 30秒で判断する
 
-## AI-DLC とは
+| 確認したいこと | 回答 |
+|----------------|------|
+| 自分で試せるか。 | はい。公開されているインストーラーから導入できます。 |
+| AWSへデプロイする必要があるか。 | ありません。完成するアプリの実行場所はプロジェクト側で決めます。 |
+| Bedrockが必須か。 | 方法論自体はモデル提供元に依存しません。実際の接続先は利用するハーネスの設定に従います。 |
+| 日本語で依頼できるか。 | できます。ただし、説明の一部に英語が混ざる不具合報告があります。 |
+| Power Platformにも使えるか。 | 開発工程の考え方は適用できますが、専用の公式連携は確認できていません。詳しくは[Plansとの比較](ai-dlc-power-platform.md)を参照してください。 |
 
-AI-DLC（AI-Driven Development Life Cycle）は、AIコーディングエージェントが「すぐ実装しようとする」「計画なしに進める」「品質チェックを省略する」といった問題行動を、**ルールファイル（ワークフロー定義）によって構造的に防ぐ**インテリジェントなソフトウェア開発ワークフローです。
+## AI-DLC Workflowsが解決すること
 
-チャットで「Using AI-DLC, ...」と書くだけでワークフローが起動し、要件整理から設計・実装・品質確認まで**AIエージェントが段階的に自律実行**します。
+AIコーディングエージェントへ短い依頼だけを渡すと、要件を詰める前に実装したり、テスト結果を十分に確認せず完了と判断したりすることがあります。
 
-| 項目 | 内容 |
-|------|------|
-| **提供元** | AWS Labs（awslabs） |
-| **リポジトリ** | [github.com/awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows) |
-| **ライセンス** | Apache-2.0 |
-| **対応ツール** | GitHub Copilot、Amazon Q Developer、Claude Code、Cursor、Cline、OpenAI Codex、Kiro、その他任意のエージェント |
-| **最新版** | v2（AI-DLC Workflows 2.0） |
+AI-DLC Workflowsは、要件、設計、実装、テスト、運用を一つの流れとして扱います。作業内容に合わせて必要な工程を選び、成果物と判断を記録し、人が確認する地点を設けます。
 
----
+> AI-DLCと似た名前の手法は、[AI-DLC・AI-PDLC・AI BPRの用語整理](ai-driven-lifecycle-terms.md)で分けて説明しています。
 
-## 3 フェーズの適応型ワークフロー
+## 5つのフェーズ
 
-AI-DLC はプロジェクトの複雑さに応じて自動的に適応する、3 フェーズの構造化ワークフローを採用しています。
+現行のAI-DLC Workflowsは、次の5フェーズで構成されています。すべての作業で全工程を実行するわけではありません。
 
-### フェーズ 1 — Inception（着想・要件定義）
+| フェーズ | 主な役割 |
+|----------|----------|
+| Initialization | プロジェクトと実行状態を準備する。 |
+| Ideation | 意図、対象範囲、実現可能性を整理する。 |
+| Inception | 要件、設計、作業単位、実行計画を具体化する。 |
+| Construction | 詳細設計、実装、ビルド、テストを行う。 |
+| Operation | デプロイ、監視、性能確認、改善を扱う。 |
 
-**「何を作るか」と「なぜ作るか」を決める**
+AWSの方法論や学習コースでは、開発の中心をInception、Construction、Operationの3フェーズで説明しています。現行のOSS実装「AI-DLC Workflows」は、その前段にInitializationとIdeationを置いた5フェーズ、33ステージです。このページで5フェーズと書く場合は、現行のOSS実装を指します。
 
-- 要件の分析とバリデーション
-- ユーザーストーリーの作成（該当する場合）
-- アプリケーション設計と並行開発のための作業単位の作成
-- リスク評価と複雑さの評価
+機能追加、バグ修正、PoC、インフラ変更など、依頼の種類に応じたワークフローがあります。各工程には常に実行するものと、対象範囲に応じて選ばれるものがあります。
 
-### フェーズ 2 — Construction（設計・実装）
+## 対応するハーネス
 
-**「どのように作るか」を決める**
+ハーネスは、AI-DLC Workflowsを実際に動かすコーディングエージェントです。現行の公式READMEに掲載されている主な選択肢は次のとおりです。
 
-- 詳細なコンポーネント設計
-- コード生成と実装
-- ビルド構成とテスト戦略
-- 品質保証とバリデーション
+| ハーネス | `aidlc config`の値 | ワークフローの開始 |
+|----------|----------------------|----------------------|
+| Claude Code | `claude` | `/aidlc` |
+| Kiro CLI | `kiro` | `/aidlc` |
+| Kiro IDE | `kiro-ide` | `/aidlc` |
+| Codex CLI | `codex` | `$aidlc` |
+| Cursor | `cursor` | `/aidlc` |
+| OpenCode | `opencode` | `/aidlc` |
+| GitHub Copilot | `copilot` | `/aidlc` |
 
-### フェーズ 3 — Operations（運用）※将来対応
+必要なバージョンや認証方法は変わるため、導入時には[公式Getting Started](https://awslabs.github.io/aidlc-workflows/guide/01-getting-started/)を確認してください。
 
-**デプロイと監視**
+## Windowsで試す最小手順
 
-- デプロイの自動化とインフラストラクチャ
-- モニタリングとオブザーバビリティのセットアップ
-- 本番環境への準備検証
+以下は公式Getting Startedに基づく手順です。このガイドではインストーラーの実行とモデル接続を実機検証していません。
 
----
+### 1. AI-DLCをインストールする
 
-## 主な特徴
-
-| 特徴 | 説明 |
-|------|------|
-| **適応的インテリジェンス** | リクエストに応じて価値を追加するステージのみを実行 |
-| **コンテキスト認識** | 既存のコードベースと複雑さの要件を分析 |
-| **リスクベース** | 複雑な変更には包括的な処理、単純な変更は効率的に処理 |
-| **質問駆動** | チャットではなくファイルへの構造化された多肢選択式の質問 |
-| **常に制御可能** | 実行計画を確認し、各フェーズを承認できる |
-| **拡張可能** | セキュリティ・コンプライアンス・組織固有のルールをコアワークフローに追加可能 |
-
----
-
-## セットアップ方法
-
-### 1. リリースファイルのダウンロード
-
-[Releases ページ](https://github.com/awslabs/aidlc-workflows/releases/latest)から最新の `ai-dlc-rules-v<バージョン>.zip` をダウンロードし、プロジェクトディレクトリ**外**（例：`~/Downloads`）に展開します。
-
-展開後のフォルダ構成：
-
-```
-aidlc-rules/
-├── aws-aidlc-rules/        # コアワークフロールール
-└── aws-aidlc-rule-details/ # コアルールから参照される詳細ルール
-```
-
-### 2. 使用するコーディングエージェントに応じてセットアップ
-
----
-
-#### GitHub Copilot
-
-AI-DLC は `.github/copilot-instructions.md` を使用してワークフローを実装します。
-
-**macOS/Linux:**
-
-```bash
-mkdir -p .github
-cp ~/Downloads/aidlc-rules/aws-aidlc-rules/core-workflow.md .github/copilot-instructions.md
-mkdir -p .aidlc-rule-details
-cp -R ~/Downloads/aidlc-rules/aws-aidlc-rule-details/* .aidlc-rule-details/
-```
-
-**Windows PowerShell:**
+PowerShellで実行します。
 
 ```powershell
-New-Item -ItemType Directory -Force -Path ".github"
-Copy-Item "$env:USERPROFILE\Downloads\aidlc-rules\aws-aidlc-rules\core-workflow.md" ".github\copilot-instructions.md"
-New-Item -ItemType Directory -Force -Path ".aidlc-rule-details"
-Copy-Item "$env:USERPROFILE\Downloads\aidlc-rules\aws-aidlc-rule-details\*" ".aidlc-rule-details\" -Recurse
+irm https://github.com/awslabs/aidlc-workflows/releases/latest/download/install.ps1 | iex
 ```
 
-**確認方法：**
+このコマンドは取得したスクリプトをそのまま実行します。組織のルールで許可されていない場合は、[最新リリース](https://github.com/awslabs/aidlc-workflows/releases/latest)からファイルを取得し、内容とチェックサムを確認してから実行してください。
 
-1. VS Code でプロジェクトフォルダを開く
-2. Copilot Chat パネル（Cmd/Ctrl+Shift+I）を開く
-3. **Configure Chat**（歯車アイコン）> **Chat Instructions** で `copilot-instructions` が一覧にあることを確認
+### 2. 試すプロジェクトを設定する
 
-**ディレクトリ構成：**
+Codex CLIを使う例です。対象はGitリポジトリである必要があります。
 
-```
-<プロジェクトルート>/
-├── .github/
-│   └── copilot-instructions.md
-└── .aidlc-rule-details/
-    ├── common/
-    ├── inception/
-    ├── construction/
-    ├── extensions/
-    └── operations/
+```powershell
+Set-Location C:\work\todo-sample
+aidlc config --harness codex
+aidlc doctor
 ```
 
----
+別のハーネスを使う場合は、前の表にある値へ置き換えます。`aidlc config`を引数なしで実行すると、利用できるハーネスを対話形式で選べます。
 
-#### Amazon Q Developer
+### 3. 日本語で開始する
 
-AI-DLC は `.amazonq/rules/` を使用してワークフローを実装します。
+Codex CLI内では、次のように入力します。
 
-**macOS/Linux:**
-
-```bash
-mkdir -p .amazonq/rules
-cp -R ~/Downloads/aidlc-rules/aws-aidlc-rules .amazonq/rules/
-cp -R ~/Downloads/aidlc-rules/aws-aidlc-rule-details .amazonq/
+```text
+$aidlc Windowsのローカルで動くToDoアプリを作りたい。
+質問、説明、要件定義書、設計書は日本語にする。
+データはSQLiteへ保存し、AWSやクラウドへはデプロイしない。
 ```
 
-**確認方法：**
+ほかの対応ハーネスでは、`$aidlc`の代わりに`/aidlc`を使います。
 
-Amazon Q Chat ウィンドウで `Rules` ボタン（右下）をクリックし、`.amazonq/rules/aws-aidlc-rules` のエントリがあることを確認します。
+## 実際のやり取り
 
----
+質問の内容や順序は、依頼の規模と選ばれたワークフローで変わります。次は実行ログではなく、体験を理解するための例です。
 
-#### Claude Code
+```text
+AI: 利用者は一人ですか。期限や優先度は必要ですか。
+人: 自分だけで使います。期限は必要ですが、優先度はいりません。
 
-AI-DLC は `CLAUDE.md`（プロジェクトメモリファイル）を使用してワークフローを実装します。
-
-**macOS/Linux（プロジェクトルートに配置）：**
-
-```bash
-cp ~/Downloads/aidlc-rules/aws-aidlc-rules/core-workflow.md ./CLAUDE.md
-mkdir -p .aidlc-rule-details
-cp -R ~/Downloads/aidlc-rules/aws-aidlc-rule-details/* .aidlc-rule-details/
+AI: タスクの追加・編集・削除、期限、完了状態、SQLiteへの保存を
+    対象にします。ログインと端末間同期は対象外です。
+    要件を確認して設計へ進めますか。
+人: 期限切れを赤く表示する要件を追加してください。
 ```
 
-**確認方法：**
+AIは回答を要件と設計へ反映し、実装、ビルド、テストへ進みます。人は、業務上の判断、成果物、テスト結果、外部へ影響する操作を確認します。
 
-1. プロジェクトディレクトリで Claude Code を起動
-2. `/config` コマンドで現在の設定を確認
-3. Claude に「このプロジェクトで現在有効なインストラクションは？」と確認
+## AWSで動くアプリに限定されない理由
 
----
+AI-DLCを使うときには、次の三つを分けて考えます。
 
-#### Cursor
+| 選択するもの | 例 |
+|--------------|----|
+| AI-DLCを動かすハーネス。 | Codex、Claude Code、Kiroなど。 |
+| AIモデルの接続先。 | ハーネスが対応するモデル提供元。 |
+| 完成したアプリの実行場所。 | ローカルPC、社内サーバー、Power Platform、クラウドなど。 |
 
-**Option 1: Project Rules（推奨）**
+AWS Platform Agentやインフラ設計の工程が存在しても、すべてのプロジェクトでAWSリソースを作るわけではありません。ローカルアプリなら、最初の依頼と要件に「クラウドへデプロイしない」と記録し、インフラ構築・デプロイ工程の実行計画を確認します。
 
-```bash
-mkdir -p .cursor/rules
+## 日本語利用時の注意
 
-cat > .cursor/rules/ai-dlc-workflow.mdc << 'EOF'
----
-description: "AI-DLC (AI-Driven Development Life Cycle) adaptive workflow for software development"
-alwaysApply: true
----
-EOF
-cat ~/Downloads/aidlc-rules/aws-aidlc-rules/core-workflow.md >> .cursor/rules/ai-dlc-workflow.mdc
+日本語の入力と日本語の成果物を指定できます。一方、非英語の会話でも自由記述の説明が英語になる事象が、公式リポジトリのIssueで報告されています。
 
-mkdir -p .aidlc-rule-details
-cp -R ~/Downloads/aidlc-rules/aws-aidlc-rule-details/* .aidlc-rule-details/
+開始時に次の条件を明示し、生成された要件書と設計書の言語も確認してください。
+
+```text
+会話と成果物は日本語にする。
+コマンド名、ファイル名、API名など変更できない識別子は原文を維持する。
 ```
 
-**Option 2: AGENTS.md（シンプルな代替手段）**
+## AI-DLCが向く開発
 
-```bash
-cp ~/Downloads/aidlc-rules/aws-aidlc-rules/core-workflow.md ./AGENTS.md
-mkdir -p .aidlc-rule-details
-cp -R ~/Downloads/aidlc-rules/aws-aidlc-rule-details/* .aidlc-rule-details/
-```
+| 向く状況 | 理由 |
+|----------|------|
+| 要件と実装の対応を残したい。 | 判断と成果物を工程ごとに記録できる。 |
+| 複数の担当領域が関係する。 | 設計、品質、セキュリティ、運用の観点を分けて扱える。 |
+| 既存システムを段階的に変更する。 | 既存コードの調査と変更計画を実装前に置ける。 |
+| チーム固有の確認事項がある。 | ルールや工程を拡張できる。 |
 
----
+小さな試作では、全工程を細かく実行すると確認作業のほうが大きくなることがあります。最初は軽量なワークフローを使い、必要な成果物と確認地点を見極めます。
 
-#### Cline
+## 公式情報と状態
 
-**Option 1: .clinerules ディレクトリ（推奨）**
+| リソース | 提供元 | 状態 | 確認できること |
+|----------|--------|------|------------------|
+| [AI-DLC Workflows](https://github.com/awslabs/aidlc-workflows) | Official（AWS Labs） | GA（安定版） | 現行README、対応ハーネス、ライセンス、機能。 |
+| [Getting Started](https://awslabs.github.io/aidlc-workflows/guide/01-getting-started/) | Official（AWS Labs） | GA（安定版） | インストール、設定、最初の実行。 |
+| [Orchestrator Reference](https://awslabs.github.io/aidlc-workflows/reference/03-orchestrator/) | Official（AWS Labs） | GA（安定版） | フェーズ、工程、実行条件。 |
+| [日本語コースの案内](https://aws.amazon.com/jp/blogs/news/aidlc-aws-skill-builder/) | Official（AWS） | —（公開コース） | 無料の日本語学習コースと方法論の3フェーズ。 |
+| [非英語で説明が混在するIssue](https://github.com/awslabs/aidlc-workflows/issues/780) | Community（公式リポジトリ上の報告） | —（Issue） | 日本語を含む非英語利用時に確認すべき事象。 |
 
-```bash
-mkdir -p .clinerules
-cp ~/Downloads/aidlc-rules/aws-aidlc-rules/core-workflow.md .clinerules/
-mkdir -p .aidlc-rule-details
-cp -R ~/Downloads/aidlc-rules/aws-aidlc-rule-details/* .aidlc-rule-details/
-```
+## 関連ドキュメント
 
----
-
-#### OpenAI Codex
-
-Codex はプロジェクトルートの `AGENTS.md` を自動検出して読み込みます。
-
-```bash
-cp ~/Downloads/aidlc-rules/aws-aidlc-rules/core-workflow.md ./AGENTS.md
-mkdir -p .aidlc-rule-details
-cp -R ~/Downloads/aidlc-rules/aws-aidlc-rule-details/* .aidlc-rule-details/
-```
-
----
-
-#### Kiro
-
-AI-DLC は [Kiro Steering Files](https://kiro.dev/docs/cli/steering/) を使用してワークフローを実装します。
-
-```bash
-mkdir -p .kiro/steering
-cp -R ~/Downloads/aidlc-rules/aws-aidlc-rules .kiro/steering/
-cp -R ~/Downloads/aidlc-rules/aws-aidlc-rule-details .kiro/
-```
-
-> [!NOTE]
-> Kiro IDE では Vibe モードで AI-DLC ワークフローを実行します。Kiro が Spec モードへの切り替えを促した場合は `No` を選択して Vibe モードを維持してください。
-
----
-
-## 使い方
-
-セットアップ後は、チャットで以下のように入力するだけでワークフローが起動します。
-
-```
-Using AI-DLC, [作りたいものの説明]
-```
-
-**例：**
-
-- `Using AI-DLC, ユーザー認証機能を追加したい`
-- `Using AI-DLC, 既存のプロジェクトを分析してほしい`
-
-**ワークフローの流れ：**
-
-1. `Using AI-DLC, ...` でチャットを開始
-2. AI-DLC ワークフローが自動的に起動し、対話形式で導いてくれる
-3. AI-DLC が提示する構造化された質問に回答
-4. AI が生成するすべての計画を慎重にレビューし、フィードバックを提供
-5. 実行計画を確認して、どのステージが実行されるかを把握
-6. 各ステージの成果物を慎重にレビューして承認し、制御を維持
-7. すべての成果物は `aidlc-docs/` ディレクトリに生成される
-
----
-
-## 拡張機能（Extensions）システム
-
-AI-DLC はコアワークフローの上に追加ルールを重ねる拡張システムをサポートしています。拡張機能は `aws-aidlc-rule-details/extensions/` 配下のカテゴリ別マークダウンファイルとして構成されています。
-
-### 組み込み拡張機能
-
-| 拡張機能 | 説明 |
-|---------|------|
-| **security/baseline** | セキュリティのベースラインルール（組織固有にカスタマイズ推奨） |
-| **testing/property-based** | プロパティベーステストのルール |
-| **resiliency/baseline** | 耐障害性のベースラインルール |
-
-### 拡張機能の仕組み
-
-各拡張機能は 2 つのファイルで構成されます：
-
-- **ルールファイル**（例：`security-baseline.md`）— 拡張ルールの定義
-- **オプトインファイル**（例：`security-baseline.opt-in.md`）— 要件分析時にユーザーへ提示する多肢選択式の質問
-
-ワークフロー開始時に `*.opt-in.md` ファイルをスキャンし、要件分析フェーズで各オプトインを提示します。ユーザーがオプトインすると対応するルールファイルがロードされます。
-
-### 独自の拡張機能を追加する方法
-
-1. `extensions/` 配下にディレクトリを作成（例：`security/compliance/`）
-2. ルールファイルを追加。各ルールは `## Rule <PREFIX-NN>: <タイトル>` 形式の見出し（例：`COMPLIANCE-01`）で定義
-3. オプトインファイルを追加（省略した場合、拡張は常に適用される）
-
----
-
-## ツール・エバリュエーター
-
-`scripts/aidlc-evaluator/` ディレクトリには AI-DLC ワークフローの変更を検証するための自動テスト・レポートフレームワークが含まれています。
-
-| 機能 | 説明 |
-|------|------|
-| **ゴールデンテストケース** | 検証用のベースラインテストケース |
-| **セマンティック評価** | 出力の正確性と完全性を AI ベースで評価 |
-| **コード評価** | 静的解析（リンティング、セキュリティスキャン、重複検出） |
-| **NFR 評価** | 非機能要件のテスト（トークン使用量、実行時間、クロスモデル一貫性） |
-| **CI/CD 統合** | PR バリデーション用の自動パイプライン |
-
-**クイックスタート：**
-
-```bash
-cd scripts/aidlc-evaluator
-uv sync
-uv run python run.py test
-```
-
----
-
-## 関連リソース
-
-| リソース | URL |
-|---------|-----|
-| リポジトリ | [github.com/awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows) |
-| AI-DLC 2.0 仕様書 | [PDF（英語）](https://github.com/awslabs/aidlc-workflows/blob/v2/assets/AI-DLC-Workflows-2.0-Specification.pdf) |
-| AWS DevOps ブログ | [AI-Driven Development Life Cycle（英語）](https://aws.amazon.com/blogs/devops/ai-driven-development-life-cycle/) |
-| メソッド定義ペーパー | [prod.d13rzhkk8cj2z0.amplifyapp.com（英語）](https://prod.d13rzhkk8cj2z0.amplifyapp.com/) |
-| デザインレビューツール | [aws-samples/sample-aidlc-design-reviewer（実験的）](https://github.com/aws-samples/sample-aidlc-design-reviewer) |
-| トレーサビリティツール | [aws-samples/sample-aidlc-traceability](https://github.com/aws-samples/sample-aidlc-traceability) |
-| コードレビューツール | [aws-samples/sample-aidlc-code-reviewer](https://github.com/aws-samples/sample-aidlc-code-reviewer) |
-| AWS 責任ある AI ポリシー | [aws.amazon.com/ai/responsible-ai/policy/（英語）](https://aws.amazon.com/ai/responsible-ai/policy/) |
+- [Power Apps PlansとAI-DLCの比較](ai-dlc-power-platform.md) — Power Platformで使う場合の役割と導入判断。
+- [AI-DLC・AI-PDLC・AI BPRの違い](ai-driven-lifecycle-terms.md) — 似た名前の対象と公開形態。
+- [仕様駆動開発（SDD）](spec-driven.md#ai-dlc-との関係--どちらを選ぶか) — GitHub Spec Kitとの選び方。
 
 > [!IMPORTANT]
-> 生成 AI は誤りを犯すことがあります。AI モデルとエージェントコーディングアシスタントが生成するすべての出力とコストを必ずレビューすることを検討してください。
+> 生成AIの出力、実行するコマンド、テスト結果、費用、外部システムへの変更は人が確認してください。

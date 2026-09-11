@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-09
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-11
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -724,7 +724,7 @@ Skill・MCP・ハーネスがエージェントを**動かす**側の話だと�
 
 コアワークフローは `/speckit.constitution`（原則の確立）→ `/speckit.specify`（何を作るか）→ `/speckit.plan`（どう作るか）→ `/speckit.tasks`（タスク分解）→ `/speckit.implement`（実装）→ `/speckit.converge`（仕様との整合を確認）の順で進みます。受け入れ基準を曖昧さなく書く記法として **EARS（Easy Approach to Requirements Syntax）** が広く使われています。
 
-[AI-DLC ワークフロー](dev-methods/aidlc-workflows.md)（AWS Labs）も同じ問題意識（AI エージェントに構造化された手順を強制する）を持つ実装の 1 つです。機能単位で仕様を積み重ねたいか、プロジェクト全体を 3 フェーズで管理したいかで、選ぶものが変わります。
+[AI-DLC Workflows](dev-methods/aidlc-workflows.md)（AWS Labs）も、要件や設計を実装前に確認してAIエージェントの作業を構造化します。Spec Kitは機能単位の仕様作成、AI-DLCは初期化から運用までの5フェーズを中心に据えます。対象は重なりますが、同じ手法や公式な連携機能ではありません。
 
 **→ ワークフローの詳細・EARS の記法・AI-DLC との選び方の軸は [仕様駆動開発（SDD）](dev-methods/spec-driven.md) を参照**
 

@@ -1,6 +1,6 @@
 # 仕様駆動開発（SDD） — 仕様を実行可能な入力にする
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Cursor・Codex ほか多数のエージェントに対応） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-07
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Cursor・Codex ほか多数のエージェントに対応） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-11
 
 > このページは [github/spec-kit](https://github.com/github/spec-kit) のスナップショットです。コマンド名・生成されるディレクトリ構成・対応エージェントの一覧はバージョンで変わります。導入時は必ず [公式リポジトリ](https://github.com/github/spec-kit) と [公式ドキュメント](https://github.github.io/spec-kit/) を確認してください。実行環境は Python 3.11+ と [uv](https://docs.astral.sh/uv/)（または pipx）が前提の CLI です。
 
@@ -76,23 +76,23 @@ While <任意の事前条件>, when <任意のトリガー>, the <システム�
 
 ## AI-DLC との関係 — どちらを選ぶか
 
-[AI-DLC ワークフロー](aidlc-workflows.md)（AWS Labs）も、AI エージェントに構造化された手順を強制するという点で SDD と同じ問題意識を持っています。**AI-DLC は SDD の実装の 1 つ**という位置づけで捉えると読みやすくなります。両者の違いは次の軸に整理できます。
+[AI-DLC Workflows](aidlc-workflows.md)（AWS Labs）も、要件や設計を実装前に確認し、AIエージェントの作業を構造化します。Spec Kitが仕様を実装の中心に置くのに対し、AI-DLCは初期化から運用までのライフサイクル全体を扱います。両者は対象が重なりますが、同じ手法や公式な連携機能ではありません。
 
 | 軸 | GitHub Spec Kit | AI-DLC |
 |---|---|---|
 | 提供元 | GitHub（コミュニティ主導） | AWS Labs |
-| 単位 | 機能（feature）ごとに `specify → plan → tasks → implement` | プロジェクトの複雑さに応じて自動的に適応する 3 フェーズ（Inception / Construction / Operations） |
-| 起動方法 | CLI (`specify init`) でエージェント別ファイルを生成し、スラッシュコマンドで進める | チャットに「Using AI-DLC, …」と書くだけで起動 |
-| 拡張性 | プリセット・Extension・Community Bundle による差し替えが前提 | ルールファイルによる問題行動の抑制が中心 |
-| 収束の確認 | `/speckit.converge` が明示的な「Converged」判定を出す | 明示的な収束コマンドは確認できていない |
+| 単位 | 機能（feature）ごとに `specify → plan → tasks → implement` | 5フェーズ、33ステージと複数のワークフロープロファイル |
+| 起動方法 | CLI (`specify init`) でエージェント別ファイルを生成し、スラッシュコマンドで進める | `aidlc config`でハーネスを設定し、`/aidlc`または`$aidlc`で開始 |
+| 拡張性 | プリセット・Extension・Community Bundle による差し替えが前提 | ステージ、エージェント、ルール、知識、プラグインを変更可能 |
+| 進行の確認 | `/speckit.converge` が明示的な「Converged」判定を出す | 成果物、永続状態、監査履歴、人の承認ゲートで確認 |
 
-**選び方の軸は「仕様を書く単位をどこに置くか」です。** 機能単位で仕様・計画・タスクを積み重ね、`/speckit.converge` で明示的に収束を確認したいなら spec-kit、既存のプロジェクト全体に対して「着想 → 設計実装 → 運用」という 3 段階のフェーズ管理をルールファイルで強制したいなら AI-DLC が近い選択です。両方を同じプロジェクトで併用する場合の一次情報は確認できていないため、本文では扱いません。
+**選び方の軸は「仕様作成を中心に置くか、開発ライフサイクル全体を中心に置くか」です。** 機能単位で仕様・計画・タスクを積み重ね、`/speckit.converge`で収束を確認したいならSpec Kit、着想から運用までの工程、専門エージェント、承認、監査履歴を一つの実行系で扱いたいならAI-DLCが候補になります。両方を同じプロジェクトで併用する公式手順は確認できていないため、先に一方を小さく試してください。
 
 ---
 
 ## 関連ドキュメント
 
-- [AI-DLC ワークフロー](aidlc-workflows.md) — AWS Labs による SDD の実装。3 フェーズの適応型ワークフロー
+- [AI-DLC Workflows](aidlc-workflows.md) — AWS Labsによる5フェーズの適応型ワークフロー
 - [コーディングエージェントの選び方](coding-agents.md) — `AGENTS.md` など、エージェント横断の設定ファイルの位置づけ
 - [Skill / Plugin のセキュリティ](skill-security.md) — spec-kit が生成するコマンドファイル・スクリプトを導入する前に確認すること
 
