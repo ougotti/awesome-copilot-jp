@@ -56,17 +56,40 @@ AWSの方法論や学習コースでは、開発の中心をInception、Construc
 
 ## Windowsで試す最小手順
 
-以下は公式Getting Startedに基づく手順です。このガイドではインストーラーの実行とモデル接続を実機検証していません。
+以下は公式Getting Startedとリリースページに基づく手順です。このガイドではインストーラーの実行とモデル接続を実機検証していません。
 
 ### 1. AI-DLCをインストールする
 
-PowerShellで実行します。
+GitHubの最新リリース情報から、インストーラーと公開されているSHA-256ダイジェストを取得します。インストーラーは、すぐに実行せずファイルとして保存します。
 
 ```powershell
-irm https://github.com/awslabs/aidlc-workflows/releases/latest/download/install.ps1 | iex
+$release = Invoke-RestMethod "https://api.github.com/repos/awslabs/aidlc-workflows/releases/latest"
+$asset = $release.assets | Where-Object { $_.name -eq "install.ps1" } | Select-Object -First 1
+if (-not $asset -or -not $asset.digest) {
+    throw "install.ps1またはSHA-256ダイジェストを取得できません。"
+}
+
+$installer = Join-Path $PWD "install-aidlc.ps1"
+Invoke-WebRequest $asset.browser_download_url -OutFile $installer
+Get-Content -LiteralPath $installer
+
+$actualHash = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash.ToLowerInvariant()
+$expectedHash = $asset.digest -replace "^sha256:", ""
+if ($actualHash -ne $expectedHash) {
+    Remove-Item -LiteralPath $installer
+    throw "SHA-256が一致しないため、インストーラーを削除しました。"
+}
 ```
 
-このコマンドは取得したスクリプトをそのまま実行します。組織のルールで許可されていない場合は、[最新リリース](https://github.com/awslabs/aidlc-workflows/releases/latest)からファイルを取得し、内容とチェックサムを確認してから実行してください。
+表示されたスクリプトの内容と、[最新リリース](https://github.com/awslabs/aidlc-workflows/releases/latest)の説明を確認してから実行します。
+
+```powershell
+$version = $release.tag_name.TrimStart("v")
+& $installer -Version $version
+Remove-Item -LiteralPath $installer
+```
+
+組織でダウンロードしたスクリプトの実行が禁止されている場合は、実行せず管理者へ確認してください。
 
 ### 2. 試すプロジェクトを設定する
 

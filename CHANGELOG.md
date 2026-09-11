@@ -6,7 +6,7 @@
 
 - **2026-09-11** AI-DLC入門・Plans比較・AI駆動手法の用語整理を分割（#174）
   - **[AI-DLC Workflows — 日本語で試すAI駆動開発ライフサイクル](docs/dev-methods/aidlc-workflows.md) を現行仕様へ更新** — 5フェーズ、対応ハーネス、公式インストーラー、Codexでの導入、日本語での依頼例、実際の対話例、実装先とAWS利用の関係を整理した
-  - **[Power Apps Plansがあるのに、AI-DLCを使う意味はあるか](docs/dev-methods/ai-dlc-power-platform.md) を新設** — Power Apps / Power Automate中心ならPlansを先に使い、複数システムや開発ライフサイクル全体を扱う場合にAI-DLCを検討する選定軸と小規模な評価手順を示した
+  - **[Power Apps PlansがあるのにAI-DLCを使う意味はあるのか](docs/dev-methods/ai-dlc-power-platform.md) を新設** — Power Apps / Power Automate中心ならPlansを先に使い、複数システムや開発ライフサイクル全体を扱う場合にAI-DLCを検討する選定軸と小規模な評価手順を示した
   - **[AI-DLC・AI-PDLC・AI BPRを混ぜずに理解する](docs/dev-methods/ai-driven-lifecycle-terms.md) を新設** — 3つの対象、提供形態、試用可能性を分離し、単一の公式パイプラインとして扱わない構成にした
   - AWSブログ、`awslabs`、`aws-samples`、Microsoft Learnの公式情報と、本ガイドによるPower Platformへの適用案を明示的に区別した。Power Platformとの統合案は実機未検証であり、AWSとMicrosoftの共同公式手順ではないことを明記した
   - `spec-driven.md`と`docs/trends.md`に残っていた旧3フェーズ・旧起動方法の比較を、現行の5フェーズとネイティブCLIに合わせて更新した
