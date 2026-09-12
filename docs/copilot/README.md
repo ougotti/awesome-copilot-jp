@@ -451,24 +451,13 @@ approval 後に新しいコミットが push されると、**人間のレビュ
 
 GitHub Copilot の **enterprise managed permissions** が 2026-09-09 に一般提供されました。Enterprise owner は、エージェントが行う操作を `permissions.deny`、`permissions.ask`、`permissions.allow` に分類できます。
 
-| セレクター | 対象 | 運用例 |
-|-----------|------|--------|
-| `Shell` | シェルコマンド | ビルドは許可し、デプロイは毎回確認する |
-| `Read` | ファイルの読み取り | 秘密情報を置くパスを拒否する |
-| `Edit` | ファイルの作成・変更 | 生成物のディレクトリだけ許可する |
-| `Domain` | ネットワーク接続先 | 許可した API 以外は確認する |
-
-複数の規則が一致する場合は **`deny` → `ask` → `allow`** の順で優先されます。組織が `ask` にした操作には毎回新しい承認が必要で、利用者側の自動承認、承認バイパス、保存済みの許可、Hook では省略できません。利用者の設定を組織の設定より緩くできないため、`permissions.disableBypassPermissionsMode` より細かく操作を分けたい場合に使えます。
-
-一般提供の対象として発表された面は、**Copilot app、Copilot CLI、VS Code Agent Host のセッション**です。別の IDE や GitHub 上のエージェントにも同じ粒度の規則が効くと推測せず、対象面を確認してください。
+対象は shell command、file read / edit、network domain です。複数の規則が一致する場合は **`deny` → `ask` → `allow`** の順で優先され、組織の `ask` には毎回新しい承認が必要です。一般提供の対象として発表された面は、**Copilot app、Copilot CLI、VS Code Agent Host のセッション**です。
 
 ### JetBrains は managed sandbox の Public Preview
 
-GitHub Copilot for JetBrains では、2026-09-08 に **enterprise managed sandbox** が Public Preview になりました。ファイルシステム、ネットワーク、プロキシ、開発ツール、macOS Keychain へのアクセスを中央設定し、制限された項目は利用者側で変更できません。
+GitHub Copilot for JetBrains では、2026-09-08 に **enterprise managed sandbox** が Public Preview になりました。これは JetBrains の実行環境を中央設定する機能で、上記の操作単位の managed permissions が JetBrains でも一般提供された、という発表ではありません。
 
-これは JetBrains の実行環境を囲う機能です。上記の `Shell` / `Read` / `Edit` / `Domain` による操作単位の managed permissions が JetBrains でも一般提供された、という意味ではありません。
-
-**→ MCP / Plugin の許可リスト、Claude Managed Agents との比較は [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#実行する操作を-deny--ask--allow-に分ける) を参照**
+**→ セレクター、承認を省略できない条件、JetBrains sandbox、Claude Managed Agents との比較は [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#実行する操作を-deny--ask--allow-に分ける) を参照**
 
 ---
 

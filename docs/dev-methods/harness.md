@@ -256,7 +256,7 @@ Console などファイルの外側でリソースが編集・アーカイブ・
 
 ## 実行中の権限判定と介入 — Claude Managed Agents
 
-`ant apply` が「どの構成をデプロイするか」を止める仕組みなら、Claude Platform の **Managed Agents permission policies**（Beta）は、デプロイしたエージェントが**実行中に個々のツールを呼べるか**を判定する仕組みです。Managed Agents API では `managed-agents-2026-04-01` の beta header が必要です。
+`ant apply` が「どの構成をデプロイするか」を止める仕組みなら、Claude Platform の **Managed Agents permission policies**（Beta）は、デプロイしたエージェントが**実行中に個々のツールを呼べるか**を判定する仕組みです。Managed Agents API では `anthropic-beta: managed-agents-2026-04-01` ヘッダーが必要です。
 
 | ポリシー | 動作 | 運用上の意味 |
 |---------|------|-------------|
