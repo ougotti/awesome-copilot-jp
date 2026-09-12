@@ -1,6 +1,6 @@
 # Codex ガイド（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル）／ デスクトップ（ChatGPT アプリ）／ Chat UI（ChatGPT・ChatGPT Work） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-12
+> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-12
 
 [openai/skills](https://github.com/openai/skills) は OpenAI が公開している Codex 用の公式スキルカタログです。指示・スクリプト・リソースをフォルダにまとめた「スキル」を追加することで、デプロイ・ブラウザ自動化・外部サービス連携といったワークフローを Codex に持たせられます。
 
@@ -140,35 +140,35 @@ CLI のプラグインブラウザは Marketplace ごとにタブが分かれ、
 
 同じく 0.152.0 で、**記憶された MCP tool の承認が、選択中の app account 単位**で扱われるようになりました。アカウントを切り替えると、以前の承認はそのまま引き継がれません。権限分離そのものではなく、**記憶済み承認の適用範囲**の変更として理解してください。
 
-> コマンドの正確な構文はバージョンによって変わります。導入時は使用中バージョンの`--help`または[公式changelog](https://learn.chatgpt.com/docs/changelog)で確認してください。
+> コマンドの正確な構文はバージョンによって変わります。導入時は使用中バージョンの `--help` または [公式 changelog](https://learn.chatgpt.com/docs/changelog) で確認してください。
 
-### CodexをMCP serverとして公開する入口は削除
+### Codex を MCP サーバーとして公開する入口は削除
 
-`codex mcp-server`コマンドとstandaloneの`codex-mcp-server`バイナリは、2026-09-05に削除されました。どちらかを起動して**Codex自体をMCP serverとして組み込んでいたintegration**は、Codexを更新する前に移行が必要です。
+`codex mcp-server` コマンドと単体の `codex-mcp-server` バイナリは、2026-09-05 に削除されました。どちらかを起動して **Codex 自体を MCP サーバーとして組み込んでいたインテグレーション**は、Codex を更新する前に移行が必要です。
 
 | 確認すること | 内容 |
 |-------------|------|
-| 削除の影響を受ける | `codex mcp-server`または`codex-mcp-server`を起動するintegration。 |
-| 移行候補 | 認証、会話履歴、承認、streamed agent eventsが必要ならCodex app server。 |
-| 互換性 | app serverは独自のJSON-RPC protocolを使う。MCP serverやMCP clientのdrop-in replacementではない。 |
-| 成熟度 | app-serverコマンドはExperimentalで、本番workloadはサポート対象外。 |
-| 影響を受けない | Codexから外部MCP serverへ接続する機能。`codex mcp`で引き続き管理できる。 |
+| 削除の影響を受ける | `codex mcp-server` または `codex-mcp-server` を起動するインテグレーション |
+| 移行候補 | 認証、会話履歴、承認、streamed agent events が必要なら Codex app server |
+| 互換性 | app server は独自の JSON-RPC プロトコルを使う。MCP サーバーや MCP クライアントをそのまま置き換える互換先ではない |
+| 成熟度 | app-server コマンドは Experimental で、本番 workload はサポート対象外 |
+| 影響を受けない | Codex から外部 MCP サーバーへ接続する機能。`codex mcp` で引き続き管理できる |
 
-これはMCP specificationの移行ではなく、Codexを外部へ公開するintegration endpointの削除です。[公式の移行案内](https://learn.chatgpt.com/docs/mcp-server)で、移行対象とapp-server protocolを確認してください。
+これは MCP specification の移行ではなく、Codex を外部へ公開する integration endpoint の削除です。[公式の移行案内](https://learn.chatgpt.com/docs/mcp-server) で、移行対象と app-server protocol を確認してください。
 
-### Codex CLI 0.154.0の運用変更
+### Codex CLI 0.154.0 の運用変更
 
-0.154.0（2026-09-09）では、worktreeと実行中セッションの再読込、MCP認証、workspace trustに関する境界が更新されました。
+0.154.0（2026-09-09）では、worktree と実行中セッションの再読込、MCP 認証、workspace trust に関する境界が更新されました。
 
 | 変更 | 運用上の意味 |
 |------|--------------|
-| `--worktree` / `/worktree` | 新規・fork sessionを隔離したcheckoutで開始できるExperimental機能。Scheduled tasksのworktree選択とは別の入口。 |
-| Plugin再読込 | 新しく導入したPlugin toolsと、外部で更新・rollbackしたPlugin内のSkills / Hooksを既存sessionへ反映する。 |
-| MCP OAuth | token refresh失敗時はlogin challengeを表示し、拒否されたtool callを自動replayしない。認証後に必要性を確認して再実行する。 |
-| Workspace trust | trust確立前にworkspace側が制御するhelperを起動しない。 |
-| 承認context | compaction後も承認contextを保持し、新しいuser inputで無効になった承認を拒否する。 |
+| `--worktree` / `/worktree` | 新規・fork session を隔離した checkout で開始できる Experimental 機能。Scheduled tasks の worktree 選択とは別の入口 |
+| Plugin 再読込 | 新しく導入した Plugin tools と、外部で更新・rollback した Plugin 内の Skills / Hooks を既存 session へ反映する |
+| MCP OAuth | token refresh 失敗時は login challenge を表示し、拒否された tool call を自動 replay しない。認証後に必要性を確認して再実行する |
+| Workspace trust | trust 確立前に workspace 側が制御する helper を起動しない |
+| 承認 context | compaction 後も承認 context を保持し、新しい user input で無効になった承認を拒否する |
 
-Plugin以外の単体Skillを追加した場合まで、実行中の全sessionが必ず再読込するとは公式changelogに書かれていません。単体SkillはCodexを再起動して確認します。
+Plugin 以外の単体 Skill を追加した場合まで、実行中の全 session が必ず再読込するとは公式 changelog に書かれていません。単体 Skill は Codex を再起動して確認します。
 
 **→ 可搬形式（Agent Plugins 1.0.0）の仕様と他ツールの対応状況は [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準) を参照**
 
