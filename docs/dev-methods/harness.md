@@ -194,9 +194,20 @@ QM が「自前のクラウド・Postgres・インフラ担当者」を前提に
 | Codex CLI | メトリクス・ログ（イベント）。`config.toml` の `[otel]` で設定 | 公式ドキュメントに明記なし |
 | VS Code Copilot Chat | トレース・メトリクス・イベント | 明記あり（`gen_ai.*` に加え `github.copilot.*` の拡張名前空間） |
 
-> **対応の深さはツールごとに違い、変化も速い領域です。** 上表は各公式ドキュメントの確認日（2026-09-07）時点のもので、導入時は必ず最新の記述を確認してください。
+> **対応の深さはツールごとに違い、変化も速い領域です。** 上表は各公式ドキュメントの確認日（2026-09-12）時点のもので、導入時は必ず最新の記述を確認してください。
 
 この「動かした後に何が見えるか」は、[Skill / Plugin のセキュリティ 5 節「統制が効く 3 つの段階」](skill-security.md#5-統制が効く-3-つの段階)の**実行後（監査）**と直結します。あちらが「セッションのトランスクリプトを取得する」という組織向け機能（Compliance API）を扱うのに対し、ここでの OpenTelemetry は**ベンダー中立の計測データ**（メトリクス・ログ・トレース）を自分たちの監視基盤（OTLP 対応バックエンド）へ流す仕組みです。両者は排他ではなく、組織で使える統制の手段が違う層として併存します。
+
+### OpenTelemetry と Copilot usage metrics API を分ける
+
+2026-09-11、GitHub は専用の **VS Code Agents ウィンドウ**の利用指標を Copilot usage metrics reports へ一般提供しました。これはエージェントの内部トレースではなく、Enterprise / Organization での導入状況を見る集計 API です。
+
+| 観測手段 | 答える問い | 主なデータ |
+|---------|-----------|-----------|
+| OpenTelemetry | 1 回の実行で、どのモデル・tool が動き、どこで失敗・遅延したか | trace、event、token、tool call、latency |
+| Copilot usage metrics API | 組織内で専用 Agents ウィンドウを何人が、何 session / message 使ったか | `daily_active_vscode_agent_users`、`totals_by_vscode_agent`、ユーザー別 `used_vscode_agent` |
+
+Copilot の新しいフィールドは 1 日 / 28 日の report に追加され、データがない場合は省略または `null` になり得ます。対象は**専用の VS Code Agents ウィンドウだけ**で、editor-window Agent Mode や汎用の集計へ足し合わせません。閲覧には owner / billing manager または `View Copilot Metrics` 権限と、Copilot usage metrics policy の有効化が必要です。
 
 ## 宣言でリモートのエージェントを管理する — `ant apply`
 
@@ -308,6 +319,8 @@ Console などファイルの外側でリソースが編集・アーカイブ・
 - [Claude Code Monitoring](https://code.claude.com/docs/en/monitoring-usage) — OTel メトリクス・イベント・トレース（ベータ）の設定（公式）
 - [Codex CLI Advanced Configuration — `[otel]`](https://learn.chatgpt.com/docs/config-file/config-advanced) — Codex の OTel 設定（公式）
 - [Monitor agent usage with OpenTelemetry](https://code.visualstudio.com/docs/agents/guides/monitoring-agents) — VS Code Copilot Chat の OTel 対応（公式）
+- [Add VS Code Agents to Copilot usage metrics](https://github.blog/changelog/2026-09-11-add-vs-code-agents-to-copilot-usage-metrics/) — 専用 Agents ウィンドウの利用指標（GitHub 公式・GA）
+- [Copilot usage metrics reference](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics) — report の種類、field、権限（GitHub 公式）
 - [Manage resources as code with `ant apply`](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/apply) — リソースの種類・`claude-lock.json`・フラグ・CI 運用の一次情報（Anthropic 公式）
 - [Claude Platform リリースノート](https://platform.claude.com/docs/en/release-notes/overview) — `ant` CLI 1.30.0 / `ant apply` の公開（2026-09-03、公式）
 - [Managed Agents permission policies](https://platform.claude.com/docs/en/managed-agents/permission-policies) — `always_allow` / `always_ask` / `auto` とイベント形式（Anthropic 公式・Beta）

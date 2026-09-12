@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-11
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-12
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-12 | GitHub / Claude の実行時権限制御、VS Code 1.137 Automations、Codex MCP server 廃止、Claude Code の Plugin eval、Copilot code review と Agents 利用指標を追加。詳細は各製品・開発手法ページへ分離した |
 | 2026-09-09 | 13 節を「MCP 2026-07-28 仕様と移行時の確認」に改題し、「tier 1 SDK が後方互換を保っているため利用者側の作業は不要」という断定を、既製クライアント利用者・SDK 開発者・独自サーバー運用者・拡張利用者で分けた役割別の確認事項の表へ置き換えた。stateless core でもアプリケーション状態は明示的なハンドルで保持できる点を補足した |
 | 2026-09-09 | 13 節「拡張」に、独立ページ [MCP Apps — 会話内にUIを追加する](dev-methods/mcp-apps.md) への誘導を追加。仕組み・最小例・対応ホストの確認と fallback・データ露出範囲を新ページに整理した |
 | 2026-09-09 | 10 節に、独立ページ [長時間タスクの信頼性設計](dev-methods/agent-reliability.md) への誘導を追加。time horizon と実行時間の違い、checkpoint・retry・冪等性・reliability budget を新ページに整理した |
@@ -569,6 +570,10 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 
 レビューごとに選べるほか、組織管理者が既定値を設定できます（組織設定 → Copilot → Copilot code review）。使用されたレベルは、タイムラインと PR の概要コメントに表示されます。
 
+2026-09-11 には review の検証範囲が広がり、Copilot SDK の full shell tools を **Copilot agent firewall の内側**で使って build、test、対象 script を実行できるようになりました。これは review agent の分析経路の変更であり、上表の **MCP tool は read-only** という制約が撤廃された発表ではありません。
+
+同じ更新で、後続 commit が指摘を修正したと rereview が判断すると、その comment を自動 resolve するようになりました。未対応の指摘は open のまま残ります。返信しただけで直ったと扱う機能ではなく、後続差分を rereview する挙動です。
+
 ### 9-2. IDE・CLI 側の対応状況
 
 各ツールが Skill / Plugin を「設定ファイルを手で置くもの」から「**UI で管理するもの**」へ移しつつあります。
@@ -579,7 +584,7 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 | Visual Studio | Copilot CLI と同じ Copilot SDK を基盤とする Agent。**.NET / Azure チームが作成したビルトイン Skill** を同梱 |
 | JetBrains | Marketplace またはソースリポジトリから Plugin を導入する UI。**Claude を agent provider に指定**して、カスタムエージェント・Skill・Instructions を利用できる |
 | Codex | Agent Plugins に対応。**ローカル / 個人 / ワークスペース / リモート**のカタログを横断検索できる。Cursor 管理の Skill をインポートできる |
-| Claude Code | Plugin marketplace が **GitLab に対応**（nested subgroup を含む）。`plugin validate` が `SKILL.md` の frontmatter の解析失敗を検出する |
+| Claude Code | Plugin marketplace が **GitLab に対応**（nested subgroup を含む）。`plugin validate` は構造を検査し、2.1.269 以降の `plugin eval` は Plugin あり / なしの挙動を反復評価する |
 
 > **実務上の落とし穴**: Codex は、コンテキストが逼迫すると Skill カタログを切り詰め、その旨を警告します。Skill は入れるほど良いわけではなく、**使う分だけ有効にする**ほうが安定します。
 
@@ -620,6 +625,10 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 
 動かす仕組みが揃うほど、**動かした後に何が見えるか**も問われます。OpenTelemetry の **GenAI semantic conventions**（モデル呼び出し・ツール呼び出し・トークン交換を標準化した `gen_ai.*` 属性）に、Claude Code・Codex CLI・VS Code Copilot Chat がいずれも OTel（メトリクス／ログ／トレース）を出力できます。ただし `gen_ai.*` 属性への準拠を明記しているのは Claude Code と VS Code Copilot Chat で、**Codex CLI の公式ドキュメントには明記がありません**。
 
+2026-09-11 に一般提供された Copilot usage metrics の VS Code Agents 指標は、これとは用途が違います。`daily_active_vscode_agent_users`、`totals_by_vscode_agent`、`used_vscode_agent` は、専用 Agents ウィンドウの組織内 adoption / engagement を 1 日・28 日単位で集計します。個々の tool call を追う OTel とは分けて使い、editor-window Agent Mode の利用をこの指標へ含めません。
+
+また、VS Code 1.137 の **Automations**（Microsoft 公式、2026-09-09、Preview）は、prompt、workspace、agent / model / permission options、schedule を保存して、Manual / Hourly / Daily / Weekly でローカルの agent task を起動します。Codex Scheduled tasks、Claude Code `/loop`、Kiro Crew と同名機能として扱わず、実行場所・worktree・承認・停止条件で選びます。
+
 **→ 概念、Microsoft Copilot Studio・QM・Kiro Crew の実装、セキュリティポスチャ、導入の前提、OpenTelemetry での可観測性は [AI エージェントの実行基盤（ハーネス）](dev-methods/harness.md) を参照**
 **→ ループの構成要素・停止条件の作り方・落とし穴は [ループエンジニアリング](dev-methods/loop-engineering.md) を参照**
 **→ サブエージェントや並列実行を「いつ使うべきか」という設計判断は [マルチエージェントを使う境界線](dev-methods/multi-agent.md) を参照**
@@ -648,6 +657,8 @@ Snyk の「ToxicSkills」調査（2026-02-05 公開）は、ClawHub と skills.s
 最低限の対処は 3 つです — **`gh skill preview` で中身を読む**、**タグではなくコミット SHA で固定する**、**組織では `managed-settings.json` で Marketplace と MCP サーバーを限定する**。
 
 2026 年 8 月には、統制の範囲が**導入前から前後へ**広がりました。組織向けプラン限定ですが、**推論前**に組織のセキュリティサーバーが allow / deny を返すまで待つ仕組み（Inference hooks）と、**実行後**に利用者のマシン上のセッションまでトランスクリプトを取得する仕組み（Compliance API）が加わっています。中身が安全な Skill でも、渡される入力や実行される文脈まではスキャンできないためです。
+
+2026 年 9 月には**実行する操作そのもの**も中央制御の対象になりました。GitHub Copilot の enterprise managed permissions（GitHub 公式、2026-09-09、GA）は `Shell` / `Read` / `Edit` / `Domain` を `deny` / `ask` / `allow` に分け、managed `ask` には毎回新しい承認を要求します。Claude Managed Agents permission policies（Anthropic 公式、Beta）は agent / MCP tool call ごとに allow / ask / deny を評価し、`evaluated_permission` をイベントに残します。Claude の `auto` は人の確認を保証しないため、人が必ず止める操作は `always_ask` にします。Claude Code のローカル権限設定とは別機能です。
 
 **→ 未定義の領域、導入前チェック、監査データ、組織での絞り込みは [Skill / Plugin のセキュリティ](dev-methods/skill-security.md) を参照**
 **→ コードを書かない方向けの安全ガイドは [生成AIを業務で安全に使う](business/safety.md) を参照**
@@ -678,6 +689,14 @@ GitHub MCP Server は正式リリース前に先行対応済みです。ただ�
 | **Tasks 等の拡張の利用者** | core と extension それぞれのバージョン・対応状況を照合する |
 
 **「最新 SDK に上げれば無変更で動く」という保証はありません。** 影響が及ぶのは主に、廃止されたセッション・ハンドシェイクの仕組みに直接依存していた実装です。
+
+### Codex を MCP server として起動していた場合
+
+Codex は 2026-09-05 に `codex mcp-server` command と standalone `codex-mcp-server` binary を削除しました。これは MCP 2026-07-28 specification への移行ではなく、**Codex 自体を MCP server として組み込む入口の廃止**です。Codex から外部 MCP server へ接続する `codex mcp` は継続します。
+
+認証、履歴、承認、streaming event が必要な integration は Codex app server が移行候補ですが、独自 JSON-RPC protocol であり MCP client の drop-in replacement ではありません。app server は Experimental で、公式は production workload 向けとしていません。
+
+**→ 影響範囲、移行判断、Codex CLI 0.154.0 の worktree と承認境界は [Codex ガイド](codex/README.md) を参照**
 
 **拡張の一つ「Apps」は、tool 呼び出しの結果として会話内にインタラクティブな UI（HTML/JS）を返せるようにするものです。** 対応ホストは Claude・Claude Desktop・VS Code GitHub Copilot など一部に限られ、「すべての MCP クライアントで動く」わけではありません。仕組み・最小例・対応ホストの確認方法・fallback の設計は [MCP Apps — 会話内にUIを追加する](dev-methods/mcp-apps.md) を参照してください。
 
@@ -738,6 +757,8 @@ SkillsBench（[arXiv:2602.12670](https://arxiv.org/abs/2602.12670)）は、複�
 
 退行の典型は、①**発火しない**／②**過剰に発火する**（いずれも `description` の書き方が主因）、③**必要な手順を飛ばす**、④**余計なファイルを残す**の 4 パターンです。測り方の最小手順は、成功の定義を先に決め、実際の失敗を題材にしたタスク集合で「Skill あり / なし」を比較し、決定論的な採点を基本にして変更のたびに回す、という流れになります。
 
+Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を組み込んだ `claude plugin eval` が追加されました。各 case を Plugin あり / なしで反復し、`regex`、tool、file、LLM judge の grader で採点して JSON / HTML report を出します。`plugin validate` が manifest / frontmatter の構造検査であるのに対し、`plugin eval` は挙動・退行の検査です。model call は利用枠または API 料金を消費し、server-side の利用可否にも従います。
+
 **→ 退行パターンの詳細、測り方の手順、`skill-eval-harness` 等の道具、ハーネスとの用語の切り分けは [Skill / エージェントの評価（evals）](dev-methods/evals.md) を参照**
 
 ---
@@ -764,7 +785,7 @@ SkillsBench（[arXiv:2602.12670](https://arxiv.org/abs/2602.12670)）は、複�
 | 組織で使える MCP サーバーを限定したい | MCP allowlists（managed settings） |
 | チームの規約をコードレビューに効かせたい | Copilot code review ＋ `.github/skills/` |
 | 手持ちの prompt ファイルを Skill にしたい | VS Code の AI Customizations から変換 |
-| 導入した Skill が効いているか測りたい | [Skill / エージェントの評価（evals）](dev-methods/evals.md)（`skill-eval-harness` ＋ 決定論的な採点） |
+| 導入した Skill が効いているか測りたい | [Skill / エージェントの評価（evals）](dev-methods/evals.md)（Claude Plugin は `plugin eval`、ツール横断は `skill-eval-harness`） |
 
 ---
 
@@ -811,26 +832,32 @@ SkillsBench（[arXiv:2602.12670](https://arxiv.org/abs/2602.12670)）は、複�
 - [kirodotdev/KiroCrew](https://github.com/kirodotdev/KiroCrew) — リポジトリと README（公式・Apache-2.0）
 - [Kiro Crew](https://kiro.dev/crew/) — 製品ページと FAQ（前提となるプラン・対応 OS。公式）
 - [Inside the LLM Call: GenAI Observability with OpenTelemetry](https://opentelemetry.io/blog/2026/genai-observability/) — GenAI semantic conventions の解説（OpenTelemetry 公式）
+- [VS Code 1.137 release notes](https://code.visualstudio.com/updates/v1_137) — Automations の公開（Microsoft 公式・Preview）
+- [Add VS Code Agents to Copilot usage metrics](https://github.blog/changelog/2026-09-11-add-vs-code-agents-to-copilot-usage-metrics/) — 専用 Agents ウィンドウの利用指標（GitHub 公式・GA）
 
-### Skill / Plugin のセキュリティ（本ページ 11 節・詳細は [解説ページ](dev-methods/skill-security.md)）
+### Skill / Plugin のセキュリティ（本ページ 12 節・詳細は [解説ページ](dev-methods/skill-security.md)）
 
 - [Future Considerations](https://github.com/agentplugins/agent-plugins-spec/blob/main/FUTURE_CONSIDERATIONS.md) — v1.0.0 が扱わない領域（公式）
 - [Snyk ToxicSkills study](https://snyk.io/blog/toxicskills-malicious-ai-agent-skills-clawhub/) — ClawHub / skills.sh の 3,984 Skill の監査結果（Snyk・2026-02-05）
 - [MCP allowlists in enterprise managed settings](https://github.blog/changelog/2026-08-06-mcp-allowlists-in-enterprise-managed-settings/) — MCP 許可リスト（公式）
 - [Enterprise managed settings in GitHub Copilot for JetBrains](https://github.blog/changelog/2026-08-18-enterprise-managed-settings-in-github-copilot-for-jetbrains/) — JetBrains への managed settings 拡大（公式）
+- [Enterprise managed permissions for GitHub Copilot agent operations](https://github.blog/changelog/2026-09-09-enterprise-managed-permissions-for-github-copilot-agent-operations/) — 操作単位の managed permissions（GitHub 公式・GA）
+- [Managed Agents permission policies](https://platform.claude.com/docs/en/managed-agents/permission-policies) — tool call ごとの権限判定（Anthropic 公式・Beta）
 - [awesome-agent-skills-security](https://github.com/LLMSecurity/awesome-agent-skills-security) — 攻撃手法と防御策の一覧（コミュニティ）
 - [Agents 一覧](copilot/agents.md) — 導入前監査に使える `trojan-skill-hunter` の解説（本ガイド）
 
-### Skill が動く場所・MCP 次期仕様（本ページ 9・12 節）
+### Skill が動く場所・MCP 仕様（本ページ 9・13 節）
 
 - [Copilot code review: Agent skills and MCP now generally available](https://github.blog/changelog/2026-07-29-copilot-code-review-agent-skills-and-mcp-now-generally-available/) — レビューでの Skill / MCP 対応（公式）
 - [Copilot code review effort levels are generally available](https://github.blog/changelog/2026-08-07-copilot-code-review-effort-levels-are-generally-available/) — レビューの深さの選択（公式）
+- [Auto-resolution and analysis updates in Copilot code review](https://github.blog/changelog/2026-09-11-auto-resolution-and-analysis-updates-in-copilot-code-review/) — comment の自動 resolve と shell tools による検証（公式）
 - [GitHub MCP Server supports the next MCP specification](https://github.blog/changelog/2026-07-23-github-mcp-server-supports-the-next-mcp-specification/) — MCP 次期仕様への対応（公式）
 - [GitHub Copilot in Visual Studio Code, July 2026 releases](https://github.blog/changelog/2026-07-30-github-copilot-in-visual-studio-code-july-2026-releases/) — VS Code の更新（公式）
 - [GitHub Copilot in Visual Studio — July update](https://github.blog/changelog/2026-07-30-github-copilot-in-visual-studio-july-update/) — Visual Studio の更新（公式）
 - [GitHub Copilot for JetBrains expands BYOK capabilities](https://github.blog/changelog/2026-07-14-github-copilot-for-jetbrains-expands-byok-capabilities/) — JetBrains の Plugin 管理と agent provider（公式）
 - [Claude Code changelog](https://code.claude.com/docs/en/changelog) — Claude Code の更新（公式）
 - [Codex changelog](https://learn.chatgpt.com/docs/changelog) — Codex の更新（公式）
+- [Codex MCP server removal migration guide](https://learn.chatgpt.com/docs/mcp-server) — 廃止対象と app server の移行境界（公式）
 
 ### 仕様駆動開発（本ページ 14 節・詳細は [解説ページ](dev-methods/spec-driven.md)）
 
@@ -843,6 +870,7 @@ SkillsBench（[arXiv:2602.12670](https://arxiv.org/abs/2602.12670)）は、複�
 - [Testing Agent Skills Systematically with Evals](https://developers.openai.com/blog/eval-skills) — 8 段階の評価手順（OpenAI 公式）
 - [Evaluating Skills](https://www.langchain.com/blog/evaluating-skills) — Robert Xu、2026-03-05（LangChain 公式）
 - [adewale/skill-eval-harness](https://github.com/adewale/skill-eval-harness) — 決定論的な採点を行う比較用ハーネス（Community・MIT）
+- [Test plugins with evals](https://code.claude.com/docs/en/plugin-evals) — `claude plugin eval` の suite、baseline、grader、report（Anthropic 公式）
 - [SkillsBench](https://arxiv.org/abs/2602.12670) — arXiv:2602.12670、2026-02-13 投稿
 
 ---

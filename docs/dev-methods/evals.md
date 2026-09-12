@@ -1,6 +1,6 @@
 # Skill / エージェントの評価（evals） — 入れた後に効いているかを測る
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-09
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-12
 
 > [Skill / Plugin のセキュリティ](skill-security.md)は「**導入前**に入れてよいものか」を扱います。このページはその先、「**導入後に実際に効いているか**」を測る話です。両者は別軸で、片方をやれば済むわけではありません。
 
@@ -45,12 +45,30 @@ LangChain の解説記事（“Evaluating Skills”, Robert Xu, 2026-03-05）は
 
 [AI エージェントの実行基盤（ハーネス）](harness.md)でいう「ハーネス」は、**エージェントを動かす裏側の仕組み**（ツール呼び出し・状態管理・ループ制御）を指します。このページで扱う「eval harness」は同じ単語を使いますが指すものが違い、**変更前後の実行結果を集めて採点する測定用の実行環境**です。前者はエージェントを動かすための土台、後者はその土台の上で「変えた結果どうなったか」を記録・採点するための足場です。両方が「ハーネス」と呼ばれるため、文脈で区別してください。
 
-| 道具 | 位置づけ | 提供元 | 状態 |
-|------|---------|-------|------|
-| Codex `codex exec --json` / `--output-schema` | 実行トレース（JSONL）の取得と構造化出力での採点をビルトインで提供 | Official（OpenAI） | GA |
-| [adewale/skill-eval-harness](https://github.com/adewale/skill-eval-harness) | 同一ケース・同一モデル・同一試行回数で Skill あり / なしを比較し、決定論的に採点する | Community | — |
+| 道具 | 位置づけ | 提供元 | 状態 | 前提・注意 |
+|------|---------|-------|------|-----------|
+| Codex `codex exec --json` / `--output-schema` | 実行トレース（JSONL）の取得と構造化出力での採点をビルトインで提供 | Official（OpenAI） | GA | 利用するモデルの料金・利用枠に従う |
+| Claude Code `claude plugin eval` | Plugin あり / なしの反復実行、grader による採点、JSON / HTML report をビルトインで提供 | Official（Anthropic） | GA | 2.1.269 以降。server-side の利用可否に従う |
+| [adewale/skill-eval-harness](https://github.com/adewale/skill-eval-harness) | 同一ケース・同一モデル・同一試行回数で Skill あり / なしを比較し、決定論的に採点する | Community | Experimental | 利用する各 CLI とモデルの料金・利用枠に従う |
 
 `skill-eval-harness` は Claude・Codex・Gemini・Mistral Vibe・Pi・Jetty（と検証用のスタブランナー）に対応し、MIT ライセンスで公開されています。採点はテキスト一致・正規表現・JSON 検証・ファイル存在確認・スクリプトオラクルによる決定論的な方式が基本で、モデル呼び出しを伴う LLM ジャッジは任意機能として用意されています。テストケースに含めた正解が実行ログへ漏れていないかを検知する "leakage lint" を持ち、再現性を損なわないための工夫になっています。
+
+### Claude Code 組み込みの `plugin eval`
+
+`claude plugin eval init` は Plugin の `evals/` に case と grader の草案を作り、`claude plugin eval .` が suite を実行します。各 case は既定で Plugin あり / なしをそれぞれ 3 回実行し、両者の score と差分 `Δ` を出します。「Claude 自体が解けただけ」を Plugin の効果と数えないための baseline です。
+
+| grader | 確認すること |
+|--------|-------------|
+| `regex` | 最終応答、trace、生成ファイルの内容が pattern に一致するか |
+| `tool_used` / `tool_order` | Skill や別の tool を呼んだか、順序を守ったか |
+| `file_exists` | 指定した成果物を新規作成したか |
+| `llm` / `baseline` | 決定論的に書けない品質を rubric または基準 transcript と比較できるか |
+
+結果は JSON と HTML report に残り、threshold 未達を終了コード 1 として CI の gate にできます。ただしモデル呼び出しは利用枠または API 料金を消費し、LLM judge は結果が揺れます。まず `regex`、tool、file の grader を置き、必要な部分だけ LLM judge にします。
+
+実行ごとに一時的な home / workspace / Claude Code 設定を使い、個人の `CLAUDE.md`、memory、他の Plugin や MCP server は読み込みません。Bash、Write、Edit、WebFetch などは `--allow-tools` で明示的に許可します。一方、対象 Plugin の hooks と、起動を許した実 MCP server は agent の sandbox 外で動き得るため、**eval の合格を安全性の証明にはできません**。
+
+`claude plugin validate` は manifest や frontmatter の**構造検査**です。`plugin eval` は prompt から始まる**挙動と退行の検査**であり、置き換え関係ではありません。
 
 ## 5. 人が見る範囲
 
@@ -72,4 +90,6 @@ LangChain の解説記事（“Evaluating Skills”, Robert Xu, 2026-03-05）は
 - [Testing Agent Skills Systematically with Evals](https://developers.openai.com/blog/eval-skills) — 8 段階の評価手順（OpenAI 公式）
 - [Evaluating Skills](https://www.langchain.com/blog/evaluating-skills) — Robert Xu、2026-03-05（LangChain 公式）
 - [adewale/skill-eval-harness](https://github.com/adewale/skill-eval-harness) — 決定論的な採点を行う比較用ハーネス（Community・MIT）
+- [Test plugins with evals](https://code.claude.com/docs/en/plugin-evals) — suite、baseline、grader、JSON / HTML report、分離と CI（Anthropic 公式）
+- [Claude Code v2.1.269](https://github.com/anthropics/claude-code/releases/tag/v2.1.269) — `claude plugin eval` の追加（Anthropic 公式・2026-09-11）
 - [SkillsBench: Benchmarking How Well Agent Skills Work Across Diverse Tasks](https://arxiv.org/abs/2602.12670) — arXiv:2602.12670、2026-02-13 投稿
