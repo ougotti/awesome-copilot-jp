@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-09
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-12
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -447,6 +447,31 @@ approval 後に新しいコミットが push されると、**人間のレビュ
 
 ---
 
+## 組織の統制 — 実行操作を `deny` / `ask` / `allow` に分ける
+
+GitHub Copilot の **enterprise managed permissions** が 2026-09-09 に一般提供されました。Enterprise owner は、エージェントが行う操作を `permissions.deny`、`permissions.ask`、`permissions.allow` に分類できます。
+
+| セレクター | 対象 | 運用例 |
+|-----------|------|--------|
+| `Shell` | シェルコマンド | ビルドは許可し、デプロイは毎回確認する |
+| `Read` | ファイルの読み取り | 秘密情報を置くパスを拒否する |
+| `Edit` | ファイルの作成・変更 | 生成物のディレクトリだけ許可する |
+| `Domain` | ネットワーク接続先 | 許可した API 以外は確認する |
+
+複数の規則が一致する場合は **`deny` → `ask` → `allow`** の順で優先されます。組織が `ask` にした操作には毎回新しい承認が必要で、利用者側の自動承認、承認バイパス、保存済みの許可、Hook では省略できません。利用者の設定を組織の設定より緩くできないため、`permissions.disableBypassPermissionsMode` より細かく操作を分けたい場合に使えます。
+
+一般提供の対象として発表された面は、**Copilot app、Copilot CLI、VS Code Agent Host のセッション**です。別の IDE や GitHub 上のエージェントにも同じ粒度の規則が効くと推測せず、対象面を確認してください。
+
+### JetBrains は managed sandbox の Public Preview
+
+GitHub Copilot for JetBrains では、2026-09-08 に **enterprise managed sandbox** が Public Preview になりました。ファイルシステム、ネットワーク、プロキシ、開発ツール、macOS Keychain へのアクセスを中央設定し、制限された項目は利用者側で変更できません。
+
+これは JetBrains の実行環境を囲う機能です。上記の `Shell` / `Read` / `Edit` / `Domain` による操作単位の managed permissions が JetBrains でも一般提供された、という意味ではありません。
+
+**→ MCP / Plugin の許可リスト、Claude Managed Agents との比較は [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#実行する操作を-deny--ask--allow-に分ける) を参照**
+
+---
+
 ## 組織の統制 — content exclusion
 
 機密ファイルを Copilot のコンテキストから除外する **content exclusion** が、**Copilot app と Copilot CLI で一般提供（GA）** になりました（2026-09-02）。対象は **Copilot Business / Copilot Enterprise** です。
@@ -546,6 +571,9 @@ Instructions、Prompts、Agents は GitHub Copilot のすべてのプラン（Fr
 - [Manage agent skills with GitHub CLI](https://github.blog/changelog/2026-04-16-manage-agent-skills-with-github-cli/) — `gh skill` による Skill 管理（公式）
 - [Copilot code review can now approve pull requests](https://github.blog/changelog/2026-09-01-copilot-code-review-can-now-approve-pull-requests/) — approval assessment と approval の区別（公式・2026-09-01、Public Preview）
 - [Configuring code review by GitHub Copilot](https://docs.github.com/en/copilot/how-tos/copilot-on-github/set-up-copilot/configure-code-review) — 設定階層・パス限定（最大 15 glob）の一次情報（公式）
+- [Enterprise managed permissions for GitHub Copilot agent operations](https://github.blog/changelog/2026-09-09-enterprise-managed-permissions-for-github-copilot-agent-operations/) — 操作単位の managed permissions 一般提供（公式・2026-09-09）
+- [Enterprise managed settings reference](https://docs.github.com/en/enterprise-cloud@latest/copilot/reference/enterprise-administrators/enterprise-managed-settings) — 規則の優先順位、対象面、サンドボックス設定（公式）
+- [Enterprise managed sandbox in Copilot for JetBrains](https://github.blog/changelog/2026-09-08-enterprise-managed-sandbox-in-copilot-for-jetbrains/) — JetBrains の managed sandbox Public Preview（公式・2026-09-08）
 - [Content exclusions generally available in Copilot app and CLI](https://github.blog/changelog/2026-09-02-content-exclusions-generally-available-in-copilot-app-and-cli/) — app / CLI での GA（公式・2026-09-02）
 - [Content exclusion for GitHub Copilot](https://docs.github.com/en/copilot/concepts/context/content-exclusion) — 対応面・非対応面と制限の一次情報（公式）
 
