@@ -4,6 +4,14 @@
 
 ## 2026-09
 
+- **2026-09-12** エージェントの権限・定期実行・MCP移行・評価・可観測性を更新（#176）
+  - GitHub Copilot の enterprise managed permissions（GA）と JetBrains managed sandbox（Public Preview）、Claude Managed Agents permission policies（Beta）を適用面ごとに整理し、実行時の allow / ask / deny、人の承認、監査、対象外を比較した
+  - VS Code 1.137 Automations（Preview）の Manual first run、ローカル process、catch-up、直列実行、権限を追記し、Codex Scheduled tasks・Claude Code `/loop`・Kiro Crew と比較した
+  - `codex mcp-server` / `codex-mcp-server` の削除について、外部 MCP 接続は継続すること、app server は JSON-RPC で非互換かつ Experimental であることを移行メモにした
+  - Claude Code 2.1.268 の Plugin 管理 JSON 出力と、2.1.269 の `claude plugin eval` を追加し、`plugin validate` の構造検査と挙動評価を分けた
+  - Copilot code review の comment 自動 resolve と firewall 内の shell tools、専用 VS Code Agents ウィンドウの usage metrics（GA）を追記し、MCP read-only 制約と OpenTelemetry を別経路として整理した
+  - 公式一次情報を 2026-09-12 に再確認し、各機能の GA / Preview / Experimental / Beta と server-side availability を記載した
+
 - **2026-09-11** AI-DLC入門・Plans比較・AI駆動手法の用語整理を分割（#174）
   - **[AI-DLC Workflows — 日本語で試すAI駆動開発ライフサイクル](docs/dev-methods/aidlc-workflows.md) を現行仕様へ更新** — 5フェーズ、対応ハーネス、公式インストーラー、Codexでの導入、日本語での依頼例、実際の対話例、実装先とAWS利用の関係を整理した
   - **[Power Apps PlansがあるのにAI-DLCを使う意味はあるのか](docs/dev-methods/ai-dlc-power-platform.md) を新設** — Power Apps / Power Automate中心ならPlansを先に使い、複数システムや開発ライフサイクル全体を扱う場合にAI-DLCを検討する選定軸と小規模な評価手順を示した

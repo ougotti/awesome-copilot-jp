@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-12** [Skills 最新動向](docs/trends.md)へエージェントの実行時権限、VS Code Automations、Codex MCP移行、Claude Plugin eval、Copilotのレビュー・利用指標を追加
 - **2026-09-11** [AI-DLC Workflows](docs/dev-methods/aidlc-workflows.md)を現行手順へ更新し、[Power Apps Plansとの比較](docs/dev-methods/ai-dlc-power-platform.md)と[AI-DLC・AI-PDLC・AI BPRの用語整理](docs/dev-methods/ai-driven-lifecycle-terms.md)を分離
 - **2026-09-09** [VS Code エディタウィンドウでの複数ルート運用](docs/copilot/multi-root.md) を新設し、multi-root workspace（Experimental）の設定・hooks の読み込み元・確認手順を整理
 - **2026-09-09** [Skills 最新動向](docs/trends.md) 13 節を改題し、MCP更新時の「利用者側の作業は不要」という断定を役割別の移行判断の表に修正
 - **2026-09-09** [MCP Apps — 会話内にUIを追加する](docs/dev-methods/mcp-apps.md) を新設し、tool 結果として UI を返す仕組み・最小例・対応ホストの確認と fallback・データ露出範囲を整理
-- **2026-09-09** [ツール間の用語対照表](README.md#ツール間の用語対照表)のCodex Agents列を訂正し、[Codexガイド](docs/codex/README.md#8-サブエージェントへ作業を委任する)にサブエージェント／カスタムエージェントの解説と依頼例を追加
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 

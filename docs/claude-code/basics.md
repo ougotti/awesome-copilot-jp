@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-05
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-12
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -218,7 +218,7 @@ Anthropic が管理する公式のプラグインディレクトリです。**�
 
 > [anthropics/skills](official-skills.md) はスキル集そのもの、`claude-plugins-official` は**プラグインを集めたディレクトリ**で、役割が違います。前者を使うには `/plugin marketplace add anthropics/skills` の登録が要ります。
 
-### 配布元と検証（2026-08 時点）
+### 配布元と検証（2026-09 時点）
 
 | 項目 | 内容 |
 |------|------|
@@ -226,7 +226,24 @@ Anthropic が管理する公式のプラグインディレクトリです。**�
 | **`claude plugin validate`** | `.claude/skills` だけを持つプラグインも検査対象になり、frontmatter の解析に失敗する `SKILL.md` を報告する（2.1.233）。公開前の自己点検に使える |
 | **`headersHelper`** | url 形式の Marketplace やカタログエントリが、短命トークンなどの HTTP ヘッダーを生成するコマンドを実行できる（2.1.238）。実行前にコマンドが表示されて `[y/N]` の確認が入り、フォルダ信頼の受諾が必須で、資格情報の環境変数は継承されない |
 
-> バージョン番号は 2026-08 時点のスナップショットです。最新は [Claude Code の CHANGELOG](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md) を確認してください。
+Claude Code 2.1.268 では `claude plugin install` / `uninstall` / `update` / `enable` / `disable` に `--json` が加わり、`claude plugin list --json` の各行に `errorDetails` / `noteDetails` が追加されました。CI や管理スクリプトでは、人向けの表示を解析せず、この機械可読な出力を使えます。
+
+### `plugin validate` と `plugin eval` を分ける
+
+Claude Code 2.1.269 以降には、Plugin の eval suite を実行する `claude plugin eval` があります。2 つのコマンドは検査する対象が違います。
+
+| コマンド | 確認すること | 主な出力 |
+|---------|-------------|---------|
+| `claude plugin validate <path>` | manifest、ディレクトリ構造、frontmatter などが読み込めるか | 構造・スキーマのエラー |
+| `claude plugin eval <path>` | 実際の prompt で Skill が発火し、期待した結果・ツール順・ファイルを作るか | score、Plugin なしの baseline との差、JSON、HTML report |
+
+`claude plugin eval init` で `evals/` に case と grader の草案を作れます。各 case は既定で Plugin あり / なしをそれぞれ 3 回実行し、`regex`、`tool_used`、`tool_order`、`file_exists`、LLM judge などで採点します。実際のモデル呼び出しとして利用枠または API 料金を消費します。
+
+> eval はセキュリティ検査ではありません。対象 Plugin の hooks と、明示的に起動した実 MCP server は agent の sandbox 外で動き得ます。信頼できる Plugin だけを評価し、CI では必要な tool だけを `--allow-tools` で許可してください。公式ドキュメントは server-side で command が利用不可になる場合も案内しているため、2.1.269 以上でも現在の利用可否を実行環境で確認します。
+
+**→ case の作り方、baseline、grader、既存の community harness との違いは [Skill / エージェントの評価](../dev-methods/evals.md#claude-code-組み込みの-plugin-eval) を参照**
+
+> バージョン番号は 2026-09 時点のスナップショットです。最新は [Claude Code の CHANGELOG](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md) を確認してください。
 
 ### Agent Plugins 1.0.0 との関係
 
@@ -429,6 +446,9 @@ CLAUDE.md              # プロジェクトの前提・規約
 - [Extend Claude with skills](https://code.claude.com/docs/en/slash-commands) — Agent Skills の作成と運用
 - [Interactive mode](https://code.claude.com/docs/en/interactive-mode) — キーボードショートカット・対話機能のリファレンス
 - [CLI reference](https://code.claude.com/docs/en/cli-reference) — CLI の起動オプション
+- [Test plugins with evals](https://code.claude.com/docs/en/plugin-evals) — `claude plugin eval` の suite、grader、baseline、分離、CI（公式）
+- [Claude Code v2.1.268](https://github.com/anthropics/claude-code/releases/tag/v2.1.268) — Plugin 管理コマンドの JSON 出力（公式・2026-09-10）
+- [Claude Code v2.1.269](https://github.com/anthropics/claude-code/releases/tag/v2.1.269) — `claude plugin eval` の追加（公式・2026-09-11）
 - [Inference hooks](https://platform.claude.com/docs/en/manage-claude/inference-hooks) — 推論前の allow / deny 判定（公式）
 - [Compliance API — Retrieve session transcripts](https://platform.claude.com/docs/en/manage-claude/compliance-sessions) — セッションのトランスクリプト取得（公式）
 - [Claude apps release notes](https://support.claude.com/en/articles/12138966-release-notes) — Skill / Plugin セキュリティスキャンの提供状況（公式）
