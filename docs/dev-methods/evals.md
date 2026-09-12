@@ -45,11 +45,11 @@ LangChain の解説記事（“Evaluating Skills”, Robert Xu, 2026-03-05）は
 
 [AI エージェントの実行基盤（ハーネス）](harness.md)でいう「ハーネス」は、**エージェントを動かす裏側の仕組み**（ツール呼び出し・状態管理・ループ制御）を指します。このページで扱う「eval harness」は同じ単語を使いますが指すものが違い、**変更前後の実行結果を集めて採点する測定用の実行環境**です。前者はエージェントを動かすための土台、後者はその土台の上で「変えた結果どうなったか」を記録・採点するための足場です。両方が「ハーネス」と呼ばれるため、文脈で区別してください。
 
-| 道具 | 位置づけ | 提供元 | 状態 |
-|------|---------|-------|------|
-| Codex `codex exec --json` / `--output-schema` | 実行トレース（JSONL）の取得と構造化出力での採点をビルトインで提供 | Official（OpenAI） | GA |
-| Claude Code `claude plugin eval` | Plugin あり / なしの反復実行、grader による採点、JSON / HTML report をビルトインで提供 | Official（Anthropic） | 2.1.269 以降。server-side の利用可否に従う |
-| [adewale/skill-eval-harness](https://github.com/adewale/skill-eval-harness) | 同一ケース・同一モデル・同一試行回数で Skill あり / なしを比較し、決定論的に採点する | Community | — |
+| 道具 | 位置づけ | 提供元 | 状態 | 前提・注意 |
+|------|---------|-------|------|-----------|
+| Codex `codex exec --json` / `--output-schema` | 実行トレース（JSONL）の取得と構造化出力での採点をビルトインで提供 | Official（OpenAI） | GA | 利用するモデルの料金・利用枠に従う |
+| Claude Code `claude plugin eval` | Plugin あり / なしの反復実行、grader による採点、JSON / HTML report をビルトインで提供 | Official（Anthropic） | GA | 2.1.269 以降。server-side の利用可否に従う |
+| [adewale/skill-eval-harness](https://github.com/adewale/skill-eval-harness) | 同一ケース・同一モデル・同一試行回数で Skill あり / なしを比較し、決定論的に採点する | Community | Experimental | 利用する各 CLI とモデルの料金・利用枠に従う |
 
 `skill-eval-harness` は Claude・Codex・Gemini・Mistral Vibe・Pi・Jetty（と検証用のスタブランナー）に対応し、MIT ライセンスで公開されています。採点はテキスト一致・正規表現・JSON 検証・ファイル存在確認・スクリプトオラクルによる決定論的な方式が基本で、モデル呼び出しを伴う LLM ジャッジは任意機能として用意されています。テストケースに含めた正解が実行ログへ漏れていないかを検知する "leakage lint" を持ち、再現性を損なわないための工夫になっています。
 
