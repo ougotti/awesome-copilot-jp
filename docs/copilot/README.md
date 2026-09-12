@@ -397,6 +397,25 @@ Cookbook Recipes は、GitHub Copilot SDK を使ったアプリケーション�
 
 ---
 
+## Automations — エージェントタスクを定期実行する
+
+VS Code 1.137（2026-09-09）で **Automations** が Preview として追加されました。保存した prompt、workspace、agent / model / permission options、schedule を使い、Agents ウィンドウから同じタスクを繰り返し実行します。
+
+1. Settings で `chat.automations.enabled` を有効にする
+2. Agents ウィンドウ → Automations → Create Automation を開く
+3. prompt、workspace、agent、model、permission options を指定する
+4. Git workspace で agent が対応していれば New Worktree と基準ブランチを選ぶ
+5. 最初は **Manual** で保存し、`Run now` の結果と承認要求を History で確認する
+6. 確認後に Hourly / Daily / Weekly を選び、Enabled にする
+
+Automation はローカルで動きます。Agent Host を使う schedule は Agent Host process、それ以外は VS Code window が起動している必要があり、マシンもスリープさせないようにします。中断後に catch-up run が起きる場合はありますが、逃した回すべての再実行は保証されません。同じ Automation は一度に 1 セッションだけ動きます。
+
+> 保存した permission options は組織ポリシーを迂回しません。将来の run で承認待ちになる可能性があるため、無人化する前に Manual run で確認してください。Automation を無効にしても、すでに実行中の session は止まりません。History から Stop を選びます。
+
+**→ Codex Scheduled tasks、Claude Code `/loop`、Kiro Crew との比較は [ループエンジニアリング](../dev-methods/loop-engineering.md#定期実行を選ぶときの比較) を参照**
+
+---
+
 ## カスタマイズが効く場所 — レビューとエージェント
 
 カスタマイズは IDE のチャットの中だけのものではありません。同じ `SKILL.md` と MCP 設定を、**プルリクエストのレビュー**にも効かせられます（2026-07-29 一般提供）。
@@ -555,6 +574,8 @@ Instructions、Prompts、Agents は GitHub Copilot のすべてのプラン（Fr
 - [Copilot のカスタマイズ方法](https://docs.github.com/copilot/customizing-copilot) — 公式カスタマイズガイド
 - [Agentic Workflows ドキュメント](https://github.com/github/awesome-copilot/blob/main/docs/README.workflows.md) — AI 駆動ワークフローの一覧
 - [Hooks ドキュメント](https://github.com/github/awesome-copilot/blob/main/docs/README.hooks.md) — セッションイベント駆動フックの一覧
+- [VS Code 1.137 release notes](https://code.visualstudio.com/updates/v1_137) — Automations の公開（Microsoft 公式・2026-09-09、Preview）
+- [Automate recurring agent tasks](https://code.visualstudio.com/docs/agents/run/automations) — 作成、初回確認、schedule、実行条件（Microsoft 公式・Preview）
 - [Cookbook](https://github.com/github/awesome-copilot/blob/main/cookbook/README.md) — Copilot SDK を活用した実践的コードレシピ集
 - [About GitHub Copilot plugins](https://docs.github.com/en/copilot/concepts/agents/about-plugins) — Plugin の概念と構成（公式）
 - [Manage agent skills with GitHub CLI](https://github.blog/changelog/2026-04-16-manage-agent-skills-with-github-cli/) — `gh skill` による Skill 管理（公式）

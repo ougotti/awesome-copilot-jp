@@ -1,6 +1,6 @@
 # ループエンジニアリング
 
-> **対象ツール**: ツール横断（Claude Code・Codex 等） ｜ **実行環境**: CLI / デスクトップ / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-09
+> **対象ツール**: ツール横断（Claude Code・Codex 等） ｜ **実行環境**: CLI / デスクトップ / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-12
 
 > エージェントに毎ターン指示を出す代わりに、**エージェントに指示を出し続ける「ループ」の側を設計する**実践を **ループエンジニアリング（loop engineering）** と呼びます。2026-06-07 に Addy Osmani（Google Chrome）が [Loop Engineering](https://addyosmani.com/blog/loop-engineering/) で命名しました。このページは概念、ループの構成要素、停止条件の作り方、そして落とし穴をまとめた解説です。ループが動く土台については [AI エージェントの実行基盤（ハーネス）](harness.md) を参照してください。
 
@@ -90,6 +90,16 @@ Osmani はループエンジニアリングをハーネスエンジニアリン�
 
 ここで役割を分けて考えると設計が楽になります — **Skill が手順の定義**、**Plugin が外部接続**、**Scheduled task が起動条件**、**worktree やサンドボックスが実行境界**です。ループの部品をどこに置くかの目安になります。
 
+### IDE で保存して回す — VS Code Automations
+
+VS Code 1.137（2026-09-09）の **Automations**（Preview）は、保存した prompt、workspace、agent / model / permission options、schedule からエージェントタスクを起動します。`chat.automations.enabled` を有効にし、Agents ウィンドウの Automations から作成します。スケジュールは Manual / Hourly / Daily / Weekly です。
+
+公式手順が最初の schedule を **Manual** にするのは、無人実行へ移る前に同じ構成で `Run now` を試すためです。初回の History で応答、変更、承認要求、消費量を確認してから繰り返しを有効にします。Git workspace では、選んだ agent が分離に対応していれば New Worktree と基準ブランチを指定できます。
+
+ローカル実行の条件も設計に含めてください。Agent Host を使うスケジュールには Agent Host process、それ以外には VS Code のウィンドウが必要で、マシンを起動したままにします。中断後は catch-up run が起きる場合がありますが、逃した回がすべて再実行される保証はありません。同じ Automation は一度に 1 セッションだけ実行し、次の時刻が来ても並列には開始しません。
+
+保存時に選んだ権限でファイル読み取り・コマンド・変更を実行できますが、**保存しても組織ポリシーは迂回されず、将来の実行で承認が必要になる場合があります**。無人化する前に、承認が残る操作を prompt から分離してください。
+
 ### OSS 側の起動条件 — Kiro Crew
 
 同じ「起動条件を製品側に持たせる」形は OSS でも出てきました。AWS が 2026-08-04 に Apache-2.0 で公開した [Kiro Crew](harness.md#kiro-crew--常駐して動き続けるハーネス) は、常駐したまま次の 3 つで起動します。
@@ -105,6 +115,20 @@ Codex の Scheduled tasks との違いは 2 点です。**起動条件の実装�
 長時間タスクは計画・実行・検証・失敗時の再試行までツール側が回すため、**[停止条件](#停止条件の作り方)を渡す側で決めておく必要はむしろ大きくなります**。「終わるまで」ではなく、機械が判定できる条件と上限を仕様に書いてください。
 
 > 本体は無償の OSS ですが、**動かすには Kiro のプランが必要**です（エージェントの利用は Kiro アカウントの枠を消費します）。
+
+### 定期実行を選ぶときの比較
+
+同じ「automation」や「schedule」という名前でも、常駐場所と状態の寿命が違います。特に VS Code Automations はローカル IDE の Preview 機能であり、クラウドのジョブ基盤ではありません。
+
+| 観点 | VS Code Automations | Codex Scheduled tasks | Claude Code `/loop` | Kiro Crew |
+|------|---------------------|-----------------------|---------------------|-----------|
+| 主な起動条件 | Manual / Hourly / Daily / Weekly | 時刻、または Gmail / Slack / GitHub のイベント | 固定間隔、またはセッション中に選ぶ間隔 | 定期ジョブ、webhook、メッセージ、heartbeat |
+| 実行場所 | ローカルの Agent Host process または VS Code window | デスクトップのローカル実行、または提供面に応じた実行先 | 開いているローカルセッション | 常駐する Kiro Crew 実行環境 |
+| workspace / 分離 | workspace なしも可。対応 agent は New Worktree を選べる | ローカルでは作業中 checkout / Git worktree を選べる | 現在のセッションと作業ディレクトリを継承 | エージェントごとの workspace と sandbox 強度を設計する |
+| 権限・承認 | session configuration を保存。組織ポリシーは迂回せず、run ごとに承認が残り得る | タスクの実行環境・サンドボックス・承認設定に従う | 現在のセッションの権限を継承 | standard / strict / off の分離と audit を運用者が設定する |
+| 停止・重複実行 | disable は次回以降だけ。実行中は History から Stop。同一 Automation は直列 | 各起動でタスクを作る。重複時の扱いは対象面の現行仕様を確認する | `Esc` または task の削除。busy 中は turn 後に 1 回実行し、取り逃した回を全 replay しない | heartbeat / task の終了条件と上限を仕様に置く |
+
+選択の基準は単純です。IDE の作業構成をそのまま定期化するなら VS Code、時刻だけでなく外部イベントも入口にするなら Codex、開いている会話内の短い監視なら `/loop`、セッションを越えて常駐しメモリやチャネルを持たせるなら Kiro Crew が候補になります。どれを使う場合も、[停止条件](#停止条件の作り方)と影響の大きい操作の承認を先に決めます。
 
 ### 実行した知識を次の周回へ戻す — Runme + WebMCP
 
@@ -190,5 +214,8 @@ Claude Code には、ループを組むための機能がひととおり揃っ�
 - [Loop, Harness, Context Engineering: The Terms Explained](https://www.codecentric.de/en/knowledge-hub/blog/loop-harness-context-engineering-explained) — 用語階層の整理（codecentric、2026-07-05）
 - [Automating repetitive work at OpenAI with Codex](https://developers.openai.com/blog/automating-repetitive-work-at-openai-with-codex) — Runme + WebMCP による反復作業のループ化（OpenAI 公式）
 - [Scheduled tasks](https://learn.chatgpt.com/docs/automations) — 時刻・イベントでの起動と、その前提条件（公式）
+- [VS Code 1.137 release notes](https://code.visualstudio.com/updates/v1_137) — Automations の公開（Microsoft 公式・2026-09-09、Preview）
+- [Automate recurring agent tasks](https://code.visualstudio.com/docs/agents/run/automations) — 保存内容、初回実行、schedule、ローカル実行条件（Microsoft 公式・Preview）
 - [Kiro Crew ドキュメント](https://kiro.dev/docs/crew/) — 定期ジョブ・ハートビート・webhook による起動（公式）
 - [Claude Code Commands](https://code.claude.com/docs/en/commands) — `/goal`・`/loop` の公式リファレンス
+- [Run prompts on a schedule](https://code.claude.com/docs/en/scheduled-tasks) — `/loop` のセッション寿命・権限・停止条件（Anthropic 公式）
