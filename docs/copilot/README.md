@@ -408,9 +408,9 @@ VS Code 1.137（2026-09-09）で **Automations** が Preview として追加さ�
 5. 最初は **Manual** で保存し、`Run now` の結果と承認要求を History で確認する
 6. 確認後に Hourly / Daily / Weekly を選び、Enabled にする
 
-Automation はローカルで動きます。Agent Host を使う schedule は Agent Host process、それ以外は VS Code window が起動している必要があり、マシンもスリープさせないようにします。中断後に catch-up run が起きる場合はありますが、逃した回すべての再実行は保証されません。同じ Automation は一度に 1 セッションだけ動きます。
+Automation はローカルで動きます。Agent Host を使う schedule は Agent Host process、それ以外は VS Code window が起動している必要があり、マシンもスリープさせないようにします。中断後に catch-up run が起きる場合はありますが、逃した回がすべて再実行される保証はありません。同じ Automation は一度に 1 セッションだけ動きます。
 
-> 保存した permission options は組織ポリシーを迂回しません。将来の run で承認待ちになる可能性があるため、無人化する前に Manual run で確認してください。Automation を無効にしても、すでに実行中の session は止まりません。History から Stop を選びます。
+> 保存した permission options は組織ポリシーを迂回しません。将来の run で承認待ちになる可能性があるため、無人化する前に Manual run で確認してください。Automation を無効にしても、すでに実行中のセッションは止まりません。History から Stop を選びます。
 
 **→ Codex Scheduled tasks、Claude Code `/loop`、Kiro Crew との比較は [ループエンジニアリング](../dev-methods/loop-engineering.md#定期実行を選ぶときの比較) を参照**
 
