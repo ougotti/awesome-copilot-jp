@@ -1,6 +1,6 @@
 # AI エージェントの実行基盤（ハーネス）
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-09
+> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-12
 
 > エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
 
@@ -254,6 +254,22 @@ Console などファイルの外側でリソースが編集・アーカイブ・
 
 **人間の責任境界**: plan の承認（対話時）とレビュー（`--dry-run` の出力）が、変更を止められる唯一の地点です。`--yes` で自動適用する経路には、その前段に PR レビューを置いてください。
 
+## 実行中の権限判定と介入 — Claude Managed Agents
+
+`ant apply` が「どの構成をデプロイするか」を止める仕組みなら、Claude Platform の **Managed Agents permission policies**（Beta）は、デプロイしたエージェントが**実行中に個々のツールを呼べるか**を判定する仕組みです。Managed Agents API では `anthropic-beta: managed-agents-2026-04-01` ヘッダーが必要です。
+
+| ポリシー | 動作 | 運用上の意味 |
+|---------|------|-------------|
+| `always_allow` | ツール呼び出しを許可する | 低リスクで自動実行してよいツールに限定する |
+| `always_ask` | 呼び出しを保留し、応答を待つ | 人の確認が必須の操作に使う |
+| `auto` | ツール、入力、セッションの文脈から allow / deny / ask を判定する | 自律性を上げられるが、人の確認を保証しない |
+
+`auto` が deny と判定した呼び出しは上書きできません。ask になった呼び出しはセッションを一時停止し、応答を待ちます。判断の根拠はイベントの `evaluated_permission` と通常そこに含まれる `evaluation` で監査できます。必要なら `ant beta:sessions connect` で進行中のセッションを追跡し、指示を追加し、承認要求へ応答できます。
+
+適用範囲にも境界があります。ポリシーが扱うのは Managed Agents が提供するツールと MCP ツールです。API 利用者が定義した **custom tools には適用されない**ため、認可、確認画面、監査ログをアプリ側で用意します。また、これはサーバー上の Managed Agents の機能で、Claude Code のローカル権限モードではありません。
+
+**→ GitHub Copilot の組織ポリシーとの比較と、導入前から実行後までの統制は [Skill / Plugin のセキュリティ](skill-security.md#managed-agents-はツール呼び出しごとに判定する) を参照**
+
 ## ループとの関係
 
 ハーネスの 1 つ上の階には、エージェントを目標へ向けて何度も回す **ループ** の設計があります。ハーネスが「エージェントが動く環境」を決めるのに対し、ループは「その環境で何を、いつまで繰り返すか」を決めます。両者は独立ではありません。**ループはハーネスの上で回るため、ハーネスが弱ければループはその弱点を繰り返し踏み、誤りを増幅します**。無人で回す前に、権限・サンドボックス・観測がハーネス側で揃っているかを先に確認してください。
@@ -294,4 +310,5 @@ Console などファイルの外側でリソースが編集・アーカイブ・
 - [Monitor agent usage with OpenTelemetry](https://code.visualstudio.com/docs/agents/guides/monitoring-agents) — VS Code Copilot Chat の OTel 対応（公式）
 - [Manage resources as code with `ant apply`](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/apply) — リソースの種類・`claude-lock.json`・フラグ・CI 運用の一次情報（Anthropic 公式）
 - [Claude Platform リリースノート](https://platform.claude.com/docs/en/release-notes/overview) — `ant` CLI 1.30.0 / `ant apply` の公開（2026-09-03、公式）
-
+- [Managed Agents permission policies](https://platform.claude.com/docs/en/managed-agents/permission-policies) — `always_allow` / `always_ask` / `auto` とイベント形式（Anthropic 公式・Beta）
+- [Connect to a running session](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/sessions-connect) — `ant beta:sessions connect` による追跡・介入（Anthropic 公式）

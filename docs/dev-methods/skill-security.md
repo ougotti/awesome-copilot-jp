@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-09
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-12
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -76,13 +76,28 @@ Agent Plugins 1.0.0 は可搬なパッケージ形式を定めた一方で、安
 
 Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMarketplaces`・`strictKnownMarketplaces` で統制できます。2026-08-18 には GitHub Copilot for JetBrains も同じ `managed-settings.json` による統制対象に加わり、MCP の許可リスト・Plugin の marketplace 制限・エージェントの承認バイパス禁止（`permissions.disableBypassPermissionsMode`）を中央設定できるようになりました。Claude Code もこれらに相当する設定（`additionalMarketplaces` / `allowedMarketplaces` を同義エイリアスとして追加）を持っており、**設定キー名がツール間で近づき始めています**。
 
+### 実行する操作を `deny` / `ask` / `allow` に分ける
+
+GitHub Copilot の **enterprise managed permissions** は、導入できる MCP や Plugin の範囲に加えて、エージェントが実行しようとする操作を中央で制御します（2026-09-09 一般提供）。対象は Copilot app、Copilot CLI、VS Code Agent Host のセッションです。
+
+| セレクター | 制御する操作 | 設定例 |
+|-----------|-------------|--------|
+| `Shell` | シェルコマンド | 読み取り系は許可し、デプロイやパッケージ公開は毎回確認する |
+| `Read` | ファイルの読み取り | 秘密情報を置くパスを拒否する |
+| `Edit` | ファイルの作成・変更 | 生成物のディレクトリだけ許可する |
+| `Domain` | ネットワーク接続先 | 社内 API は許可し、未知のドメインは確認する |
+
+同じ操作へ複数の規則が一致した場合は **`deny` → `ask` → `allow`** の順で強い規則が優先されます。組織が `ask` にした操作は、その都度の新しい承認が必要です。利用者側の自動承認、承認バイパス、保存済みの許可、Hook で組織の確認を省略することはできません。
+
+JetBrains では、同じ週に **enterprise managed sandbox** が Public Preview になりました。ファイルシステム、ネットワーク、プロキシ、開発ツール、macOS Keychain へのアクセスを中央設定し、利用者が制限を緩められないようにします。これはサンドボックスの管理であり、上記 4 セレクターによる操作単位の managed permissions が JetBrains でも一般提供された、という発表ではありません。
+
 **→ ここまでは「何を許可するか」の話でした。「エージェント自身を誰として認証し、その権限を他のエージェントへどこまで委任してよいか」は [AIエージェントのID・認可・委任権限](agent-identity.md) を参照してください。**
 
 ---
 
 ## 5. 統制が効く 3 つの段階
 
-ここまでは「入れる前に読む」「組織で許可範囲を絞る」という**導入前**の話でした。2026 年 8 月には、その前後へ統制の範囲が広がっています。Claude（Enterprise プラン）を例に取ると、3 つの段階に整理できます。
+ここまでは「入れる前に読む」「組織で許可範囲を絞る」という**導入前**の話でした。2026 年 8〜9 月には、その前後へ統制の範囲が広がっています。Claude の組織向け機能を例に取ると、3 つの段階に整理できます。
 
 | 段階 | 何をするか | 例 |
 |------|-----------|-----|
@@ -95,6 +110,24 @@ Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMa
 一方で、いずれも**組織向けプランと事前設定が前提**です。個人利用では [2 節](#2-導入前に何を確認するか)の導入前チェックが引き続き主役になります。
 
 **→ Claude での具体的な設定・利用条件は [Claude Code のカスタマイズ機能](../claude-code/basics.md#組織での統制--導入前推論前実行後) を参照**
+
+### Managed Agents はツール呼び出しごとに判定する
+
+Claude Platform の **Managed Agents permission policies**（Beta）は、サーバー上のエージェントがツールを呼ぶたびに `always_allow`、`always_ask`、`auto` のいずれかで判定します。`auto` はツール名、入力、セッションの文脈から allow / deny / ask を決めますが、**人間による確認を必須にする設定ではありません**。人が必ず止めて確認する操作は `always_ask` にします。`auto` が deny と判定した呼び出しを利用者が上書きすることもできません。
+
+このポリシーは Managed Agents が提供するツールと MCP ツールに適用され、API 利用者が定義する custom tools は対象外です。custom tools の認可と監査はアプリ側で実装します。判定結果はイベントの `evaluated_permission`（通常は `evaluation` を含む）で追跡でき、必要なら `ant beta:sessions connect` で進行中セッションを確認・誘導・応答できます。
+
+GitHub と Anthropic の機能は、どちらも「実行時の権限」を扱いますが、同じ設定モデルではありません。
+
+| 観点 | GitHub Copilot managed permissions | Claude Managed Agents permission policies |
+|------|------------------------------------|-------------------------------------------|
+| 判定単位 | `Shell` / `Read` / `Edit` / `Domain` の規則に一致する操作 | サーバー上の agent / MCP tool call |
+| 結果 | `deny` / `ask` / `allow` | allow / deny / ask |
+| 人の確認を必須にする方法 | 組織の `ask`。保存済み許可や自動承認では省略できない | `always_ask`。`auto` は人の確認を保証しない |
+| 監査 | 管理設定と各セッションの承認操作 | イベントの `evaluated_permission` |
+| 対象外に注意するもの | 対応面以外のクライアント。JetBrains の発表は managed sandbox | custom tools。Claude Code のローカル権限設定とは別機能 |
+
+**→ Managed Agents をハーネスとして運用するときの介入方法は [AI エージェントの実行基盤](harness.md#実行中の権限判定と介入--claude-managed-agents) を参照**
 
 ### コンテキストの除外は、Skill / MCP の統制と別に効く
 
@@ -136,7 +169,7 @@ GitHub Copilot の **content exclusion** は、機密ファイルを Copilot の
 |------|---------------|
 | 個人が 1 つ入れる | `gh skill preview` で中身を読む・`scripts/` と `mcp.json` の接続先を見る |
 | リポジトリへコミットする | コミット SHA で固定する・レビューで差分を読む（`trojan-skill-hunter` を併用） |
-| チーム・組織へ配る | `managed-settings.json` で Marketplace と MCP サーバーを限定する・承認バイパスを禁止する |
+| チーム・組織へ配る | `managed-settings.json` で Marketplace と MCP サーバーを限定し、実行操作を `deny` / `ask` / `allow` に分ける |
 | ハーネスごと持ち込む | 権限・承認・サンドボックスの既定値を確認する（[AI エージェントの実行基盤（ハーネス）](harness.md)） |
 | コマンドを 1 つ入れる | 配布元が公式かを README で確認する・`which` で実体を見る（[6 節](#6-同名の別パッケージという入口)） |
 | 組織で全社に展開する | 導入前の検査に加え、**推論前の許可判定と実行後の監査**まで設計する（[5 節](#5-統制が効く-3-つの段階)。いずれも組織向けプランが前提） |
@@ -159,9 +192,13 @@ GitHub Copilot の **content exclusion** は、機密ファイルを Copilot の
 - [Snyk ToxicSkills study](https://snyk.io/blog/toxicskills-malicious-ai-agent-skills-clawhub/) — ClawHub / skills.sh の 3,984 Skill の監査結果（Snyk・2026-02-05）
 - [MCP allowlists in enterprise managed settings](https://github.blog/changelog/2026-08-06-mcp-allowlists-in-enterprise-managed-settings/) — MCP 許可リスト（公式）
 - [Enterprise managed settings in GitHub Copilot for JetBrains](https://github.blog/changelog/2026-08-18-enterprise-managed-settings-in-github-copilot-for-jetbrains/) — JetBrains への managed settings 拡大（公式）
+- [Enterprise managed permissions for GitHub Copilot agent operations](https://github.blog/changelog/2026-09-09-enterprise-managed-permissions-for-github-copilot-agent-operations/) — 操作単位の managed permissions 一般提供（公式）
+- [Enterprise managed settings reference](https://docs.github.com/en/enterprise-cloud@latest/copilot/reference/enterprise-administrators/enterprise-managed-settings) — `deny` / `ask` / `allow` の優先順位と対象面（公式）
+- [Enterprise managed sandbox in Copilot for JetBrains](https://github.blog/changelog/2026-09-08-enterprise-managed-sandbox-in-copilot-for-jetbrains/) — JetBrains の managed sandbox Public Preview（公式）
 - [gh skill マニュアル](https://cli.github.com/manual/gh_skill) — `gh skill preview` などのサブコマンド（公式）
 - [awesome-agent-skills-security](https://github.com/LLMSecurity/awesome-agent-skills-security) — 攻撃手法と防御策の一覧（コミュニティ）
 - [Inference hooks](https://platform.claude.com/docs/en/manage-claude/inference-hooks) — 推論前の allow / deny 判定（Anthropic 公式）
 - [Compliance API — session transcripts](https://platform.claude.com/docs/en/manage-claude/compliance-sessions) — 実行後のセッション取得（Anthropic 公式）
+- [Managed Agents permission policies](https://platform.claude.com/docs/en/managed-agents/permission-policies) — ツール呼び出し単位の権限判定（Anthropic 公式・Beta）
+- [Connect to a running session](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/sessions-connect) — Managed Agents の実行中セッションへの接続（Anthropic 公式）
 - [garrytan/gbrain](https://github.com/garrytan/gbrain) — npm 上の同名別パッケージへの警告と `gbrain doctor`（README、一次情報）
-
