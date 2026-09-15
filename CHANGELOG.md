@@ -4,6 +4,12 @@
 
 ## 2026-09
 
+- **2026-09-16** Claude Codeのfork型サブエージェントを通常型と区別（#183）
+  - **[マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md)のコンテキスト説明を修正** — すべてのClaude Codeサブエージェントが親の会話履歴を引き継がないという断定をやめ、非fork型とfork型を分けた
+  - 起動時のコンテキスト、system prompt / tools、model、prompt cache、選ぶ場面を比較表にし、「必要な情報を明示的に渡す」という原則の適用先を非fork型に限定した
+  - **[Claude Code のカスタマイズ機能](docs/claude-code/basics.md)と用語を統一** — forkモードが既定で有効でも、定義ファイルから起動する通常型までfork型に変わるわけではないことを明記した
+  - Claude Code公式ドキュメントの「How forks differ from other subagents」を2026-09-16に確認した
+
 - **2026-09-15** Kiro Crew 0.6.0 の選択可能な Agent Backend を反映（#182）
   - **[AI エージェントの実行基盤](docs/dev-methods/harness.md)の Kiro Crew 節を更新** — 公開時の Kiro CLI 基本経路と、Claude Code / Codex / KAS も選べる Agent Backend（Preview）を分けた
   - 選択が新規セッションだけに適用されること、共通のセッション制御、Claude / Codex 固有のセキュリティ上の注意を公式情報に基づいて追加した
