@@ -4,6 +4,12 @@
 
 ## 2026-09
 
+- **2026-09-15** Kiro IDEのCVEを承認境界の事例として追加（#181）
+  - **[Skill / Pluginのセキュリティ](docs/dev-methods/skill-security.md)にCVE-2026-89332を追加** — 細工されたrepository、workspace settingsの変更、Powers registry URLの差し替え、Powers panelからのrequestという順序を整理し、承認画面の表示と副作用の停止を分けて確認する必要性を示した
+  - 対象をKiro IDE 0.8.135未満、修正版を0.8.135以上、workaroundなしと記載し、Kiro CLI / Web / Crewや現在のIDE 1.xへ一般化しない範囲を明示した
+  - AWS Security Bulletin、Kiro 0.8 changelog、現在のPowers / Permissions公式文書を2026-09-15に確認した
+  - `docs/trends.md`には短い要約と詳細ページへのリンクだけを置き、READMEの「最近の更新」を5行に保った
+
 - **2026-09-12** エージェントの権限・定期実行・MCP移行・評価・可観測性を更新（#176）
   - GitHub Copilot の enterprise managed permissions（GA）と JetBrains managed sandbox（Public Preview）、Claude Managed Agents permission policies（Beta）を適用面ごとに整理し、実行時の allow / ask / deny、人の承認、監査、対象外を比較した
   - VS Code 1.137 Automations（Preview）の Manual first run、ローカル process、catch-up、直列実行、権限を追記し、Codex Scheduled tasks・Claude Code `/loop`・Kiro Crew と比較した
