@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-12
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-16
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -432,6 +432,16 @@ Automation はローカルで動きます。Agent Host を使う schedule は Ag
 
 レビューの深さ（**effort levels**）も選べます（2026-08-07 一般提供）。`Lite` は単純な変更向け、`Balanced` はより高い推論能力が要る変更向けで、組織管理者が既定値を設定できます（組織設定 → Copilot → Copilot code review）。使用されたレベルはタイムラインと PR の概要コメントに表示されます。
 
+### Upcoming — `Default` が `Balanced` を使う予定
+
+GitHubは、**2026-09-28以降に**、組織またはリポジトリのreview effortが `Default` の場合に `Balanced` を使う予定です。これは[2026-08-28の公式告知](https://github.blog/changelog/2026-08-28-upcoming-changes-to-github-copilot-policies-and-billing/#copilot-code-review-default-is-changing-to-balanced-effort-level)に基づく**将来の変更**で、2026-09-16の確認時点では実施済みとして扱いません。
+
+- `Default` のままなら、変更後は既存・新規の組織とリポジトリで `Balanced` が使われる予定です。
+- `Lite` を維持したい管理者は、**2026-09-28より前に**組織またはリポジトリのreview effortを `Default` から明示的な `Lite` へ変更します。
+- 組織の既定値は、独自の値を選んでいない配下リポジトリへ適用されます。リポジトリの既定値は自動リクエストされたreviewへ適用され、手動リクエストではPRのReviewers欄からeffort levelを選べます。
+
+> 2026-09-28以降も、公式変更ログと実際の組織・リポジトリ設定画面を再確認してください。段階的なロールアウトや予定変更があり得るため、日付だけを根拠に適用済みと判断しないでください。
+
 **→ 経緯と他ツールの対応状況は [Skills 最新動向 9 節](../trends.md#9-skill-が動く場所の広がり) を参照**
 
 ---
@@ -480,6 +490,30 @@ GitHub Copilot for JetBrains では、2026-09-08 に **enterprise managed sandbo
 
 ---
 
+## Upcoming — github.com・Mobile・cloud agentのポリシー統合
+
+[GitHubの2026-08-28の公式告知](https://github.blog/changelog/2026-08-28-upcoming-changes-to-github-copilot-policies-and-billing/#copilot-cloud-agent-copilot-chat-on-githubcom-and-copilot-chat-in-github-mobile-are-converging-to-a-single-experience-and-policy)では、**2026-09-28より前には開始しない**（no earlier than September 28th, 2026）条件で、Copilot Chat on github.com、GitHub MobileのCopilot Chat、Copilot cloud agentを単一の体験とポリシーへ統合する予定です。
+
+> **確認日: 2026-09-16 / 状態: Upcoming（予定）**。以下は現在の挙動ではありません。ロールアウト後に公式変更ログ、管理画面、データ保持の公式文書を再確認し、この節を更新してください。
+
+| 変更予定 | 管理・利用への影響 |
+|---------|------------------|
+| 3つの体験の個別ポリシーを単一ポリシーへ統合 | 統合後は既定で有効になる予定。現在の個別設定がそのまま同じ意味で残るとは限らない |
+| Copilot on github.comをagent sessionsの体験へ移行 | github.comのチャットデータ保持期間を**28日からアカウントの存続期間へ変更**する予定 |
+| cloud agentでSandboxを利用 | GitHubは、より高速なcloud体験を目的としていると説明している |
+| 統合後にopt outする | github.comとGitHub MobileのCopilotへアクセスできなくなる予定 |
+
+### Business / Enterprise管理者が事前に確認すること
+
+1. **2026-09-28より前に**、github.comのCopilot設定を開きます。
+2. 公式告知で追加予定とされる `Copilot cloud agent` ポリシーを確認します。
+3. github.com / Mobile / cloud agentをチームに許可するか、統合後の既定有効化を受け入れるかを決めます。
+4. チャットデータをアカウント存続期間まで保持する変更が、社内のデータ保持・監査方針と合うかを確認します。
+
+利用を継続するだけなら、GitHubは追加操作を不要としています。ただし管理者は、既定有効化とデータ保持期間の変更を理解したうえで期限前にポリシーを確認する必要があります。
+
+---
+
 ## 組織の統制 — content exclusion
 
 機密ファイルを Copilot のコンテキストから除外する **content exclusion** が、**Copilot app と Copilot CLI で一般提供（GA）** になりました（2026-09-02）。対象は **Copilot Business / Copilot Enterprise** です。
@@ -489,6 +523,8 @@ GitHub Copilot for JetBrains では、2026-09-08 に **enterprise managed sandbo
 ### 対応している面・していない面
 
 **「app・CLI・主要 IDE で GA」であって「全ての面で GA」ではありません。** GitHub Web / Mobile は Public Preview に留まり、VS Code の Edit mode / Agent mode は非対応です。ここを取り違えると、保護されていない経路が残ります。
+
+> 上記のポリシー統合予定は、content exclusionの対応範囲が同じ日付に自動で変わることを意味しません。ロールアウト後も、content exclusionの公式文書で対応面を別に確認してください。
 
 | 面 | 対応 |
 |----|------|
