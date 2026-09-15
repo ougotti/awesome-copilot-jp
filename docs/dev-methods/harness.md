@@ -1,6 +1,6 @@
 # AI エージェントの実行基盤（ハーネス）
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-15
+> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-16
 
 > エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
 
@@ -200,16 +200,21 @@ QM が「自前のクラウド・Postgres・インフラ担当者」を前提に
 
 この「動かした後に何が見えるか」は、[Skill / Plugin のセキュリティ 5 節「統制が効く 3 つの段階」](skill-security.md#5-統制が効く-3-つの段階)の**実行後（監査）**と直結します。あちらが「セッションのトランスクリプトを取得する」という組織向け機能（Compliance API）を扱うのに対し、ここでの OpenTelemetry は**ベンダー中立の計測データ**（メトリクス・ログ・トレース）を自分たちの監視基盤（OTLP 対応バックエンド）へ流す仕組みです。両者は排他ではなく、組織で使える統制の手段が違う層として併存します。
 
-### OpenTelemetry と Copilot usage metrics API を分ける
+### OTLP とデータの意味を分ける
 
-2026-09-11、GitHub は専用の **VS Code Agents ウィンドウ**の利用指標を Copilot usage metrics reports へ一般提供しました。これはエージェントの内部トレースではなく、Enterprise / Organization での導入状況を見る集計 API です。
+**OpenTelemetryは観測のためのAPI・SDK・データモデルを含む仕組みで、OTLPはそのデータを運ぶプロトコルです。** OTLPを使っているだけでは、データがGenAI semantic conventionsに従う実行トレースなのか、ベンダー独自の日次集計なのかは決まりません。名前空間、signal（trace / metric / log）、集計粒度を確認してください。
 
-| 観測手段 | 答える問い | 主なデータ |
-|---------|-----------|-----------|
-| OpenTelemetry | 1 回の実行で、どのモデル・tool が動き、どこで失敗・遅延したか | trace、event、token、tool call、latency |
-| Copilot usage metrics API | 組織内で専用 Agents ウィンドウを何人が、何 session / message 使ったか | `daily_active_vscode_agent_users`、`totals_by_vscode_agent`、ユーザー別 `used_vscode_agent` |
+2026-09-01、Kiroは利用者別のusage metricsをOpenTelemetry互換のcollectorへ送るaccount-level exportを追加しました。これは `invoke_agent` や `execute_tool` のspanではなく、`kiro.daily.*` 名前空間の**単調増加するOTLP Sumメトリクス**です。既存のCSV reportと同じ日次集計を別経路で送り、両方を独立して有効化できます。
 
-Copilot の新しいフィールドは 1 日 / 28 日の report に追加され、データがない場合は省略または `null` になり得ます。対象は**専用の VS Code Agents ウィンドウだけ**で、editor-window Agent Mode や汎用の集計へ足し合わせません。閲覧には owner / billing manager または `View Copilot Metrics` 権限と、Copilot usage metrics policy の有効化が必要です。
+| 観測対象 | 転送・取得方式 | データ粒度 | 答える問い | 頻度・権限 |
+|---------|---------------|-----------|-----------|-----------|
+| **GenAI実行トレース / semantic conventions** | 各ツールのOTel exporterからcollectorへ送る。OTLP対応は実装ごとに確認 | 1回のagent・model・tool実行のspan / event / metric、token、latency | どのmodel・toolが動き、どこで失敗・遅延したか | 送信頻度・設定権限はツールごとに異なる |
+| **Kiro user activity export** | Kiroのserverから `OTLP/gRPC` または `OTLP/HTTP`（protobuf）でcollectorへ送る | 利用者・client type・model別の日次集計。credits、overage credits、messages、conversations、model別message数 | 誰がどのclient / modelを使い、adoption・engagement・credit consumptionがどう変わったか | 毎日02:00 UTC。account administratorがKiro consoleで設定し、Secrets Managerのsecret、KMS key、公開到達可能なOTLP endpointが必要 |
+| **Copilot usage metrics API** | GitHubのREST API / NDJSON reportから取得（OTLPではない） | Enterprise / Organization / 利用者別の1日・28日集計。専用VS Code Agents windowのuser、session、message数 | 組織内で専用Agents windowを何人が、何session / message使ったか | report単位。owner / billing managerまたは `View Copilot Metrics` 権限と、Copilot usage metrics policyの有効化が必要 |
+
+Kiroの機能は**提供元: Official / Kiro、状態: GA、確認日: 2026-09-16**です。公式ドキュメントでは、個人の開発環境ではなくadministratorがaccount単位で設定し、`kiro.daily.credits`などを1日1回送る機能として説明されています。送信要求がcollectorに受理されても後段でdatapointが拒否される可能性があるため、宛先で到着を確認します。
+
+Copilotの専用VS Code Agents指標は2026-09-11に一般提供され、`daily_active_vscode_agent_users`、`totals_by_vscode_agent`、利用者別の `used_vscode_agent` を1日 / 28日のreportへ追加します。データがない場合は省略または `null` になり得ます。対象は**専用のVS Code Agents windowだけ**で、editor-window Agent Modeや汎用の集計へ足し合わせません。
 
 ## 宣言でリモートのエージェントを管理する — `ant apply`
 
@@ -323,6 +328,8 @@ Console などファイルの外側でリソースが編集・アーカイブ・
 - [Claude Code Monitoring](https://code.claude.com/docs/en/monitoring-usage) — OTel メトリクス・イベント・トレース（ベータ）の設定（公式）
 - [Codex CLI Advanced Configuration — `[otel]`](https://learn.chatgpt.com/docs/config-file/config-advanced) — Codex の OTel 設定（公式）
 - [Monitor agent usage with OpenTelemetry](https://code.visualstudio.com/docs/agents/guides/monitoring-agents) — VS Code Copilot Chat の OTel 対応（公式）
+- [Export user activity with OpenTelemetry](https://kiro.dev/docs/enterprise/monitor-and-track/user-activity/opentelemetry/) — account-levelの日次usage metrics、OTLP、設定権限、export時刻、metric定義（`提供元`: Official / Kiro ｜ `状態`: GA、2026-09-16確認）
+- [Kiro changelog — Export Kiro usage metrics to OpenTelemetry](https://kiro.dev/changelog/) — 機能公開の一次情報（`提供元`: Official / Kiro ｜ `状態`: GA、2026-09-01）
 - [Add VS Code Agents to Copilot usage metrics](https://github.blog/changelog/2026-09-11-add-vs-code-agents-to-copilot-usage-metrics/) — 専用 Agents ウィンドウの利用指標（GitHub 公式・GA）
 - [Copilot usage metrics reference](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics) — report の種類、field、権限（GitHub 公式）
 - [Manage resources as code with `ant apply`](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/apply) — リソースの種類・`claude-lock.json`・フラグ・CI 運用の一次情報（Anthropic 公式）
