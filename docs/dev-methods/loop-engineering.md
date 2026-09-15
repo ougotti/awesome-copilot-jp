@@ -1,6 +1,6 @@
 # ループエンジニアリング
 
-> **対象ツール**: ツール横断（Claude Code・Codex 等） ｜ **実行環境**: CLI / デスクトップ / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-12
+> **対象ツール**: ツール横断（Claude Code・Codex 等） ｜ **実行環境**: CLI / IDE（デスクトップ） / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-15
 
 > エージェントに毎ターン指示を出す代わりに、**エージェントに指示を出し続ける「ループ」の側を設計する**実践を **ループエンジニアリング（loop engineering）** と呼びます。2026-06-07 に Addy Osmani（Google Chrome）が [Loop Engineering](https://addyosmani.com/blog/loop-engineering/) で命名しました。このページは概念、ループの構成要素、停止条件の作り方、そして落とし穴をまとめた解説です。ループが動く土台については [AI エージェントの実行基盤（ハーネス）](harness.md) を参照してください。
 
@@ -114,7 +114,7 @@ Codex の Scheduled tasks との違いは 2 点です。**起動条件の実装�
 
 長時間タスクは計画・実行・検証・失敗時の再試行までツール側が回すため、**[停止条件](#停止条件の作り方)を渡す側で決めておく必要はむしろ大きくなります**。「終わるまで」ではなく、機械が判定できる条件と上限を仕様に書いてください。
 
-> 本体は無償の OSS ですが、**動かすには Kiro のプランが必要**です（エージェントの利用は Kiro アカウントの枠を消費します）。
+> 本体は無償の OSS です。基本の Kiro CLI 経路は Kiro プランとアカウントの利用枠を使います。Kiro Crew 0.6.0 では Claude Code / Codex / KAS も選べる Agent Backend が Preview になったため、代替バックエンドの認証・利用枠は選択先の現行情報を確認してください。詳細は[ハーネスの Kiro Crew 節](harness.md#層の関係--セッションごとに-agent-backend-を選ぶ)へ集約しています。
 
 ### 定期実行を選ぶときの比較
 
@@ -125,7 +125,7 @@ Codex の Scheduled tasks との違いは 2 点です。**起動条件の実装�
 | 主な起動条件 | Manual / Hourly / Daily / Weekly | 時刻、または Gmail / Slack / GitHub のイベント | 固定間隔、またはセッション中に選ぶ間隔 | 定期ジョブ、webhook、メッセージ、heartbeat |
 | 実行場所 | ローカルの Agent Host process または VS Code window | デスクトップのローカル実行、または提供面に応じた実行先 | 開いているローカルセッション | 常駐する Kiro Crew 実行環境 |
 | workspace / 分離 | workspace なしも可。対応 agent は New Worktree を選べる | ローカルでは作業中 checkout / Git worktree を選べる | 現在のセッションと作業ディレクトリを継承 | エージェントごとの workspace と sandbox 強度を設計する |
-| 権限・承認 | session configuration を保存。組織ポリシーは迂回せず、run ごとに承認が残り得る | タスクの実行環境・サンドボックス・承認設定に従う | 現在のセッションの権限を継承 | standard / strict / off の分離と audit を運用者が設定する |
+| 権限・承認 | session configuration を保存。組織ポリシーは迂回せず、run ごとに承認が残り得る | タスクの実行環境・サンドボックス・承認設定に従う | 現在のセッションの権限を継承 | Crew と選択した Agent Backend の両方を確認する（Agent Backend は Preview） |
 | 停止・重複実行 | disable は次回以降だけ。実行中は History から Stop。同一 Automation は直列 | 各起動でタスクを作る。重複時の扱いは対象面の現行仕様を確認する | `Esc` または task の削除。busy 中は turn 後に 1 回実行し、取り逃した回を全 replay しない | heartbeat / task の終了条件と上限を仕様に置く |
 
 選択の基準は単純です。IDE の作業構成をそのまま定期化するなら VS Code、時刻だけでなく外部イベントも入口にするなら Codex、開いている会話内の短い監視なら `/loop`、セッションを越えて常駐しメモリやチャネルを持たせるなら Kiro Crew が候補になります。どれを使う場合も、[停止条件](#停止条件の作り方)と影響の大きい操作の承認を先に決めます。

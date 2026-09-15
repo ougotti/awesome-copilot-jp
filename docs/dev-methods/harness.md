@@ -1,6 +1,6 @@
 # AI エージェントの実行基盤（ハーネス）
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-12
+> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-15
 
 > エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
 
@@ -130,17 +130,17 @@ QM は**組織向けソフトであり、デスクトップアプリではあり
 
 QM が**組織のスコープと権限**を中心に据えるのに対し、Kiro Crew の軸は**対話が終わっても作業が終わらないこと**です。同じ「ソースを読める OSS ハーネス」でも、設計の出発点が違います。
 
-### 層の関係 — Kiro CLI を下敷きにする
+### 層の関係 — セッションごとに Agent Backend を選ぶ
 
-Kiro Crew は **Agent Client Protocol（ACP）** 経由で `kiro-cli` を駆動します。QM が Claude Code・Codex・OpenCode・Pi を差し替え可能な部品として扱ったのと同じ構図で、こちらは下位に自社の CLI を固定した形です。
+公開時の Kiro Crew は **Agent Client Protocol（ACP）** 経由で Kiro CLI を駆動する構成で、現在の製品 FAQ もこの経路を基本として説明しています。一方、Kiro Crew 0.6.0（2026-09-05）は **Agent Backend** の選択を Preview として追加しました。Developer Mode を有効にすると、Settings → Developer → Agent Backend で **Kiro CLI、Claude Code、Codex、KAS** から選べます。選択は新しいセッションにだけ適用され、既存セッションは開始時のバックエンドを保ちます。
 
 | 層 | 担うもの |
 |----|---------|
-| ハーネス（Kiro Crew） | 永続セッション、メモリ、スケジュール、チャネルへの配送、サンドボックス、監査 |
-| コーディングツール（`kiro-cli`） | 実際のエージェントループ |
-| モデル | 推論（Kiro アカウントのサインインを使う） |
+| ハーネス（Kiro Crew） | 永続セッション、メモリ、スケジュール、チャネルへの配送、セッション制御、監査 |
+| Agent Backend | 実際のエージェントループ。Kiro CLI が基本経路で、Claude Code / Codex / KAS への切り替えは **Preview** |
+| モデル・認証・利用枠 | 選択したバックエンド側の条件に従う。Kiro CLI 経路は Kiro アカウントとプランを使うが、代替バックエンドの認証・課金対応は Agent Backend ページに記載がないため、各バックエンドの現行情報を確認する |
 
-`.kiro` 配下の steering files・カスタムエージェント・Skill は**そのまま引き継がれます**。すでに Kiro を使っているなら、定義を書き直さずに常駐側へ持ち上げられます。
+Preview でも共通すると公式に明記されているのは、monitor loop、project change、follow-up card、conversation reset です。Kiro CLI 経路では既存の `.kiro` 設定（steering files・Skill・custom agent）を引き継げますが、**代替バックエンドが同じ設定を同じ意味で解釈するとは公式ページに書かれていません。** バックエンドを切り替える場合は、設定の継承を推測せず、小さなセッションで確認してください。
 
 ### 人がいない時間に動かすための部品
 
@@ -156,19 +156,21 @@ Kiro Crew は **Agent Client Protocol（ACP）** 経由で `kiro-cli` を駆動�
 
 **→ 「いつ起動するか」の設計は [ループエンジニアリング](loop-engineering.md#oss-側の起動条件--kiro-crew) を参照**
 
-### セキュリティ — 分離の強さを選ぶ
+### セキュリティ — バックエンドごとの境界も確認する
 
-Linux と macOS では `kiro-cli` を **namespace / Seatbelt による分離**の中で動かせます。強さは **standard / strict / off** から選びます。セキュリティイベントとツールの実行履歴は記録され、`kirocrew security events` / `audit` / `verify` で確認できます。
+Kiro CLI 経路では、Linux と macOS で `kiro-cli` を **namespace / Seatbelt による分離**の中で動かせます。強さは **standard / strict / off** から選びます。セキュリティイベントとツールの実行履歴は記録され、`kirocrew security events` / `audit` / `verify` で確認できます。
+
+Agent Backend を変えると承認境界も変わります。公式の Preview ページは、Claude 側の設定ですでに事前承認されたツールは Crew の承認を迂回し、Codex にはサンドボックスが必要だと注意しています。無人実行へ使う前に、Crew 側とバックエンド側の両方で、ファイル書き込み・コマンド・ネットワークアクセスがどこで止まるかを確認してください。
 
 QM が Strict / Auto / Dangerous という**渡す内容の選別**の強さを選ばせるのに対し、Kiro Crew は**プロセス分離**の強さを選ばせます。着眼点は違いますが、どちらも「既定でどこまで許すか」を運用者に決めさせる設計です。無人で回すほどこの既定値が効いてきます（[ループエンジニアリング](loop-engineering.md)）。
 
 ### 導入の前提 — OSS だが「自前で完結」ではない
 
-- 本体は Apache-2.0 の OSS で追加の費用はかからないが、**動かすには Kiro のプランが必要**。エージェントの利用は Kiro アカウントの枠を消費する
-- Kiro Crew 自体はアカウントの仕組みを持たず、モデルアクセスは `kiro-cli` のサインインに委ねられる
-- 公式の記述に Preview / Beta の表記はなく、既定の更新チャネルも安定版のため、本ガイドでは `状態`: GA として扱う（チャネルの構成は変わるため、[公式ドキュメント](https://kiro.dev/docs/crew/)を参照）
+- 本体は Apache-2.0 の OSS で、Crew 自体に別料金はない。**Kiro CLI 経路**では Kiro プランが必要で、エージェントの利用は Kiro アカウントの枠を消費する
+- Kiro Crew 全体と個別機能の状態を分ける。本ガイドでは通常配布される Crew 本体を GA として扱うが、Kiro CLI 以外も選べる **Agent Backend は Preview**（2026-09-15 確認）
+- 代替バックエンドの認証・利用枠を Kiro CLI 経路から推測しない。導入時は選択したバックエンドと Crew の両方の公式情報を確認する
 
-QM が「自前のクラウド・Postgres・インフラ担当者」を前提にするのに対し、Kiro Crew は**手元のマシンで動かせる代わりに、モデルの提供をベンダーに依存**します。同じ OSS ハーネスでも、組織へ入れるときに確認する項目はここまで違います。
+QM が「自前のクラウド・Postgres・インフラ担当者」を前提にするのに対し、Kiro Crew は**手元のマシンで動かせる代わりに、選択したバックエンドのモデル提供・認証・利用枠に依存**します。同じ OSS ハーネスでも、組織へ入れるときに確認する項目はここまで違います。
 
 > 導入手順・対応 OS の細目・コマンドは変わります。導入時は [リポジトリ](https://github.com/kirodotdev/KiroCrew) と [公式ドキュメント](https://kiro.dev/docs/crew/) を一次情報として確認してください。
 
@@ -315,6 +317,8 @@ Console などファイルの外側でリソースが編集・アーカイブ・
 - [Introducing Kiro Crew](https://kiro.dev/blog/introducing-kiro-crew/) — 公開時の発表（公式・2026-08-04）
 - [kirodotdev/KiroCrew](https://github.com/kirodotdev/KiroCrew) — リポジトリと README（公式・Apache-2.0）
 - [Kiro Crew ドキュメント](https://kiro.dev/docs/crew/) — 機能・設定・セキュリティの一次情報（公式）
+- [Kiro Crew 0.6.0 changelog](https://kiro.dev/changelog/crew/0-6/) — Agent Backend 選択の追加（`提供元`: Official / Kiro ｜ `状態`: —、2026-09-05）
+- [Agent backends](https://kiro.dev/docs/crew/features/agent-backends/) — Kiro CLI / Claude Code / Codex / KAS、セッションへの適用範囲、セキュリティ上の注意（`提供元`: Official / Kiro ｜ `状態`: Preview）
 - [Inside the LLM Call: GenAI Observability with OpenTelemetry](https://opentelemetry.io/blog/2026/genai-observability/) — GenAI semantic conventions の解説（OpenTelemetry 公式）
 - [Claude Code Monitoring](https://code.claude.com/docs/en/monitoring-usage) — OTel メトリクス・イベント・トレース（ベータ）の設定（公式）
 - [Codex CLI Advanced Configuration — `[otel]`](https://learn.chatgpt.com/docs/config-file/config-advanced) — Codex の OTel 設定（公式）
