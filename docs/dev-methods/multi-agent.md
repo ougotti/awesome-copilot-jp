@@ -1,6 +1,6 @@
 # マルチエージェントを使う境界線
 
-> **対象ツール**: ツール横断（Claude Code・OpenAI Agents SDK・LangGraph ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-09
+> **対象ツール**: ツール横断（Claude Code・OpenAI Agents SDK・LangGraph ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-16
 
 > Codex・Claude Code・各種ハーネスでサブエージェントや並列実行が一般化し、「複数体にできるか」はもう問題ではなくなりました。残っているのは「**いつ複数体にすべきか**」という設計判断です。マルチエージェントは分業とコンテキスト分離に有効な一方、通信・重複作業・競合・権限増幅・集約時の誤りという追加コストを持ちます。このページはその判断基準を、機能の存在ではなく設計判断として整理します。
 
@@ -35,9 +35,17 @@
 
 ## 3. agent-as-tool: 専門作業を隔離して呼び出す
 
-[Claude Code のサブエージェント](https://code.claude.com/docs/en/sub-agents)は、このパターンの具体例です。**各サブエージェントは独立した context window で動き、呼び出し元の会話履歴・既に読んだファイルを引き継ぎません。** 呼び出し元は要約だけを受け取ります。
+[Claude Code のサブエージェント](https://code.claude.com/docs/en/sub-agents)は、このパターンの具体例です。ただし、**通常の非 fork 型**と、現在の会話から分岐する **fork 型**では、起動時に受け取るコンテキストが異なります。
 
-> Use one when a side task would flood your main conversation with search results, logs, or file contents you won't reference again: the subagent does that work in its own context and returns only the summary.
+| 観点 | 非 fork 型 | fork 型 |
+|------|------------|---------|
+| **起動時のコンテキスト** | 委任プロンプトを中心に、新しい context window で開始する。親の会話履歴・呼び出し済み Skill・既読ファイルは引き継がない | 起動時点の親の会話履歴をすべて引き継ぐ |
+| **system prompt / tools** | サブエージェントの定義ファイルに従う（バックグラウンド実行では一部の tool が制限される） | 親と同じ system prompt / tools を使う |
+| **model** | 定義ファイルの `model` など、サブエージェント用の選択順に従う | 親と同じ model を使う |
+| **prompt cache** | 親とは別 | 親と共有し、最初のリクエストで親の cache を再利用する |
+| **選ぶ場面** | 大量のログや探索結果を親の会話から隔離したい。役割・tool・modelを個別に絞りたい | 親がすでに把握した文脈を使い、別の観点から続きを並行して進めたい |
+
+非 fork 型には、**必要な情報を委任プロンプトで明示的に渡します。** fork 型は既存の文脈を再利用できますが、独立した役割定義や異なる model に切り替える用途には向きません。対話セッションで fork モードが既定で有効でも、定義ファイルから起動する Explore などのサブエージェントまで自動的に fork 型へ変わるわけではありません。
 
 OpenAI Agents SDK も同じ構造を **`Agent.as_tool()`** として提供しています。
 
@@ -117,8 +125,8 @@ Claude Code のドキュメントが挙げる例は、独立した複数の探�
 | 項目 | 論点 |
 |------|------|
 | **通信** | 呼び出し元とサブエージェントは、要約された結果だけをやり取りするのか、詳細な文脈まで渡すのか |
-| **コンテキスト** | サブエージェントは独立した context window を持つため、呼び出し元の会話履歴・既読ファイルを引き継がない。**必要な情報は明示的に渡す必要がある** |
-| **コスト** | 詳細を追わない定型作業は、低コストなモデルへルーティングできる。サブエージェントの説明文もコンテキストを消費するため、簡潔に保つ |
+| **コンテキスト** | 非 fork 型は親の会話履歴・既読ファイルを引き継がないため、**必要な情報を明示的に渡す**。Claude Code の fork 型は起動時点の親の会話履歴を引き継ぐため、文脈を再利用する目的で選ぶ |
+| **コスト** | 非 fork 型では詳細を追わない定型作業を低コストな model へルーティングできる。fork 型は親の model と prompt cache を使う。サブエージェントの説明文もコンテキストを消費するため、簡潔に保つ |
 | **権限** | 呼び出し元の権限をそのまま渡さない。ツールを許可リスト・拒否リストで絞り、**タスクに必要な最小の権限**にする（[エージェントのID・認可・委任権限](agent-identity.md#5-親エージェントからサブエージェントへ渡してよい権限)の「権限の増幅」と同じ論点） |
 | **停止条件** | 何をもって各サブエージェントの作業を「完了」とみなすか、機械的に判定できる条件を決める（[ループエンジニアリング「停止条件の作り方」](loop-engineering.md#停止条件の作り方)と同じ設計原則） |
 
@@ -166,7 +174,7 @@ Claude Code のドキュメントが挙げる例は、独立した複数の探�
 
 ## 参考リンク
 
-- [Claude Code のサブエージェント](https://code.claude.com/docs/en/sub-agents) — context window の独立性、権限制限、並列実行の上限、出力スキャンの一次情報（公式）
+- [Claude Code のサブエージェント](https://code.claude.com/docs/en/sub-agents) — 非 fork 型と fork 型のコンテキスト、system prompt / tools、model、prompt cache の差、権限制限、並列実行の上限、出力スキャンの一次情報（公式）
 - [OpenAI Agents SDK: Multi-agent](https://openai.github.io/openai-agents-python/multi_agent/) — agent-as-tool と handoff の定義・使い分け（公式）
 - [LangGraph: Use subgraphs](https://docs.langchain.com/oss/python/langgraph/use-subgraphs) — 状態共有・分離の仕組み、並列実行時のチェックポイント競合リスク（公式）
 - [Measuring AI agent autonomy in practice](https://www.anthropic.com/news/measuring-agent-autonomy) — 承認戦略が「都度承認」から「監視・介入」へ移る実利用データ（Anthropic 公式）
