@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-12
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-15
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -111,6 +111,28 @@ JetBrains では、同じ週に **enterprise managed sandbox** が Public Previe
 
 **→ Claude での具体的な設定・利用条件は [Claude Code のカスタマイズ機能](../claude-code/basics.md#組織での統制--導入前推論前実行後) を参照**
 
+### 承認画面が副作用より先とは限らない — Kiro IDEの修正済み事例
+
+`ask` や確認画面があることだけでは、**ファイル書き込みや外部通信が承認応答まで停止している**とは限りません。AWSが2026-09-11に公開した [CVE-2026-89332](https://aws.amazon.com/security/security-bulletins/2026-111-aws/) は、その順序を確認する必要性が表れたKiro IDE固有の事例です。
+
+1. 細工されたrepositoryにより、未信頼workspaceのsettings fileをKiro agentが変更し、Kiro Powers registry URLを外部endpointへ向けられる可能性があった
+2. Kiro IDEは変更内容とURLを承認画面へ表示した
+3. しかし、承認への応答を待つ時点でsettings fileはすでにdiskへ書き込まれていた
+4. 応答前にPowers panelを開くと、そのURLへのrequestが発生し、workspaceの機微情報が送信される可能性があった
+
+この問題の対象は **Kiro IDE 0.8.135未満**で、**0.8.135以上で修正済み**です。AWSは最新版への更新と、旧版で開いたproject内にcredentialsがあった場合のrotationを推奨しており、workaroundはありません。これは旧Kiro IDEの実装に関するCVEです。Kiro CLI、Kiro Web、Kiro Crew、PowersやAgent Pluginsの仕様全体に同じ問題があるという意味ではなく、現在のKiro IDE 1.xに未修正の問題が残ることも示していません。
+
+承認機能を評価するときは、UIの有無に加えて次の時点を実際の実装とtraceで確認します。
+
+| 確認する境界 | 確認内容 |
+|-------------|---------|
+| ファイル書き込み | 承認前に一時領域や本来のsettings fileへ反映されていないか |
+| 設定の再読み込み | 未承認の変更をpanel、extension、agentが読み込まないか |
+| 外部通信 | DNS解決やHTTP requestを含め、送信前に停止しているか |
+| 拒否後 | 書き込み済みの値、cache、接続先がrollbackされるか |
+
+Kiro IDEを利用している場合は最新版へ更新します。0.8.135未満で開いたprojectにcredentialsが存在した場合は、AWSの推奨に沿ってrotationを検討してください。未信頼repositoryを開く際は、workspace settingsとregistry / MCP endpointの変更も確認対象に含めます。
+
 ### Managed Agents はツール呼び出しごとに判定する
 
 Claude Platform の **Managed Agents permission policies**（Beta）は、サーバー上のエージェントがツールを呼ぶたびに `always_allow`、`always_ask`、`auto` のいずれかで判定します。`auto` はツール名、入力、セッションの文脈から allow / deny / ask を決めますが、**人間による確認を必須にする設定ではありません**。人が必ず止めて確認する操作は `always_ask` にします。`auto` が deny と判定した呼び出しを利用者が上書きすることもできません。
@@ -201,4 +223,8 @@ GitHub Copilot の **content exclusion** は、機密ファイルを Copilot の
 - [Compliance API — session transcripts](https://platform.claude.com/docs/en/manage-claude/compliance-sessions) — 実行後のセッション取得（Anthropic 公式）
 - [Managed Agents permission policies](https://platform.claude.com/docs/en/managed-agents/permission-policies) — ツール呼び出し単位の権限判定（Anthropic 公式・Beta）
 - [Connect to a running session](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/sessions-connect) — Managed Agents の実行中セッションへの接続（Anthropic 公式）
+- [CVE-2026-89332 — Kiro IDE Sensitive Workspace Data Exfiltration](https://aws.amazon.com/security/security-bulletins/2026-111-aws/) — AWSがImportantとして公開し、0.8.135以上で修正済み（`提供元`: Official / AWS ｜ `状態`: —）
+- [CVE Record: CVE-2026-89332](https://www.cve.org/CVERecord?id=CVE-2026-89332) — 公開済みのCVE登録情報（`提供元`: Official / CVE Program ｜ `状態`: —）
+- [Kiro Powers](https://kiro.dev/docs/powers/) — PowersがAgent Plugins形式でSkillとMCP設定を読み込む現在の仕様（`提供元`: Official / Kiro ｜ `状態`: —、2026-09-15確認）
+- [Kiro Permissions](https://kiro.dev/docs/permissions/) — `deny` / `ask` / `allow` を含む現在の権限設定（`提供元`: Official / Kiro ｜ `状態`: —、2026-09-15確認）
 - [garrytan/gbrain](https://github.com/garrytan/gbrain) — npm 上の同名別パッケージへの警告と `gbrain doctor`（README、一次情報）

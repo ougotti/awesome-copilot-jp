@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-12
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-15
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-15 | Kiro IDEのCVE-2026-89332を、承認画面の表示と副作用の停止を分けて検証する事例として追加。詳細はSkill / Plugin のセキュリティへ集約した |
 | 2026-09-12 | GitHub / Claude の実行時権限制御、VS Code 1.137 Automations、Codex MCP server 廃止、Claude Code の Plugin eval、Copilot code review と Agents 利用指標を追加。詳細は各製品・開発手法ページへ分離した |
 | 2026-09-09 | 13 節を「MCP 2026-07-28 仕様と移行時の確認」に改題し、「tier 1 SDK が後方互換を保っているため利用者側の作業は不要」という断定を、既製クライアント利用者・SDK 開発者・独自サーバー運用者・拡張利用者で分けた役割別の確認事項の表へ置き換えた。stateless core でもアプリケーション状態は明示的なハンドルで保持できる点を補足した |
 | 2026-09-09 | 13 節「拡張」に、独立ページ [MCP Apps — 会話内にUIを追加する](dev-methods/mcp-apps.md) への誘導を追加。仕組み・最小例・対応ホストの確認と fallback・データ露出範囲を新ページに整理した |
@@ -659,6 +660,8 @@ Snyk の「ToxicSkills」調査（2026-02-05 公開）は、ClawHub と skills.s
 2026 年 8 月には、統制の範囲が**導入前から前後へ**広がりました。組織向けプラン限定ですが、**推論前**に組織のセキュリティサーバーが allow / deny を返すまで待つ仕組み（Inference hooks）と、**実行後**に利用者のマシン上のセッションまでトランスクリプトを取得する仕組み（Compliance API）が加わっています。中身が安全な Skill でも、渡される入力や実行される文脈まではスキャンできないためです。
 
 2026 年 9 月には**実行する操作そのもの**も中央制御の対象になりました。GitHub Copilot の enterprise managed permissions（GitHub 公式、2026-09-09、GA）は `Shell` / `Read` / `Edit` / `Domain` を `deny` / `ask` / `allow` に分け、managed `ask` には毎回新しい承認を要求します。Claude Managed Agents permission policies（Anthropic 公式、Beta）は agent / MCP tool call ごとに allow / ask / deny を評価し、`evaluated_permission` をイベントに残します。Claude の `auto` は人の確認を保証しないため、人が必ず止める操作は `always_ask` にします。Claude Code のローカル権限設定とは別機能です。
+
+AWSが2026-09-11に公開したKiro IDEのCVE-2026-89332（AWS公式・Important）は、確認画面に変更内容とURLが表示されても、応答前にsettings fileが書き込まれ、別操作から外部requestが発生し得た事例です。対象はKiro IDE 0.8.135未満で、0.8.135以上では修正済みです。**確認画面の有無と、副作用の前に実際に停止するかは分けて検証します。** 攻撃の順序、対象範囲、利用者の確認事項は[詳細ページ](dev-methods/skill-security.md#承認画面が副作用より先とは限らない--kiro-ideの修正済み事例)へ集約しています。
 
 **→ 未定義の領域、導入前チェック、監査データ、組織での絞り込みは [Skill / Plugin のセキュリティ](dev-methods/skill-security.md) を参照**
 **→ コードを書かない方向けの安全ガイドは [生成AIを業務で安全に使う](business/safety.md) を参照**
