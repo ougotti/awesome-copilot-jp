@@ -223,8 +223,8 @@ GitHub Copilot の **content exclusion** は、機密ファイルを Copilot の
 - [Compliance API — session transcripts](https://platform.claude.com/docs/en/manage-claude/compliance-sessions) — 実行後のセッション取得（Anthropic 公式）
 - [Managed Agents permission policies](https://platform.claude.com/docs/en/managed-agents/permission-policies) — ツール呼び出し単位の権限判定（Anthropic 公式・Beta）
 - [Connect to a running session](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/sessions-connect) — Managed Agents の実行中セッションへの接続（Anthropic 公式）
-- [CVE-2026-89332 — Kiro IDE Sensitive Workspace Data Exfiltration](https://aws.amazon.com/security/security-bulletins/2026-111-aws/) — 承認応答前にsettings fileが書き込まれていた問題（`提供元`: Official / AWS ｜ `状態`: Important・0.8.135以上で修正済み）
-- [CVE Record: CVE-2026-89332](https://www.cve.org/CVERecord?id=CVE-2026-89332) — CVE登録情報（`提供元`: Official / CVE Program ｜ `状態`: Published）
-- [Kiro Powers](https://kiro.dev/docs/powers/) — PowersがAgent Plugins形式でSkillとMCP設定を読み込む現在の仕様（`提供元`: Official / Kiro ｜ `状態`: 現行ドキュメント、2026-09-15確認）
-- [Kiro Permissions](https://kiro.dev/docs/permissions/) — `deny` / `ask` / `allow` を含む現在の権限設定（`提供元`: Official / Kiro ｜ `状態`: 現行ドキュメント、2026-09-15確認）
+- [CVE-2026-89332 — Kiro IDE Sensitive Workspace Data Exfiltration](https://aws.amazon.com/security/security-bulletins/2026-111-aws/) — AWSがImportantとして公開し、0.8.135以上で修正済み（`提供元`: Official / AWS ｜ `状態`: —）
+- [CVE Record: CVE-2026-89332](https://www.cve.org/CVERecord?id=CVE-2026-89332) — 公開済みのCVE登録情報（`提供元`: Official / CVE Program ｜ `状態`: —）
+- [Kiro Powers](https://kiro.dev/docs/powers/) — PowersがAgent Plugins形式でSkillとMCP設定を読み込む現在の仕様（`提供元`: Official / Kiro ｜ `状態`: —、2026-09-15確認）
+- [Kiro Permissions](https://kiro.dev/docs/permissions/) — `deny` / `ask` / `allow` を含む現在の権限設定（`提供元`: Official / Kiro ｜ `状態`: —、2026-09-15確認）
 - [garrytan/gbrain](https://github.com/garrytan/gbrain) — npm 上の同名別パッケージへの警告と `gbrain doctor`（README、一次情報）

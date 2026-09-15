@@ -18,7 +18,7 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
-- **2026-09-15** [Skill / Pluginのセキュリティ](docs/dev-methods/skill-security.md#承認画面が副作用より先とは限らない--kiro-ideの修正済み事例)へKiro IDEのCVE-2026-89332を承認境界の事例として追加
+- **2026-09-15** [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#承認画面が副作用より先とは限らない--kiro-ideの修正済み事例)へKiro IDEのCVE-2026-89332を承認境界の事例として追加
 - **2026-09-12** [Skills 最新動向](docs/trends.md)へエージェントの実行時権限、VS Code Automations、Codex MCP移行、Claude Plugin eval、Copilotのレビュー・利用指標を追加
 - **2026-09-11** [AI-DLC Workflows](docs/dev-methods/aidlc-workflows.md)を現行手順へ更新し、[Power Apps Plansとの比較](docs/dev-methods/ai-dlc-power-platform.md)と[AI-DLC・AI-PDLC・AI BPRの用語整理](docs/dev-methods/ai-driven-lifecycle-terms.md)を分離
 - **2026-09-09** [VS Code エディタウィンドウでの複数ルート運用](docs/copilot/multi-root.md) を新設し、multi-root workspace（Experimental）の設定・hooks の読み込み元・確認手順を整理

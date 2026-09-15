@@ -5,7 +5,7 @@
 ## 2026-09
 
 - **2026-09-15** Kiro IDEのCVEを承認境界の事例として追加（#181）
-  - **[Skill / Pluginのセキュリティ](docs/dev-methods/skill-security.md)にCVE-2026-89332を追加** — 細工されたrepository、workspace settingsの変更、Powers registry URLの差し替え、Powers panelからのrequestという順序を整理し、承認画面の表示と副作用の停止を分けて確認する必要性を示した
+  - **[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md)にCVE-2026-89332を追加** — 細工されたrepository、workspace settingsの変更、Powers registry URLの差し替え、Powers panelからのrequestという順序を整理し、承認画面の表示と副作用の停止を分けて確認する必要性を示した
   - 対象をKiro IDE 0.8.135未満、修正版を0.8.135以上、workaroundなしと記載し、Kiro CLI / Web / Crewや現在のIDE 1.xへ一般化しない範囲を明示した
   - AWS Security Bulletin、Kiro 0.8 changelog、現在のPowers / Permissions公式文書を2026-09-15に確認した
   - `docs/trends.md`には短い要約と詳細ページへのリンクだけを置き、READMEの「最近の更新」を5行に保った
