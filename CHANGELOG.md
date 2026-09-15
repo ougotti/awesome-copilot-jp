@@ -4,6 +4,12 @@
 
 ## 2026-09
 
+- **2026-09-15** Kiro Crew 0.6.0 の選択可能な Agent Backend を反映（#182）
+  - **[AI エージェントの実行基盤](docs/dev-methods/harness.md)の Kiro Crew 節を更新** — 公開時の Kiro CLI 基本経路と、Claude Code / Codex / KAS も選べる Agent Backend（Preview）を分けた
+  - 選択が新規セッションだけに適用されること、共通のセッション制御、Claude / Codex 固有のセキュリティ上の注意を公式情報に基づいて追加した
+  - Kiro CLI 経路のアカウント・プランと代替バックエンドの条件を分離し、公式ページで確認できない認証・課金・`.kiro` 設定の継承を断定しない形へ修正した
+  - `docs/dev-methods/loop-engineering.md` は料金・権限の要約だけを更新し、詳細をハーネス記事へ集約した
+
 - **2026-09-15** Kiro IDEのCVEを承認境界の事例として追加（#181）
   - **[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md)にCVE-2026-89332を追加** — 細工されたrepository、workspace settingsの変更、Powers registry URLの差し替え、Powers panelからのrequestという順序を整理し、承認画面の表示と副作用の停止を分けて確認する必要性を示した
   - 対象をKiro IDE 0.8.135未満、修正版を0.8.135以上、workaroundなしと記載し、Kiro CLI / Web / Crewや現在のIDE 1.xへ一般化しない範囲を明示した
