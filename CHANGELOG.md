@@ -5,7 +5,7 @@
 ## 2026-09
 
 - **2026-09-16** 2026-09-28以降に予定されるCopilotポリシーとcode review既定値の変更を追記（#184）
-  - **[GitHub Copilot ガイド](docs/copilot/README.md)のeffort levels節を更新** — 組織・リポジトリ設定の `Default` が2026-09-28から `Balanced` を使う予定と、`Lite` を維持するための期限前設定を追加した
+  - **[GitHub Copilot ガイド](docs/copilot/README.md)のeffort levels節を更新** — 組織・リポジトリ設定の `Default` が2026-09-28以降に `Balanced` を使う予定と、`Lite` を維持するための期限前設定を追加した
   - Copilot Chat on github.com、GitHub Mobile、Copilot cloud agentのポリシー統合、統合後の既定有効化、github.comのチャットデータ保持期間が28日からアカウント存続期間へ変わる予定を、現在の仕様から分けて記載した
   - Business / Enterprise管理者が2026-09-28より前に確認する設定、opt outの影響、データ保持・監査方針の確認事項を整理した
   - 公式の「no earlier than September 28th, 2026」を保ち、確認日2026-09-16とロールアウト後の再確認を明記した

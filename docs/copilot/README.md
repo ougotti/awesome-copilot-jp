@@ -434,7 +434,7 @@ Automation はローカルで動きます。Agent Host を使う schedule は Ag
 
 ### Upcoming — `Default` が `Balanced` を使う予定
 
-GitHubは、**2026-09-28から**、組織またはリポジトリのreview effortが `Default` の場合に `Balanced` を使う予定です。これは[2026-08-28の公式告知](https://github.blog/changelog/2026-08-28-upcoming-changes-to-github-copilot-policies-and-billing/#copilot-code-review-default-is-changing-to-balanced-effort-level)に基づく**将来の変更**で、2026-09-16の確認時点では実施済みとして扱いません。
+GitHubは、**2026-09-28以降に**、組織またはリポジトリのreview effortが `Default` の場合に `Balanced` を使う予定です。これは[2026-08-28の公式告知](https://github.blog/changelog/2026-08-28-upcoming-changes-to-github-copilot-policies-and-billing/#copilot-code-review-default-is-changing-to-balanced-effort-level)に基づく**将来の変更**で、2026-09-16の確認時点では実施済みとして扱いません。
 
 - `Default` のままなら、変更後は既存・新規の組織とリポジトリで `Balanced` が使われる予定です。
 - `Lite` を維持したい管理者は、**2026-09-28より前に**組織またはリポジトリのreview effortを `Default` から明示的な `Lite` へ変更します。
