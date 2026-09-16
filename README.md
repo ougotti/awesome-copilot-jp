@@ -19,10 +19,10 @@
 -->
 
 - **2026-09-16** [AI エージェントの実行基盤](docs/dev-methods/harness.md#otlp-とデータの意味を分ける)でOTLPという転送方式と、実行トレース・組織利用集計というデータの用途を分離
+- **2026-09-16** [Skill / エージェントの評価](docs/dev-methods/evals.md#1-最初に分ける--回帰評価本番品質インフラ監視)でSkill / Pluginの回帰評価、本番Agentの品質評価、インフラ監視を分離
 - **2026-09-16** [GitHub Copilot ガイド](docs/copilot/README.md#upcoming--githubcommobilecloud-agentのポリシー統合)へ9月28日以降に予定されるポリシー統合、データ保持、code review既定値変更を追加
 - **2026-09-16** [マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md#3-agent-as-tool-専門作業を隔離して呼び出す)でClaude Codeの非fork型とfork型サブエージェントの違いを整理
 - **2026-09-15** [AI エージェントの実行基盤](docs/dev-methods/harness.md#層の関係--セッションごとに-agent-backend-を選ぶ)へ Kiro Crew 0.6.0 の選択可能な Agent Backend（Preview）を追加
-- **2026-09-15** [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#承認画面が副作用より先とは限らない--kiro-ideの修正済み事例)へKiro IDEのCVE-2026-89332を承認境界の事例として追加
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -156,7 +156,7 @@
 | **[マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md)** | 本ガイド | — | CLI / IDE / Cloud | agent-as-tool・supervisor・peer/teamの使い分け、向く仕事・向かない仕事、導入判断フローチャート |
 | **[長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md)** | 本ガイド | — | CLI / Cloud | time horizonと実行時間の違い、checkpoint・retry・冪等性・reliability budgetの設計、最小テストシナリオ |
 | **[プラグインの可搬性](docs/dev-methods/plugin-portability.md)** | 本ガイド | — | IDE / CLI | `plugin.json` を見て、他のエージェントへ持ち出せる Plugin かを判定する手順 |
-| **[Skill / エージェントの評価（evals）](docs/dev-methods/evals.md)** | 本ガイド | — | CLI | 導入した Skill が実際に効いているかを測る、退行パターンと測り方の最小手順 |
+| **[Skill / エージェントの評価（evals）](docs/dev-methods/evals.md)** | 本ガイド | — | CLI / Cloud | Skill / Plugin変更時の回帰評価と、本番エージェントの継続的な品質評価を分けて設計する |
 
 ### 共通・事務活用
 
