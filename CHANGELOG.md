@@ -4,6 +4,12 @@
 
 ## 2026-09
 
+- **2026-09-17** evals記事の対象をSkill / Plugin回帰評価と本番エージェント品質評価に整理（#186）
+  - **[Skill / エージェントの評価（evals）](docs/dev-methods/evals.md)の対象を明確化** — Skill / Plugin変更時の回帰評価、本番エージェントの品質評価、インフラ・実行時監視を、問い・評価対象・実行時点で分けた
+  - **本番評価の選定軸を追加** — response、tool call、session / trajectoryの単位と、on-demand / batch、onlineの違いを整理し、goal completion、応答品質、tool選択・引数、routingを測る最小手順を示した
+  - **Amazon Bedrock AgentCore Evaluations（Official / GA）をAWS固有の実装例として追加** — AgentCore外のエージェントも対象にできること、on-demand / batch / online評価、組み込み / custom evaluatorを公式文書で確認し、AWS DevOps Agentとの2層構成を一般機能として扱わない注意を付けた
+  - AWS公式ドキュメント、GA発表、AWS Machine Learning Blogを2026-09-17に確認し、READMEの「最近の更新」を5行に保ち、`docs/trends.md`の要約も更新した
+
 - **2026-09-16** OpenTelemetryの転送方式と観測データの用途を分離（#185）
   - **[AI エージェントの実行基盤](docs/dev-methods/harness.md)の比較を更新** — OTLPを転送プロトコル、GenAI semantic conventionsを実行時データの共通スキーマとして分け、OTLP利用が実行トレースを意味するという誤解を避けた
   - Kiroのaccount-level user activity export（Official / GA）を追加し、利用者・client・model別のcredits / messages / conversationsを日次のOTLP Sumメトリクスとして送る仕組みを整理した
