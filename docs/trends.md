@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-16
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-17
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,7 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
-| 2026-09-16 | 15 節でSkill / Plugin変更時の回帰評価、本番エージェントの品質評価、インフラ監視を分離。Amazon Bedrock AgentCore EvaluationsはAWS固有の実装例として詳細ページへ追加した |
+| 2026-09-17 | 15 節でSkill / Plugin変更時の回帰評価、本番エージェントの品質評価、インフラ監視を分離。Amazon Bedrock AgentCore Evaluations（Official / GA）はAWS固有の実装例として詳細ページへ追加した |
 | 2026-09-15 | Kiro IDEのCVE-2026-89332を、承認画面の表示と副作用の停止を分けて検証する事例として追加。詳細はSkill / Plugin のセキュリティへ集約した |
 | 2026-09-12 | GitHub / Claude の実行時権限制御、VS Code 1.137 Automations、Codex MCP server 廃止、Claude Code の Plugin eval、Copilot code review と Agents 利用指標を追加。詳細は各製品・開発手法ページへ分離した |
 | 2026-09-09 | 13 節を「MCP 2026-07-28 仕様と移行時の確認」に改題し、「tier 1 SDK が後方互換を保っているため利用者側の作業は不要」という断定を、既製クライアント利用者・SDK 開発者・独自サーバー運用者・拡張利用者で分けた役割別の確認事項の表へ置き換えた。stateless core でもアプリケーション状態は明示的なハンドルで保持できる点を補足した |
@@ -757,7 +757,7 @@ Skill・MCP・ハーネスがエージェントを**動かす**側の話だと�
 
 [12 節](#12-skill--plugin-のセキュリティ)が「入れてよい Skill か」という**導入前**の話だとすれば、こちらは導入後の評価です。ただし、**Skill / Plugin変更時の回帰評価**と、**本番エージェントの継続的な品質評価**は分けます。前者は発火・手順・出力を固定ケースで比較し、後者は実際のinteractionに対するgoal completion、応答品質、tool選択・引数、routing / trajectoryを見ます。latencyやerrorなどのインフラ監視も、品質評価とは別の問いです。
 
-この節ではSkill / Pluginの回帰評価を要約します。本番エージェントの品質評価、on-demand / onlineの違い、AWS固有の実装例であるAmazon Bedrock AgentCore Evaluationsは詳細ページで扱います。
+この節ではSkill / Pluginの回帰評価を要約します。本番エージェントの品質評価、on-demand / batchとonlineの違い、AWS固有の実装例であるAmazon Bedrock AgentCore Evaluationsは詳細ページで扱います。
 
 SkillsBench（[arXiv:2602.12670](https://arxiv.org/abs/2602.12670)）は、複数タスク・複数ドメイン・複数の model-harness 構成で Curated Skills の効果を計測し、**平均では成功率が改善する一方、ドメインや構成によって効果の大きさは大きくばらつき、改善が乏しい構成もある**と報告しています。「入れれば必ず伸びる」とは限りません（具体的な数値はアブストラクトを参照）。
 
@@ -765,7 +765,7 @@ SkillsBench（[arXiv:2602.12670](https://arxiv.org/abs/2602.12670)）は、複�
 
 Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を組み込んだ `claude plugin eval` が追加されました。各 case を Plugin あり / なしで反復し、`regex`、tool、file、LLM judge の grader で採点して JSON / HTML report を出します。`plugin validate` が manifest / frontmatter の構造検査であるのに対し、`plugin eval` は挙動・退行の検査です。model call は利用枠または API 料金を消費し、server-side の利用可否にも従います。
 
-**→ 退行パターン、測り方、`skill-eval-harness` 等の道具、本番Agentの品質評価、インフラ監視との切り分けは [Skill / エージェントの評価（evals）](dev-methods/evals.md) を参照**
+**→ 退行パターン、測り方、`skill-eval-harness` 等の道具、本番エージェントの品質評価、インフラ監視との切り分けは [Skill / エージェントの評価（evals）](dev-methods/evals.md) を参照**
 
 ---
 
@@ -792,7 +792,7 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 | チームの規約をコードレビューに効かせたい | Copilot code review ＋ `.github/skills/` |
 | 手持ちの prompt ファイルを Skill にしたい | VS Code の AI Customizations から変換 |
 | 導入した Skill が効いているか測りたい | [Skill / エージェントの評価（evals）](dev-methods/evals.md)（Claude Plugin は `plugin eval`、ツール横断は `skill-eval-harness`） |
-| 本番エージェントの目的達成・tool選択・応答品質を継続評価したい | [Skill / エージェントの評価（evals）](dev-methods/evals.md#6-本番エージェントの品質を継続評価する)でon-demand / online評価を分けて設計 |
+| 本番エージェントの目的達成・tool選択・応答品質を評価したい | [Skill / エージェントの評価（evals）](dev-methods/evals.md#6-本番エージェントの品質を継続評価する)でon-demand / batchとonline評価を分けて設計 |
 
 ---
 
@@ -879,7 +879,7 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 - [adewale/skill-eval-harness](https://github.com/adewale/skill-eval-harness) — 決定論的な採点を行う比較用ハーネス（Community・MIT）
 - [Test plugins with evals](https://code.claude.com/docs/en/plugin-evals) — `claude plugin eval` の suite、baseline、grader、report（Anthropic 公式）
 - [SkillsBench](https://arxiv.org/abs/2602.12670) — arXiv:2602.12670、2026-02-13 投稿
-- [Amazon Bedrock AgentCore Evaluations](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html) — 本番エージェントをon-demand / onlineで評価するAWS固有の実装例（AWS 公式）
+- [Amazon Bedrock AgentCore Evaluations](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html) — 本番エージェントをon-demand / batch / onlineで評価するAWS固有の実装例（Official / GA）
 
 ---
 

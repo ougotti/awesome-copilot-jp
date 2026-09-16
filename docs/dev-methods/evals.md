@@ -1,6 +1,6 @@
 # Skill / エージェントの評価（evals） — 変更時の回帰と本番品質を分けて測る
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・本番エージェント基盤ほか） ｜ **実行環境**: CLI（ターミナル）/ Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-16
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・本番エージェント基盤ほか） ｜ **実行環境**: CLI（ターミナル）/ Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-17
 
 > [Skill / Plugin のセキュリティ](skill-security.md)は「**導入前**に入れてよいものか」を扱います。このページはその先、「**変更した Skill / Plugin が効いているか**」と「**本番エージェントが目的を達成しているか**」を測る話です。両者は対象と実行頻度が異なります。
 
@@ -106,9 +106,9 @@ LLM-as-a-Judge の score は evaluator の model や prompt でも変わりま�
 
 ### AWS 固有の実装例 — Amazon Bedrock AgentCore Evaluations
 
-> **提供元**: Official（AWS） ｜ **状態**: — ｜ **確認日**: 2026-09-16
+> **提供元**: Official（AWS） ｜ **状態**: GA ｜ **確認日**: 2026-09-17
 
-Amazon Bedrock AgentCore Evaluations は、OpenTelemetry / OpenInference で取得した trace を共通形式へ変換し、組み込みまたは custom evaluator で採点する AWS のサービスです。AgentCore Runtime 内だけでなく、外部でホストしたエージェントも対象にできます。公式文書では、end-to-end の goal attainment、tool の正確さ、独自の品質指標を評価対象として挙げています。
+Amazon Bedrock AgentCore Evaluations は、2026-03-31 に GA となった AWS のサービスです。OpenTelemetry / OpenInference で取得した trace を共通形式へ変換し、組み込みまたは custom evaluator で採点します。AgentCore Runtime 内だけでなく、外部でホストしたエージェントも対象にできます。公式文書では、end-to-end の goal attainment、tool の正確さ、独自の品質指標を評価対象として挙げています。
 
 - **Online evaluation** — 監視する data source、evaluator、parameter を設定して本番 traffic を継続評価する
 - **On-demand evaluation** — 指定した span / trace だけを採点し、報告された問題や修正後の挙動を調べる
@@ -140,6 +140,7 @@ AWS の本番監視例では、AgentCore Evaluations による品質評価と AW
 - [Claude Code v2.1.269](https://github.com/anthropics/claude-code/releases/tag/v2.1.269) — `claude plugin eval` の追加（Anthropic 公式・2026-09-11）
 - [SkillsBench: Benchmarking How Well Agent Skills Work Across Diverse Tasks](https://arxiv.org/abs/2602.12670) — arXiv:2602.12670、2026-02-13 投稿
 - [Evaluate agent performance with Amazon Bedrock AgentCore Evaluations](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html) — 対象、telemetry、評価方式（AWS 公式）
+- [Amazon Bedrock AgentCore Evaluations is now generally available](https://aws.amazon.com/about-aws/whats-new/2026/03/agentcore-evaluations-generally-available/) — 2026-03-31 の GA 発表（AWS 公式）
 - [How AgentCore Evaluations works](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/how-it-works-evaluations.html) — goal attainment、tool の正確さ、AgentCore 外のエージェント対応（AWS 公式）
 - [Online evaluation](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/online-evaluations.html) / [On-demand evaluation](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-demand-evaluations.html) — 継続評価と指定 trace の評価（AWS 公式）
 - [Monitoring production agent lifecycle with AWS DevOps Agent and AgentCore Evaluations](https://aws.amazon.com/blogs/machine-learning/monitoring-production-agent-lifecycle-with-aws-devops-agent-and-agentcore-evaluations/) — 品質評価とインフラ監視を分けた AWS 構成例（AWS 公式、2026-09-11）

@@ -19,7 +19,7 @@
 -->
 
 - **2026-09-16** [AI エージェントの実行基盤](docs/dev-methods/harness.md#otlp-とデータの意味を分ける)でOTLPという転送方式と、実行トレース・組織利用集計というデータの用途を分離
-- **2026-09-16** [Skill / エージェントの評価](docs/dev-methods/evals.md#1-最初に分ける--回帰評価本番品質インフラ監視)でSkill / Pluginの回帰評価、本番Agentの品質評価、インフラ監視を分離
+- **2026-09-17** [Skill / エージェントの評価](docs/dev-methods/evals.md#1-最初に分ける--回帰評価本番品質インフラ監視)でSkill / Pluginの回帰評価、本番エージェントの品質評価、インフラ監視を分離
 - **2026-09-16** [GitHub Copilot ガイド](docs/copilot/README.md#upcoming--githubcommobilecloud-agentのポリシー統合)へ9月28日以降に予定されるポリシー統合、データ保持、code review既定値変更を追加
 - **2026-09-16** [マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md#3-agent-as-tool-専門作業を隔離して呼び出す)でClaude Codeの非fork型とfork型サブエージェントの違いを整理
 - **2026-09-15** [AI エージェントの実行基盤](docs/dev-methods/harness.md#層の関係--セッションごとに-agent-backend-を選ぶ)へ Kiro Crew 0.6.0 の選択可能な Agent Backend（Preview）を追加
