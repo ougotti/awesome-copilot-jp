@@ -4,6 +4,12 @@
 
 ## 2026-09
 
+- **2026-09-16** OpenTelemetryの転送方式と観測データの用途を分離（#185）
+  - **[AI エージェントの実行基盤](docs/dev-methods/harness.md)の比較を更新** — OTLPを転送プロトコル、GenAI semantic conventionsを実行時データの共通スキーマとして分け、OTLP利用が実行トレースを意味するという誤解を避けた
+  - Kiroのaccount-level user activity export（Official / GA）を追加し、利用者・client・model別のcredits / messages / conversationsを日次のOTLP Sumメトリクスとして送る仕組みを整理した
+  - GenAI実行トレース、Kiro user activity export、Copilot usage metrics APIを、転送・取得方式、データ粒度、答える問い、頻度・権限で比較した
+  - Kiro公式changelogとenterprise documentation、GitHub公式のusage metrics情報を2026-09-16に再確認した
+
 - **2026-09-16** 2026-09-28以降に予定されるCopilotポリシーとcode review既定値の変更を追記（#184）
   - **[GitHub Copilot ガイド](docs/copilot/README.md)のeffort levels節を更新** — 組織・リポジトリ設定の `Default` が2026-09-28以降に `Balanced` を使う予定と、`Lite` を維持するための期限前設定を追加した
   - Copilot Chat on github.com、GitHub Mobile、Copilot cloud agentのポリシー統合、統合後の既定有効化、github.comのチャットデータ保持期間が28日からアカウント存続期間へ変わる予定を、現在の仕様から分けて記載した
