@@ -1,6 +1,6 @@
 # AIエージェントのID・認可・委任権限
 
-> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-09
+> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-18
 
 > [Skill / Plugin のセキュリティ](skill-security.md)は Skill・Plugin という**導入するモノ**の確認手順を扱います。このページは、常駐・非同期・マルチエージェントで重要になる**エージェント自身をどう認証し、何を委任してよいかという設計判断**を独立して整理します。
 
@@ -32,13 +32,15 @@
 
 ## 3. 認証／認可／委任／人間の承認の違い
 
-この 4 つを混同すると、設計の議論がすれ違います。
+これらを混同すると、設計の議論がすれ違います。
 
 | 用語 | 問いへの答え |
 |------|-------------|
 | **認証（Authentication）** | このリクエストを送っているのは誰か |
 | **認可（Authorization）** | その相手に、この操作を許可するか |
 | **委任（Delegation）** | ある主体（親エージェント）が、別の主体（サブエージェント）に自分の権限の一部を渡すこと |
+| **OAuth consent** | 利用者が外部providerへ、どのscopeで代理アクセスすることを許したか |
+| **Session binding** | OAuth grantを、同意した利用者・agent sessionへ安全に結びつけること |
 | **人間の承認（Human approval）** | 認証・認可の仕組みを通っていても、実行前に人間の判断を挟むかどうか |
 
 **委任は「トークンを渡すこと」ではありません。** 子が親の権限をそのまま引き継ぐのか、それより狭い権限（attenuated）に絞って引き継ぐのかを決め、**子が親の代理として動いたことを記録する**ことが委任の本体です。「権限を渡した」で終わらせず、「どこまで渡したか」「誰の代理として動いたか」を残す設計が必要です。
@@ -63,7 +65,52 @@
 
 ---
 
-## 5. 親エージェントからサブエージェントへ渡してよい権限
+## 5. End-user OAuth consentとsession binding
+
+AIエージェントが利用者の代理でGitHubやSlack等へ接続する場合、少なくとも3つの主体を分けます。
+
+| 主体 | 役割 | 確認すること |
+|------|------|-------------|
+| **End user** | agentを使う人 | 誰としてprimary IdPへsign inしたか |
+| **Agent / Gateway** | 利用者の依頼を受けてtoolを呼ぶ | どの利用者・sessionのgrantを使うか |
+| **Downstream provider** | GitHub、Slack等の外部サービス | どのscopeを許可し、どのtoken audienceへ発行したか |
+
+ここで**認証済み**なのは「primary IdPが利用者を確認した」状態です。**OAuth consent済み**なのは「その利用者がdownstream providerへのscopeを許した」状態です。さらに、返されたgrantを別の利用者へ取り違えないよう結びつける処理が**session binding**です。
+
+### 一般的な流れ
+
+1. IDEやMCP clientから利用者をprimary IdPへ送り、組織内の利用者を認証する。
+2. 接続したいdownstream providerと要求scopeを表示する。
+3. 利用者がprovider側で認証し、scopeへのconsentを行う。
+4. OAuth callbackをserver-sideで受け、stateやPKCE等を検証する。
+5. 得られたgrantを、primary IdPで認証した利用者と対象session / connectionへbindingする。
+6. tokenをvaultへ保存し、browser、IDE、prompt、ログへ露出させない。
+7. tool call時に、対象利用者・provider・scope・audienceが一致するgrantだけを取り出す。
+8. 接続、利用、更新、失効、再同意を監査ログへ残す。
+
+**Consentは個別操作の承認ではありません。** 例えば「GitHub Issueの作成scopeを許可した」ことは、エージェントが今から作ろうとしている特定Issueの題名・本文・repositoryを承認したことにはなりません。削除、送信、購入、公開等は、OAuth consentに加えて実行直前のhuman approvalを置きます。
+
+### AWS固有の実装例 — AgentCore Consent Portal
+
+> **提供元**: Official（AWS） ｜ **状態**: `—`（公式発表にGA / Previewの明記なし） ｜ **確認日**: 2026-09-18
+
+[Amazon Bedrock AgentCore IdentityのConsent Portal](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/identity-consent-portal.html) は、上の流れをAgentCore Gateway向けにmanaged serviceとして提供する例です。Gatewayごとにhosted portalを作り、利用者をprimary OIDC IdPへ認証し、downstream providerごとの同意、session binding、token vaultへの保存を処理します。OAuth flowはserver-sideで完結し、**browserはtokenを保持しません**。
+
+primary IdPとoutbound providerは別です。primary IdPはGatewayのJWT authorizerと同じOIDC issuerを使い、JWT access tokenを発行する必要があります。GitHub、Slack、Salesforce等はprimary IdPとしては使えませんが、agentが代理接続するoutbound providerとしては利用できます。
+
+導入時は次を確認します。
+
+- Gateway、primary IdP、outbound providerのissuer / audience / scopeが一致しているか。
+- portalのexecution roleが、Gateway設定やOAuth client secretへ必要以上にアクセスできないか。
+- token vaultのgrantを利用者、provider、Gateway単位で失効し、再同意できるか。
+- CloudTrail等で、誰が接続し、どのproviderのgrantを使い、いつ失効したか追跡できるか。
+- consent済みconnectionの存在を、不可逆操作の事前承認として扱っていないか。
+
+これはAWS固有の実装であり、MCP Authorization仕様そのものではありません。他のGatewayやclientでは、同じsession binding、token保管、失効、監査を別の仕組みで実装します。
+
+---
+
+## 6. 親エージェントからサブエージェントへ渡してよい権限
 
 サブエージェントへの委任で最も見落とされるのが、**権限の増幅**です。親エージェントが持つ権限をそのままサブエージェントに渡すと、サブエージェント側の実装ミスやプロンプトインジェクションが、親と同じ範囲の被害を生みます。
 
@@ -79,7 +126,7 @@
 
 ---
 
-## 6. 所有者、実行主体、承認者、監査者の責任分界
+## 7. 所有者、実行主体、承認者、監査者の責任分界
 
 権限の設計と、責任の所在は別の軸です。最低限、次の 4 者を分けて考えます。
 
@@ -94,7 +141,7 @@
 
 ---
 
-## 7. control plane が担う inventory・policy・telemetry・kill switch
+## 8. control plane が担う inventory・policy・telemetry・kill switch
 
 組織でエージェントの数が増えると、個々のエージェントの設定だけでは管理できなくなります。[ハーネス](harness.md)の上位、あるいはハーネスの一部として、次の機能を持つ **control plane** が必要になります。
 
@@ -109,7 +156,7 @@
 
 ---
 
-## 8. 最小構成チェックリスト
+## 9. 最小構成チェックリスト
 
 導入時に、少なくとも次を満たしているかを確認します。
 
@@ -117,6 +164,9 @@
 - [ ] scope は必要最小限から始まり、必要になった操作だけ昇格する設計になっている
 - [ ] token の audience が検証されており、他サービス向けの token を受理しない
 - [ ] MCP サーバーが、受け取った token を下流へそのまま転送していない（token passthrough になっていない）
+- [ ] OAuth grantが、同意した利用者・session・providerへbindingされ、別利用者へ取り違えられない
+- [ ] tokenはvault等へ保存され、browser、IDE、prompt、ログへ露出していない
+- [ ] consentのscope、失効、再同意、利用履歴を監査できる
 - [ ] サブエージェントへ渡す権限は、親の権限の部分集合に絞られている
 - [ ] 不可逆な操作には、実行前の人間承認が入っている
 - [ ] 所有者・実行主体・承認者・監査者を後から区別できるログが残る
@@ -145,3 +195,6 @@
 - [NIST: Summary Analysis of Responses to the RFI Regarding Security Considerations for AI Agents](https://www.nist.gov/publications/summary-analysis-responses-request-information-regarding-security-considerations-ai) — 2026-05-18 公開
 - [MCP Authorization（2025-11-25 版）](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization) — OAuth 2.1 準拠、scope・token audience の仕組み
 - [MCP Security Best Practices（2025-11-25 版）](https://modelcontextprotocol.io/specification/2025-11-25/basic/security_best_practices) — token passthrough 禁止、scope minimization、confused deputy 問題
+- [AgentCore Identity managed consent portal](https://aws.amazon.com/about-aws/whats-new/2026/09/amazon-bedrock-agentcore/) — hosted portalとIDE / MCP client向けsession bindingの発表（AWS公式・2026-09-01）
+- [Configure a consent portal](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/identity-consent-portal.html) ／ [Prerequisites](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/identity-consent-portal-prerequisites.html) — primary IdP、Gateway、outbound provider、server-side token flow（AWS公式）
+- [Manage end-user OAuth consent for AI agents](https://aws.amazon.com/blogs/machine-learning/manage-end-user-oauth-consent-for-ai-agents-with-amazon-bedrock-agentcore/) — session binding、token vault、CloudTrailの実装例（AWS公式・2026-09-14）

@@ -1,8 +1,8 @@
 # AI エージェントの実行基盤（ハーネス）
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-16
+> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-18
 
-> エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
+> エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew / OpenAI Agents API）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
 
 ---
 
@@ -32,17 +32,16 @@ ChatGPT の「チャットに答える」段階から、タスクを自律的に
 
 > エンジニアの仕事が「コードを書くこと」から「エージェントが確実に働ける環境を設計すること」へ移る、という主張の実証として引かれる事例です。数値は OpenAI の自己報告であり、そのまま一般化できる保証はありません。
 
-## 実装を見る 3 つの入口
+## 実装を見る 4 つの入口
 
-ハーネスは概念だけでは掴みにくいため、性格の異なる実装を 3 つ並べます。
+ハーネスは概念だけでは掴みにくいため、性格の異なる実装を 4 つ並べます。
 
-| | Microsoft Copilot Studio | QM（Y Combinator） | Kiro Crew（AWS） |
-|---|---|---|---|
-| 形態 | GUI・ローコードで構成する商用プラットフォーム | ソースを読める OSS（MIT） | ソースを読める OSS（Apache-2.0）＋公式ビルドの配布 |
-| 想定利用者 | 業務担当者・開発者 | 組織のプラットフォームエンジニア | 個人・チームの開発者 |
-| 見えるもの | 設計の**考え方**を GUI 上で追える | 設計の**実装**をコードで追える | **常駐して動き続ける**前提の設計を実装で追える |
-| 重心 | 業務フローの構成 | 組織のスコープと権限 | セッションをまたぐ継続と起動条件 |
-| `提供元` / `状態` | Official（Microsoft） / GA | Official（Y Combinator） / **Experimental** | Official（AWS） / GA |
+| 実装 | 形態 | 想定利用者 | 重心 | `提供元` / `状態` |
+|------|------|-----------|------|--------------------|
+| Microsoft Copilot Studio | GUI・ローコードで構成する商用プラットフォーム | 業務担当者・開発者 | 業務フローの構成 | Official（Microsoft） / GA |
+| QM（Y Combinator） | ソースを読める OSS（MIT） | 組織のプラットフォームエンジニア | 組織のスコープと権限 | Official（Y Combinator） / **Experimental** |
+| Kiro Crew（AWS） | OSS（Apache-2.0）＋公式ビルド | 個人・チームの開発者 | セッションをまたぐ継続と起動条件 | Official（AWS） / GA |
+| OpenAI Agents API | OpenAI管理のCodexハーネスを呼ぶAPI | エージェントを自社サービスへ組み込む開発者 | durable session、orchestration、context compaction、recovery | Official（OpenAI） / **Public Beta** |
 
 ## Microsoft Copilot Studio での実装例
 
@@ -173,6 +172,57 @@ QM が Strict / Auto / Dangerous という**渡す内容の選別**の強さを�
 QM が「自前のクラウド・Postgres・インフラ担当者」を前提にするのに対し、Kiro Crew は**手元のマシンで動かせる代わりに、選択したバックエンドのモデル提供・認証・利用枠に依存**します。同じ OSS ハーネスでも、組織へ入れるときに確認する項目はここまで違います。
 
 > 導入手順・対応 OS の細目・コマンドは変わります。導入時は [リポジトリ](https://github.com/kirodotdev/KiroCrew) と [公式ドキュメント](https://kiro.dev/docs/crew/) を一次情報として確認してください。
+
+## OpenAI Agents API — CodexハーネスをマネージドAPIで使う
+
+[OpenAI Agents API](https://developers.openai.com/api/docs/guides/agents-api/overview) は、Codexと同系統のハーネスを、自社アプリケーションからOpenAI管理のAPIとして利用する入口です。2026-09-10に **Public Beta** として公開されました。OpenAIがsession、orchestration、context compaction、recoveryを管理し、利用側はagentの構成、tools、実行環境、業務上の認可と承認を設計します。
+
+### ハーネスと実行環境を分ける
+
+Agents APIを使うことと、OpenAIのsandboxを使うことは同じではありません。ハーネスはOpenAIが管理しますが、コマンドやファイルを扱う**実行環境は別に選びます**。
+
+| 層 | 担当 | 主な役割 |
+|----|------|---------|
+| **Harness** | OpenAI | model / tool loop、durable session、orchestration、context compaction、recovery、subagentの調整 |
+| **Application server** | 利用側 | taskの投入、stream / webhookの受信、function toolの実行、利用者認可、業務上の承認 |
+| **Environment** | 選択による | shell、コード実行、ファイル編集、artifact作成、network access |
+
+Environmentは次の3通りです。
+
+| `environment.type` | 実行場所 | 利用側の責任 |
+|--------------------|---------|---------------|
+| `none` | shellやworkspaceを持たない。remote MCPやfunction toolは利用できる | function toolの実行と結果返却。組み込みBash / apply patch、workspace file、executor MCPは使えない |
+| `openai_hosted` | session用にOpenAIがsandboxを作成・管理する | packages、files、network access、secret、tool権限を設定し、出力を検証する |
+| `self_hosted` | 自社環境、private network、独自softwareを使う | provisioning、接続、再接続、停止、永続化、実行中workの終了確認を管理する |
+
+**環境を選べることは、sandboxや権限設計が不要という意味ではありません。** `self_hosted` では実行基盤のlife cycleを自分で持ち、`openai_hosted` でもnetwork、secret、files、toolの露出範囲を自分で決めます。
+
+### Codex、Agents API、Agents SDKを混同しない
+
+| 入口 | 何を提供するか | 選ぶ場面 |
+|------|---------------|---------|
+| **CodexのCLI / IDE / Desktop / Cloud** | 開発者が直接使うCodex製品と作業UI | 人がrepositoryやtaskを対話的・非同期に進める |
+| **Agents API** | OpenAI管理のCodexハーネス、durable session、event、artifact、選択可能なenvironment | 自社サービスへ長時間agentをAPIとして組み込む |
+| **Agents SDK** | agent、tool、handoff、guardrail、trace等をコードで組み立てるライブラリ | orchestrationをアプリケーションコード側で設計する |
+| **Codex SDK / app server** | Codexプロセスをプログラムやクライアントから制御する入口 | ローカルまたは自社管理のCodexを組み込む。app serverはAgents API互換ではない |
+
+Agents APIは、Agents SDKのホスティング版という単純な関係ではありません。APIはOpenAI管理のCodexハーネスとdurable sessionを提供し、SDKはアプリケーション内でagent workflowを構成するための部品です。
+
+### tools、multi-agent、artifact
+
+Agentにはfunction、remote MCP、Plugin等のtoolsを設定できます。多数のtoolsを常時contextへ入れないためのtool searchや、tool呼び出しをコード側でまとめるprogrammatic tool callingも利用できます。multi-agentを有効にするとsubagentを作成・待機できますが、**複数化するだけで速く、安く、正確になるわけではありません**。分割と統合の責任は[マルチエージェントを使う境界線](multi-agent.md)に従って設計します。
+
+hosted sessionの完了turnから公開したfileはartifactとして取得できます。途中のworkspace fileと、完了後に配布するimmutable artifactを区別し、必要な成果物が公開されたことを終了条件として検証します。
+
+### 費用と導入前の確認
+
+Agents API自体を「定額のCodex利用枠」と見なさないでください。公式ドキュメントでは、選択したmodelのAPI料金、OpenAI toolの料金、OpenAI-hosted sandboxのcontainer料金がそれぞれ発生すると説明されています。価格を本文へ固定せず、導入時に[公式Pricing](https://developers.openai.com/api/docs/pricing)を確認します。
+
+- Public BetaのAPI変更と、利用可能なmodel / tool / environmentを再確認する。
+- sessionの保存対象、retention、削除、trace / artifactに含まれる情報を確認する。
+- network egress、MCP、function tool、secret、workspace fileの最小権限を決める。
+- irreversibleな操作はtool側で止め、利用者の承認とaudit logを用意する。
+- self-hosted environmentではreconnection、shutdown、重複実行、途中成果物の回収をテストする。
 
 ## ハーネスを意識する理由
 
@@ -310,12 +360,17 @@ Console などファイルの外側でリソースが編集・アーカイブ・
 - [Claude Code のカスタマイズ機能](../claude-code/basics.md) ／ [Codex ガイド](../codex/README.md) — ハーネスから見れば差し替え可能な「コーディングツール」層の解説
 - [コーディングエージェントの選び方](coding-agents.md) — その「コーディングツール」層に何があるかの比較（Claude Code / Codex / Qwen Code / OpenCode / Bionic）
 - [長時間タスクの信頼性設計](agent-reliability.md) — ハーネスが引き受ける状態管理・エラー処理を、checkpoint・再開・冪等性の観点で詳しく扱う
+- [Codex ガイド](../codex/README.md#codexを製品へ組み込む入口を分ける) — Codex製品、Agents API、Codex SDK / app serverの入口をCodex利用者向けに整理
 
 ## 参考リンク
 
 - [なぜ今、AI に「ハーネス」が必要なのか](https://www.geekfujiwara.com/tech/powerplatform/8591/) — ハーネスの概念と Microsoft Copilot Studio での実装例（ギークフジワラ）
 - [My AI Adoption Journey](https://mitchellh.com/writing/my-ai-adoption-journey) — Mitchell Hashimoto によるハーネスエンジニアリングの定義（一次情報）
 - [Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/) — OpenAI の実証報告（公式）
+- [Agents API overview](https://developers.openai.com/api/docs/guides/agents-api/overview) — managed Codex harness、durable session、料金の考え方（OpenAI公式・Public Beta）
+- [Agents API architecture](https://developers.openai.com/api/docs/guides/agents-api/architecture) — harness、application server、environmentの責任分界（OpenAI公式）
+- [OpenAI API changelog](https://developers.openai.com/api/docs/changelog) — 2026-09-10のPublic Beta公開（OpenAI公式）
+- [Agents SDK overview](https://developers.openai.com/api/docs/guides/agents) — agent workflowをコードで構成するSDK（OpenAI公式）
 - [yc-software/qm](https://github.com/yc-software/qm) — QM のリポジトリと README（公式）
 - [QM の SECURITY.md](https://github.com/yc-software/qm/blob/main/SECURITY.md) — 脅威モデル・運用者の前提・既知の限界（公式）
 - [Kiro Crew](https://kiro.dev/crew/) — 製品ページと FAQ（前提となるプラン・対応 OS。公式）

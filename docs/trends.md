@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-17
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-18
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,11 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-18 | 14 節でSpec Kit・OpenSpec・BMAD Method・Kiro Specsを、方法論 / framework / 製品機能、成果物、承認点、実装後の同期方法で比較した |
+| 2026-09-18 | 12 節にend-user OAuth consentとsession bindingを追加し、外部providerへの接続同意と個別操作のhuman approvalを分離した |
+| 2026-09-18 | 15 節にObserve → Evaluate → Recommend → Validate → Experiment → Promoteの改善ループと、AgentCore OptimizationのGA / Preview境界を追加 |
+| 2026-09-18 | 10 節にOpenAI Agents API（Public Beta）を追加し、managed Codex harnessとsandbox / application serverの責任を分離した |
+| 2026-09-18 | 8 節の Google を「Skillのみ」から、Skill単体と Agent Plugins 1.0.0 準拠の `google-cloud-developer` Pluginを併用する現行構成へ更新 |
 | 2026-09-17 | 15 節でSkill / Plugin変更時の回帰評価、本番エージェントの品質評価、インフラ監視を分離。Amazon Bedrock AgentCore Evaluations（Official / GA）はAWS固有の実装例として詳細ページへ追加した |
 | 2026-09-15 | Kiro IDEのCVE-2026-89332を、承認画面の表示と副作用の停止を分けて検証する事例として追加。詳細はSkill / Plugin のセキュリティへ集約した |
 | 2026-09-12 | GitHub / Claude の実行時権限制御、VS Code 1.137 Automations、Codex MCP server 廃止、Claude Code の Plugin eval、Copilot code review と Agents 利用指標を追加。詳細は各製品・開発手法ページへ分離した |
@@ -21,7 +26,7 @@
 | 2026-09-08 | 6 節（Computer Use / Browser Use）を要約 + 独立ページ [エージェントに外部操作を与える手段の選び方](dev-methods/tool-selection.md) へ誘導する形に整理し、Google の Gemini Computer Use（2026-06-24）を追記 |
 | 2026-09-07 | 10 節に OpenTelemetry GenAI semantic conventions（Claude Code・Codex CLI・VS Code Copilot Chat の対応状況）を追加し、[ハーネス](dev-methods/harness.md) へ誘導。[コーディングエージェントの選び方](dev-methods/coding-agents.md) に非同期・クラウド型（Jules・Antigravity）との軸を追加 |
 | 2026-09-07 | 「15. Skill / エージェントの評価（evals）」を新設し、独立ページ [Skill / エージェントの評価（evals）](dev-methods/evals.md) へ要約 + 誘導した（`skill-security.md` の「導入前」に対する「導入後」の話として位置づけ） |
-| 2026-09-06 | 「14. 仕様駆動開発（SDD）」を新設し、独立ページ [仕様駆動開発（SDD）](dev-methods/spec-driven.md) へ要約 + 誘導した（AI-DLC はその実装の 1 つという位置づけに整理） |
+| 2026-09-06 | 「14. 仕様駆動開発（SDD）」を新設し、独立ページ [仕様駆動開発（SDD）](dev-methods/spec-driven.md) へ要約 + 誘導した（AI-DLCとの対象範囲の違いも整理） |
 | 2026-09-06 | 13 節に A2A の AAIF 合流（2026-08-17）を追加。MCP と A2A の役割の違い（ツール接続とエージェント間連携）を整理し、7-2 節の ARD の A2A への言及からつないだ |
 | 2026-09-05 | 7 節に「7-4. APM」を新設し、比較表を 4 つへ拡張して**「命令的か宣言的か」**の軸を立てた。`npx skills` の提供元表記に、ベンダー公式スキルの導入経路にもなっている実態の注記を追加 |
 | 2026-09-05 | 8 節に「ベンダー公式スキルの登場」を追加（AWS・Microsoft・Google の公式リポジトリと、可搬形式に乗っているかが提供元で割れる実態）。Anthropic の公式ディレクトリ `claude-plugins-official` への言及を [Claude Code のカスタマイズ機能](claude-code/basics.md#公式ディレクトリ-claude-plugins-official) に新設し、8 節から誘導 |
@@ -74,7 +79,7 @@
 | 渡す知識 | オントロジー / ナレッジグラフ | 業務の語彙・関係・規則を定義してエージェントへ渡す（[解説](dev-methods/ontology.md)） | 用語のゆれ・根拠の説明が要る業務 |
 | 安全性 | `gh skill preview` / MCP allowlists | 導入前の内容確認と、組織での許可範囲の限定（[解説](dev-methods/skill-security.md)） | 業務利用・組織展開の前提 |
 | 実行される場所 | Copilot code review / IDE の Skill 管理 | 対話の外（レビュー・IDE の常設機能）での実行 | 規約の自動適用と定常運用 |
-| 仕様駆動開発（SDD） | GitHub Spec Kit / AI-DLC | 仕様 → 計画 → タスクという構造化された手順（[解説](dev-methods/spec-driven.md)） | 機能開発を仕様から実行可能にしたい場合 |
+| 仕様駆動開発（SDD） | Spec Kit / OpenSpec / BMAD / Kiro Specs | 仕様 → 計画 → タスクを構造化し、変更規模に合うprocessを選ぶ（[解説](dev-methods/spec-driven.md)） | 機能開発を仕様から実行可能にしたい場合 |
 | 評価（evals） | SkillsBench / skill-eval-harness | 導入した Skill が実際に効いているかを測る仕組み（[解説](dev-methods/evals.md)） | Skill・Skill 変更の効果を継続的に確認したい場合 |
 
 ---
@@ -530,9 +535,9 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 |--------|-----------|-----------|------|
 | `Official`（AWS） | [aws/agent-toolkit-for-aws](https://github.com/aws/agent-toolkit-for-aws) | Apache-2.0 | GA と明記 |
 | `Official`（Microsoft） | [microsoft/azure-skills](https://github.com/microsoft/azure-skills) ／ [microsoft/power-platform-skills](https://github.com/microsoft/power-platform-skills) | MIT | プラグインごとに異なる（リポジトリを確認） |
-| `Official`（Google） | [google/skills](https://github.com/google/skills) | Apache-2.0 | README が「under active development」と明記 |
+| `Official`（Google） | [google/skills](https://github.com/google/skills) | Apache-2.0 | `—`（公式発表に GA / Preview の明記なし） |
 
-**ただし、配り方は揃っていません。** 同じ「複数のエージェントで使える」という案内でも、可搬形式（Agent Plugins 1.0.0）に乗っているものと、乗っていないものが混在します。AWS の `aws-core` は `plugin.json` に `$schema` を持ち、Claude Code 固有の Hooks を `extensions` へ逃がしていますが、Microsoft の 2 つは `.claude-plugin/plugin.json` で `$schema` を持ちません。Google の `google/skills` はそもそもプラグインではなく `SKILL.md` の集まりで、`.claude-plugin/marketplace.json` は別リポジトリのプラグインを指すカタログとして機能しています。
+**ただし、配り方は揃っていません。** 同じ「複数のエージェントで使える」という案内でも、可搬形式（Agent Plugins 1.0.0）に乗っているものと、乗っていないものが混在します。AWS の `aws-core` は `plugin.json` に `$schema` を持ち、Claude Code 固有の Hooks を `extensions` へ逃がしています。Google はSkill単体の配布に加え、2026-09-10に `google-cloud-developer` Pluginを公開しました。このPluginはルートの標準 `plugin.json`、Skills、Developer Knowledge MCP用の `mcp.json` を持ち、`.codex-plugin/` / `.claude-plugin/` のメタデータも併置しています。一方、Microsoft の 2 つは `.claude-plugin/plugin.json` で `$schema` を持ちません。
 
 **読者の行動は 1 つです — インストール前に `plugin.json` を見る。** 提供元が大手であることは、可搬性の根拠にも安全性の根拠にもなりません。
 
@@ -623,6 +628,8 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 
 実装はベンダー側からも出ました。**Kiro Crew**（AWS が 2026-08-04 に Apache-2.0 で公開。`提供元`: Official / `状態`: GA）は、Agent Client Protocol 経由で `kiro-cli` を駆動する**常駐型のハーネス**です。永続セッションとメモリ、定期ジョブ・ハートビート・認証済み webhook による起動、namespace / Seatbelt による分離（standard / strict / off）と監査コマンドを備え、Slack や Discord からも同じ実行環境へ入れます。ただし**本体が無償の OSS でも、動かすには Kiro のプランが必要**で、モデルの提供はベンダーに依存します。「OSS のハーネス」でも自前で完結するとは限らない、という点は導入判断で確認してください。
 
+2026-09-10には **OpenAI Agents API**（`提供元`: Official / `状態`: Public Beta）が公開されました。これはOpenAI管理のCodexハーネスをAPIとして提供し、durable session、orchestration、context compaction、recoveryをOpenAI側で担います。ただし実行環境は `none` / OpenAI-hosted / self-hostedから選ぶ別の層であり、APIを使うだけでsandbox、network、secret、tool権限の設計が不要になるわけではありません。Codex製品、Agents SDK、Codex SDK / app serverとも役割が異なります。
+
 2026 年半ばには、この 1 つ上の階として **ループエンジニアリング**（loop engineering）という呼び名が加わりました。Addy Osmani（Google Chrome）が [Loop Engineering](https://addyosmani.com/blog/loop-engineering/)（2026-06-07）で命名したもので、**人がプロンプトを打ち続けるのをやめ、エージェントを目標へ向けて回すループの側を設計する**という実践です。自動実行・ワークツリー・スキル・コネクタ・サブエージェント・外部状態を組み合わせ、機械が判定できる停止条件で止めます。ループはハーネスの上で回るため、**ハーネスが弱ければループは同じ誤りを繰り返し増幅します**。
 
 動かす仕組みが揃うほど、**動かした後に何が見えるか**も問われます。OpenTelemetry の **GenAI semantic conventions**（モデル呼び出し・ツール呼び出し・トークン交換を標準化した `gen_ai.*` 属性）に、Claude Code・Codex CLI・VS Code Copilot Chat がいずれも OTel（メトリクス／ログ／トレース）を出力できます。ただし `gen_ai.*` 属性への準拠を明記しているのは Claude Code と VS Code Copilot Chat で、**Codex CLI の公式ドキュメントには明記がありません**。
@@ -631,7 +638,7 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 
 また、VS Code 1.137 の **Automations**（Microsoft 公式、2026-09-09、Preview）は、prompt、workspace、agent / model / permission options、schedule を保存して、Manual / Hourly / Daily / Weekly でローカルの agent task を起動します。Codex Scheduled tasks、Claude Code `/loop`、Kiro Crew と同名機能として扱わず、実行場所・worktree・承認・停止条件で選びます。
 
-**→ 概念、Microsoft Copilot Studio・QM・Kiro Crew の実装、セキュリティポスチャ、導入の前提、OpenTelemetry での可観測性は [AI エージェントの実行基盤（ハーネス）](dev-methods/harness.md) を参照**
+**→ 概念、Microsoft Copilot Studio・QM・Kiro Crew・OpenAI Agents APIの実装、セキュリティポスチャ、導入の前提、OpenTelemetryでの可観測性は [AI エージェントの実行基盤（ハーネス）](dev-methods/harness.md) を参照**
 **→ ループの構成要素・停止条件の作り方・落とし穴は [ループエンジニアリング](dev-methods/loop-engineering.md) を参照**
 **→ サブエージェントや並列実行を「いつ使うべきか」という設計判断は [マルチエージェントを使う境界線](dev-methods/multi-agent.md) を参照**
 **→ 長時間・多段階のタスクで失敗が累積する問題と、checkpoint・再開・冪等性の設計は [長時間タスクの信頼性設計](dev-methods/agent-reliability.md) を参照**
@@ -663,6 +670,8 @@ Snyk の「ToxicSkills」調査（2026-02-05 公開）は、ClawHub と skills.s
 2026 年 9 月には**実行する操作そのもの**も中央制御の対象になりました。GitHub Copilot の enterprise managed permissions（GitHub 公式、2026-09-09、GA）は `Shell` / `Read` / `Edit` / `Domain` を `deny` / `ask` / `allow` に分け、managed `ask` には毎回新しい承認を要求します。Claude Managed Agents permission policies（Anthropic 公式、Beta）は agent / MCP tool call ごとに allow / ask / deny を評価し、`evaluated_permission` をイベントに残します。Claude の `auto` は人の確認を保証しないため、人が必ず止める操作は `always_ask` にします。Claude Code のローカル権限設定とは別機能です。
 
 AWSが2026-09-11に公開したKiro IDEのCVE-2026-89332（AWS公式・Important）は、確認画面に変更内容とURLが表示されても、応答前にsettings fileが書き込まれ、別操作から外部requestが発生し得た事例です。対象はKiro IDE 0.8.135未満で、0.8.135以上では修正済みです。**確認画面の有無と、副作用の前に実際に停止するかは分けて検証します。** 攻撃の順序、対象範囲、利用者の確認事項は[詳細ページ](dev-methods/skill-security.md#承認画面が副作用より先とは限らない--kiro-ideの修正済み事例)へ集約しています。
+
+外部サービスへ接続するときは、OAuth consentの後にも承認境界が残ります。AWSは2026-09-01にAgentCore Identityのmanaged Consent Portalを公開し、primary OIDC IdPで認証した利用者とGitHub / Slack等のoutbound grantをsession bindingし、token vaultへ保存する例を示しました。これは「指定scopeで接続してよい」という同意であり、個々の送信・公開・削除を実行してよいという承認ではありません。**OAuth consent、session binding、per-action approvalを別々に追跡します。**
 
 **→ 未定義の領域、導入前チェック、監査データ、組織での絞り込みは [Skill / Plugin のセキュリティ](dev-methods/skill-security.md) を参照**
 **→ コードを書かない方向けの安全ガイドは [生成AIを業務で安全に使う](business/safety.md) を参照**
@@ -743,13 +752,13 @@ MCP のロードマップが**ツールと接続する側**の話であるのに
 
 ## 14. 仕様駆動開発（SDD）
 
-Skill・MCP・ハーネスがエージェントを**動かす**側の話だとすれば、こちらは動かす前に**何を作るか**を決める側の話です。仕様を先に書き、それを実装の入力にする**仕様駆動開発（Spec-Driven Development, SDD）**は、[github/spec-kit](https://github.com/github/spec-kit) が v1.0.0 に達したことで、主要なコーディングエージェントを広くカバーする実践として定着しつつあります。
+Skill・MCP・ハーネスがエージェントを**動かす**側の話だとすれば、こちらは動かす前に**何を作るか**を決める側の話です。仕様を先に書き、それを実装の入力にする**仕様駆動開発（Spec-Driven Development, SDD）**を、複数のtool / method / 製品が異なる範囲で支援しています。
 
-コアワークフローは `/speckit.constitution`（原則の確立）→ `/speckit.specify`（何を作るか）→ `/speckit.plan`（どう作るか）→ `/speckit.tasks`（タスク分解）→ `/speckit.implement`（実装）→ `/speckit.converge`（仕様との整合を確認）の順で進みます。受け入れ基準を曖昧さなく書く記法として **EARS（Easy Approach to Requirements Syntax）** が広く使われています。
+近い選択肢でも同じ種類ではありません。**GitHub Spec Kit**はagent横断の拡張可能なprocess harness、**OpenSpec**はchange deltaをmain specsへ戻す軽量framework、**BMAD Method**はintent形成からreview / test / retrospectiveまで広げられるAgile AI-driven SDLC方法論 + Skills / Agents、**Kiro Specs**はKiroへ統合されたFeature / Bugfix / Quick Spec機能です。Kiroだけを独立OSS frameworkとして扱わないこと、4者を単純なランキングにしないことが重要です。
 
-[AI-DLC Workflows](dev-methods/aidlc-workflows.md)（AWS Labs）も、要件や設計を実装前に確認してAIエージェントの作業を構造化します。Spec Kitは機能単位の仕様作成、AI-DLCは初期化から運用までの5フェーズを中心に据えます。対象は重なりますが、同じ手法や公式な連携機能ではありません。
+選ぶ軸は、作業の開始単位、source of truth、人が承認する地点、実装後に仕様へ同期する方法です。たとえばbrownfieldで現在仕様と変更履歴を分けるならOpenSpec、複数epic / teamを含むSDLC全体ならBMAD、Kiro内のphase approvalを使うならKiro Specs、agentを固定せずfeature単位の標準processとconvergenceを置くならSpec Kitが候補です。[AI-DLC Workflows](dev-methods/aidlc-workflows.md)はライフサイクル全体を扱う別系統で、4者の別名や上位版ではありません。
 
-**→ ワークフローの詳細・EARS の記法・AI-DLC との選び方の軸は [仕様駆動開発（SDD）](dev-methods/spec-driven.md) を参照**
+**→ 4者の成果物・承認・同期方法の比較、EARS、AI-DLCとの境界は [仕様駆動開発（SDD）](dev-methods/spec-driven.md) を参照**
 
 ---
 
@@ -757,7 +766,7 @@ Skill・MCP・ハーネスがエージェントを**動かす**側の話だと�
 
 [12 節](#12-skill--plugin-のセキュリティ)が「入れてよい Skill か」という**導入前**の話だとすれば、こちらは導入後の評価です。ただし、**Skill / Plugin変更時の回帰評価**と、**本番エージェントの継続的な品質評価**は分けます。前者は発火・手順・出力を固定ケースで比較し、後者は実際のinteractionに対するgoal completion、応答品質、tool選択・引数、routing / trajectoryを見ます。latencyやerrorなどのインフラ監視も、品質評価とは別の問いです。
 
-この節ではSkill / Pluginの回帰評価を要約します。本番エージェントの品質評価、on-demand / batchとonlineの違い、AWS固有の実装例であるAmazon Bedrock AgentCore Evaluationsは詳細ページで扱います。
+この節ではSkill / Pluginの回帰評価を要約します。本番エージェントの品質評価、on-demand / batchとonlineの違い、評価から改善・検証・昇格へつなぐループは詳細ページで扱います。AWS固有の実装例では、AgentCore Evaluationsに加えてAgentCore Optimizationのrecommendation、batch evaluation、A/B testを取り上げています。
 
 SkillsBench（[arXiv:2602.12670](https://arxiv.org/abs/2602.12670)）は、複数タスク・複数ドメイン・複数の model-harness 構成で Curated Skills の効果を計測し、**平均では成功率が改善する一方、ドメインや構成によって効果の大きさは大きくばらつき、改善が乏しい構成もある**と報告しています。「入れれば必ず伸びる」とは限りません（具体的な数値はアブストラクトを参照）。
 
@@ -765,7 +774,7 @@ SkillsBench（[arXiv:2602.12670](https://arxiv.org/abs/2602.12670)）は、複�
 
 Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を組み込んだ `claude plugin eval` が追加されました。各 case を Plugin あり / なしで反復し、`regex`、tool、file、LLM judge の grader で採点して JSON / HTML report を出します。`plugin validate` が manifest / frontmatter の構造検査であるのに対し、`plugin eval` は挙動・退行の検査です。model call は利用枠または API 料金を消費し、server-side の利用可否にも従います。
 
-**→ 退行パターン、測り方、`skill-eval-harness` 等の道具、本番エージェントの品質評価、インフラ監視との切り分けは [Skill / エージェントの評価（evals）](dev-methods/evals.md) を参照**
+**→ 退行パターン、測り方、`skill-eval-harness` 等の道具、本番エージェントの品質評価、改善・A/B test・昇格、インフラ監視との切り分けは [Skill / エージェントの評価（evals）](dev-methods/evals.md) を参照**
 
 ---
 
@@ -793,6 +802,7 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 | 手持ちの prompt ファイルを Skill にしたい | VS Code の AI Customizations から変換 |
 | 導入した Skill が効いているか測りたい | [Skill / エージェントの評価（evals）](dev-methods/evals.md)（Claude Plugin は `plugin eval`、ツール横断は `skill-eval-harness`） |
 | 本番エージェントの目的達成・tool選択・応答品質を評価したい | [Skill / エージェントの評価（evals）](dev-methods/evals.md#6-本番エージェントの品質を継続評価する)でon-demand / batchとonline評価を分けて設計 |
+| 評価結果からprompt改善・回帰評価・A/B test・本番昇格へつなげたい | [評価から改善・検証・昇格へつなぐ](dev-methods/evals.md#7-評価から改善検証昇格へつなぐ)で工程ごとの成果物と人のgateを設計 |
 
 ---
 
@@ -850,6 +860,8 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 - [Enterprise managed settings in GitHub Copilot for JetBrains](https://github.blog/changelog/2026-08-18-enterprise-managed-settings-in-github-copilot-for-jetbrains/) — JetBrains への managed settings 拡大（公式）
 - [Enterprise managed permissions for GitHub Copilot agent operations](https://github.blog/changelog/2026-09-09-enterprise-managed-permissions-for-github-copilot-agent-operations/) — 操作単位の managed permissions（GitHub 公式・GA）
 - [Managed Agents permission policies](https://platform.claude.com/docs/en/managed-agents/permission-policies) — tool call ごとの権限判定（Anthropic 公式・Beta）
+- [AgentCore Identity managed consent portal](https://aws.amazon.com/about-aws/whats-new/2026/09/amazon-bedrock-agentcore/) — IDE / MCP client向けhosted portalとsession binding（AWS公式・2026-09-01）
+- [Configure a consent portal](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/identity-consent-portal.html) — primary OIDC IdP、Gateway、downstream provider、server-side token flow（AWS公式）
 - [awesome-agent-skills-security](https://github.com/LLMSecurity/awesome-agent-skills-security) — 攻撃手法と防御策の一覧（コミュニティ）
 - [Agents 一覧](copilot/agents.md) — 導入前監査に使える `trojan-skill-hunter` の解説（本ガイド）
 
@@ -870,6 +882,13 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 
 - [github/spec-kit](https://github.com/github/spec-kit) — リポジトリ本体（公式）
 - [spec-driven.md](https://github.com/github/spec-kit/blob/main/spec-driven.md) — SDD 方法論の解説文書（公式）
+- [OpenSpec Quickstart](https://openspec.dev/docs/quickstart) — change deltaからarchiveまで（プロジェクト公式）
+- [Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec) — リポジトリ本体（Community・MIT）
+- [BMad: Choose a Planning Path](https://docs.bmad-method.org/plan/choose-a-planning-path/) — work sizeに応じた計画経路（プロジェクト公式）
+- [bmad-code-org/BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD) — リポジトリ本体（Community・MIT）
+- [Kiro Feature Specs](https://kiro.dev/docs/specs/feature-specs/) — Requirements-First / Design-First（公式）
+- [Kiro Bugfix Specs](https://kiro.dev/docs/specs/bugfix-specs/) — root causeとregression prevention（公式）
+- [Kiro Quick Spec](https://kiro.dev/docs/specs/quick-spec/) — phase間のapprovalを省くsession mode（公式）
 - [EARS: Easy Approach to Requirements Syntax](https://alistairmavin.com/ears/) — 提唱者による公式解説（一次情報）
 
 ### Skill / エージェントの評価（本ページ 15 節・詳細は [解説ページ](dev-methods/evals.md)）
@@ -880,6 +899,8 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 - [Test plugins with evals](https://code.claude.com/docs/en/plugin-evals) — `claude plugin eval` の suite、baseline、grader、report（Anthropic 公式）
 - [SkillsBench](https://arxiv.org/abs/2602.12670) — arXiv:2602.12670、2026-02-13 投稿
 - [Amazon Bedrock AgentCore Evaluations](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html) — 本番エージェントをon-demand / batch / onlineで評価するAWS固有の実装例（Official / GA）
+- [AgentCore optimization](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/optimization.html) — traceからrecommendation、offline評価、A/B testへ進むAWS固有の改善ループ（Official）
+- [AgentCore optimization GA announcement](https://aws.amazon.com/about-aws/whats-new/2026/06/amazon-bedrock-agentcore-new-optimization-capabilities/) — recommendation、batch evaluation、A/B testはGA、failure / intent / trajectory insightsはPreview（AWS公式・2026-06-17）
 
 ---
 

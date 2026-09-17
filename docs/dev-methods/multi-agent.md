@@ -1,6 +1,6 @@
 # マルチエージェントを使う境界線
 
-> **対象ツール**: ツール横断（Claude Code・OpenAI Agents SDK・LangGraph ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-16
+> **対象ツール**: ツール横断（Claude Code・OpenAI Agents API / SDK・LangGraph ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-18
 
 > Codex・Claude Code・各種ハーネスでサブエージェントや並列実行が一般化し、「複数体にできるか」はもう問題ではなくなりました。残っているのは「**いつ複数体にすべきか**」という設計判断です。マルチエージェントは分業とコンテキスト分離に有効な一方、通信・重複作業・競合・権限増幅・集約時の誤りという追加コストを持ちます。このページはその判断基準を、機能の存在ではなく設計判断として整理します。
 
@@ -52,6 +52,8 @@ OpenAI Agents SDK も同じ構造を **`Agent.as_tool()`** として提供して
 > A manager agent keeps control of the conversation and calls specialist agents through `Agent.as_tool()`.
 
 **マネージャー（呼び出し元）が対話の主導権と最終的な統合の責任を持ち続ける**のが、このパターンの核心です。専門エージェントは道具として扱われ、応答を直接ユーザーへ返しません。
+
+[OpenAI Agents API](https://developers.openai.com/api/docs/guides/agents-api/multi-agent) も、OpenAI管理のCodexハーネス内でsubagentの作成・指示・待機を扱います。ただし、これはAgents SDKの `Agent.as_tool()` をそのままホストする機能ではありません。**Agents APIはmanaged session内のmulti-agent実行、Agents SDKはアプリケーションコード内のorchestration**という実装境界を分けてください。どちらでも、managerが分割と統合を担う設計原則は同じです。
 
 向く場面:
 - テスト実行・ログ調査など、詳細を読み返さない検証作業
@@ -127,7 +129,7 @@ Claude Code のドキュメントが挙げる例は、独立した複数の探�
 | **通信** | 呼び出し元とサブエージェントは、要約された結果だけをやり取りするのか、詳細な文脈まで渡すのか |
 | **コンテキスト** | 非 fork 型は親の会話履歴・既読ファイルを引き継がないため、**必要な情報を明示的に渡す**。Claude Code の fork 型は起動時点の親の会話履歴を引き継ぐため、文脈を再利用する目的で選ぶ |
 | **コスト** | 非 fork 型では詳細を追わない定型作業を低コストな model へルーティングできる。fork 型は親の model と prompt cache を使う。サブエージェントの説明文もコンテキストを消費するため、簡潔に保つ |
-| **権限** | 呼び出し元の権限をそのまま渡さない。ツールを許可リスト・拒否リストで絞り、**タスクに必要な最小の権限**にする（[エージェントのID・認可・委任権限](agent-identity.md#5-親エージェントからサブエージェントへ渡してよい権限)の「権限の増幅」と同じ論点） |
+| **権限** | 呼び出し元の権限をそのまま渡さない。ツールを許可リスト・拒否リストで絞り、**タスクに必要な最小の権限**にする（[エージェントのID・認可・委任権限](agent-identity.md#6-親エージェントからサブエージェントへ渡してよい権限)の「権限の増幅」と同じ論点） |
 | **停止条件** | 何をもって各サブエージェントの作業を「完了」とみなすか、機械的に判定できる条件を決める（[ループエンジニアリング「停止条件の作り方」](loop-engineering.md#停止条件の作り方)と同じ設計原則） |
 
 **Claude Code は既定で、サブエージェントの最終報告をメインの会話が読む前にスキャンします。** これは、サブエージェントが読んだファイル・Web ページ・コマンド出力に、メインの会話へ向けた指示が紛れ込む可能性があるためです。**サブエージェントの出力は、常に検証すべきデータとして扱ってください。**
@@ -176,5 +178,6 @@ Claude Code のドキュメントが挙げる例は、独立した複数の探�
 
 - [Claude Code のサブエージェント](https://code.claude.com/docs/en/sub-agents) — 非 fork 型と fork 型のコンテキスト、system prompt / tools、model、prompt cache の差、権限制限、並列実行の上限、出力スキャンの一次情報（公式）
 - [OpenAI Agents SDK: Multi-agent](https://openai.github.io/openai-agents-python/multi_agent/) — agent-as-tool と handoff の定義・使い分け（公式）
+- [OpenAI Agents API: Multi-agent](https://developers.openai.com/api/docs/guides/agents-api/multi-agent) — managed session内でのsubagent作成・指示・待機（公式・Public Beta）
 - [LangGraph: Use subgraphs](https://docs.langchain.com/oss/python/langgraph/use-subgraphs) — 状態共有・分離の仕組み、並列実行時のチェックポイント競合リスク（公式）
 - [Measuring AI agent autonomy in practice](https://www.anthropic.com/news/measuring-agent-autonomy) — 承認戦略が「都度承認」から「監視・介入」へ移る実利用データ（Anthropic 公式）

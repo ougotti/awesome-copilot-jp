@@ -1,6 +1,6 @@
 # Skill / エージェントの評価（evals） — 変更時の回帰と本番品質を分けて測る
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・本番エージェント基盤ほか） ｜ **実行環境**: CLI（ターミナル）/ Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-17
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・本番エージェント基盤ほか） ｜ **実行環境**: CLI（ターミナル）/ Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-18
 
 > [Skill / Plugin のセキュリティ](skill-security.md)は「**導入前**に入れてよいものか」を扱います。このページはその先、「**変更した Skill / Plugin が効いているか**」と「**本番エージェントが目的を達成しているか**」を測る話です。両者は対象と実行頻度が異なります。
 
@@ -116,7 +116,42 @@ Amazon Bedrock AgentCore Evaluations は、2026-03-31 に GA となった AWS �
 
 AWS の本番監視例では、AgentCore Evaluations による品質評価と AWS DevOps Agent によるインフラ調査を 2 層として組み合わせています。これは AWS サービスを使った構成例であり、すべてのエージェント基盤が同じ機能や統合を持つという意味ではありません。他の基盤へ適用するときは、同じ製品名ではなく「品質」と「インフラを別の問いとして測る」という区分だけを持ち込みます。
 
-## 7. 人が見る範囲
+## 7. 評価から改善・検証・昇格へつなぐ
+
+評価scoreを表示して終わらせず、次の変更へ戻すには、工程を分けます。この流れは特定ベンダーに依存しません。
+
+| 工程 | 問い | 成果物 | 人が止める地点 |
+|------|------|--------|----------------|
+| **Observe** | どこで失敗しているか | production trace、利用者報告、既知の失敗case | 同意・個人情報・保存期間を確認し、利用できるtraceだけを選ぶ |
+| **Evaluate** | 何を改善目標にするか | evaluator、baseline score、失敗cluster | evaluatorが業務上の成功を表しているか確認する |
+| **Recommend** | prompt / tool descriptionの何を変えるか | 理由つきの変更案と候補configuration | AI生成案をreviewし、直接本番へ反映しない |
+| **Validate** | 既知caseを直し、別caseを壊していないか | offline batch evaluation、regression結果 | baselineより悪い指標がないか、代表例を読む |
+| **Experiment** | 実trafficでも改善するか | control / treatment、effect、信頼区間・有意性 | traffic、期間、停止条件、rollback条件を承認する |
+| **Promote / Roll back** | 本番標準にするか | versioned configuration、変更記録、rollback先 | 人が昇格を決め、旧versionを戻せる状態にする |
+
+**最適化するのはevaluatorが報酬として表現したものです。** 誤ったevaluator、偏ったtrace、狭すぎるtest setを与えると、その誤りを上手に最適化します。goal completionだけでなく、安全性、tool誤用、応答品質、cost / latency等の非退行条件も見て、scoreと具体的なsessionを一緒に確認します。
+
+### AWS 固有の実装例 — AgentCore Optimization
+
+> **提供元**: Official（AWS） ｜ **状態**: Recommendations / batch evaluations / A/B tests はGA、failure / intent / trajectory insightsはPreview ｜ **確認日**: 2026-09-18
+
+[AgentCore Optimization](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/optimization.html) は、上の改善ループをAWS上で実装する例です。
+
+| 機能 | 役割 | 状態 |
+|------|------|------|
+| Recommendations | traceとtarget evaluatorから、system promptまたはtool descriptionの改善案を生成する | GA |
+| Configuration bundles | system prompt、model ID、tool descriptionをversioned immutable snapshotとして保存する | `—`（公式発表は単独の状態を明記していない） |
+| Batch evaluation | 定義済みdatasetと複数evaluatorで候補をoffline検証する | GA |
+| A/B testing | AgentCore Gatewayでlive trafficを2 variantへ分け、online evaluationと統計的有意性で比較する | GA |
+| Failure / intent / trajectory insights | 多数sessionの失敗、利用者intent、実行経路をcluster化する | Preview |
+
+Recommendationは、現在のconfigurationとtraceに加えて、**何を良くしたいかを表すtarget evaluator**を入力にします。出力はLLMが生成した候補であり、AWS公式ドキュメントも適用前のreviewとtestを求めています。Configuration bundleへ書き込む場合も新しいversionとして保持し、元のversionを上書きしません。
+
+A/B testは、offline batch evaluationの次に行うlive validationです。session IDごとに割り当てを固定し、同じsessionが途中でvariantをまたがないようにします。平均scoreだけで昇格せず、必要なsample、統計的有意性、guardrail metric、最大期間、早期停止とrollbackを先に決めます。
+
+AWS外へこの考え方を持ち込む場合は、製品名ではなく、**trace → evaluator → versioned candidate → offline regression → live experiment → human promotion**という成果物とgateを再現してください。
+
+## 8. 人が見る範囲
 
 自動採点で代替できるのは「決められた基準に対して合っているか」までです。**基準そのものが正しいか**、**スタイルや業務判断が妥当か**は、自動採点の外に残ります。[生成AIを業務で安全に使う「出力を受け取った後に確認すること」](../business/safety.md#出力を受け取った後に確認すること)が挙げる数値・固有名詞・事実・抜け漏れ・体裁の確認は、Skill の出力と本番エージェントの応答についても同じように人の目が必要です。evals は「毎回人が全部読む」手間を減らす仕組みであって、その確認をゼロにする仕組みではありません。
 
@@ -144,3 +179,8 @@ AWS の本番監視例では、AgentCore Evaluations による品質評価と AW
 - [How AgentCore Evaluations works](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/how-it-works-evaluations.html) — goal attainment、tool の正確さ、AgentCore 外のエージェント対応（AWS 公式）
 - [Online evaluation](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/online-evaluations.html) / [On-demand evaluation](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/on-demand-evaluations.html) — 継続評価と指定 trace の評価（AWS 公式）
 - [Monitoring production agent lifecycle with AWS DevOps Agent and AgentCore Evaluations](https://aws.amazon.com/blogs/machine-learning/monitoring-production-agent-lifecycle-with-aws-devops-agent-and-agentcore-evaluations/) — 品質評価とインフラ監視を分けた AWS 構成例（AWS 公式、2026-09-11）
+- [AgentCore optimization](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/optimization.html) — recommendation、configuration bundle、A/B testからなる改善ループ（AWS公式）
+- [Recommendations](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/optimization-recommendations.html) — trace source、target evaluator、system prompt / tool descriptionの候補生成（AWS公式）
+- [A/B testing](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/ab-testing.html) — offline評価後のlive traffic検証、sticky assignment、統計的有意性（AWS公式）
+- [AgentCore optimization GA announcement](https://aws.amazon.com/about-aws/whats-new/2026/06/amazon-bedrock-agentcore-new-optimization-capabilities/) — GAとPreviewの機能境界（AWS公式・2026-06-17）
+- [Optimizing agent system prompts with AgentCore](https://aws.amazon.com/blogs/machine-learning/optimizing-agent-system-prompts-with-amazon-bedrock-agentcore/) — system prompt最適化の実装例（AWS公式・2026-09-16）

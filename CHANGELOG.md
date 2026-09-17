@@ -4,6 +4,40 @@
 
 ## 2026-09
 
+- **2026-09-18** Google Cloud Developer Pluginを可搬性の実例へ追加し、Googleの配布形態を訂正（#193）
+  - **[プラグインの可搬性](docs/dev-methods/plugin-portability.md)の実例表へ `google-cloud-developer` を追加** — ルートの `plugin.json` がAgent Plugins 1.0.0の正式な`$schema`を持ち、`skills/`とDeveloper Knowledge MCP用の`mcp.json`を束ねる可搬形式であることを確認した。
+  - **Skill単体とPluginを区別** — `google/skills`全体を「`plugin.json`を持たないSkill集」としていた旧記述を訂正し、`skills/`のSkill単体と`plugins/`のPluginを併用する現行構成へ更新した。
+  - `.codex-plugin/plugin.json`と`.claude-plugin/plugin.json`はクライアント固有のメタデータであり、可搬性の判定はルートの標準マニフェストで行うことを明記した。
+  - Google Cloud公式発表と`google/skills`の現行ファイルを2026-09-18に確認し、`docs/trends.md`の要約とREADMEの「最近の更新」も更新した。
+
+- **2026-09-18** OpenAI Agents APIをマネージドハーネスとして整理（#194）
+  - **[AI エージェントの実行基盤](docs/dev-methods/harness.md)へAgents APIを追加** — OpenAI管理のCodexハーネスがdurable session、orchestration、context compaction、recoveryを担い、application serverとenvironmentは別の責任を持つことを整理した。
+  - `none` / `openai_hosted` / `self_hosted`を比較し、managed APIの利用がsandbox、network、secret、tool権限の設計を不要にしないことを明記した。
+  - **Codex製品、Agents API、Agents SDK、Codex SDK / app serverを分離** — 利用者向け製品、managed API、workflow library、Codexプロセスの組み込みという入口の違いを`docs/codex/README.md`にも反映した。
+  - tools、multi-agent、artifact、model / tool / containerの料金区分と、Public BetaであることをOpenAI公式ドキュメントとAPI changelogで2026-09-18に確認した。
+  - `docs/dev-methods/multi-agent.md`と`docs/trends.md`へ要約と相互リンクを追加し、READMEの「最近の更新」を5行に保った。
+
+- **2026-09-18** エージェント評価を改善・A/B test・昇格へつなぐループを追加（#195）
+  - **[Skill / エージェントの評価](docs/dev-methods/evals.md)へObserve → Evaluate → Recommend → Validate → Experiment → Promote / Roll backを追加** — 各工程の問い、成果物、人が止める地点をベンダー横断の形で整理した。
+  - evaluatorが誤っていれば誤った目標を最適化すること、production traceの同意・個人情報・保存期間、既知case以外の非退行条件も確認することを明記した。
+  - **Amazon Bedrock AgentCore OptimizationをAWS固有の実装例として追加** — system prompt / tool descriptionのrecommendation、versioned configuration bundle、offline batch evaluation、AgentCore Gatewayによるlive A/B testを整理した。
+  - recommendation、batch evaluation、A/B testはGA、failure / intent / trajectory insightsはPreviewとして、AWS公式発表の機能境界を分けた。Configuration bundlesは単独の状態が明記されていないため`—`とした。
+  - AWS公式ドキュメント、GA発表、AWS Machine Learning Blogを2026-09-18に確認し、`docs/trends.md`の要約とREADMEの「最近の更新」も更新した。
+
+- **2026-09-18** エージェントのOAuth同意とsession bindingを整理（#196）
+  - **[AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md)へOAuth consentとsession bindingを追加** — end user、agent / Gateway、downstream providerを分け、grantを同意した利用者・sessionへ結びつける流れを整理した。
+  - primary IdPでの認証、provider scopeへの同意、session binding、token vault、失効・再同意、監査を別工程として示し、browser・IDE・prompt・ログへtokenを露出させない境界を追加した。
+  - **OAuth consentとper-action approvalを分離** — 接続scopeへの同意を、個々の送信・公開・削除・購入の承認として扱わない注意を`docs/dev-methods/skill-security.md`にも追加した。
+  - AgentCore Consent PortalをAWS固有の実装例として扱い、primary OIDC IdPとGitHub / Slack等のoutbound provider、Gateway JWT authorizer、CloudTrailの役割を整理した。公式発表にGA / Previewの明記がないため状態は`—`とした。
+  - AWS公式発表・ドキュメント・Machine Learning BlogとMCP Authorization仕様を2026-09-18に確認し、`docs/trends.md`の要約とREADMEの「最近の更新」も更新した。
+
+- **2026-09-18** Spec Kit・OpenSpec・BMAD Method・Kiro Specsの選び方を比較（#197）
+  - **[仕様駆動開発（SDD）](docs/dev-methods/spec-driven.md)を4者比較へ拡張** — process harness、change-oriented spec framework、Agile AI-driven SDLC方法論 + Skills / Agents、Kiro製品組み込み機能という提供形態を分けた。
+  - feature / change / intent / epic / project / bugという開始単位、成果物とsource of truth、human approval gate、archive / convergence / regression preventionを同じ粒度で比較した。
+  - **OpenSpecのchange deltaとmain specsへのarchive merge、BMADのwork-sizeに応じたplanning path、KiroのRequirements-First / Design-First / Quick / Bugfixを個別に整理**した。
+  - 小規模変更、brownfieldの継続的な仕様管理、複数epic / teamを含むSDLC、Kiro利用者の4例で選び方を示し、Spec Kitのagent横断processとAI-DLCの別系統のライフサイクル実装も接続した。
+  - 4者の公式ドキュメントとrepositoryを2026-09-18に確認し、`docs/trends.md`の要約とREADMEの「最近の更新」も更新した。
+
 - **2026-09-17** evals記事の対象をSkill / Plugin回帰評価と本番エージェント品質評価に整理（#186）
   - **[Skill / エージェントの評価（evals）](docs/dev-methods/evals.md)の対象を明確化** — Skill / Plugin変更時の回帰評価、本番エージェントの品質評価、インフラ・実行時監視を、問い・評価対象・実行時点で分けた
   - **本番評価の選定軸を追加** — response、tool call、session / trajectoryの単位と、on-demand / batch、onlineの違いを整理し、goal completion、応答品質、tool選択・引数、routingを測る最小手順を示した

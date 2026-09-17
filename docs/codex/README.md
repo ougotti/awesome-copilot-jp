@@ -1,6 +1,6 @@
 # Codex ガイド（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-12
+> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-18
 
 [openai/skills](https://github.com/openai/skills) は OpenAI が公開している Codex 用の公式スキルカタログです。指示・スクリプト・リソースをフォルダにまとめた「スキル」を追加することで、デプロイ・ブラウザ自動化・外部サービス連携といったワークフローを Codex に持たせられます。
 
@@ -172,6 +172,21 @@ Plugin 以外の単体 Skill を追加した場合まで、実行中の全 sessi
 
 **→ 可搬形式（Agent Plugins 1.0.0）の仕様と他ツールの対応状況は [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準) を参照**
 
+### Codexを製品へ組み込む入口を分ける
+
+Codexを「使う」ことと、Codex系のハーネスを自社サービスへ「組み込む」ことは別です。
+
+| 入口 | 管理される場所 | 選ぶ場面 |
+|------|---------------|---------|
+| Codex CLI / IDE / Desktop / Cloud | Codex製品 | 開発者がrepositoryやtaskを直接進める |
+| [Agents API](https://developers.openai.com/api/docs/guides/agents-api/overview) | OpenAI管理のCodexハーネス。session、orchestration、context compaction、recoveryを管理 | durable sessionを持つagentを自社アプリケーションからAPIで使う |
+| [Codex SDK](https://learn.chatgpt.com/docs/codex-sdk) / [app server](https://learn.chatgpt.com/docs/app-server) | ローカルまたは自社管理のCodexプロセス | Codexをプログラムや独自UIから制御する |
+| [Agents SDK](https://developers.openai.com/api/docs/guides/agents) | アプリケーションコード | agent、tools、handoff、guardrail、traceをコードで構成する |
+
+Agents APIは **Public Beta** です。ハーネスはOpenAIが管理しますが、実行環境は `none` / `openai_hosted` / `self_hosted` から選びます。したがって、Agents APIを選んでもsandbox、network、secret、tool権限の設計は残ります。model、OpenAI tool、OpenAI-hosted sandboxはそれぞれAPI料金の対象です。
+
+**→ harnessとenvironmentの責任分界、tools、artifact、導入前の確認事項は [AI エージェントの実行基盤](../dev-methods/harness.md#openai-agents-api--codexハーネスをマネージドapiで使う) を参照**
+
 ---
 
 ## 6. 定期・イベントで動かす（Scheduled tasks）
@@ -310,6 +325,7 @@ Codex には **subagents** という機能があります。**専門化した複
 - [Subagents – Codex 公式ドキュメント](https://learn.chatgpt.com/docs/agent-configuration/subagents) — Availability、カスタムエージェントの定義方法（公式・2026-09-09 確認）
 - [openai/codex リポジトリ](https://github.com/openai/codex) — Codex CLI 本体
 - [Codex CLI 公式ドキュメント](https://developers.openai.com/codex/cli) — CLI の使い方
+- [Agents API overview](https://developers.openai.com/api/docs/guides/agents-api/overview) ／ [architecture](https://developers.openai.com/api/docs/guides/agents-api/architecture) — OpenAI管理のCodexハーネスと実行環境の選択（公式・Public Beta）
 - [Scheduled tasks](https://learn.chatgpt.com/docs/automations) — 時刻・イベントでの起動、worktree、プラン要件（公式）
 - [Import from another agent](https://learn.chatgpt.com/docs/import) — 取り込み対象・制限・取り込み後の点検項目（公式）
 

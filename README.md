@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
-- **2026-09-16** [AI エージェントの実行基盤](docs/dev-methods/harness.md#otlp-とデータの意味を分ける)でOTLPという転送方式と、実行トレース・組織利用集計というデータの用途を分離
-- **2026-09-17** [Skill / エージェントの評価](docs/dev-methods/evals.md#1-最初に分ける--回帰評価本番品質インフラ監視)でSkill / Pluginの回帰評価、本番エージェントの品質評価、インフラ監視を分離
-- **2026-09-16** [GitHub Copilot ガイド](docs/copilot/README.md#upcoming--githubcommobilecloud-agentのポリシー統合)へ9月28日以降に予定されるポリシー統合、データ保持、code review既定値変更を追加
-- **2026-09-16** [マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md#3-agent-as-tool-専門作業を隔離して呼び出す)でClaude Codeの非fork型とfork型サブエージェントの違いを整理
-- **2026-09-15** [AI エージェントの実行基盤](docs/dev-methods/harness.md#層の関係--セッションごとに-agent-backend-を選ぶ)へ Kiro Crew 0.6.0 の選択可能な Agent Backend（Preview）を追加
+- **2026-09-18** [仕様駆動開発（SDD）](docs/dev-methods/spec-driven.md#近い4者は同じ種類ではない)でSpec Kit・OpenSpec・BMAD Method・Kiro Specsを提供形態、成果物、承認、仕様同期の違いから比較
+- **2026-09-18** [AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md#5-end-user-oauth-consentとsession-binding)へOAuth同意・session binding・token vault・個別操作承認の境界を追加
+- **2026-09-18** [Skill / エージェントの評価](docs/dev-methods/evals.md#7-評価から改善検証昇格へつなぐ)へtraceから改善案・offline評価・A/B test・人による本番昇格までのループを追加
+- **2026-09-18** [AI エージェントの実行基盤](docs/dev-methods/harness.md#openai-agents-api--codexハーネスをマネージドapiで使う)へOpenAI Agents APIを追加し、Codex・Agents SDK・sandboxとの責任境界を整理
+- **2026-09-18** [プラグインの可搬性](docs/dev-methods/plugin-portability.md#実物で見る)へAgent Plugins 1.0.0準拠のGoogle Cloud Developer Pluginを追加し、「GoogleはSkillのみ」という旧記述を訂正
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -144,7 +144,7 @@
 | **[AI-DLC Workflows](docs/dev-methods/aidlc-workflows.md)** | Official（AWS Labs） | GA | CLI / IDE | 5 フェーズを対話で進める AI 駆動開発ライフサイクルと日本語での試し方 |
 | **[Power Apps Plans と AI-DLC の比較](docs/dev-methods/ai-dlc-power-platform.md)** | 本ガイド | — | Cloud / CLI / IDE | Microsoft Power Platform の Plans と AI-DLC の役割、併用案、選び方 |
 | **[AI-DLC・AI-PDLC・AI BPR の用語整理](docs/dev-methods/ai-driven-lifecycle-terms.md)** | 本ガイド | — | CLI / IDE | AWS が公開する 3 つの取り組みの提供形態と対象範囲を分離 |
-| **[仕様駆動開発（SDD）](docs/dev-methods/spec-driven.md)** | Community | GA | CLI | GitHub Spec Kit のワークフローと EARS、AI-DLC との選び方の軸 |
+| **[仕様駆動開発（SDD）](docs/dev-methods/spec-driven.md)** | 本ガイド | — | CLI / IDE | Spec Kit・OpenSpec・BMAD・Kiro Specsの違い、EARS、AI-DLCとの境界 |
 | **[AI エージェントの実行基盤（ハーネス）](docs/dev-methods/harness.md)** | 本ガイド | — | CLI / Cloud | エージェントを動かす裏側の仕組みと実装例（Copilot Studio / QM）、OpenTelemetry による可観測性 |
 | **[ループエンジニアリング](docs/dev-methods/loop-engineering.md)** | 本ガイド | — | CLI / Cloud | エージェントを目標へ向けて回すループの設計・停止条件・落とし穴 |
 | **[オントロジー](docs/dev-methods/ontology.md)** | 本ガイド | — | CLI / Cloud | 業務の意味（語彙・関係・規則）を定義してエージェントに渡す方法と実装例 |

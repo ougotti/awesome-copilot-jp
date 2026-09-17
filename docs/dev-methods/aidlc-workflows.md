@@ -179,7 +179,7 @@ AWS Platform Agentやインフラ設計の工程が存在しても、すべて�
 
 - [Power Apps PlansとAI-DLCの比較](ai-dlc-power-platform.md) — Power Platformで使う場合の役割と導入判断。
 - [AI-DLC・AI-PDLC・AI BPRの違い](ai-driven-lifecycle-terms.md) — 似た名前の対象と公開形態。
-- [仕様駆動開発（SDD）](spec-driven.md#ai-dlc-との関係--どちらを選ぶか) — GitHub Spec Kitとの選び方。
+- [仕様駆動開発（SDD）](spec-driven.md#ai-dlcは別系統のライフサイクル実装) — Spec Kitなどの仕様中心の選択肢とAI-DLCの境界。
 
 > [!IMPORTANT]
 > 生成AIの出力、実行するコマンド、テスト結果、費用、外部システムへの変更は人が確認してください。

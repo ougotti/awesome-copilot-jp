@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-15
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-18
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -164,6 +164,14 @@ GitHub Copilot の **content exclusion** は、機密ファイルを Copilot の
 これは権限分離そのものではなく、**記憶済みの承認の適用範囲**の話です。過大評価せず、marketplace の出自確認（[6 節](#6-同名の別パッケージという入口)）と併せて扱ってください。
 
 **→ Codex の Plugin / MCP 運用は [Codex ガイド](../codex/README.md#5-plugin-でまとめて配る2026-08-の追加) を参照**
+
+### OAuth consentを操作承認とみなさない
+
+外部providerへのOAuth consentは、指定scopeで代理アクセスするgrantを作る手続きです。接続済みでtokenを再利用できても、個々の送信・公開・削除・購入まで承認済みという意味ではありません。
+
+組織のIdPで利用者を認証し、downstream providerのgrantを同じ利用者・sessionへ結びつける**session binding**と、不可逆操作の直前に止める**human approval**を別々に実装します。tokenはbrowser、IDE、prompt、ログへ返さず、vault等で利用者・provider・scope・audienceに結びつけて保管・失効します。
+
+**→ 用語、session binding、AgentCore Consent Portalの実装例は [AIエージェントのID・認可・委任権限](agent-identity.md#5-end-user-oauth-consentとsession-binding) を参照**
 
 ---
 
