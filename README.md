@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-20** [Skills 最新動向](docs/trends.md#10-aiエージェントの実行基盤ハーネス)へClaude Code 2.1.271〜2.1.277、VS Code 1.138 Agent Host、Codex CLI 0.155.0、CLI利用指標、on-demand compactionを反映
 - **2026-09-18** [仕様駆動開発（SDD）](docs/dev-methods/spec-driven.md#近い4者は同じ種類ではない)でSpec Kit・OpenSpec・BMAD Method・Kiro Specsを提供形態、成果物、承認、仕様同期の違いから比較
 - **2026-09-18** [AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md#5-end-user-oauth-consentとsession-binding)へOAuth同意・session binding・token vault・個別操作承認の境界を追加
 - **2026-09-18** [Skill / エージェントの評価](docs/dev-methods/evals.md#7-評価から改善検証昇格へつなぐ)へtraceから改善案・offline評価・A/B test・人による本番昇格までのループを追加
 - **2026-09-18** [AI エージェントの実行基盤](docs/dev-methods/harness.md#openai-agents-api--codexハーネスをマネージドapiで使う)へOpenAI Agents APIを追加し、Codex・Agents SDK・sandboxとの責任境界を整理
-- **2026-09-18** [プラグインの可搬性](docs/dev-methods/plugin-portability.md#実物で見る)へAgent Plugins 1.0.0準拠のGoogle Cloud Developer Pluginを追加し、「GoogleはSkillのみ」という旧記述を訂正
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 

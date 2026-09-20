@@ -1,6 +1,6 @@
 # Codex ガイド（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-18
+> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-20
 
 [openai/skills](https://github.com/openai/skills) は OpenAI が公開している Codex 用の公式スキルカタログです。指示・スクリプト・リソースをフォルダにまとめた「スキル」を追加することで、デプロイ・ブラウザ自動化・外部サービス連携といったワークフローを Codex に持たせられます。
 
@@ -170,6 +170,21 @@ CLI のプラグインブラウザは Marketplace ごとにタブが分かれ、
 
 Plugin 以外の単体 Skill を追加した場合まで、実行中の全 session が必ず再読込するとは公式 changelog に書かれていません。単体 Skill は Codex を再起動して確認します。
 
+### Codex CLI 0.155.0 — MCP の本人確認を 4 層で分ける
+
+0.155.0（2026-09-17）は、**対応する Mac のローカル TUI sessionで、MCP request に Touch ID による user verification**を追加しました。MCP 全般の認証方式が Touch ID に置き換わったわけではありません。
+
+| 層 | 確認すること |
+|----|-------------|
+| OAuth identity | MCP server にどのアカウントで接続しているか。期限切れ credential / refresh failure は再接続案内の対象 |
+| Tool permission | その MCP tool を現在の workspace / policy で呼べるか |
+| Action approval | 実行予定の操作を許可するか。automatic review は action と authorization evidence を保持する |
+| Current-user verification | いま端末の前にいる利用者が要求を確認したか。Touch ID は対応 Mac + local TUI + 対象 MCP request の追加確認 |
+
+本人確認を通っても、OAuth scope や tool permission が広がるわけではありません。反対に、OAuth login 済みでも現在ユーザーの確認が必要な request は残ります。
+
+運用面では、daemon の更新 schedule と `codex app-server daemon update` が追加され、restart 後に保存済み thread と active goal を recovery できるようになりました。あわせて expired MCP OAuth の診断、approval evidence の保持、account switch 時の前 identity state の無効化、restricted WSL / shell snapshot の hardening が入りました。更新後は daemon version だけでなく、thread / goal の再開と MCP 再接続を確認します。
+
 **→ 可搬形式（Agent Plugins 1.0.0）の仕様と他ツールの対応状況は [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準) を参照**
 
 ### Codexを製品へ組み込む入口を分ける
@@ -321,7 +336,7 @@ Codex には **subagents** という機能があります。**専門化した複
 - [Agent Skills – Codex 公式ドキュメント](https://developers.openai.com/codex/skills) — 公式スキル解説
 - [Plugins – Codex 公式ドキュメント](https://developers.openai.com/codex/plugins) — Plugin の導入・権限・Marketplace（公式）
 - [Codex MCP server removal](https://learn.chatgpt.com/docs/mcp-server) — 削除されたentry point、app serverへの移行、外部MCP接続への非影響（公式・2026-09-05）
-- [ChatGPT & Codex changelog](https://learn.chatgpt.com/docs/changelog) — Codex CLI 0.154.0のworktree、Plugin再読込、MCP OAuth、workspace trust（公式・2026-09-09）
+- [ChatGPT & Codex changelog](https://learn.chatgpt.com/docs/changelog) — Codex CLI 0.154.0 / 0.155.0 の worktree、MCP OAuth、Touch ID verification、daemon recovery（公式）
 - [Subagents – Codex 公式ドキュメント](https://learn.chatgpt.com/docs/agent-configuration/subagents) — Availability、カスタムエージェントの定義方法（公式・2026-09-09 確認）
 - [openai/codex リポジトリ](https://github.com/openai/codex) — Codex CLI 本体
 - [Codex CLI 公式ドキュメント](https://developers.openai.com/codex/cli) — CLI の使い方

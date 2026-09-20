@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-16
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-20
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -399,7 +399,9 @@ Cookbook Recipes は、GitHub Copilot SDK を使ったアプリケーション�
 
 ## Automations — エージェントタスクを定期実行する
 
-VS Code 1.137（2026-09-09）で **Automations** が Preview として追加されました。保存した prompt、workspace、agent / model / permission options、schedule を使い、Agents ウィンドウから同じタスクを繰り返し実行します。
+VS Code 1.137（2026-09-09）で追加された **Automations** は、1.138（2026-09-16）で共有用ファイルの export / import に対応しました。保存した prompt、workspace、agent / model / permission options、schedule を使い、Agents ウィンドウから同じタスクを繰り返し実行します。
+
+> **状態は Preview です。** 1.138 release notes は「既定で有効」と案内していますが、現行の Automations ドキュメントは段階的ロールアウト中で、Stable は既定オフ、Insiders は既定オンとしています。利用面・ロールアウト時点で差があるため、GA と扱わず `chat.automations.enabled` と表示有無を確認してください。
 
 1. Settings で `chat.automations.enabled` を有効にする
 2. Agents ウィンドウ → Automations → Create Automation を開く
@@ -410,9 +412,36 @@ VS Code 1.137（2026-09-09）で **Automations** が Preview として追加さ�
 
 Automation はローカルで動きます。Agent Host を使う schedule は Agent Host process、それ以外は VS Code window が起動している必要があり、マシンもスリープさせないようにします。中断後に catch-up run が起きる場合はありますが、逃した回がすべて再実行される保証はありません。同じ Automation は一度に 1 セッションだけ動きます。
 
+共有時は `.automation.md` を使います。これは実行環境を丸ごと移すファイルではなく、**移植可能な定義だけ**を渡します。
+
+| 含む | 含まない |
+|------|----------|
+| name、prompt、Manual / Hourly / Daily / Weekly の schedule、file format version、portable identifier | workspace、provider、model、permissions、enabled state、run history |
+
+import した側が workspace、agent、model、permissions、isolation をローカルで選び直し、Enabled はオフの状態から始まります。定義の共有を、実行権限の共有とみなさないでください。
+
 > 保存した permission options は組織ポリシーを迂回しません。将来の run で承認待ちになる可能性があるため、無人化する前に Manual run で確認してください。Automation を無効にしても、すでに実行中のセッションは止まりません。History から Stop を選びます。
 
 **→ Codex Scheduled tasks、Claude Code `/loop`、Kiro Crew との比較は [ループエンジニアリング](../dev-methods/loop-engineering.md#定期実行を選ぶときの比較) を参照**
+
+### VS Code 1.138 の Agent Host と Codex 継続
+
+Agent Host は Agent Host Protocol（AHP）を基盤に、agent harness を **VS Code 本体とは別の専用 process** で動かします。同じ session に複数の VS Code window から接続でき、ローカル folder の対応する Dev Container へ session を移して、プロジェクト側の toolchain / dependencies で動かせます。Dev Container 経路には Docker と対応構成が必要で、1.138 時点は段階的ロールアウトです。
+
+Codex session は ChatGPT app と VS Code の間で同じ会話を継続できます。ただし移動後の tool surface は VS Code 側の built-in / extension / MCP tools へ広がります。**会話が同じでも、使える tool と実行境界が同じとは限らない**ため、handoff 後に権限と接続先を再確認します。
+
+### Agentic CLI の customization 利用指標
+
+2026-09-17、Copilot usage metrics API に CLI の Skill / custom agent / MCP / slash command / Plugin 指標が加わりました。
+
+| 問い | フィールド |
+|------|-----------|
+| よく使われるもの（上位 5 件、各 `interaction_count`） | `totals_by_skill` / `totals_by_custom_agent` / `totals_by_mcp` / `totals_by_slash_cmd` / `totals_by_plugin` |
+| 使われた種類数（上位 5 件以外も含む） | `distinct_skill_use_count` / `distinct_custom_agent_use_count` / `distinct_mcp_use_count` / `distinct_slash_cmd_use_count` / `distinct_plugin_use_count` |
+
+顧客定義名は privacy のため Skill / custom agent / MCP / Plugin では `other`、custom slash command では `custom` にまとめられます。MCP の `interaction_count` は**接続 / 再接続の試行回数**で、tool call 数ではありません（成功・失敗の両方を数える）。Plugin は Plugin に属する Skill invocation の subset で、同じ activity が Skill totals にも入るため、両者を加算しません。
+
+この指標が示すのは adoption、利用の偏り、enablement gap です。生産性、成果物の品質、MCP 接続の成功率を直接示す評価指標ではありません。
 
 ---
 
@@ -611,7 +640,9 @@ Instructions、Prompts、Agents は GitHub Copilot のすべてのプラン（Fr
 - [Agentic Workflows ドキュメント](https://github.com/github/awesome-copilot/blob/main/docs/README.workflows.md) — AI 駆動ワークフローの一覧
 - [Hooks ドキュメント](https://github.com/github/awesome-copilot/blob/main/docs/README.hooks.md) — セッションイベント駆動フックの一覧
 - [VS Code 1.137 release notes](https://code.visualstudio.com/updates/v1_137) — Automations の公開（Microsoft 公式・2026-09-09、Preview）
-- [Automate recurring agent tasks](https://code.visualstudio.com/docs/agents/run/automations) — 作成、初回確認、schedule、実行条件（Microsoft 公式・Preview）
+- [VS Code 1.138 release notes](https://code.visualstudio.com/updates/v1_138) — Agent Host、Dev Container、Codex session 継続、Automation 共有（Microsoft 公式・2026-09-16）
+- [Create and manage agent automations](https://code.visualstudio.com/docs/agents/run/automations) — Preview / rollout、`.automation.md` の portable boundary（Microsoft 公式）
+- [Agentic CLI customizations in the usage metrics API](https://github.blog/changelog/2026-09-17-agentic-cli-customizations-now-in-the-usage-metrics-api/) — 上位 5 件、distinct count、privacy と集計上の注意（GitHub 公式）
 - [Cookbook](https://github.com/github/awesome-copilot/blob/main/cookbook/README.md) — Copilot SDK を活用した実践的コードレシピ集
 - [About GitHub Copilot plugins](https://docs.github.com/en/copilot/concepts/agents/about-plugins) — Plugin の概念と構成（公式）
 - [Manage agent skills with GitHub CLI](https://github.blog/changelog/2026-04-16-manage-agent-skills-with-github-cli/) — `gh skill` による Skill 管理（公式）

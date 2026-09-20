@@ -1,6 +1,6 @@
 # ループエンジニアリング
 
-> **対象ツール**: ツール横断（Claude Code・Codex 等） ｜ **実行環境**: CLI / IDE（デスクトップ） / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-15
+> **対象ツール**: ツール横断（Claude Code・Codex 等） ｜ **実行環境**: CLI / IDE（デスクトップ） / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-20
 
 > エージェントに毎ターン指示を出す代わりに、**エージェントに指示を出し続ける「ループ」の側を設計する**実践を **ループエンジニアリング（loop engineering）** と呼びます。2026-06-07 に Addy Osmani（Google Chrome）が [Loop Engineering](https://addyosmani.com/blog/loop-engineering/) で命名しました。このページは概念、ループの構成要素、停止条件の作り方、そして落とし穴をまとめた解説です。ループが動く土台については [AI エージェントの実行基盤（ハーネス）](harness.md) を参照してください。
 
@@ -100,6 +100,10 @@ VS Code 1.137（2026-09-09）の **Automations**（Preview）は、保存した 
 
 保存時に選んだ権限でファイル読み取り・コマンド・変更を実行できますが、**保存しても組織ポリシーは迂回されず、将来の実行で承認が必要になる場合があります**。無人化する前に、承認が残る操作を prompt から分離してください。
 
+VS Code 1.138 では `.automation.md` の export / import が追加されました。運べるのは name、prompt、schedule、file format version、portable identifier だけで、workspace、provider、model、permissions、enabled state、run history は含みません。import 後は実行環境をローカルで選び直し、Enabled はオフから始まります。**ループ定義の可搬性と、実行権限の可搬性を分ける**設計です。
+
+なお Automations は引き続き Preview です。1.138 release notes の「既定で有効」と、現行ドキュメントの「段階的ロールアウト、Stable は既定オフ / Insiders は既定オン」には提供面・時点の差があるため、GA と扱わず実機の設定を確認します。
+
 ### OSS 側の起動条件 — Kiro Crew
 
 同じ「起動条件を製品側に持たせる」形は OSS でも出てきました。AWS が 2026-08-04 に Apache-2.0 で公開した [Kiro Crew](harness.md#kiro-crew--常駐して動き続けるハーネス) は、常駐したまま次の 3 つで起動します。
@@ -143,6 +147,19 @@ OpenAI が公開している Codex の事例は、**無人実行そのものよ�
 技術的な要は **WebMCP** です。静的なクライアントサイドの Web アプリが、**専用の MCP サーバーを立てずに**ブラウザ側の限定されたツールをエージェントへ公開できます。
 
 この事例が示すのは、[外部状態](#ループの構成要素)と[承認境界](#落とし穴)を両立させる形です。人は「計画が実行に足るか」と「結果を出荷してよいか」を判断し、繰り返しの実行と記録はループが担います。
+
+### 長い会話をどこで縮めるか — Claude Messages API の on-demand compaction
+
+Claude Messages API の `compact-2026-09-04` beta は、アプリが選んだ時点で top-level `compaction` を送り、署名付き `compaction` block を 1 個返します。以降の request では、その block を要約対象だった messages の代わりに**先頭へ置き**、その後に要約後の turns を続けます。最近の turns は verbatim のまま残せるため、keep-tail や background compaction をアプリ側で設計できます。
+
+ループに組み込むときは、次を状態として保存します。
+
+1. compaction を起動する条件（token、checkpoint、phase 完了など）
+2. 返された signed block
+3. 要約後にそのまま保持する recent turns
+4. 次の request で block を先頭へ戻したことの検証
+
+これは **Claude API を使うアプリが compaction の timing と message 構成を管理する beta** です。OpenAI Agents API が managed Codex harness の機能として提供する context compaction とは責任主体が違います。またこの on-demand 方式は、公式文書上 Amazon Bedrock / Google Cloud では利用できません。
 
 ---
 
@@ -216,6 +233,8 @@ Claude Code には、ループを組むための機能がひととおり揃っ�
 - [Scheduled tasks](https://learn.chatgpt.com/docs/automations) — 時刻・イベントでの起動と、その前提条件（公式）
 - [VS Code 1.137 release notes](https://code.visualstudio.com/updates/v1_137) — Automations の公開（Microsoft 公式・2026-09-09、Preview）
 - [Automate recurring agent tasks](https://code.visualstudio.com/docs/agents/run/automations) — 保存内容、初回実行、schedule、ローカル実行条件（Microsoft 公式・Preview）
+- [VS Code 1.138 release notes](https://code.visualstudio.com/updates/v1_138) — Automation 共有、Agent Host、Codex 継続（Microsoft 公式・2026-09-16）
 - [Kiro Crew ドキュメント](https://kiro.dev/docs/crew/) — 定期ジョブ・ハートビート・webhook による起動（公式）
 - [Claude Code Commands](https://code.claude.com/docs/en/commands) — `/goal`・`/loop` の公式リファレンス
 - [Run prompts on a schedule](https://code.claude.com/docs/en/scheduled-tasks) — `/loop` のセッション寿命・権限・停止条件（Anthropic 公式）
+- [Claude Messages API compaction](https://platform.claude.com/docs/en/build-with-claude/compaction) — `compact-2026-09-04`、signed block、keep-tail、対応経路（Anthropic 公式・Beta）

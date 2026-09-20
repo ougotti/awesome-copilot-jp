@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-18
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-20
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-20 | Claude Code 2.1.271〜2.1.277、VS Code 1.138、Codex CLI 0.155.0、Copilot CLI customization metrics、Claude Messages API on-demand compactionを追加し、読み込み・実行・承認・観測の境界を整理した |
 | 2026-09-18 | 14 節でSpec Kit・OpenSpec・BMAD Method・Kiro Specsを、方法論 / framework / 製品機能、成果物、承認点、実装後の同期方法で比較した |
 | 2026-09-18 | 12 節にend-user OAuth consentとsession bindingを追加し、外部providerへの接続同意と個別操作のhuman approvalを分離した |
 | 2026-09-18 | 15 節にObserve → Evaluate → Recommend → Validate → Experiment → Promoteの改善ループと、AgentCore OptimizationのGA / Preview境界を追加 |
@@ -638,6 +639,12 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 
 また、VS Code 1.137 の **Automations**（Microsoft 公式、2026-09-09、Preview）は、prompt、workspace、agent / model / permission options、schedule を保存して、Manual / Hourly / Daily / Weekly でローカルの agent task を起動します。Codex Scheduled tasks、Claude Code `/loop`、Kiro Crew と同名機能として扱わず、実行場所・worktree・承認・停止条件で選びます。
 
+VS Code 1.138（2026-09-16）では、AHPベースのAgent Hostがharnessを専用processで動かし、local Dev Containerでの実行、ChatGPT appとVS Code間のCodex session継続、VS Code built-in / extension / MCP toolsの利用を広げました。同じsessionでもhandoff先でtool surfaceが変わる点に注意します。Automationsの`.automation.md`はname / prompt / schedule等だけを運び、workspace / provider / model / permissions / enabled state / run historyは運びません。Automations自体はPreviewかつ段階的ロールアウトで、release notesの既定有効と現行docsのStable既定オフ / Insiders既定オンを同一視しません。
+
+Copilot usage metrics APIは2026-09-17にCLI customizationの上位5件とdistinct countを追加しました。MCPの`interaction_count`はtool callではなく接続 / 再接続試行、Plugin totalsはSkill totalsのsubsetです。これはadoption / enablementの診断で、品質や生産性の直接評価ではありません。
+
+長い会話の状態管理では、Claude Messages APIの`compact-2026-09-04` betaがtop-level `compaction`からsigned blockを返し、次回以降はそのblockをmessagesの先頭へ置くon-demand方式を追加しました。recent turnsをverbatimで残すkeep-tailにも使えます。これはアプリがtimingとmessage stateを管理する仕組みで、OpenAI Agents APIのmanaged context compactionとは責任主体が違います。
+
 **→ 概念、Microsoft Copilot Studio・QM・Kiro Crew・OpenAI Agents APIの実装、セキュリティポスチャ、導入の前提、OpenTelemetryでの可観測性は [AI エージェントの実行基盤（ハーネス）](dev-methods/harness.md) を参照**
 **→ ループの構成要素・停止条件の作り方・落とし穴は [ループエンジニアリング](dev-methods/loop-engineering.md) を参照**
 **→ サブエージェントや並列実行を「いつ使うべきか」という設計判断は [マルチエージェントを使う境界線](dev-methods/multi-agent.md) を参照**
@@ -670,6 +677,10 @@ Snyk の「ToxicSkills」調査（2026-02-05 公開）は、ClawHub と skills.s
 2026 年 9 月には**実行する操作そのもの**も中央制御の対象になりました。GitHub Copilot の enterprise managed permissions（GitHub 公式、2026-09-09、GA）は `Shell` / `Read` / `Edit` / `Domain` を `deny` / `ask` / `allow` に分け、managed `ask` には毎回新しい承認を要求します。Claude Managed Agents permission policies（Anthropic 公式、Beta）は agent / MCP tool call ごとに allow / ask / deny を評価し、`evaluated_permission` をイベントに残します。Claude の `auto` は人の確認を保証しないため、人が必ず止める操作は `always_ask` にします。Claude Code のローカル権限設定とは別機能です。
 
 AWSが2026-09-11に公開したKiro IDEのCVE-2026-89332（AWS公式・Important）は、確認画面に変更内容とURLが表示されても、応答前にsettings fileが書き込まれ、別操作から外部requestが発生し得た事例です。対象はKiro IDE 0.8.135未満で、0.8.135以上では修正済みです。**確認画面の有無と、副作用の前に実際に停止するかは分けて検証します。** 攻撃の順序、対象範囲、利用者の確認事項は[詳細ページ](dev-methods/skill-security.md#承認画面が副作用より先とは限らない--kiro-ideの修正済み事例)へ集約しています。
+
+Claude Code 2.1.271〜2.1.277では、`AGENTS.md`は`CLAUDE.md`がない場合だけのfallback、`omitClaudeMd`はuser / project / local指示をサブエージェントから除外してもmanaged policyは残る、`allowed_domains`は1コマンド限定、`--accept-command <sha256>`はJSONで表示したPlugin commandだけを承認する、という境界が加わりました。読み取れない`managed-mcp.json`はexclusive controlを維持するfail-closedへ修正されています。アカウントSkills / Pluginsの端末同期は個別にopt-outできるため、repositoryだけでなくaccount / organization層も実効構成に含めます。
+
+Codex CLI 0.155.0のTouch IDは、対応Macのlocal TUIにおけるMCP requestの**current-user verification**です。OAuth identity、tool permission、action approvalとは別層で、本人確認がscopeや権限を広げるわけではありません。
 
 外部サービスへ接続するときは、OAuth consentの後にも承認境界が残ります。AWSは2026-09-01にAgentCore Identityのmanaged Consent Portalを公開し、primary OIDC IdPで認証した利用者とGitHub / Slack等のoutbound grantをsession bindingし、token vaultへ保存する例を示しました。これは「指定scopeで接続してよい」という同意であり、個々の送信・公開・削除を実行してよいという承認ではありません。**OAuth consent、session binding、per-action approvalを別々に追跡します。**
 
@@ -850,7 +861,10 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 - [Kiro Crew](https://kiro.dev/crew/) — 製品ページと FAQ（前提となるプラン・対応 OS。公式）
 - [Inside the LLM Call: GenAI Observability with OpenTelemetry](https://opentelemetry.io/blog/2026/genai-observability/) — GenAI semantic conventions の解説（OpenTelemetry 公式）
 - [VS Code 1.137 release notes](https://code.visualstudio.com/updates/v1_137) — Automations の公開（Microsoft 公式・Preview）
+- [VS Code 1.138 release notes](https://code.visualstudio.com/updates/v1_138) ／ [Create and manage agent automations](https://code.visualstudio.com/docs/agents/run/automations) — Agent Host、Codex継続、`.automation.md`、Preview / rollout（Microsoft 公式）
 - [Add VS Code Agents to Copilot usage metrics](https://github.blog/changelog/2026-09-11-add-vs-code-agents-to-copilot-usage-metrics/) — 専用 Agents ウィンドウの利用指標（GitHub 公式・GA）
+- [Agentic CLI customizations in the usage metrics API](https://github.blog/changelog/2026-09-17-agentic-cli-customizations-now-in-the-usage-metrics-api/) — CLI customizationのtop 5 / distinct countと集計上の注意（GitHub 公式）
+- [Claude Messages API compaction](https://platform.claude.com/docs/en/build-with-claude/compaction) — on-demand compaction、signed block、keep-tail（Anthropic 公式・Beta）
 
 ### Skill / Plugin のセキュリティ（本ページ 12 節・詳細は [解説ページ](dev-methods/skill-security.md)）
 
@@ -864,6 +878,8 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 - [Configure a consent portal](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/identity-consent-portal.html) — primary OIDC IdP、Gateway、downstream provider、server-side token flow（AWS公式）
 - [awesome-agent-skills-security](https://github.com/LLMSecurity/awesome-agent-skills-security) — 攻撃手法と防御策の一覧（コミュニティ）
 - [Agents 一覧](copilot/agents.md) — 導入前監査に使える `trojan-skill-hunter` の解説（本ガイド）
+- [Claude Code v2.1.271](https://github.com/anthropics/claude-code/releases/tag/v2.1.271) ／ [v2.1.274](https://github.com/anthropics/claude-code/releases/tag/v2.1.274) ／ [v2.1.275](https://github.com/anthropics/claude-code/releases/tag/v2.1.275) ／ [v2.1.277](https://github.com/anthropics/claude-code/releases/tag/v2.1.277) — 読み込み・権限・同期・運用の更新（Anthropic 公式）
+- [ChatGPT & Codex changelog](https://learn.chatgpt.com/docs/changelog) — Codex CLI 0.155.0のMCP user verificationとdaemon recovery（OpenAI 公式）
 
 ### Skill が動く場所・MCP 仕様（本ページ 9・13 節）
 
