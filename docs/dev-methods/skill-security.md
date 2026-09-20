@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-18
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-20
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -90,6 +90,14 @@ GitHub Copilot の **enterprise managed permissions** は、導入できる MCP 
 同じ操作へ複数の規則が一致した場合は **`deny` → `ask` → `allow`** の順で強い規則が優先されます。組織が `ask` にした操作は、その都度の新しい承認が必要です。利用者側の自動承認、承認バイパス、保存済みの許可、Hook で組織の確認を省略することはできません。
 
 JetBrains では、同じ週に **enterprise managed sandbox** が Public Preview になりました。ファイルシステム、ネットワーク、プロキシ、開発ツール、macOS Keychain へのアクセスを中央設定し、利用者が制限を緩められないようにします。これはサンドボックスの管理であり、上記 4 セレクターによる操作単位の managed permissions が JetBrains でも一般提供された、という発表ではありません。
+
+### Claude Code の 1 コマンド限定許可と managed MCP
+
+Claude Code 2.1.271 では、auto mode + sandbox の Bash / PowerShell / Monitor に `allowed_domains` が加わりました。これは**そのコマンドが必要とする host をレビューし、そのコマンドの間だけ開く**仕組みです。永続的なネットワーク allowlist や、MCP サーバー自体の許可リストではありません。
+
+同じ版では Plugin install / update の `--json` が示したコマンドを、`--accept-command <sha256>` で完全一致した 1 件だけ承認できます。`-y` の代替として、承認対象のコマンドが後から変わっていないことを確認する境界です。
+
+組織管理では、読み取れない / parse できない `managed-mcp.json` を黙って無視せず、**exclusive MCP control を維持したまま user / project / Plugin の MCP を読み込まない fail-closed** へ修正されました。また 2.1.273 では、server-managed settings と併用したときに `allowManagedMcpServersOnly` / `deniedMcpServers` / `disableClaudeAiConnectors` が無視される問題も修正されています。運用確認は「設定ファイルがあるか」だけでなく、startup warning と実際の MCP 一覧まで見ます。
 
 **→ ここまでは「何を許可するか」の話でした。「エージェント自身を誰として認証し、その権限を他のエージェントへどこまで委任してよいか」は [AIエージェントのID・認可・委任権限](agent-identity.md) を参照してください。**
 
@@ -230,6 +238,7 @@ GitHub Copilot の **content exclusion** は、機密ファイルを Copilot の
 - [Inference hooks](https://platform.claude.com/docs/en/manage-claude/inference-hooks) — 推論前の allow / deny 判定（Anthropic 公式）
 - [Compliance API — session transcripts](https://platform.claude.com/docs/en/manage-claude/compliance-sessions) — 実行後のセッション取得（Anthropic 公式）
 - [Managed Agents permission policies](https://platform.claude.com/docs/en/managed-agents/permission-policies) — ツール呼び出し単位の権限判定（Anthropic 公式・Beta）
+- [Claude Code v2.1.271](https://github.com/anthropics/claude-code/releases/tag/v2.1.271) ／ [v2.1.273](https://github.com/anthropics/claude-code/releases/tag/v2.1.273) — command-scoped domain、Plugin command hash、managed MCP の fail-closed / 適用修正（公式）
 - [Connect to a running session](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/sessions-connect) — Managed Agents の実行中セッションへの接続（Anthropic 公式）
 - [CVE-2026-89332 — Kiro IDE Sensitive Workspace Data Exfiltration](https://aws.amazon.com/security/security-bulletins/2026-111-aws/) — AWSがImportantとして公開し、0.8.135以上で修正済み（`提供元`: Official / AWS ｜ `状態`: —）
 - [CVE Record: CVE-2026-89332](https://www.cve.org/CVERecord?id=CVE-2026-89332) — 公開済みのCVE登録情報（`提供元`: Official / CVE Program ｜ `状態`: —）

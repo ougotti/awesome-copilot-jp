@@ -1,6 +1,6 @@
 # 長時間タスクの信頼性設計
 
-> **対象ツール**: ツール横断（Claude Code・MCP・LangGraph ほか） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-09
+> **対象ツール**: ツール横断（Claude Code・Codex・MCP・LangGraph ほか） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-20
 
 > [ループエンジニアリング](loop-engineering.md)はエージェントを反復実行する方法と停止条件を、[AI エージェントの実行基盤（ハーネス）](harness.md)は実行環境を扱います。このページはその間にある、**長時間・多段階の仕事で小さな失敗が累積する問題**と、それを抑える信頼性設計を扱います。評価ツールや telemetry の網羅ではなく、**実行中の故障を前提にした** checkpoint・再開・冪等性・検証・reliability budget が対象です。
 
@@ -112,7 +112,20 @@ Anthropic の実利用データは、経験を積んだ利用者ほど「操作�
 
 ---
 
-## 9. 最小テストシナリオ
+## 9. 実装例 — startup、再開、設定解決を観測する
+
+2026-09 の Claude Code / Codex 更新は、信頼性を「retry する」だけでなく、**どこで待ち、何を復元し、どの設定で動いたか**を明示する方向に進んでいます。
+
+| 実装例 | 信頼性設計としての意味 |
+|--------|----------------------|
+| Claude Code `CLAUDE_CODE_MCP_STARTUP_WAIT_MS` | 最初の non-interactive turn が MCP server の接続を待つ上限を設定する（`0` は待たない）。startup dependency を無制限待ちにしない |
+| Claude Code `claude_code.managed_settings_resolved` | managed-settings の source / policy helper state と、opt-in で redacted settings / digest を OTel に残す。実効設定を再現できるようにする |
+| Claude Code の scheduled task 修正 | `.claude/scheduled_tasks.json` を worktree 等へコピーしても、別 session を誤って実行しないよう修正。定義コピーと runtime identity を分離する |
+| Codex daemon recovery | daemon update / restart 後に saved threads と active goals を復元する。更新前後で thread / goal の継続を postflight する |
+
+製品が recovery を備えていても、外部副作用の exactly-once は保証されません。再開後に同じ step が走る可能性を前提に、[5 節](#5-冪等性重複実行外部副作用の扱い)の冪等キーと中間成果物の検証を組み合わせます。
+
+## 10. 最小テストシナリオ
 
 長時間タスクの信頼性は、正常系だけでは検証できません。最低限、次のシナリオを試してください。
 
@@ -145,3 +158,5 @@ Anthropic の実利用データは、経験を積んだ利用者ほど「操作�
 - [MCP Tasks（2025-11-25 版仕様）](https://modelcontextprotocol.io/specification/2025-11-25/basic/utilities/tasks) — タスクの状態機械、TTL、キャンセル、エラー処理の一次情報（公式）
 - [Measuring AI agent autonomy in practice](https://www.anthropic.com/news/measuring-agent-autonomy) — 承認戦略が実績に応じて変わる実利用データ（Anthropic 公式）
 - [LangGraph: Persistence](https://docs.langchain.com/oss/python/langgraph/persistence) — checkpointer・store による状態永続化（公式）
+- [Claude Code v2.1.273](https://github.com/anthropics/claude-code/releases/tag/v2.1.273) ／ [v2.1.274](https://github.com/anthropics/claude-code/releases/tag/v2.1.274) — scheduled task / worktree、MCP startup wait、managed settings event（公式）
+- [ChatGPT & Codex changelog](https://learn.chatgpt.com/docs/changelog) — Codex CLI 0.155.0 の daemon update と thread / goal recovery（公式・2026-09-17）

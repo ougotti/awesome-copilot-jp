@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-16
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-20
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -79,6 +79,12 @@ Claude Code には目的の近い仕組みが複数あります。**やりたい
 
 既存のコードベースから雛形を生成するには、Claude Code 内で `/init` を実行します。
 
+### `AGENTS.md` は `CLAUDE.md` の代替で、追加読み込みではない
+
+Claude Code 2.1.277（2026-09-18）から、プロジェクトに `CLAUDE.md` がない場合は `AGENTS.md` を Project instructions として読めます。**両方があるときに内容をマージする機能ではなく、`CLAUDE.md` があればそちらが優先**されます。切り替えは `/config` の Project instructions で確認します。
+
+リリース時点では Amazon Bedrock、Google Vertex AI、Microsoft Foundry 経由の Claude Code には未提供です。共通の `AGENTS.md` を置いても、これらの経路まで同じ挙動になるとは限りません。
+
 ---
 
 ## Agent Skills
@@ -120,6 +126,8 @@ Agent Skills は、タスク内容に応じて**必要なときに読み込ま�
 | Cowork セッション | — | **読み込まれない**（claude.ai アカウントで有効化したスキルを使う） |
 
 > 個人用ディレクトリにだけ置いたスキルは、クラウド／Cowork セッションでは「見つからない」と報告されます。これらの環境でも使いたい場合は、リポジトリの `.claude/skills/` にコミットするか、Plugin として配布してください。
+
+Claude Code 2.1.275 以降は、同じ claude.ai アカウントで有効にした Skills と Plugins が、サインイン済みのターミナルセッションへ同期されます。端末側を固定構成にしたい場合は `syncClaudeAiSkills: false`、`syncClaudeAiPlugins: false` で個別に止めます。**リポジトリ・ローカル・Plugin・アカウント同期・組織ポリシーの各層を合成したものが、実際に使える拡張セット**です。
 
 ---
 
@@ -179,6 +187,8 @@ description: 現在のブランチのテストを生成して実行する
 
 > **2026-08 の変更**: 対話セッションでは **fork モードが既定で有効**になりました（2.1.232）。`subagent_type: "fork"` は起動時点の親の会話履歴、system prompt / tools、model、prompt cache を引き継ぎます。定義ファイルから起動する通常のサブエージェントは、引き続き新しいコンテキストで開始します。会話の続きを別観点で走らせるなら fork、役割・tool・modelを個別に定義して文脈を隔離するなら非 fork 型を選びます。詳しい比較は[マルチエージェントを使う境界線](../dev-methods/multi-agent.md#3-agent-as-tool-専門作業を隔離して呼び出す)を参照してください。
 
+2.1.271 以降は、カスタム / Plugin サブエージェントの frontmatter（または `--agents` JSON）に `omitClaudeMd` を指定できます。これは user / project / local の `CLAUDE.md` をサブエージェントへ渡さない隔離であり、**組織が強制する managed policy は引き続き読み込まれます**。プロジェクト指示を隠す設定を、管理ポリシーの回避に使うことはできません。
+
 ---
 
 ## プラグイン
@@ -227,6 +237,8 @@ Anthropic が管理する公式のプラグインディレクトリです。**�
 | **`headersHelper`** | url 形式の Marketplace やカタログエントリが、短命トークンなどの HTTP ヘッダーを生成するコマンドを実行できる（2.1.238）。実行前にコマンドが表示されて `[y/N]` の確認が入り、フォルダ信頼の受諾が必須で、資格情報の環境変数は継承されない |
 
 Claude Code 2.1.268 では `claude plugin install` / `uninstall` / `update` / `enable` / `disable` に `--json` が加わり、`claude plugin list --json` の各行に `errorDetails` / `noteDetails` が追加されました。CI や管理スクリプトでは、人向けの表示を解析せず、この機械可読な出力を使えます。
+
+2.1.271 以降は、install / update の `--json` が表示したコマンドを、その SHA-256 に限って `--accept-command <sha256>` で承認できます。これは包括的な `-y` ではなく、**直前にレビューした 1 コマンドだけを一致確認して受け入れる**ための境界です。コマンドや引数が変われば同じハッシュでは通りません。
 
 ### `plugin validate` と `plugin eval` を分ける
 
@@ -449,6 +461,9 @@ CLAUDE.md              # プロジェクトの前提・規約
 - [Test plugins with evals](https://code.claude.com/docs/en/plugin-evals) — `claude plugin eval` の suite、grader、baseline、分離、CI（公式）
 - [Claude Code v2.1.268](https://github.com/anthropics/claude-code/releases/tag/v2.1.268) — Plugin 管理コマンドの JSON 出力（公式・2026-09-10）
 - [Claude Code v2.1.269](https://github.com/anthropics/claude-code/releases/tag/v2.1.269) — `claude plugin eval` の追加（公式・2026-09-11）
+- [Claude Code v2.1.271](https://github.com/anthropics/claude-code/releases/tag/v2.1.271) — `omitClaudeMd`、コマンド単位のドメイン許可、Plugin コマンドのハッシュ承認（公式・2026-09-14）
+- [Claude Code v2.1.275](https://github.com/anthropics/claude-code/releases/tag/v2.1.275) — claude.ai の Skills / Plugins 同期と opt-out（公式・2026-09-17）
+- [Claude Code v2.1.277](https://github.com/anthropics/claude-code/releases/tag/v2.1.277) — `AGENTS.md` fallback と提供経路の制限（公式・2026-09-18）
 - [Inference hooks](https://platform.claude.com/docs/en/manage-claude/inference-hooks) — 推論前の allow / deny 判定（公式）
 - [Compliance API — Retrieve session transcripts](https://platform.claude.com/docs/en/manage-claude/compliance-sessions) — セッションのトランスクリプト取得（公式）
 - [Claude apps release notes](https://support.claude.com/en/articles/12138966-release-notes) — Skill / Plugin セキュリティスキャンの提供状況（公式）

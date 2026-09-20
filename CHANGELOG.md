@@ -4,6 +4,13 @@
 
 ## 2026-09
 
+- **2026-09-20** Claude Code・VS Code Agent Host・Codex MCP本人確認など2026-09-12〜09-19の動向を反映（#198）
+  - **Claude Code 2.1.271〜2.1.277の読み込み・権限境界を整理** — `AGENTS.md`は`CLAUDE.md`不在時だけのfallback、`omitClaudeMd`でもmanaged policyは残る、claude.ai Skills / Plugins同期には個別opt-outがあることを追記した。`allowed_domains`は1コマンド限定、`--accept-command <sha256>`はJSONで表示したPlugin commandだけを承認し、読み取れない`managed-mcp.json`はfail-closedになることをセキュリティページへ反映した。
+  - **VS Code 1.138のAgent Host・Dev Container・Codex session継続を追加** — AHPベースの専用process、対応Dev ContainerとDocker、ChatGPT appからVS Codeへのhandoff後にbuilt-in / extension / MCP toolsへtool surfaceが変わる境界を整理した。AutomationsはPreview / 段階展開のままで、`.automation.md`が運ぶportable definitionと、運ばないworkspace / provider / model / permissions / historyを分けた。
+  - **Codex CLI 0.155.0のTouch IDをMCP current-user verificationとして整理** — OAuth identity、tool permission、action approval、current-user verificationの4層を分け、対応Macのlocal TUIという範囲、expired OAuth診断、approval evidence、daemon restart後のthread / goal recovery、sandbox hardeningを追記した。
+  - **観測・長時間運用を補強** — Copilot CLI customization metricsのtop 5 / distinct count、privacy label、MCP接続試行、PluginとSkillの重複を記載した。Claude Messages APIの`compact-2026-09-04` betaはsigned block / keep-tailをアプリ側で管理する仕組みとして、OpenAI Agents APIのmanaged compactionと分離した。Claude CodeのMCP startup wait、managed settings OTel event、scheduled task / worktree修正も信頼性設計へ反映した。
+  - Anthropic、Microsoft、GitHub、OpenAIの公式release notes / docsを2026-09-20に確認し、各詳細ページ、`docs/trends.md`、READMEの「最近の更新」を更新した。
+
 - **2026-09-18** Google Cloud Developer Pluginを可搬性の実例へ追加し、Googleの配布形態を訂正（#193）
   - **[プラグインの可搬性](docs/dev-methods/plugin-portability.md)の実例表へ `google-cloud-developer` を追加** — ルートの `plugin.json` がAgent Plugins 1.0.0の正式な`$schema`を持ち、`skills/`とDeveloper Knowledge MCP用の`mcp.json`を束ねる可搬形式であることを確認した。
   - **Skill単体とPluginを区別** — `google/skills`全体を「`plugin.json`を持たないSkill集」としていた旧記述を訂正し、`skills/`のSkill単体と`plugins/`のPluginを併用する現行構成へ更新した。

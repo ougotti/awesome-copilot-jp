@@ -1,6 +1,6 @@
 # AI エージェントの実行基盤（ハーネス）
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-18
+> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-20
 
 > エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew / OpenAI Agents API）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
 
@@ -224,6 +224,14 @@ Agents API自体を「定額のCodex利用枠」と見なさないでくださ�
 - irreversibleな操作はtool側で止め、利用者の承認とaudit logを用意する。
 - self-hosted environmentではreconnection、shutdown、重複実行、途中成果物の回収をテストする。
 
+## 定義の可搬性と実行コンテキストを分ける
+
+VS Code 1.138 の Agent Host は、Agent Host Protocol（AHP）を基盤に agent harness を専用 process で動かし、同じ session へ複数 window から接続できるようにしました。対応する Dev Container 構成と Docker があれば、ローカル machine ではなく container の toolchain / dependencies で session を動かせます（段階的ロールアウト）。
+
+同じ session を ChatGPT app から VS Code へ継続できても、移動先では VS Code built-in / extension / MCP tools が使えるようになります。また Automations の `.automation.md` が運ぶのは name / prompt / schedule などの portable definition だけで、workspace、provider、model、permissions、enabled state、run history は運びません。
+
+つまり、**定義が可搬であること、会話が継続すること、同じ実行環境・権限で動くことは別**です。handoff / import / Dev Container 化のたびに、tool surface、workspace、secret、network、permission を実行先で再評価します。
+
 ## ハーネスを意識する理由
 
 - **ループの土台になる**: 無人で回すループは、ハーネスが用意した権限・サンドボックス・観測の範囲でしか安全にならない（[ループエンジニアリング](loop-engineering.md)）。
@@ -247,6 +255,8 @@ Agents API自体を「定額のCodex利用枠」と見なさないでくださ�
 | VS Code Copilot Chat | トレース・メトリクス・イベント | 明記あり（`gen_ai.*` に加え `github.copilot.*` の拡張名前空間） |
 
 > **対応の深さはツールごとに違い、変化も速い領域です。** 上表は各公式ドキュメントの確認日（2026-09-12）時点のもので、導入時は必ず最新の記述を確認してください。
+
+Claude Code 2.1.274 では `claude_code.managed_settings_resolved` OTel event が追加されました。managed-settings の source と policy helper の状態を確認でき、`OTEL_LOG_MANAGED_SETTINGS=1` を設定すると**値を redaction した設定と digest**も記録します。設定値そのものを露出させず、「どの管理設定が解決されたか」を監査するための event です。
 
 この「動かした後に何が見えるか」は、[Skill / Plugin のセキュリティ 5 節「統制が効く 3 つの段階」](skill-security.md#5-統制が効く-3-つの段階)の**実行後（監査）**と直結します。あちらが「セッションのトランスクリプトを取得する」という組織向け機能（Compliance API）を扱うのに対し、ここでの OpenTelemetry は**ベンダー中立の計測データ**（メトリクス・ログ・トレース）を自分たちの監視基盤（OTLP 対応バックエンド）へ流す仕組みです。両者は排他ではなく、組織で使える統制の手段が違う層として併存します。
 
@@ -383,6 +393,8 @@ Console などファイルの外側でリソースが編集・アーカイブ・
 - [Claude Code Monitoring](https://code.claude.com/docs/en/monitoring-usage) — OTel メトリクス・イベント・トレース（ベータ）の設定（公式）
 - [Codex CLI Advanced Configuration — `[otel]`](https://learn.chatgpt.com/docs/config-file/config-advanced) — Codex の OTel 設定（公式）
 - [Monitor agent usage with OpenTelemetry](https://code.visualstudio.com/docs/agents/guides/monitoring-agents) — VS Code Copilot Chat の OTel 対応（公式）
+- [VS Code 1.138 release notes](https://code.visualstudio.com/updates/v1_138) — Agent Host、Dev Container、Codex session handoff と tool surface（Microsoft 公式・2026-09-16）
+- [Claude Code v2.1.274](https://github.com/anthropics/claude-code/releases/tag/v2.1.274) — managed settings OTel event と MCP startup wait（Anthropic 公式・2026-09-17）
 - [Export user activity with OpenTelemetry](https://kiro.dev/docs/enterprise/monitor-and-track/user-activity/opentelemetry/) — account-levelの日次usage metrics、OTLP、設定権限、export時刻、metric定義（`提供元`: Official / Kiro ｜ `状態`: GA、2026-09-16確認）
 - [Kiro changelog — Export Kiro usage metrics to OpenTelemetry](https://kiro.dev/changelog/) — 機能公開の一次情報（`提供元`: Official / Kiro ｜ `状態`: GA、2026-09-01）
 - [Add VS Code Agents to Copilot usage metrics](https://github.blog/changelog/2026-09-11-add-vs-code-agents-to-copilot-usage-metrics/) — 専用 Agents ウィンドウの利用指標（GitHub 公式・GA）

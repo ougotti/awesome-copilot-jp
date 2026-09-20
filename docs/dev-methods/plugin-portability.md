@@ -1,6 +1,6 @@
 # プラグインの可搬性 — インストール前に `plugin.json` を見る
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・Cursor・Kiro ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-18
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・Cursor・Kiro ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-20
 
 > 「マルチエージェント対応」と書かれた Plugin が、実際に他のエージェントへ持っていけるとは限りません。ベンダー中立のオープン標準 **Agent Plugins 1.0.0** に乗っているかどうかは、`plugin.json` を 1 つ開けば判定できます。このページは、その判定手順と、判定した結果で何が変わるかを 1 か所にまとめた解説です。標準そのものの成り立ちと各ツールの対応状況は [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準)、Copilot での操作手順は [GitHub Copilot Plugins](../copilot/plugins.md) を参照してください。
 
@@ -117,6 +117,19 @@ Microsoft の 2 つは、README に Claude Code と GitHub Copilot の両方が�
 
 `$schema` があることは「持ち出せる」ことの根拠であって、「入れてよい」ことの根拠ではありません。
 
+### 配布形式と「いま有効な拡張」を分ける
+
+Plugin が可搬でも、実行時の拡張セットまで端末間で同じになるとは限りません。Claude Code 2.1.275 以降は、claude.ai アカウントで有効にした Skills / Plugins もサインイン済みターミナルへ同期されます（`syncClaudeAiSkills: false` / `syncClaudeAiPlugins: false` で opt-out）。したがって、実効構成は次の層を分けて棚卸しします。
+
+| 層 | 確認するもの |
+|----|-------------|
+| 配布物 | 標準 `plugin.json`、Skills、`mcp.json`、クライアント固有拡張 |
+| 端末 / リポジトリ | ローカルに導入した Skill / Plugin、固定したバージョン |
+| アカウント | クラウド側で有効化され、端末へ同期された Skill / Plugin |
+| 組織 | managed settings、許可された Marketplace / MCP、強制ポリシー |
+
+また、Claude Code の Plugin install / update で外部コマンドの承認が必要な場合、2.1.271 以降の `--accept-command <sha256>` は `--json` で表示した**そのコマンドだけ**を受け入れます。可搬性とは別の、インストール時の supply-chain 境界として扱います。
+
 **→ 導入前に何を確認するか、組織でどう絞り込むかは [Skill / Plugin のセキュリティ](skill-security.md) を参照**
 
 ---
@@ -139,3 +152,4 @@ Microsoft の 2 つは、README に Claude Code と GitHub Copilot の両方が�
 - [aws/agent-toolkit-for-aws](https://github.com/aws/agent-toolkit-for-aws) — 可搬形式の実例（公式・Apache-2.0）
 - [microsoft/azure-skills](https://github.com/microsoft/azure-skills) ／ [microsoft/power-platform-skills](https://github.com/microsoft/power-platform-skills) — 独自形式の実例（公式・MIT）
 - [Google Cloud Developer Plugin](https://github.com/google/skills/tree/main/plugins/cloud/google-cloud-developer) ／ [Google Cloud公式発表](https://cloud.google.com/blog/topics/developers-practitioners/introducing-the-google-cloud-developer-plugin-for-ai-coding-agents) — Skill単体と可搬Pluginを同じリポジトリで配る例（公式・Apache-2.0）
+- [Claude Code v2.1.271](https://github.com/anthropics/claude-code/releases/tag/v2.1.271) ／ [v2.1.275](https://github.com/anthropics/claude-code/releases/tag/v2.1.275) — Plugin コマンドのハッシュ承認と、アカウント Skills / Plugins の端末同期（公式）
