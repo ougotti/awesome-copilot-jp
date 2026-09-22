@@ -1,8 +1,8 @@
 # Instructions 一覧と活用ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-07
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-22
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **201 個の Instructions** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **202 個の Instructions** を日本語で解説します。
 
 ## Instructions とは
 
@@ -86,6 +86,7 @@ applyTo: "**/*.py"
 | [`quarkus.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/quarkus.instructions.md) | Quarkus クラウドネイティブ Java | 軽量 Java マイクロサービス |
 | [`quarkus-mcp-server-sse.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/quarkus-mcp-server-sse.instructions.md) | Quarkus での MCP サーバー（SSE） | MCP + Quarkus |
 | [`java-junit5-assertions.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/java-junit5-assertions.instructions.md) | JUnit 5 アサーションのベストプラクティス | Java テスト記述 |
+| [`intellij-java-kotlin.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/intellij-java-kotlin.instructions.md) | IntelliJ IDEA での Java / Kotlin 開発規約（Gradle・Maven をビルドの正とし、IDE 設定に依存しない検証を求める） | IntelliJ IDEA で Java / Kotlin を開発 |
 
 **[java-17-to-java-21-upgrade.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/java-17-to-java-21-upgrade.instructions.md)** の主なルール:
 - **Virtual Threads（JEP 444）**: `Thread.ofVirtual()` で高スループット並行処理
@@ -93,6 +94,14 @@ applyTo: "**/*.py"
 - **Sequenced Collections（JEP 431）**: `getFirst()`, `getLast()`, `reversed()`
 - **Record Patterns（JEP 440）**: ネストした分解操作
 - `finalize()` を Cleaner API または try-with-resources に移行
+
+**[intellij-java-kotlin.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/intellij-java-kotlin.instructions.md)** の主なルール:
+- **ビルド設定が正**: 依存・ソースセット・コンパイラオプションは Gradle / Maven 側で定義し、IntelliJ の Project Structure だけで設定しない
+- **JDK の整合**: プロジェクト SDK・言語レベル・Gradle JVM・Maven の JDK をビルド設定に合わせ、最新 JDK やプレビュー機能を既定で選ばない
+- **意味論的リファクタリング**: テキスト置換ではなく Rename / Move / Change Signature / Safe Delete を使い、Java/Kotlin 相互運用と公開 API への影響を差分で確認
+- **IDE のグリーンは CI の代替にならない**: CI と同じラッパー・タスク・プロファイルをコマンドラインで実行して検証
+- **IDE メタデータを持ち込まない**: `.idea/workspace.xml`・ローカルの SDK 絶対パス・`build/` などをコミットしない
+- 有料版 IntelliJ 機能や追加プラグインを前提にせず、IDE 操作ができない環境では同等のソース／ビルド編集で代替する
 
 ---
 
@@ -568,11 +577,11 @@ applyTo: "**/*.py"
 
 ## まとめ
 
-Instructions は **201 ファイル** あり、以下のカテゴリに分類されます：
+Instructions は **202 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な内容 |
 |---------|----------|---------|
-| プログラミング言語 | 約 42 | Python, C#, Java, Go, TypeScript, Rust 等 |
+| プログラミング言語 | 約 43 | Python, C#, Java, Go, TypeScript, Rust 等 |
 | Web フレームワーク | 約 15 | React, Next.js, Vue, Angular, Svelte 等 |
 | インフラ・DevOps | 約 21 | Terraform, Kubernetes, Docker, CI/CD, AWS |
 | テスト | 約 5 | Playwright (各言語版) |

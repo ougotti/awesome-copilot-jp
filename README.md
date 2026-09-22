@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-22** [obra/superpowers](docs/dev-methods/superpowers.md#diagnosing-superpowers--セッションの事後診断)へセッションの事後診断スキル`diagnosing-superpowers`を追加
+- **2026-09-22** [Instructions 一覧](docs/copilot/instructions.md#java)へIntelliJ IDEAでのJava / Kotlin開発規約`intellij-java-kotlin`を追加
 - **2026-09-20** [Skills 最新動向](docs/trends.md#10-aiエージェントの実行基盤ハーネス)へClaude Code 2.1.271〜2.1.277、VS Code 1.138 Agent Host、Codex CLI 0.155.0、CLI利用指標、on-demand compactionを反映
 - **2026-09-18** [仕様駆動開発（SDD）](docs/dev-methods/spec-driven.md#近い4者は同じ種類ではない)でSpec Kit・OpenSpec・BMAD Method・Kiro Specsを提供形態、成果物、承認、仕様同期の違いから比較
 - **2026-09-18** [AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md#5-end-user-oauth-consentとsession-binding)へOAuth同意・session binding・token vault・個別操作承認の境界を追加
-- **2026-09-18** [Skill / エージェントの評価](docs/dev-methods/evals.md#7-評価から改善検証昇格へつなぐ)へtraceから改善案・offline評価・A/B test・人による本番昇格までのループを追加
-- **2026-09-18** [AI エージェントの実行基盤](docs/dev-methods/harness.md#openai-agents-api--codexハーネスをマネージドapiで使う)へOpenAI Agents APIを追加し、Codex・Agents SDK・sandboxとの責任境界を整理
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -112,7 +112,7 @@
 
 | ドキュメント | 提供元 | 状態 | 環境 | 内容 | 件数 |
 |-------------|-------|------|------|------|------|
-| **[Instructions 一覧](docs/copilot/instructions.md)** | Official | GA | IDE | ファイルパターン別に規約を自動適用するルール | 201 件 |
+| **[Instructions 一覧](docs/copilot/instructions.md)** | Official | GA | IDE | ファイルパターン別に規約を自動適用するルール | 202 件 |
 | **[Agents 一覧](docs/copilot/agents.md)** | Official | GA | IDE | 特定ドメインの専門家ペルソナ定義 | 244 件 |
 | **[Prompts / Skills 一覧](docs/copilot/prompts.md)** | Official | GA | IDE / CLI | `/` から呼ぶタスクテンプレートと Skills | 137 件 |
 | **[Plugins](docs/copilot/plugins.md)** | Official | GA | CLI / IDE | 拡張一式をまとめて配布する単位と Marketplace | — |

@@ -4,6 +4,18 @@
 
 ## 2026-09
 
+- **2026-09-22** superpowersのセッション事後診断スキル`diagnosing-superpowers`を追加（#201）
+  - **[obra/superpowers](docs/dev-methods/superpowers.md)のデバッグカテゴリへ`diagnosing-superpowers`を追加** — セッションのトランスクリプトを読み、問題の特定 → セッション特定 → 7観点の並列分析 → 報告という流れで、何が起きたかを`path:line`の引用付きで報告するスキルとして整理した。
+  - **「報告までを担い、superpowersの不具合は断定しない」という境界を明記** — 修正の要否はIssueをトリアージする側が判断すること、引用のない指摘や記憶に基づく数値を採用しないこと、セッションファイルは読み取り専用であることを記載した。
+  - バンドルのアーカイブ化とIssue起票が利用者の承認を必要とすること、scrubしても見落としはあり得るため共有前に中身を確認する必要があることを注意書きとして追加した。
+  - スキル件数の固定表記は自動検証できないため本文から外し、カテゴリ分類の記述に変更した。`scripts/known-files.json`の`superpowers_skills`とREADMEの「最近の更新」も更新した。
+
+- **2026-09-22** IntelliJ IDEAでのJava / Kotlin開発規約を追加（#200）
+  - **[Instructions 一覧](docs/copilot/instructions.md#java)のJavaセクションへ`intellij-java-kotlin.instructions.md`を追加** — Gradle / Mavenのビルド設定をソース・オブ・トゥルースとし、IntelliJのProject Structureだけで依存やコンパイラオプションを設定しない方針を整理した。
+  - **IDEのグリーンをCIの代替にしない点を主なルールとして記載** — CIと同じラッパー・タスク・プロファイルをコマンドラインで実行して検証すること、プロジェクトSDK・言語レベル・Gradle JVM・MavenのJDKをビルド設定に合わせることを追記した。
+  - 意味論的リファクタリング（Rename / Move / Change Signature / Safe Delete）の優先、`.idea/workspace.xml`やローカルSDK絶対パスを持ち込まないバージョン管理の衛生、有料版IntelliJ機能や追加プラグインを前提にしない制約を記載した。
+  - `scripts/known-files.json`の`instructions`を202件へ更新し、`docs/copilot/instructions.md`とREADMEの件数表記、READMEの「最近の更新」を合わせた（`python3 scripts/check_catalog_counts.py`が通ることを確認）。
+
 - **2026-09-20** Claude Code・VS Code Agent Host・Codex MCP本人確認など2026-09-12〜09-19の動向を反映（#198）
   - **Claude Code 2.1.271〜2.1.277の読み込み・権限境界を整理** — `AGENTS.md`は`CLAUDE.md`不在時だけのfallback、`omitClaudeMd`でもmanaged policyは残る、claude.ai Skills / Plugins同期には個別opt-outがあることを追記した。`allowed_domains`は1コマンド限定、`--accept-command <sha256>`はJSONで表示したPlugin commandだけを承認し、読み取れない`managed-mcp.json`はfail-closedになることをセキュリティページへ反映した。
   - **VS Code 1.138のAgent Host・Dev Container・Codex session継続を追加** — AHPベースの専用process、対応Dev ContainerとDocker、ChatGPT appからVS Codeへのhandoff後にbuilt-in / extension / MCP toolsへtool surfaceが変わる境界を整理した。AutomationsはPreview / 段階展開のままで、`.automation.md`が運ぶportable definitionと、運ばないworkspace / provider / model / permissions / historyを分けた。
