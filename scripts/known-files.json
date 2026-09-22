@@ -89,6 +89,7 @@
     "hooks.instructions.md",
     "html-css-style-color-guide.instructions.md",
     "instructions.instructions.md",
+    "intellij-java-kotlin.instructions.md",
     "java-11-to-java-17-upgrade.instructions.md",
     "java-17-to-java-21-upgrade.instructions.md",
     "java-21-to-java-25-upgrade.instructions.md",
@@ -708,6 +709,7 @@
   ],
   "superpowers_skills": [
     "skills/brainstorming",
+    "skills/diagnosing-superpowers",
     "skills/dispatching-parallel-agents",
     "skills/executing-plans",
     "skills/finishing-a-development-branch",
