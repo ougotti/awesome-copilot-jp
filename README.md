@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-22** [mattpocock/skills](docs/dev-methods/mattpocock-skills.md)と[Anthropic 公式スキル](docs/claude-code/official-skills.md)のヘッダーへ「実行環境」を追加し、docs配下の全ページで必須形式を満たす状態に
 - **2026-09-22** [obra/superpowers](docs/dev-methods/superpowers.md#diagnosing-superpowers--セッションの事後診断)へセッションの事後診断スキル`diagnosing-superpowers`を追加
 - **2026-09-22** [Instructions 一覧](docs/copilot/instructions.md#java)へIntelliJ IDEAでのJava / Kotlin開発規約`intellij-java-kotlin`を追加
 - **2026-09-20** [Skills 最新動向](docs/trends.md#10-aiエージェントの実行基盤ハーネス)へClaude Code 2.1.271〜2.1.277、VS Code 1.138 Agent Host、Codex CLI 0.155.0、CLI利用指標、on-demand compactionを反映
 - **2026-09-18** [仕様駆動開発（SDD）](docs/dev-methods/spec-driven.md#近い4者は同じ種類ではない)でSpec Kit・OpenSpec・BMAD Method・Kiro Specsを提供形態、成果物、承認、仕様同期の違いから比較
-- **2026-09-18** [AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md#5-end-user-oauth-consentとsession-binding)へOAuth同意・session binding・token vault・個別操作承認の境界を追加
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
