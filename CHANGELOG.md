@@ -5,8 +5,8 @@
 ## 2026-09
 
 - **2026-09-22** ヘッダーの必須項目「実行環境」の欠落を全ページで解消
-  - **[mattpocock/skills](docs/dev-methods/mattpocock-skills.md)へ`**実行環境**: CLI（ターミナル）`を追加** — 導入が`npx skills@latest add`・`/plugin install`・`claude plugins install`のいずれもターミナル起点であることに合わせた。
-  - **[Anthropic 公式スキル](docs/claude-code/official-skills.md)へ`**実行環境**: Chat UI / CLI`を追加** — Claude.aiとClaude Codeの双方が対象であることを明示した。
+  - **[mattpocock/skills](docs/dev-methods/mattpocock-skills.md)へ`実行環境: CLI（ターミナル）`を追加** — 導入が`npx skills@latest add`・`/plugin install`・`claude plugins install`のいずれもターミナル起点であることに合わせた。
+  - **[Anthropic 公式スキル](docs/claude-code/official-skills.md)へ`実行環境: Chat UI / CLI`を追加** — Claude.aiとClaude Codeの双方が対象であることを明示した。
   - CONTRIBUTING.mdが必須としているヘッダー形式（`対象ツール ｜ 実行環境 ｜ 対象読者 ｜ 最終更新`）に対し、`docs/`配下で`実行環境`が欠けていた残り2ページを揃えた（#202で`superpowers.md`を修正した際の積み残し）。これで`docs/`配下の全ページがヘッダー形式を満たす。
 
 - **2026-09-22** superpowersのセッション事後診断スキル`diagnosing-superpowers`を追加（#201）
