@@ -4,6 +4,10 @@
 
 ## 2026-09
 
+- **2026-09-23** エージェント生成PRのマージ後品質の読み方を追加（#208）
+  - [Skill / エージェントの評価](docs/dev-methods/evals.md#コーディングエージェントはマージ後も測る)に、2026-09-12公開プレプリントの90日revert、変更行あたりの後続commit、security smell、人間のレビュー数を母数と定義つきで整理した。
+  - タスク割当・PRサイズ・言語・静的解析・revert検出の限界を明記し、製品ランキングや因果効果として扱わない。[コーディングエージェント比較](docs/dev-methods/coding-agents.md#乗り換えるときに見る軸)、[Skills 最新動向](docs/trends.md#15-skill--エージェントの評価evals)、READMEを同期した。
+
 - **2026-09-23** Claude Opus 5.5・GPT-6 Sol / Luna と Codex CLI 0.156 系を追加（#207）
   - Anthropic・OpenAI Docs・GitHub の公式発表を確認し、[Claude Code](docs/claude-code/basics.md)、[Codex](docs/codex/README.md#gpt-6-sol--luna-と-codex-cli-0156-系)、[GitHub Copilot](docs/copilot/README.md#2026-09-22-の新モデル--copilot-経由の利用条件)で提供場所とプランを分けた。
   - Codex CLI 0.156.0 の agent command center / worktree session と UI・音声・利用分析、0.156.1 のモデルピッカーを区別した。価格の固定値や異なる測定条件のベンチマーク順位は載せず、[Skills 最新動向](docs/trends.md)と README を同期した。

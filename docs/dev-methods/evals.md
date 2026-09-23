@@ -121,6 +121,21 @@ AgentCore 側は Skill 読み込みの tool call span ごとに結果を出し�
 
 LLM-as-a-Judge の score は evaluator の model や prompt でも変わります。sampling した非同期評価は、評価対象外の interaction を保証せず、問題のある応答を利用者へ返す前に止める guardrail にもなりません。評価費用、機密情報、誤判定を含めて運用してください。
 
+### コーディングエージェントはマージ後も測る
+
+PR のテスト通過・マージ率だけでは、後から必要になる保守とレビューの負荷は見えません。[Kraishan のプレプリント（2026-09-12）](https://arxiv.org/html/2609.17598)は、2024-12-24〜2025-07-30の公開GitHubリポジトリ（100 stars超）で、5製品のエージェントPR 33,596件と、同じリポジトリ・期間から抽出した人間のPR 4,027件を観察しました。以下は研究の測定例であり、現行製品の性能順位ではありません。
+
+| 指標 | 論文での定義と母数 | 自チームで確認すること |
+|------|--------------------|------------------------|
+| 90日以内のrevert | マージ後のcommit messageからrevertを検出。90日の完全な観測窓を持つマージ済みPR 26,283件を保守分析に使用。表の群別母数は別途示される | 明示的revertだけでなく、黙って書き直された変更も追う |
+| 変更行あたりのchurn | PRで最も変更の多い**1ファイル**に対する90日以内の後続commit数 ÷ PRの変更行数 × 100。PR全体の再編集行数ではない | ファイル単位の後続変更と、変更理由・修正工数を分けて見る |
+| security smell | Python / JavaScript / TypeScriptの追加行を正規表現で検査。静的解析の対象は8,933 PR・約135万行。少なくとも1件の検出があるPRの割合と、追加100行あたりの検出密度は別指標 | 検出後に人が脆弱性か判定する。smellは悪用可能性の証明ではない |
+| 人間のレビュー数・変更要求 | botを除く人間のレビューとchange request。レビュー記録はエージェントPRのみで、群別の記録カバー率は5.4〜51.2% | PRあたりのレビュー件数だけでなく、初回待ち時間とレビューに費やした時間を見る |
+
+たとえば論文のrevert表ではCodex群6.1%（17,756件）、人間群11.5%、Devin群14.5%（2,185件）ですが、**製品の因果効果ではありません**。エージェントの割当はランダムでなく、タスクの難易度・PRサイズ・リポジトリの選択が交絡します。Claude Code群は459 PRで変更行の中央値が495行、Codex群は21,799 PRで63行と、規模も異なります。対象言語は3つ、静的解析の対象は全PRの23.7%、revertはcommit message依存、churnは1ファイルの代理指標です。公開・人気リポジトリの2025年までの観察を、非公開コードや後のモデル版へ外挿しないでください。論文は非査読のプレプリントです。
+
+実務では、同じ期間・同じリポジトリ・近いタスク種別とPRサイズで、マージ後のrevert、手直し工数、security finding、レビュー負荷を併記します。成功率だけでなく**維持にかかった時間**を見て、変更の導入判断へ戻します。
+
 ### AWS 固有の実装例 — Amazon Bedrock AgentCore Evaluations
 
 > **提供元**: Official（AWS） ｜ **状態**: GA ｜ **確認日**: 2026-09-17
@@ -187,6 +202,7 @@ AWS外へこの考え方を持ち込む場合は、製品名ではなく、**tra
 
 ## 参考リンク
 
+- [Not All Agents Are Equal](https://arxiv.org/html/2609.17598) — エージェントPRのマージ後90日・レビュー負荷の観察研究（Kraishan、2026-09-12、プレプリント）
 - [Testing Agent Skills Systematically with Evals](https://developers.openai.com/blog/eval-skills) — 8 段階の評価手順（OpenAI 公式）
 - [Evaluating Skills](https://www.langchain.com/blog/evaluating-skills) — Robert Xu、2026-03-05（LangChain 公式）
 - [adewale/skill-eval-harness](https://github.com/adewale/skill-eval-harness) — 決定論的な採点を行う比較用ハーネス（Community・MIT）
