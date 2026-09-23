@@ -4,6 +4,10 @@
 
 ## 2026-09
 
+- **2026-09-23** Claude Opus 5.5・GPT-6 Sol / Luna と Codex CLI 0.156 系を追加（#207）
+  - Anthropic・OpenAI Docs・GitHub の公式発表を確認し、[Claude Code](docs/claude-code/basics.md)、[Codex](docs/codex/README.md#gpt-6-sol--luna-と-codex-cli-0156-系)、[GitHub Copilot](docs/copilot/README.md#2026-09-22-の新モデル--copilot-経由の利用条件)で提供場所とプランを分けた。
+  - Codex CLI 0.156.0 の agent command center / worktree session と UI・音声・利用分析、0.156.1 のモデルピッカーを区別した。価格の固定値や異なる測定条件のベンチマーク順位は載せず、[Skills 最新動向](docs/trends.md)と README を同期した。
+
 - **2026-09-23** JetBrains 1.18.0 のエージェント制御を追加（#206）
   - **[GitHub Copilot ガイド](docs/copilot/README.md#jetbrains-1180--エージェントの承認共有設定mcp)** に assisted approvals（Public Preview）、組織共有 Skill / instructions、組み込み GitHub MCP Server の切り替えとツール別設定、Codex plan mode、メッセージ再編集時の巻き戻し、リモート環境の inline chat 非表示を整理した。
   - [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#実行する操作を-deny--ask--allow-に分ける)では assisted approvals、enterprise managed permissions、managed sandbox と MCP allowlist の制御面を区別した。GitHub 公式の 2026-09-22 発表を確認し、[Skills 最新動向](docs/trends.md#12-skill--plugin-のセキュリティ)と README の「最近の更新」を同期した。

@@ -1,6 +1,6 @@
 # Codex ガイド（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-20
+> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-23
 
 [openai/skills](https://github.com/openai/skills) は OpenAI が公開している Codex 用の公式スキルカタログです。指示・スクリプト・リソースをフォルダにまとめた「スキル」を追加することで、デプロイ・ブラウザ自動化・外部サービス連携といったワークフローを Codex に持たせられます。
 
@@ -185,6 +185,20 @@ Plugin 以外の単体 Skill を追加した場合まで、実行中の全 sessi
 
 運用面では、daemon の更新 schedule と `codex app-server daemon update` が追加され、restart 後に保存済み thread と active goal を recovery できるようになりました。あわせて expired MCP OAuth の診断、approval evidence の保持、account switch 時の前 identity state の無効化、restricted WSL / shell snapshot の hardening が入りました。更新後は daemon version だけでなく、thread / goal の再開と MCP 再接続を確認します。
 
+### GPT-6 Sol / Luna と Codex CLI 0.156 系
+
+**OpenAI Docs の 2026-09-22〜23 時点**では、GPT-6 Sol と GPT-6 Luna が Codex と ChatGPT Work に段階展開中です。Sol は複雑なコーディング・エージェント作業、Luna は範囲の絞られた大量の作業を選ぶ目安です。Plus / Pro / Business / Enterprise / Edu が展開対象で、Free / Go ではデスクトップアプリから Luna を利用できます。実際の表示は展開状況と workspace 設定に依存し、Enterprise では管理者による有効化が必要です。ChatGPT では Work / Codex での提供であり、Chat には提供されません。
+
+CLI では 0.156.1（2026-09-23）からモデルピッカーで両モデルを選択でき、`/model` または起動時の `codex --model gpt-6-sol` / `codex --model gpt-6-luna` も使えます。料金は API の token 単価と Codex / Work の利用枠・credit を混同せず、[OpenAI Docs の料金案内](https://learn.chatgpt.com/docs/pricing)を確認してください。
+
+| 版・機能 | 作業上の入口 |
+|----------|--------------|
+| 0.156.0: agent command center | task を状態で絞り込み、worktree session を作成できる。worktree support は既定で有効になった |
+| 0.156.0: `/tui`・`/voice`・`/usage` | 全画面UI、既定有効の音声会話、利用分析の表示。worktree session 自体の作成手順とは別 |
+| 0.156.1: モデルピッカー | Sol / Luna を選択可能。rate-limit 時の切り替え案内は Luna を推奨する |
+
+既存の 0.154.0 の `--worktree` / `/worktree` は新規・fork session の入口で、0.156.0 の command center からの worktree session 作成とは操作面が異なります。
+
 **→ 可搬形式（Agent Plugins 1.0.0）の仕様と他ツールの対応状況は [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準) を参照**
 
 ### Codexを製品へ組み込む入口を分ける
@@ -336,7 +350,8 @@ Codex には **subagents** という機能があります。**専門化した複
 - [Agent Skills – Codex 公式ドキュメント](https://developers.openai.com/codex/skills) — 公式スキル解説
 - [Plugins – Codex 公式ドキュメント](https://developers.openai.com/codex/plugins) — Plugin の導入・権限・Marketplace（公式）
 - [Codex MCP server removal](https://learn.chatgpt.com/docs/mcp-server) — 削除されたentry point、app serverへの移行、外部MCP接続への非影響（公式・2026-09-05）
-- [ChatGPT & Codex changelog](https://learn.chatgpt.com/docs/changelog) — Codex CLI 0.154.0 / 0.155.0 の worktree、MCP OAuth、Touch ID verification、daemon recovery（公式）
+- [ChatGPT & Codex changelog](https://learn.chatgpt.com/docs/changelog) — GPT-6 Sol / Luna の提供条件と Codex CLI 0.154.0〜0.156.1 の変更（OpenAI Docs）
+- [Models](https://learn.chatgpt.com/docs/models) ／ [Pricing](https://learn.chatgpt.com/docs/pricing) — Codex / Work のモデル選択と料金（OpenAI Docs）
 - [Subagents – Codex 公式ドキュメント](https://learn.chatgpt.com/docs/agent-configuration/subagents) — Availability、カスタムエージェントの定義方法（公式・2026-09-09 確認）
 - [openai/codex リポジトリ](https://github.com/openai/codex) — Codex CLI 本体
 - [Codex CLI 公式ドキュメント](https://developers.openai.com/codex/cli) — CLI の使い方
