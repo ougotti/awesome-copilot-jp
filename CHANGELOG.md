@@ -4,6 +4,11 @@
 
 ## 2026-09
 
+- **2026-09-23** Skillの選択と手順遵守を分ける評価方法を追加（#204）
+  - **[Skill / エージェントの評価](docs/dev-methods/evals.md#skill-を選べたか手順を守れたかを別々に測る)へAWSのSkill評価器を追加** — Strands Evalsの記録済みtrajectoryとAgentCore EvaluationsのOpenTelemetry traceを入力に、選択の二値判定と手順遵守の5段階判定を分けた。
+  - 呼ぶべきSkillが未起動ならjudge型評価器は結果を返さないため、Strands Evalsの決定論的な`SkillInvoked`を併用する条件を明記。結果なしとスコア0、Skillの選択失敗と手順抜けを区別する。
+  - AWS公式記事・Skill evaluatorsドキュメントを2026-09-23に確認し、[Skills 最新動向](docs/trends.md#15-skill--エージェントの評価evals)とREADMEの「最近の更新」を同期した。
+
 - **2026-09-22** ヘッダーの必須項目「実行環境」の欠落を全ページで解消
   - **[mattpocock/skills](docs/dev-methods/mattpocock-skills.md)へ`実行環境: CLI（ターミナル）`を追加** — 導入が`npx skills@latest add`・`/plugin install`・`claude plugins install`のいずれもターミナル起点であることに合わせた。
   - **[Anthropic 公式スキル](docs/claude-code/official-skills.md)へ`実行環境: Chat UI / CLI`を追加** — Claude.aiとClaude Codeの双方が対象であることを明示した。

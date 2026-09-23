@@ -1,6 +1,6 @@
 # Skill / エージェントの評価（evals） — 変更時の回帰と本番品質を分けて測る
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・本番エージェント基盤ほか） ｜ **実行環境**: CLI（ターミナル）/ Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-18
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・本番エージェント基盤ほか） ｜ **実行環境**: CLI（ターミナル）/ Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-23
 
 > [Skill / Plugin のセキュリティ](skill-security.md)は「**導入前**に入れてよいものか」を扱います。このページはその先、「**変更した Skill / Plugin が効いているか**」と「**本番エージェントが目的を達成しているか**」を測る話です。両者は対象と実行頻度が異なります。
 
@@ -62,8 +62,25 @@ LangChain の解説記事（“Evaluating Skills”, Robert Xu, 2026-03-05）は
 | Codex `codex exec --json` / `--output-schema` | 実行トレース（JSONL）の取得と構造化出力での採点をビルトインで提供 | Official（OpenAI） | GA | 利用するモデルの料金・利用枠に従う |
 | Claude Code `claude plugin eval` | Plugin あり / なしの反復実行、grader による採点、JSON / HTML report をビルトインで提供 | Official（Anthropic） | GA | 2.1.269 以降。server-side の利用可否に従う |
 | [adewale/skill-eval-harness](https://github.com/adewale/skill-eval-harness) | 同一ケース・同一モデル・同一試行回数で Skill あり / なしを比較し、決定論的に採点する | Community | Experimental | 利用する各 CLI とモデルの料金・利用枠に従う |
+| Strands Evals / Amazon Bedrock AgentCore Evaluations | Skill の選択と手順遵守を、記録した trajectory または本番 trace から別々に採点する | Official（AWS） | Strands Evals: —（公式記事に状態明記なし）/ AgentCore Evaluations: GA | Strands Evals は SDK、AgentCore Evaluations は AWS サービス。後者は trace 上の Skill 読み込みを認識できることが前提 |
 
 `skill-eval-harness` は Claude・Codex・Gemini・Mistral Vibe・Pi・Jetty（と検証用のスタブランナー）に対応し、MIT ライセンスで公開されています。採点はテキスト一致・正規表現・JSON 検証・ファイル存在確認・スクリプトオラクルによる決定論的な方式が基本で、モデル呼び出しを伴う LLM ジャッジは任意機能として用意されています。テストケースに含めた正解が実行ログへ漏れていないかを検知する "leakage lint" を持ち、再現性を損なわないための工夫になっています。
+
+### Skill を選べたか・手順を守れたかを別々に測る
+
+AWS が 2026-09-22 に公開した [Skill 評価の実装例](https://aws.amazon.com/blogs/machine-learning/evaluate-skill-equipped-agents-with-strands-evals-and-amazon-bedrock-agentcore/)は、最終応答がもっともらしくても見逃す 2 種類の失敗を分けます。Strands Evals は記録した trajectory を使う開発時の回帰評価、AgentCore Evaluations は OpenTelemetry trace を使う on-demand / batch / online 評価の例です。どちらも評価前に Skill の読み込みを記録できているか確認します。
+
+| 評価器 | 確認すること | 利用できる場所 | 判定 |
+|--------|-------------|----------------|------|
+| Skill Selection Accuracy | 呼んだ Skill が依頼に適切だったか | Strands Evals / AgentCore Evaluations | Skill 呼び出しごとの二値判定（1 / 0） |
+| Skill Instruction Following | 読み込んだ `SKILL.md` の手順を実際に守ったか | Strands Evals / AgentCore Evaluations | 各手順の証拠から 5 段階（1 / 0.75 / 0.5 / 0.25 / 0） |
+| `SkillInvoked` | 指定した Skill が読み込まれたか | Strands Evals のみ | モデルを呼ばない決定論的な二値判定 |
+
+最小の回帰ケースでは、①依頼と呼ぶべきSkill名を固定する、②実行のtrajectoryを記録する、③`SkillInvoked`で必須Skillの読み込みを確認してから選択・手順遵守の結果と根拠を読む、という順で確認します。呼ばれてはいけない依頼も別ケースにして、誤起動を検査します。
+
+たとえば「PDF の表を抽出して要約する」ケースで、適切な Skill を読んだのに表の境界確認を飛ばしたら、選択は成功でも手順遵守は失敗です。この場合は `SKILL.md` の手順や構成を見直します。別の Skill を選んだ場合は、重なっている `description` とカタログを見直します。**選択・遵守の judge は呼ばれた Skill だけを採点**するため、呼ぶべき Skill がまったく呼ばれないケースではスコアが出ません。既知の必須経路には `SkillInvoked` を併用し、ネガティブコントロールでは誤起動の有無も検査します。
+
+AgentCore 側は Skill 読み込みの tool call span ごとに結果を出し、`SKILL.md` の読み取りまたは対応フレームワークの Skill 読み込み tool を trace から認識します。trace に Skill 名や本文がなければ採点をスキップします。スコア 0 と結果なしを混同せず、まず [Skill evaluators の検出・スキップ条件](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/skill-evaluators.html)で計測経路を確認してください。LLM judge の閾値は、両製品間でもそのまま移植せず、手元のケースと人の判定で校正します。
 
 ### Claude Code 組み込みの `plugin eval`
 
@@ -109,6 +126,8 @@ LLM-as-a-Judge の score は evaluator の model や prompt でも変わりま�
 > **提供元**: Official（AWS） ｜ **状態**: GA ｜ **確認日**: 2026-09-17
 
 Amazon Bedrock AgentCore Evaluations は、2026-03-31 に GA となった AWS のサービスです。OpenTelemetry / OpenInference で取得した trace を共通形式へ変換し、組み込みまたは custom evaluator で採点します。AgentCore Runtime 内だけでなく、外部でホストしたエージェントも対象にできます。公式文書では、end-to-end の goal attainment、tool の正確さ、独自の品質指標を評価対象として挙げています。
+
+Skill 向けには [Skill Selection Accuracy / Skill Instruction Following](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/skill-evaluators.html) が追加されました。Skill ごとの採点結果は読み込み元の tool call span に結びつきます。評価器が 0 件の結果を返した場合は「合格」とせず、Skill を呼ばなかったのか、trace から読み込みを認識できなかったのかを調べます。選択と手順遵守の意味、`SkillInvoked` との分担は [5 節](#skill-を選べたか手順を守れたかを別々に測る)を参照してください。
 
 - **Online evaluation** — 監視する data source、evaluator、parameter を設定して本番 traffic を継続評価する
 - **On-demand evaluation** — 指定した span / trace だけを採点し、報告された問題や修正後の挙動を調べる
@@ -184,3 +203,5 @@ AWS外へこの考え方を持ち込む場合は、製品名ではなく、**tra
 - [A/B testing](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/ab-testing.html) — offline評価後のlive traffic検証、sticky assignment、統計的有意性（AWS公式）
 - [AgentCore optimization GA announcement](https://aws.amazon.com/about-aws/whats-new/2026/06/amazon-bedrock-agentcore-new-optimization-capabilities/) — GAとPreviewの機能境界（AWS公式・2026-06-17）
 - [Optimizing agent system prompts with AgentCore](https://aws.amazon.com/blogs/machine-learning/optimizing-agent-system-prompts-with-amazon-bedrock-agentcore/) — system prompt最適化の実装例（AWS公式・2026-09-16）
+- [Evaluate skill-equipped agents with Strands Evals and Amazon Bedrock AgentCore](https://aws.amazon.com/blogs/machine-learning/evaluate-skill-equipped-agents-with-strands-evals-and-amazon-bedrock-agentcore/) — Skillの選択・手順遵守・未起動を分ける実装例（AWS公式・2026-09-22）
+- [Skill evaluators](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/skill-evaluators.html) — 採点単位、traceからの検出、結果なしの条件（AWS公式）

@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-20
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-23
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-23 | 15 節へ Skill の選択精度・手順遵守・未起動を分ける評価を追加し、Strands Evals と AgentCore Evaluations の実装例を詳細ページへ反映した |
 | 2026-09-20 | Claude Code 2.1.271〜2.1.277、VS Code 1.138、Codex CLI 0.155.0、Copilot CLI customization metrics、Claude Messages API on-demand compactionを追加し、読み込み・実行・承認・観測の境界を整理した |
 | 2026-09-18 | 14 節でSpec Kit・OpenSpec・BMAD Method・Kiro Specsを、方法論 / framework / 製品機能、成果物、承認点、実装後の同期方法で比較した |
 | 2026-09-18 | 12 節にend-user OAuth consentとsession bindingを追加し、外部providerへの接続同意と個別操作のhuman approvalを分離した |
@@ -779,6 +780,8 @@ Skill・MCP・ハーネスがエージェントを**動かす**側の話だと�
 
 この節ではSkill / Pluginの回帰評価を要約します。本番エージェントの品質評価、on-demand / batchとonlineの違い、評価から改善・検証・昇格へつなぐループは詳細ページで扱います。AWS固有の実装例では、AgentCore Evaluationsに加えてAgentCore Optimizationのrecommendation、batch evaluation、A/B testを取り上げています。
 
+2026-09-22のAWSの実装例は、**適切なSkillを選んだか**と**選んだSkillの手順を守ったか**を別々に採点します。どちらも呼ばれたSkillを評価するため、Skillが未起動のケースは結果なしになります。必須の呼び出しはStrands Evalsの決定論的な`SkillInvoked`などで別途確認し、traceでSkill読み込みを認識できたかも検証します。評価器と採点単位は[詳細ページ](dev-methods/evals.md#skill-を選べたか手順を守れたかを別々に測る)で整理しました。
+
 SkillsBench（[arXiv:2602.12670](https://arxiv.org/abs/2602.12670)）は、複数タスク・複数ドメイン・複数の model-harness 構成で Curated Skills の効果を計測し、**平均では成功率が改善する一方、ドメインや構成によって効果の大きさは大きくばらつき、改善が乏しい構成もある**と報告しています。「入れれば必ず伸びる」とは限りません（具体的な数値はアブストラクトを参照）。
 
 退行の典型は、①**発火しない**／②**過剰に発火する**（いずれも `description` の書き方が主因）、③**必要な手順を飛ばす**、④**余計なファイルを残す**の 4 パターンです。測り方の最小手順は、成功の定義を先に決め、実際の失敗を題材にしたタスク集合で「Skill あり / なし」を比較し、決定論的な採点を基本にして変更のたびに回す、という流れになります。
@@ -917,6 +920,7 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 - [Amazon Bedrock AgentCore Evaluations](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html) — 本番エージェントをon-demand / batch / onlineで評価するAWS固有の実装例（Official / GA）
 - [AgentCore optimization](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/optimization.html) — traceからrecommendation、offline評価、A/B testへ進むAWS固有の改善ループ（Official）
 - [AgentCore optimization GA announcement](https://aws.amazon.com/about-aws/whats-new/2026/06/amazon-bedrock-agentcore-new-optimization-capabilities/) — recommendation、batch evaluation、A/B testはGA、failure / intent / trajectory insightsはPreview（AWS公式・2026-06-17）
+- [Evaluate skill-equipped agents with Strands Evals and Amazon Bedrock AgentCore](https://aws.amazon.com/blogs/machine-learning/evaluate-skill-equipped-agents-with-strands-evals-and-amazon-bedrock-agentcore/) — Skill選択と手順遵守を分ける評価（AWS公式・2026-09-22）
 
 ---
 
