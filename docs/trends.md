@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-23 | Claude Opus 5.5・GPT-6 Sol / Luna の利用場所と、Codex CLI 0.156 系の作業導線を製品別ページに反映した |
 | 2026-09-23 | JetBrains 1.18.0 の assisted approvals（Public Preview）と共有 Skill・MCP ツール制御を、既存の managed permissions / sandbox と分けて整理した |
 | 2026-09-23 | Copilot appのOpenTelemetry実行トレースを、利用集計・本文取得と区別し、managed settingsリファレンスとの対象表記差を記録した |
 | 2026-09-23 | 15 節へ Skill の選択精度・手順遵守・未起動を分ける評価を追加し、Strands Evals と AgentCore Evaluations の実装例を詳細ページへ反映した |
@@ -827,6 +828,8 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 ---
 
 ## 参考リンク
+
+2026-09-23 時点のモデル選択とCLIの変更は、[Claude Code ガイド](claude-code/basics.md)、[Codex ガイド](codex/README.md#gpt-6-sol--luna-と-codex-cli-0156-系)、[GitHub Copilot ガイド](copilot/README.md#2026-09-22-の新モデル--copilot-経由の利用条件)で製品ごとに整理しています。モデルのベンチマークはハーネスや effort が異なるため、ここでは単純順位にしません。
 
 - [mattpocock/skills](https://github.com/mattpocock/skills)
 - [upstash/context7](https://github.com/upstash/context7)

@@ -652,9 +652,22 @@ Instructions、Prompts、Agents は GitHub Copilot のすべてのプラン（Fr
 
 ---
 
+## 2026-09-22 の新モデル — Copilot 経由の利用条件
+
+GitHub Copilot でも **Claude Opus 5.5** と **GPT-6 Sol / Luna** が段階的に展開されています。これは Anthropic / OpenAI の直接提供とは別のモデルピッカー・プラン・課金条件です。
+
+| モデル | Copilot の対象プラン | 選ぶ目安 |
+|--------|----------------------|----------|
+| Claude Opus 5.5 | Pro+ / Max / Business / Enterprise | 長時間の agentic coding や知識作業 |
+| GPT-6 Sol | Pro+ / Max / Business / Enterprise | 複数手順の検証を伴う開発作業 |
+| GPT-6 Luna | Pro / Pro+ / Max / Business / Enterprise | 小さめ・高速な作業 |
+
+VS Code、Copilot CLI、Copilot app、cloud / coding agent、JetBrains などのモデルピッカーで提供されますが、展開は段階的です。Business / Enterprise 管理者は Copilot settings の model policy を確認してください。Copilot 側は usage-based billing が適用されるため、固定単価は記載せず[公式料金案内](https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing)を参照します。年払いの一部個人プランに残る旧 premium request 課金とは区別してください。**→ OpenAI 側の Codex / Work での提供条件は [Codex ガイド](../codex/README.md#gpt-6-sol--luna-と-codex-cli-0156-系)を参照。**
+
 ## 参考リンク
 
 - [github/awesome-copilot](https://github.com/github/awesome-copilot) — カスタマイズの公式リポジトリ
+- [Claude Opus 5.5 is now available in GitHub Copilot](https://github.blog/changelog/2026-09-22-claude-opus-5-5-is-now-available-in-github-copilot/) ／ [GPT-6 Sol and Luna now available](https://github.blog/changelog/2026-09-22-openais-gpt-6-sol-and-gpt-6-luna-now-available/) — Copilot 側のプラン、対象面、段階展開（GitHub 公式）
 - [GitHub Copilot ドキュメント](https://docs.github.com/copilot) — 公式ドキュメント
 - [Copilot のカスタマイズ方法](https://docs.github.com/copilot/customizing-copilot) — 公式カスタマイズガイド
 - [Agentic Workflows ドキュメント](https://github.com/github/awesome-copilot/blob/main/docs/README.workflows.md) — AI 駆動ワークフローの一覧

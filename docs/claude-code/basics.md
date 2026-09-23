@@ -1,8 +1,10 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-20
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-23
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
+
+> **モデル選択（2026-09-23確認）**: Claude Opus 5.5 は Claude Code と Claude Platform で利用できます。Anthropic はコードベース全体の移行・監査など長時間の作業を用途に挙げ、Claude Code と Claude Platform で Fast mode も提供しています。Fast mode は速度と料金の条件が通常モードと異なるため、選択時は[公式発表](https://www.anthropic.com/claude-opus-5-5)と最新料金を確認してください。GitHub Copilot 経由の提供プラン・管理者設定は[Copilot ガイド](../copilot/README.md#2026-09-22-の新モデル--copilot-経由の利用条件)で別に扱います。
 
 > 変化の速いコマンド一覧（組み込みスラッシュコマンド、キーボードショートカット）は [コマンド一覧（付録）](commands.md) に分離しています。正確な最新版は必ず [公式リファレンス](https://code.claude.com/docs/en/interactive-mode) を確認してください。
 
@@ -455,6 +457,7 @@ CLAUDE.md              # プロジェクトの前提・規約
 ## 参考リンク
 
 - [Claude Code 公式ドキュメント](https://code.claude.com/docs/) — 機能説明・セットアップガイド（**一次情報**）
+- [Introducing Claude Opus 5.5](https://www.anthropic.com/claude-opus-5-5) — Claude Code / Platform と Fast mode の提供範囲（Anthropic 公式・2026-09-22）
 - [Extend Claude with skills](https://code.claude.com/docs/en/slash-commands) — Agent Skills の作成と運用
 - [Interactive mode](https://code.claude.com/docs/en/interactive-mode) — キーボードショートカット・対話機能のリファレンス
 - [CLI reference](https://code.claude.com/docs/en/cli-reference) — CLI の起動オプション
