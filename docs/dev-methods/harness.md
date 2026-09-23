@@ -1,6 +1,6 @@
 # AI エージェントの実行基盤（ハーネス）
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-20
+> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-23
 
 > エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew / OpenAI Agents API）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
 
@@ -253,8 +253,13 @@ VS Code 1.138 の Agent Host は、Agent Host Protocol（AHP）を基盤に agen
 | Claude Code | メトリクス・イベント（ログ）が正式対応、トレースはベータ（`CLAUDE_CODE_ENHANCED_TELEMETRY_BETA=1`） | 明記あり（`gen_ai.*` 属性を `claude_code.llm_request` 等のスパンに付与） |
 | Codex CLI | メトリクス・ログ（イベント）。`config.toml` の `[otel]` で設定 | 公式ドキュメントに明記なし |
 | VS Code Copilot Chat | トレース・メトリクス・イベント | 明記あり（`gen_ai.*` に加え `github.copilot.*` の拡張名前空間） |
+| GitHub Copilot app | エージェント session のトレース、モデル・tool 呼び出し、メトリクス・イベント。Enterprise managed settings の `telemetry` で有効化 | app 向け発表は属性名まで明記していない。導入時に実際の span を確認 |
 
-> **対応の深さはツールごとに違い、変化も速い領域です。** 上表は各公式ドキュメントの確認日（2026-09-12）時点のもので、導入時は必ず最新の記述を確認してください。
+> **対応の深さはツールごとに違い、変化も速い領域です。** 上表は各公式ドキュメントの確認日（既存3ツール: 2026-09-12、Copilot app: 2026-09-23）時点のもので、導入時は必ず最新の記述を確認してください。
+
+GitHub は 2026-09-22 に [Copilot app の OTel 対応](https://github.blog/changelog/2026-09-22-opentelemetry-in-the-github-copilot-app/)を発表しました。Enterprise 管理者が `managed-settings.json` の `telemetry` で export を有効にして OTLP endpoint を指定します。[GitHub の OTel 概念文書](https://docs.github.com/en/copilot/concepts/enterprise/opentelemetry)では、session のモデル・tool 呼び出しをつなぐ trace、token 等の metric、個別 action の event を区別しています。prompt・response・tool 引数の本文は既定で除外されます。`captureContent` を有効にする場合は、コードやファイル内容が監視基盤へ送られるため、送信先と保存範囲を確認します。
+
+**文書の対象表記に差があります（2026-09-23 確認）。** 9 月 22 日の発表は Copilot app 対応を明記しますが、[enterprise-managed settings の `telemetry` リファレンス](https://docs.github.com/en/copilot/reference/enterprise-administrators/enterprise-managed-settings#telemetry)は対応先をまだ Copilot CLI / VS Code と記載しています。app へ展開する前に対象バージョンと有効な設定を確認し、collector に実際の trace が届くことを試してください。
 
 Claude Code 2.1.274 では `claude_code.managed_settings_resolved` OTel event が追加されました。managed-settings の source と policy helper の状態を確認でき、`OTEL_LOG_MANAGED_SETTINGS=1` を設定すると**値を redaction した設定と digest**も記録します。設定値そのものを露出させず、「どの管理設定が解決されたか」を監査するための event です。
 
@@ -269,6 +274,7 @@ Claude Code 2.1.274 では `claude_code.managed_settings_resolved` OTel event �
 | 観測対象 | 転送・取得方式 | データ粒度 | 答える問い | 頻度・権限 |
 |---------|---------------|-----------|-----------|-----------|
 | **GenAI実行トレース / semantic conventions** | 各ツールのOTel exporterからcollectorへ送る。OTLP対応は実装ごとに確認 | 1回のagent・model・tool実行のspan / event / metric、token、latency | どのmodel・toolが動き、どこで失敗・遅延したか | 送信頻度・設定権限はツールごとに異なる |
+| **Copilot app の実行トレース** | Enterprise managed settings の `telemetry` で collector へ送る | session と model / tool 呼び出しの trace、metrics、events。本文は既定で除外 | どの操作・model callで失敗や遅延が起きたか | Enterprise 管理者が設定。app での有効な設定と到着を確認 |
 | **Kiro user activity export** | Kiroのserverから `OTLP/gRPC` または `OTLP/HTTP`（protobuf）でcollectorへ送る | 利用者・client type・model別の日次集計。credits、overage credits、messages、conversations、model別message数 | 誰がどのclient / modelを使い、adoption・engagement・credit consumptionがどう変わったか | 毎日02:00 UTC。account administratorがKiro consoleで設定し、Secrets Managerのsecret、KMS key、公開到達可能なOTLP endpointが必要 |
 | **Copilot usage metrics API** | GitHubのREST API / NDJSON reportから取得（OTLPではない） | Enterprise / Organization / 利用者別の1日・28日集計。専用VS Code Agents windowのuser、session、message数 | 組織内で専用Agents windowを何人が、何session / message使ったか | report単位。owner / billing managerまたは `View Copilot Metrics` 権限と、Copilot usage metrics policyの有効化が必要 |
 
@@ -399,6 +405,8 @@ Console などファイルの外側でリソースが編集・アーカイブ・
 - [Kiro changelog — Export Kiro usage metrics to OpenTelemetry](https://kiro.dev/changelog/) — 機能公開の一次情報（`提供元`: Official / Kiro ｜ `状態`: GA、2026-09-01）
 - [Add VS Code Agents to Copilot usage metrics](https://github.blog/changelog/2026-09-11-add-vs-code-agents-to-copilot-usage-metrics/) — 専用 Agents ウィンドウの利用指標（GitHub 公式・GA）
 - [Copilot usage metrics reference](https://docs.github.com/en/copilot/reference/copilot-usage-metrics/copilot-usage-metrics) — report の種類、field、権限（GitHub 公式）
+- [OpenTelemetry in the GitHub Copilot app](https://github.blog/changelog/2026-09-22-opentelemetry-in-the-github-copilot-app/) — app への管理設定からのOTel対応（GitHub公式・2026-09-22）
+- [OpenTelemetry for agent monitoring](https://docs.github.com/en/copilot/concepts/enterprise/opentelemetry) — trace / metric / eventと本文の既定除外（GitHub公式）
 - [Manage resources as code with `ant apply`](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/apply) — リソースの種類・`claude-lock.json`・フラグ・CI 運用の一次情報（Anthropic 公式）
 - [Claude Platform リリースノート](https://platform.claude.com/docs/en/release-notes/overview) — `ant` CLI 1.30.0 / `ant apply` の公開（2026-09-03、公式）
 - [Managed Agents permission policies](https://platform.claude.com/docs/en/managed-agents/permission-policies) — `always_allow` / `always_ask` / `auto` とイベント形式（Anthropic 公式・Beta）

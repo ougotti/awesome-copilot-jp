@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-23** [GitHub Copilot ガイド](docs/copilot/README.md#copilot-app-の-opentelemetry-実行トレース)へCopilot appのOpenTelemetry実行トレースと利用集計との違いを追加
 - **2026-09-23** [Skill / エージェントの評価](docs/dev-methods/evals.md#skill-を選べたか手順を守れたかを別々に測る)へSkill選択・手順遵守・未起動を分ける評価方法を追加
 - **2026-09-22** [mattpocock/skills](docs/dev-methods/mattpocock-skills.md)と[Anthropic 公式スキル](docs/claude-code/official-skills.md)のヘッダーへ「実行環境」を追加し、docs配下の全ページで必須形式を満たす状態に
 - **2026-09-22** [obra/superpowers](docs/dev-methods/superpowers.md#diagnosing-superpowers--セッションの事後診断)へセッションの事後診断スキル`diagnosing-superpowers`を追加
 - **2026-09-22** [Instructions 一覧](docs/copilot/instructions.md#java)へIntelliJ IDEAでのJava / Kotlin開発規約`intellij-java-kotlin`を追加
-- **2026-09-20** [Skills 最新動向](docs/trends.md#10-aiエージェントの実行基盤ハーネス)へClaude Code 2.1.271〜2.1.277、VS Code 1.138 Agent Host、Codex CLI 0.155.0、CLI利用指標、on-demand compactionを反映
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 

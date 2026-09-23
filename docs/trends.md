@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-23 | Copilot appのOpenTelemetry実行トレースを、利用集計・本文取得と区別し、managed settingsリファレンスとの対象表記差を記録した |
 | 2026-09-23 | 15 節へ Skill の選択精度・手順遵守・未起動を分ける評価を追加し、Strands Evals と AgentCore Evaluations の実装例を詳細ページへ反映した |
 | 2026-09-20 | Claude Code 2.1.271〜2.1.277、VS Code 1.138、Codex CLI 0.155.0、Copilot CLI customization metrics、Claude Messages API on-demand compactionを追加し、読み込み・実行・承認・観測の境界を整理した |
 | 2026-09-18 | 14 節でSpec Kit・OpenSpec・BMAD Method・Kiro Specsを、方法論 / framework / 製品機能、成果物、承認点、実装後の同期方法で比較した |
@@ -638,6 +639,8 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 
 2026-09-11 に一般提供された Copilot usage metrics の VS Code Agents 指標は、これとは用途が違います。`daily_active_vscode_agent_users`、`totals_by_vscode_agent`、`used_vscode_agent` は、専用 Agents ウィンドウの組織内 adoption / engagement を 1 日・28 日単位で集計します。個々の tool call を追う OTel とは分けて使い、editor-window Agent Mode の利用をこの指標へ含めません。
 
+2026-09-22には**GitHub Copilot app**も、Enterprise managed settingsの`telemetry`でsession・model / tool呼び出しのOTel traceを送れるようになりました。prompt・response・tool 引数の本文は既定で除外されます。GitHubのmanaged settingsリファレンスは対応先をまだCLI / VS Codeと記しているため（2026-09-23確認）、appでの実効設定とcollectorへの到着を確認します。粒度と設定境界は[ハーネス解説](dev-methods/harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions)を参照してください。
+
 また、VS Code 1.137 の **Automations**（Microsoft 公式、2026-09-09、Preview）は、prompt、workspace、agent / model / permission options、schedule を保存して、Manual / Hourly / Daily / Weekly でローカルの agent task を起動します。Codex Scheduled tasks、Claude Code `/loop`、Kiro Crew と同名機能として扱わず、実行場所・worktree・承認・停止条件で選びます。
 
 VS Code 1.138（2026-09-16）では、AHPベースのAgent Hostがharnessを専用processで動かし、local Dev Containerでの実行、ChatGPT appとVS Code間のCodex session継続、VS Code built-in / extension / MCP toolsの利用を広げました。同じsessionでもhandoff先でtool surfaceが変わる点に注意します。Automationsの`.automation.md`はname / prompt / schedule等だけを運び、workspace / provider / model / permissions / enabled state / run historyは運びません。Automations自体はPreviewかつ段階的ロールアウトで、release notesの既定有効と現行docsのStable既定オフ / Insiders既定オンを同一視しません。
@@ -867,6 +870,7 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 - [VS Code 1.138 release notes](https://code.visualstudio.com/updates/v1_138) ／ [Create and manage agent automations](https://code.visualstudio.com/docs/agents/run/automations) — Agent Host、Codex継続、`.automation.md`、Preview / rollout（Microsoft 公式）
 - [Add VS Code Agents to Copilot usage metrics](https://github.blog/changelog/2026-09-11-add-vs-code-agents-to-copilot-usage-metrics/) — 専用 Agents ウィンドウの利用指標（GitHub 公式・GA）
 - [Agentic CLI customizations in the usage metrics API](https://github.blog/changelog/2026-09-17-agentic-cli-customizations-now-in-the-usage-metrics-api/) — CLI customizationのtop 5 / distinct countと集計上の注意（GitHub 公式）
+- [OpenTelemetry in the GitHub Copilot app](https://github.blog/changelog/2026-09-22-opentelemetry-in-the-github-copilot-app/) — appの実行トレースをmanaged settingsからexport（GitHub公式・2026-09-22）
 - [Claude Messages API compaction](https://platform.claude.com/docs/en/build-with-claude/compaction) — on-demand compaction、signed block、keep-tail（Anthropic 公式・Beta）
 
 ### Skill / Plugin のセキュリティ（本ページ 12 節・詳細は [解説ページ](dev-methods/skill-security.md)）
