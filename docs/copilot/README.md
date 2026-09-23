@@ -445,7 +445,7 @@ Codex session は ChatGPT app と VS Code の間で同じ会話を継続でき�
 
 ### Copilot app の OpenTelemetry 実行トレース
 
-2026-09-22、GitHub は Copilot app のエージェント session を OpenTelemetry で観測できるようになったと発表しました。Enterprise 管理者が `managed-settings.json` の `telemetry` で export と OTLP endpoint を設定します。session 内の model / tool 呼び出しを追う trace、token 等の metric、個別 action の event が対象です。**prompt・response・tool 引数の本文は既定で除外**され、content capture を有効にすると機密情報を含み得るため、監視基盤への送信前に確認が必要です。
+2026-09-22、GitHub は Copilot app のエージェント session を OpenTelemetry で観測できるようになったと発表しました。Enterprise 管理者が `managed-settings.json` の `telemetry` で export と OTLP endpoint を設定します。session 内の model / tool 呼び出しを追う trace、token 等の metric、個別 action の event が対象です。**prompt・response・tool 引数の本文は既定で除外**され、`captureContent` を有効にすると機密情報を含み得るため、監視基盤への送信前に確認が必要です。
 
 上の usage metrics API は 1 日・28 日の**利用集計**、この OTel は個々の session の**実行経路**です。[管理設定リファレンス](https://docs.github.com/en/copilot/reference/enterprise-administrators/enterprise-managed-settings#telemetry)にはまだ対応クライアントとして CLI / VS Code だけが列記されています（2026-09-23 確認）。app 向けの新しい発表と記述が揃うまで、対象バージョン・設定値・collector への到着を確認してください。製品横断の観測データ比較は[ハーネス解説](../dev-methods/harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions)にまとめています。
 

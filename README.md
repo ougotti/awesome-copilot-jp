@@ -18,7 +18,7 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
-- **2026-09-23** [GitHub Copilotガイド](docs/copilot/README.md#copilot-app-の-opentelemetry-実行トレース)へCopilot appのOpenTelemetry実行トレースと利用集計との違いを追加
+- **2026-09-23** [GitHub Copilot ガイド](docs/copilot/README.md#copilot-app-の-opentelemetry-実行トレース)へCopilot appのOpenTelemetry実行トレースと利用集計との違いを追加
 - **2026-09-23** [Skill / エージェントの評価](docs/dev-methods/evals.md#skill-を選べたか手順を守れたかを別々に測る)へSkill選択・手順遵守・未起動を分ける評価方法を追加
 - **2026-09-22** [mattpocock/skills](docs/dev-methods/mattpocock-skills.md)と[Anthropic 公式スキル](docs/claude-code/official-skills.md)のヘッダーへ「実行環境」を追加し、docs配下の全ページで必須形式を満たす状態に
 - **2026-09-22** [obra/superpowers](docs/dev-methods/superpowers.md#diagnosing-superpowers--セッションの事後診断)へセッションの事後診断スキル`diagnosing-superpowers`を追加

@@ -639,7 +639,7 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 
 2026-09-11 に一般提供された Copilot usage metrics の VS Code Agents 指標は、これとは用途が違います。`daily_active_vscode_agent_users`、`totals_by_vscode_agent`、`used_vscode_agent` は、専用 Agents ウィンドウの組織内 adoption / engagement を 1 日・28 日単位で集計します。個々の tool call を追う OTel とは分けて使い、editor-window Agent Mode の利用をこの指標へ含めません。
 
-2026-09-22には**GitHub Copilot app**も、Enterprise managed settingsの`telemetry`でsession・model / tool呼び出しのOTel traceを送れるようになりました。prompt・response・tool引数の本文は既定で除外されます。GitHubのmanaged settingsリファレンスは対応先をまだCLI / VS Codeと記しているため（2026-09-23確認）、appでの実効設定とcollectorへの到着を確認します。粒度と設定境界は[ハーネス解説](dev-methods/harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions)を参照してください。
+2026-09-22には**GitHub Copilot app**も、Enterprise managed settingsの`telemetry`でsession・model / tool呼び出しのOTel traceを送れるようになりました。prompt・response・tool 引数の本文は既定で除外されます。GitHubのmanaged settingsリファレンスは対応先をまだCLI / VS Codeと記しているため（2026-09-23確認）、appでの実効設定とcollectorへの到着を確認します。粒度と設定境界は[ハーネス解説](dev-methods/harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions)を参照してください。
 
 また、VS Code 1.137 の **Automations**（Microsoft 公式、2026-09-09、Preview）は、prompt、workspace、agent / model / permission options、schedule を保存して、Manual / Hourly / Daily / Weekly でローカルの agent task を起動します。Codex Scheduled tasks、Claude Code `/loop`、Kiro Crew と同名機能として扱わず、実行場所・worktree・承認・停止条件で選びます。
 
