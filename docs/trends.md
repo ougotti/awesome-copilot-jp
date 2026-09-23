@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-23 | エージェント生成PRのマージ後90日のrevert・churn・レビュー負荷を、観察研究の母数と限界つきで15節へ追加した |
 | 2026-09-23 | Claude Opus 5.5・GPT-6 Sol / Luna の利用場所と、Codex CLI 0.156 系の作業導線を製品別ページに反映した |
 | 2026-09-23 | JetBrains 1.18.0 の assisted approvals（Public Preview）と共有 Skill・MCP ツール制御を、既存の managed permissions / sandbox と分けて整理した |
 | 2026-09-23 | Copilot appのOpenTelemetry実行トレースを、利用集計・本文取得と区別し、managed settingsリファレンスとの対象表記差を記録した |
@@ -786,6 +787,8 @@ Skill・MCP・ハーネスがエージェントを**動かす**側の話だと�
 [12 節](#12-skill--plugin-のセキュリティ)が「入れてよい Skill か」という**導入前**の話だとすれば、こちらは導入後の評価です。ただし、**Skill / Plugin変更時の回帰評価**と、**本番エージェントの継続的な品質評価**は分けます。前者は発火・手順・出力を固定ケースで比較し、後者は実際のinteractionに対するgoal completion、応答品質、tool選択・引数、routing / trajectoryを見ます。latencyやerrorなどのインフラ監視も、品質評価とは別の問いです。
 
 この節ではSkill / Pluginの回帰評価を要約します。本番エージェントの品質評価、on-demand / batchとonlineの違い、評価から改善・検証・昇格へつなぐループは詳細ページで扱います。AWS固有の実装例では、AgentCore Evaluationsに加えてAgentCore Optimizationのrecommendation、batch evaluation、A/B testを取り上げています。
+
+コーディングエージェントのPRでは、マージ時点の成功に加え、90日以内のrevert、後続変更、security smell、人間のレビュー負荷も確認します。2026-09-12の[観察研究](https://arxiv.org/html/2609.17598)は計測例ですが、タスク割当・PRサイズ・対象期間の交絡があるため、製品の因果的な優劣とは読みません。**→ [指標の母数と限界](dev-methods/evals.md#コーディングエージェントはマージ後も測る)を参照。**
 
 2026-09-22のAWSの実装例は、**適切なSkillを選んだか**と**選んだSkillの手順を守ったか**を別々に採点します。どちらも呼ばれたSkillを評価するため、Skillが未起動のケースは結果なしになります。必須の呼び出しはStrands Evalsの決定論的な`SkillInvoked`などで別途確認し、traceでSkill読み込みを認識できたかも検証します。評価器と採点単位は[詳細ページ](dev-methods/evals.md#skill-を選べたか手順を守れたかを別々に測る)で整理しました。
 
