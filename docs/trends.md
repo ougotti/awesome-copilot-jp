@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-23 | JetBrains 1.18.0 の assisted approvals（Public Preview）と共有 Skill・MCP ツール制御を、既存の managed permissions / sandbox と分けて整理した |
 | 2026-09-23 | Copilot appのOpenTelemetry実行トレースを、利用集計・本文取得と区別し、managed settingsリファレンスとの対象表記差を記録した |
 | 2026-09-23 | 15 節へ Skill の選択精度・手順遵守・未起動を分ける評価を追加し、Strands Evals と AgentCore Evaluations の実装例を詳細ページへ反映した |
 | 2026-09-20 | Claude Code 2.1.271〜2.1.277、VS Code 1.138、Codex CLI 0.155.0、Copilot CLI customization metrics、Claude Messages API on-demand compactionを追加し、読み込み・実行・承認・観測の境界を整理した |
@@ -680,6 +681,8 @@ Snyk の「ToxicSkills」調査（2026-02-05 公開）は、ClawHub と skills.s
 
 2026 年 9 月には**実行する操作そのもの**も中央制御の対象になりました。GitHub Copilot の enterprise managed permissions（GitHub 公式、2026-09-09、GA）は `Shell` / `Read` / `Edit` / `Domain` を `deny` / `ask` / `allow` に分け、managed `ask` には毎回新しい承認を要求します。Claude Managed Agents permission policies（Anthropic 公式、Beta）は agent / MCP tool call ごとに allow / ask / deny を評価し、`evaluated_permission` をイベントに残します。Claude の `auto` は人の確認を保証しないため、人が必ず止める操作は `always_ask` にします。Claude Code のローカル権限設定とは別機能です。
 
+GitHub Copilot for JetBrains 1.18.0（2026-09-22）では、Copilot agent セッションの低リスクなツール呼び出しを自動承認する **assisted approvals** が Public Preview になり、組織共有 Skill・instructions と MCP ツールごとの永続設定も加わりました。assisted approvals は上記の enterprise managed permissions や JetBrains の managed sandbox とは別の制御です。**→ [GitHub Copilot ガイド](copilot/README.md#jetbrains-1180--エージェントの承認共有設定mcp) を参照**
+
 AWSが2026-09-11に公開したKiro IDEのCVE-2026-89332（AWS公式・Important）は、確認画面に変更内容とURLが表示されても、応答前にsettings fileが書き込まれ、別操作から外部requestが発生し得た事例です。対象はKiro IDE 0.8.135未満で、0.8.135以上では修正済みです。**確認画面の有無と、副作用の前に実際に停止するかは分けて検証します。** 攻撃の順序、対象範囲、利用者の確認事項は[詳細ページ](dev-methods/skill-security.md#承認画面が副作用より先とは限らない--kiro-ideの修正済み事例)へ集約しています。
 
 Claude Code 2.1.271〜2.1.277では、`AGENTS.md`は`CLAUDE.md`がない場合だけのfallback、`omitClaudeMd`はuser / project / local指示をサブエージェントから除外してもmanaged policyは残る、`allowed_domains`は1コマンド限定、`--accept-command <sha256>`はJSONで表示したPlugin commandだけを承認する、という境界が加わりました。読み取れない`managed-mcp.json`はexclusive controlを維持するfail-closedへ修正されています。アカウントSkills / Pluginsの端末同期は個別にopt-outできるため、repositoryだけでなくaccount / organization層も実効構成に含めます。
@@ -880,6 +883,7 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 - [MCP allowlists in enterprise managed settings](https://github.blog/changelog/2026-08-06-mcp-allowlists-in-enterprise-managed-settings/) — MCP 許可リスト（公式）
 - [Enterprise managed settings in GitHub Copilot for JetBrains](https://github.blog/changelog/2026-08-18-enterprise-managed-settings-in-github-copilot-for-jetbrains/) — JetBrains への managed settings 拡大（公式）
 - [Enterprise managed permissions for GitHub Copilot agent operations](https://github.blog/changelog/2026-09-09-enterprise-managed-permissions-for-github-copilot-agent-operations/) — 操作単位の managed permissions（GitHub 公式・GA）
+- [New features and improvements in Copilot for JetBrains](https://github.blog/changelog/2026-09-22-new-features-and-improvements-in-copilot-for-jetbrains/) — assisted approvals と共有 Skill・MCP 制御（GitHub 公式）
 - [Managed Agents permission policies](https://platform.claude.com/docs/en/managed-agents/permission-policies) — tool call ごとの権限判定（Anthropic 公式・Beta）
 - [AgentCore Identity managed consent portal](https://aws.amazon.com/about-aws/whats-new/2026/09/amazon-bedrock-agentcore/) — IDE / MCP client向けhosted portalとsession binding（AWS公式・2026-09-01）
 - [Configure a consent portal](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/identity-consent-portal.html) — primary OIDC IdP、Gateway、downstream provider、server-side token flow（AWS公式）

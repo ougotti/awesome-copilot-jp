@@ -4,6 +4,10 @@
 
 ## 2026-09
 
+- **2026-09-23** JetBrains 1.18.0 のエージェント制御を追加（#206）
+  - **[GitHub Copilot ガイド](docs/copilot/README.md#jetbrains-1180--エージェントの承認共有設定mcp)** に assisted approvals（Public Preview）、組織共有 Skill / instructions、組み込み GitHub MCP Server の切り替えとツール別設定、Codex plan mode、メッセージ再編集時の巻き戻し、リモート環境の inline chat 非表示を整理した。
+  - [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#実行する操作を-deny--ask--allow-に分ける)では assisted approvals、enterprise managed permissions、managed sandbox と MCP allowlist の制御面を区別した。GitHub 公式の 2026-09-22 発表を確認し、[Skills 最新動向](docs/trends.md#12-skill--plugin-のセキュリティ)と README の「最近の更新」を同期した。
+
 - **2026-09-23** Copilot appのOpenTelemetry実行トレースを追加（#205）
   - **[ハーネス解説](docs/dev-methods/harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions)へCopilot appを追加** — Enterprise managed settingsからのOTel exportを、個別sessionのmodel / tool呼び出しを追うtraceとして整理し、日次・28日単位のusage metrics APIと分けた。
   - **[GitHub Copilot ガイド](docs/copilot/README.md#copilot-app-の-opentelemetry-実行トレース)に管理者向け導線を追加** — prompt・response・tool 引数の本文は既定で除外され、`captureContent`を有効にする場合は監視基盤への露出を確認する。2026-09-23時点でmanaged settingsリファレンスの対象表記が発表より遅れている点も記録した。

@@ -523,6 +523,20 @@ GitHub Copilot for JetBrains では、2026-09-08 に **enterprise managed sandbo
 
 **→ セレクター、承認を省略できない条件、JetBrains sandbox、Claude Managed Agents との比較は [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#実行する操作を-deny--ask--allow-に分ける) を参照**
 
+### JetBrains 1.18.0 — エージェントの承認・共有設定・MCP
+
+2026-09-22 の [GitHub 公式発表](https://github.blog/changelog/2026-09-22-new-features-and-improvements-in-copilot-for-jetbrains/)で、GitHub Copilot for JetBrains 1.18.0 に次の変更が加わりました。
+
+| 変更 | 利用時の注意 |
+|------|--------------|
+| **assisted approvals**（Public Preview） | Copilot agent セッションの低リスクなツール呼び出しを自動承認し、高リスクな操作は利用者へ確認する。上記の enterprise managed permissions や managed sandbox と同一機能ではない |
+| 共有 Skill・instructions | organization / enterprise の Skill と organization-managed custom instructions を、local session と Copilot agent session の両方で利用できる |
+| MCP ツール制御 | 組み込み GitHub MCP Server は既定で有効。手動構成した MCP Server は変えずに組み込み分だけ切り替えられ、Copilot agent session ではツールごとの設定を永続化できる |
+| Codex agent の plan mode | 実装前に計画を確認・修正・承認できる |
+| 以前のメッセージの再編集 | Copilot agent session で過去のユーザーメッセージを再編集できる。置き換えを送信する前に、会話とファイル変更がその地点まで巻き戻されるため、残したい変更は事前に確認する |
+
+JetBrains Gateway / リモート開発環境では、inline chat とその入口が非表示になりました。通常の JetBrains IDE の説明をリモート環境にそのまま当てはめないでください。
+
 ---
 
 ## Upcoming — github.com・Mobile・cloud agentのポリシー統合
@@ -658,6 +672,7 @@ Instructions、Prompts、Agents は GitHub Copilot のすべてのプラン（Fr
 - [Enterprise managed permissions for GitHub Copilot agent operations](https://github.blog/changelog/2026-09-09-enterprise-managed-permissions-for-github-copilot-agent-operations/) — 操作単位の managed permissions 一般提供（公式・2026-09-09）
 - [Enterprise managed settings reference](https://docs.github.com/en/enterprise-cloud@latest/copilot/reference/enterprise-administrators/enterprise-managed-settings) — 規則の優先順位、対象面、サンドボックス設定（公式）
 - [Enterprise managed sandbox in Copilot for JetBrains](https://github.blog/changelog/2026-09-08-enterprise-managed-sandbox-in-copilot-for-jetbrains/) — JetBrains の managed sandbox Public Preview（公式・2026-09-08）
+- [New features and improvements in Copilot for JetBrains](https://github.blog/changelog/2026-09-22-new-features-and-improvements-in-copilot-for-jetbrains/) — JetBrains 1.18.0 の assisted approvals・共有 Skill・MCP 制御（公式・2026-09-22）
 - [Content exclusions generally available in Copilot app and CLI](https://github.blog/changelog/2026-09-02-content-exclusions-generally-available-in-copilot-app-and-cli/) — app / CLI での GA（公式・2026-09-02）
 - [Content exclusion for GitHub Copilot](https://docs.github.com/en/copilot/concepts/context/content-exclusion) — 対応面・非対応面と制限の一次情報（公式）
 
