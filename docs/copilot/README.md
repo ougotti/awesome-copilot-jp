@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-20
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-23
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -443,6 +443,12 @@ Codex session は ChatGPT app と VS Code の間で同じ会話を継続でき�
 
 この指標が示すのは adoption、利用の偏り、enablement gap です。生産性、成果物の品質、MCP 接続の成功率を直接示す評価指標ではありません。
 
+### Copilot app の OpenTelemetry 実行トレース
+
+2026-09-22、GitHub は Copilot app のエージェント session を OpenTelemetry で観測できるようになったと発表しました。Enterprise 管理者が `managed-settings.json` の `telemetry` で export と OTLP endpoint を設定します。session 内の model / tool 呼び出しを追う trace、token 等の metric、個別 action の event が対象です。**prompt・response・tool 引数の本文は既定で除外**され、content capture を有効にすると機密情報を含み得るため、監視基盤への送信前に確認が必要です。
+
+上の usage metrics API は 1 日・28 日の**利用集計**、この OTel は個々の session の**実行経路**です。[管理設定リファレンス](https://docs.github.com/en/copilot/reference/enterprise-administrators/enterprise-managed-settings#telemetry)にはまだ対応クライアントとして CLI / VS Code だけが列記されています（2026-09-23 確認）。app 向けの新しい発表と記述が揃うまで、対象バージョン・設定値・collector への到着を確認してください。製品横断の観測データ比較は[ハーネス解説](../dev-methods/harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions)にまとめています。
+
 ---
 
 ## カスタマイズが効く場所 — レビューとエージェント
@@ -643,6 +649,7 @@ Instructions、Prompts、Agents は GitHub Copilot のすべてのプラン（Fr
 - [VS Code 1.138 release notes](https://code.visualstudio.com/updates/v1_138) — Agent Host、Dev Container、Codex session 継続、Automation 共有（Microsoft 公式・2026-09-16）
 - [Create and manage agent automations](https://code.visualstudio.com/docs/agents/run/automations) — Preview / rollout、`.automation.md` の portable boundary（Microsoft 公式）
 - [Agentic CLI customizations in the usage metrics API](https://github.blog/changelog/2026-09-17-agentic-cli-customizations-now-in-the-usage-metrics-api/) — 上位 5 件、distinct count、privacy と集計上の注意（GitHub 公式）
+- [OpenTelemetry in the GitHub Copilot app](https://github.blog/changelog/2026-09-22-opentelemetry-in-the-github-copilot-app/) — appからのOTel exportと本文の既定除外（GitHub公式・2026-09-22）
 - [Cookbook](https://github.com/github/awesome-copilot/blob/main/cookbook/README.md) — Copilot SDK を活用した実践的コードレシピ集
 - [About GitHub Copilot plugins](https://docs.github.com/en/copilot/concepts/agents/about-plugins) — Plugin の概念と構成（公式）
 - [Manage agent skills with GitHub CLI](https://github.blog/changelog/2026-04-16-manage-agent-skills-with-github-cli/) — `gh skill` による Skill 管理（公式）

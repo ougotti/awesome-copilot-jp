@@ -4,6 +4,11 @@
 
 ## 2026-09
 
+- **2026-09-23** Copilot appのOpenTelemetry実行トレースを追加（#205）
+  - **[ハーネス解説](docs/dev-methods/harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions)へCopilot appを追加** — Enterprise managed settingsからのOTel exportを、個別sessionのmodel / tool呼び出しを追うtraceとして整理し、日次・28日単位のusage metrics APIと分けた。
+  - **[GitHub Copilotガイド](docs/copilot/README.md#copilot-app-の-opentelemetry-実行トレース)に管理者向け導線を追加** — prompt・response・tool引数の本文は既定で除外され、content capture時には監視基盤への露出を確認する。2026-09-23時点でmanaged settingsリファレンスの対象表記が発表より遅れている点も記録した。
+  - GitHub公式発表・OTel概念文書・managed settingsリファレンスを確認し、[Skills 最新動向](docs/trends.md#10-aiエージェントの実行基盤ハーネス)とREADMEの「最近の更新」を同期した。
+
 - **2026-09-23** Skillの選択と手順遵守を分ける評価方法を追加（#204）
   - **[Skill / エージェントの評価](docs/dev-methods/evals.md#skill-を選べたか手順を守れたかを別々に測る)へAWSのSkill評価器を追加** — Strands Evalsの記録済みtrajectoryとAgentCore EvaluationsのOpenTelemetry traceを入力に、選択の二値判定と手順遵守の5段階判定を分けた。
   - 呼ぶべきSkillが未起動ならjudge型評価器は結果を返さないため、Strands Evalsの決定論的な`SkillInvoked`を併用する条件を明記。結果なしとスコア0、Skillの選択失敗と手順抜けを区別する。
