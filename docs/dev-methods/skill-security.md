@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-20
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-23
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -90,6 +90,8 @@ GitHub Copilot の **enterprise managed permissions** は、導入できる MCP 
 同じ操作へ複数の規則が一致した場合は **`deny` → `ask` → `allow`** の順で強い規則が優先されます。組織が `ask` にした操作は、その都度の新しい承認が必要です。利用者側の自動承認、承認バイパス、保存済みの許可、Hook で組織の確認を省略することはできません。
 
 JetBrains では、同じ週に **enterprise managed sandbox** が Public Preview になりました。ファイルシステム、ネットワーク、プロキシ、開発ツール、macOS Keychain へのアクセスを中央設定し、利用者が制限を緩められないようにします。これはサンドボックスの管理であり、上記 4 セレクターによる操作単位の managed permissions が JetBrains でも一般提供された、という発表ではありません。
+
+JetBrains 1.18.0 の **assisted approvals** も Public Preview ですが、これは Copilot agent セッションの低リスクなツール呼び出しを自動承認し、高リスクな操作では確認を求める仕組みです。enterprise managed permissions の `ask` を省略できるという発表ではありません。また、組み込み GitHub MCP Server の有効・無効と、Copilot agent セッションの MCP ツールごとの永続設定が加わりました。組織の MCP allowlist、組み込みサーバーの切り替え、個別ツールの設定は、それぞれ異なる制御面として確認してください。
 
 ### Claude Code の 1 コマンド限定許可と managed MCP
 
@@ -233,6 +235,7 @@ GitHub Copilot の **content exclusion** は、機密ファイルを Copilot の
 - [Enterprise managed permissions for GitHub Copilot agent operations](https://github.blog/changelog/2026-09-09-enterprise-managed-permissions-for-github-copilot-agent-operations/) — 操作単位の managed permissions 一般提供（公式）
 - [Enterprise managed settings reference](https://docs.github.com/en/enterprise-cloud@latest/copilot/reference/enterprise-administrators/enterprise-managed-settings) — `deny` / `ask` / `allow` の優先順位と対象面（公式）
 - [Enterprise managed sandbox in Copilot for JetBrains](https://github.blog/changelog/2026-09-08-enterprise-managed-sandbox-in-copilot-for-jetbrains/) — JetBrains の managed sandbox Public Preview（公式）
+- [New features and improvements in Copilot for JetBrains](https://github.blog/changelog/2026-09-22-new-features-and-improvements-in-copilot-for-jetbrains/) — assisted approvals と MCP ツール制御（公式・2026-09-22）
 - [gh skill マニュアル](https://cli.github.com/manual/gh_skill) — `gh skill preview` などのサブコマンド（公式）
 - [awesome-agent-skills-security](https://github.com/LLMSecurity/awesome-agent-skills-security) — 攻撃手法と防御策の一覧（コミュニティ）
 - [Inference hooks](https://platform.claude.com/docs/en/manage-claude/inference-hooks) — 推論前の allow / deny 判定（Anthropic 公式）
