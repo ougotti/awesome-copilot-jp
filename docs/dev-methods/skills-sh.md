@@ -1,6 +1,6 @@
 # skills.sh — Agent Skills ディスカバリーサイト
 
-> **対象ツール**: ツール横断（Claude Code・Codex・Cursor・OpenCode ほか 70+ エージェント対応） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-05
+> **対象ツール**: ツール横断（Claude Code・Codex・Cursor・OpenCode ほか 70+ エージェント対応） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-27
 
 > [skills.sh](https://skills.sh/) は、Agent Skills を検索・発見・導入するための公開ポータルサイトです。[vercel-labs/skills](https://github.com/vercel-labs/skills) が提供する `npx skills` CLI と連携しており、個人・企業・コミュニティが公開したスキル集を一元的に参照できます。
 
@@ -56,6 +56,15 @@ npx skills use vercel-labs/agent-skills --skill web-design-guidelines --agent cl
 ```
 
 > **2026-08 時点の CLI の変更**: スキル選択画面に**一括選択**が追加され、`--skill '*'` のワイルドカード指定では内部用スキルが除外されるようになりました。skills.sh のパックから導入する場合は、対象スキルが**あらかじめ選択された状態**で表示されます。`npx skills update` は、upstream に新しく追加されたスキルを提示します。対応エージェントには **Posit Assistant** と **MiniMax Code** が加わり、プライベートリポジトリの認証も強化されています。
+
+> **2026-09 の CLI の変更（1.5.24〜1.7.0）**: CI やスクリプトから使うときの前提に関わる変更が続きました。
+>
+> - 確認プロンプトが必要なのに TTY がない環境では、**0 以外の終了コードで終わる**ようになりました（1.5.25）。CI ではプロンプトが出ないよう、`-y` と、`--skill`・`-a` による対象の指定を明示します
+> - `npx skills add` に `--json` が加わり、結果を機械可読な形式で受け取れます（1.5.26）
+> - GitLab や一般の git URL でも、**コミット SHA を ref に指定して導入**できるようになりました（1.5.24）。GitHub では従来から、tree URL（`https://github.com/<owner>/<repo>/tree/<ref>/...`）の ref で指定できます
+> - Azure Repos の `/_git/` URL を git の取得元として解釈する修正が入りました（1.6.0）
+>
+> ただし README には、SHA で導入したスキルを `npx skills update` がどう扱うかが書かれていません。**更新で中身が変わらないことまで保証したい場合は、`gh skill` の `--pin` や APM の lock ファイル**を使います（[Skills 最新動向「4 つの仕組みの比較」](../trends.md#4-つの仕組みの比較)）。
 
 ### インストール先パス（代表例）
 
@@ -182,6 +191,7 @@ npx skills init my-custom-skill
 
 - [skills.sh](https://skills.sh/) — スキルの検索・発見ポータル
 - [vercel-labs/skills](https://github.com/vercel-labs/skills) — `npx skills` CLI リポジトリ
+- [vercel-labs/skills releases](https://github.com/vercel-labs/skills/releases) ／ [#1439](https://github.com/vercel-labs/skills/pull/1439) — 1.5.24〜1.7.0 の変更と、コミット SHA 指定での導入（2026-09-06〜09-17）
 - [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) — Vercel 公式スキル集
 - [mattpocock/skills 日本語解説](mattpocock-skills.md) — 実務エンジニア向け開発プロセス Skills
 - [obra/superpowers 日本語解説](superpowers.md) — SDLC フレームワーク

@@ -567,6 +567,29 @@ GitHub Copilot for JetBrains では、2026-09-08 に **enterprise managed sandbo
 
 修正は `.github-private` repository の **default branch へ commit** し、Agents ページを再読み込みしてから validator の結果を再確認します。「file を置いた」ことではなく「validator がエラーを出さない」ことを適用確認の最低ラインにしてください。
 
+### Copilot CLI の別経路にも managed settings が効く — 1.0.87 / 1.0.88
+
+Copilot CLI は、ターミナルで対話する使い方のほかに、エディタや別のアプリから**プロトコル経由で起動される**ことがあります。1.0.88（2026-09-22）の changelog は、次の経路で起動したセッションにも enterprise managed settings が適用されるようになったと記載しています。**それより前の版では、これらのセッションは managed の MCP・permission・plugin の policy なしで動いていました**。
+
+| 起動のしかた | 使われ方 |
+|------------|---------|
+| `copilot --acp` | Agent Client Protocol（ACP）サーバーとして起動し、ACP に対応したエディタや自動化ツールから操作される（ACP 対応は Public Preview） |
+| `copilot --ahp-host` | Agent Host Protocol（AHP）の host として起動する |
+| `--server` で公開したセッション | サーバーとして公開した Copilot CLI のセッション |
+
+管理者は次を確認してください。
+
+- 組織の端末の Copilot CLI を **1.0.88 以降**にそろえる。そろえられない間は、上の 3 経路を「統制が効かない経路」として扱い、利用を止めるかどうかを決める
+- エディタ連携などで Copilot CLI が**裏側で起動されている使い方**を棚卸しする。利用者がターミナルを開いていなくても、CLI は動いている場合がある
+- validator がエラーを出さないことに加えて、それぞれの経路で MCP の一覧と承認の挙動を実際に確かめる
+
+1.0.87（2026-09-21）には、統制に関わる次の変更もあります。
+
+- 空の `strictKnownMarketplaces` allowlist を置くと、CLI に組み込まれた plugin marketplace も表示されなくなり、ブロックされる。組み込みのものも含めて Plugin の導入元を閉じられる
+- Auto routing tier の起動時の既定を、利用者の設定と managed settings で指定できる。managed 側では、厳格に固定するか、利用者の上書きを許すかを選べる
+
+同じ「統制が効いていない経路がないか」という観点は、Claude Code の [auto mode の開始モードの拡大](../claude-code/basics.md#auto-mode-が既定の開始モードになる範囲--21283)にも当てはまります。どちらも、**配った設定ファイルではなく、実際に動いているセッションで確かめる**ことが確認の基本です。
+
 ### JetBrains 1.18.0 — エージェントの承認・共有設定・MCP
 
 2026-09-22 の [GitHub 公式発表](https://github.blog/changelog/2026-09-22-new-features-and-improvements-in-copilot-for-jetbrains/)で、GitHub Copilot for JetBrains 1.18.0 に次の変更が加わりました。
@@ -734,6 +757,8 @@ GitHub Copilot でも **Claude Opus 5.5** と **GPT-6 Sol / Luna** が段階的�
 
 VS Code、Copilot CLI、Copilot app、cloud / coding agent、JetBrains などのモデルピッカーで提供されますが、展開は段階的です。Business / Enterprise 管理者は Copilot settings の model policy を確認してください。Copilot 側は usage-based billing が適用されるため、固定単価は記載せず[公式料金案内](https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing)を参照します。年払いの一部個人プランに残る旧 premium request 課金とは区別してください。**→ OpenAI 側の Codex / Work での提供条件は [Codex ガイド](../codex/README.md#gpt-6-sol--luna-と-codex-cli-0156-系)を参照。**
 
+Copilot の model policy は Copilot 経由の利用にだけ効きます。同じ組織で Claude Code を直接使っている場合、新しいモデルを検証が済むまで使わせない設定は Claude Code 側の managed settings で別に行います（2.1.283 の `availableModelsMatch` / `deniedModels`）。**→ [Claude Code のカスタマイズ機能](../claude-code/basics.md#新しいモデルを検証前に使わせない--availablemodelsmatch-と-deniedmodels)を参照。**
+
 ## 参考リンク
 
 - [github/awesome-copilot](https://github.com/github/awesome-copilot) — カスタマイズの公式リポジトリ
@@ -751,6 +776,8 @@ VS Code、Copilot CLI、Copilot app、cloud / coding agent、JetBrains などの
 - [Local sandboxing in the GitHub Copilot app](https://github.blog/changelog/2026-09-23-local-sandboxing-in-the-github-copilot-app/) — project 単位の file / network / credential 制限（GitHub 公式・2026-09-23、Public Preview）
 - [Default enablement of Copilot features for Copilot Business and Enterprise](https://github.blog/changelog/2026-09-24-default-enablement-of-copilot-features-for-copilot-business-and-enterprise/) — 新機能の global default policy と 2026-10-22 の適用開始（GitHub 公式・2026-09-24）
 - [Enterprise managed settings in-product validator](https://github.blog/changelog/2026-09-25-enterprise-managed-settings-in-product-validator/) — managed settings / team mappings の検証（GitHub 公式・2026-09-25）
+- [Copilot CLI changelog](https://github.com/github/copilot-cli/blob/main/changelog.md) — 1.0.87（2026-09-21）の `strictKnownMarketplaces` と Auto routing tier、1.0.88（2026-09-22）の ACP / AHP / `--server` への managed settings 適用（GitHub 公式）
+- [Copilot CLI ACP server](https://docs.github.com/en/copilot/reference/copilot-cli-reference/acp-server) — `copilot --acp` の起動方法と ACP の役割（GitHub 公式）
 - [Usage metrics API adds pull request review stages](https://github.blog/changelog/2026-09-25-usage-metrics-api-adds-pull-request-review-stages/) — `pull_request_review_times` の段階別 median / p90（GitHub 公式・2026-09-25）
 - [GitHub Copilot weekly releases: September 21](https://github.blog/changelog/2026-09-25-github-copilot-weekly-releases-september-21/) — 同週の Copilot app・VS Code・JetBrains 等の更新一覧（GitHub 公式・2026-09-25）
 - [Cookbook](https://github.com/github/awesome-copilot/blob/main/cookbook/README.md) — Copilot SDK を活用した実践的コードレシピ集

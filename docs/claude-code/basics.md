@@ -87,6 +87,12 @@ Claude Code 2.1.277（2026-09-18）から、プロジェクトに `CLAUDE.md` �
 
 リリース時点では Amazon Bedrock、Google Vertex AI、Microsoft Foundry 経由の Claude Code には未提供です。共通の `AGENTS.md` を置いても、これらの経路まで同じ挙動になるとは限りません。
 
+### モデルを更新したら `/doctor prompt-audit` で点検する
+
+`CLAUDE.md` や Skill には、古いモデルの癖に合わせて足した強い言葉や細かい手順が残りがちです。Claude Code 2.1.283（2026-09-25）で加わった `/doctor prompt-audit`（別名 `/checkup prompt-audit`）は、`CLAUDE.md`・Skill・agent・command を読み、古いモデル向けの書き方、古いパス、使えなくなった command、矛盾する指示ファイルを報告します。
+
+点検結果は**削除の候補**であって、そのまま適用する結論ではありません。作成者しか知らない文脈は残し、採用した変更は eval で確かめます。**→ 点検の原則、残すべき記述、eval との組み合わせ方は [Skill / エージェントの評価](../dev-methods/evals.md#モデルの更新も変更として扱う--prompt-audit-で点検してから測る) を参照**
+
 ---
 
 ## Agent Skills
@@ -251,7 +257,7 @@ Claude Code 2.1.269 以降には、Plugin の eval suite を実行する `claude
 | `claude plugin validate <path>` | manifest、ディレクトリ構造、frontmatter などが読み込めるか | 構造・スキーマのエラー |
 | `claude plugin eval <path>` | 実際の prompt で Skill が発火し、期待した結果・ツール順・ファイルを作るか | score、Plugin なしの baseline との差、JSON、HTML report |
 
-2.1.281（2026-09-23）からは、`claude plugin validate` が Plugin の MCP 設定も検査します。load 時に**黙って捨てられる** `.mcp.json` の entry、宣言されていない `${user_config.*}` の参照、insecure な URL を報告します。shell 形式の hook で `${CLAUDE_PLUGIN_ROOT}` を quote していない場合の警告も加わりました。いずれも「読み込める構成か」の検査で、Skill が期待どおり動くかは引き続き `plugin eval` で確認します。
+2.1.281（2026-09-23）からは、`claude plugin validate` が Plugin の MCP 設定も検査します。load 時に**黙って捨てられる** `.mcp.json` の entry、宣言されていない `${user_config.*}` の参照、insecure な URL を報告します。shell 形式の hook で `${CLAUDE_PLUGIN_ROOT}` を quote していない場合の警告も加わりました。2.1.283（2026-09-25）では、Claude Code が install できない Plugin 名・marketplace 名を `marketplace.json` に書いた場合と、`outputStyles`・`themes`・`monitors`・`lspServers` のパスが存在しない、または Plugin のディレクトリ外を指す場合も失敗になりました。いずれも「読み込める構成か」の検査で、Skill が期待どおり動くかは引き続き `plugin eval` で確認します。
 
 `claude plugin eval init` で `evals/` に case と grader の草案を作れます。各 case は既定で Plugin あり / なしをそれぞれ 3 回実行し、`regex`、`tool_used`、`tool_order`、`file_exists`、LLM judge などで採点します。実際のモデル呼び出しとして利用枠または API 料金を消費します。
 
@@ -346,19 +352,22 @@ Claude Enterprise では、Skill や Plugin の「入れる前の確認」に加
 |------|------|------|-------------|
 | 導入前 | Skill / Plugin のセキュリティスキャン | Beta（Enterprise プラン、2026-08-06） | 第三者製の Skill・Plugin を、**アップロードまたは編集された時点**で悪意ある内容がないか自動検査する |
 | 推論前 | Inference hooks | Beta（Claude Enterprise、2026-08-05） | 組織の AI セキュリティサーバーを指定すると、**claude.ai・Cowork・Claude Code の対象プロンプトが、サーバーの allow / deny 判定が返るまで推論に進まない**。リクエストは署名され、失敗時の挙動は設定可能。**拒否はすべて Activity Feed に記録される** |
-| 実行後 | Compliance API のセッション取得 | 利用者のマシン上のセッション取得は 2026-08-26 に**ベータを終了**（Cowork / Claude Code） | 組織横断でセッションを一覧し、個別セッションのメタデータとトランスクリプトを取得する。既存の Compliance Access Key と `read:compliance_user_data` スコープを使う |
+| 実行後 | Compliance API のセッション取得 | 利用者のマシン上のセッション取得は 2026-08-26 に**ベータを終了**（Cowork / Claude Code）。Claude for Microsoft 365 のセッションは 2026-09-24 に**ベータを終了**、Claude in Chrome のセッションは 2026-09-18 から **Beta** | 組織横断でセッションを一覧し、個別セッションのメタデータとトランスクリプトを取得する。既存の Compliance Access Key と `read:compliance_user_data` スコープを使う |
 
 ### 導入時に確認すること
 
 - **いずれも Enterprise 向け**です。個人・チームプランでは使えません
 - **Inference hooks は自組織でセキュリティサーバーを用意する前提**です。判定サーバーが落ちたときの挙動（通すのか止めるのか）を設定で決めておく必要があります
 - Compliance API で取得できるのは**利用者のマシン上で動いたセッションを含みます**。監査の範囲と、従業員への周知の要否を法務・人事と確認してください
+- 取得できる面は増えています。Claude for Microsoft 365（Excel・PowerPoint・Word・Outlook）は `product_surface` が `office_agents` で始まる値、Claude in Chrome は `claude_in_chrome` で区別します。監査対象の一覧に、これらの面を加えるかを決めてください
+
+> **Activity Feed の変更（2026-09-24）**: Compliance API の Activity Feed は、ファイル名・プロジェクト文書名・artifact のタイトルを返さなくなりました。`filename` と `title` は常に空か省略され、**過去の activity にも遡って適用**されます。名前が必要な場合は、`read:compliance_user_data` スコープを持つ Compliance Access Key で ID から引き直します。Activity Feed の名前をそのまま集計・検索していた監査手順は見直しが必要です。
 
 > 3 つとも「入れてよい Skill か」を人が読む作業を置き換えるものではありません。**スキャンは既知の悪意を検出する仕組み**であり、[導入前に中身を読む](../dev-methods/skill-security.md#2-導入前に何を確認するか)必要は変わりません。
 
 ### managed settings を下位の設定で弱められない変更
 
-2026-09-22〜24 の Claude Code 2.1.280〜2.1.282 では、**repository・user・Plugin 側の設定から managed の制限を弱められない**方向の修正と追加が続きました。
+2026-09-22〜25 の Claude Code 2.1.280〜2.1.283 では、**repository・user・Plugin 側の設定から managed の制限を弱められない**方向の修正と追加が続きました。
 
 | 版 | 変更 | 意味 |
 |----|------|------|
@@ -370,8 +379,65 @@ Claude Enterprise では、Skill や Plugin の「入れる前の確認」に加
 | 2.1.282 | managed settings または `--settings` で `allowUnsandboxedCommands: false`、あるいは managed で `allowManagedDomainsOnly: true` のとき、project / local の `sandbox.excludedCommands` を無視する | repository 側の設定で sandbox の例外を追加できない |
 | 2.1.282 | project / local settings から、OpenTelemetry の export 有効化・endpoint・本文取得に関わる変数（`CLAUDE_CODE_ENABLE_TELEMETRY`、`OTEL_LOG_*` など）を設定できない | clone した repository がテレメトリの送信先を変えられない |
 | 2.1.282 | Windows / WSL で、admin policy（HKLM、`managed-settings.json`）が存在するが無効・読めない場合、利用者が書き込める HKCU と WSL の `/etc/claude-code` を適用しない | fail-open を防ぐ |
+| 2.1.283 | managed の `sandbox` で入れ子の値が 1 つ無効でも、その値だけを fail-closed にし、残りは適用する | 以前は無効な値が 1 つあると **`sandbox` ブロック全体が無視**されていた |
+| 2.1.283 | `Skill(anthropic-skills:<name>)` の deny rule が、Claude Desktop が Plugin として配信した同じ Skill にも効く。`Skill(skill:<name>)` の deny は Skill の alias と表示名にも一致する | 配信経路や呼び名が変わっても deny を回避できない |
+| 2.1.283 | `availableModelsMatch` と `deniedModels` を追加（managed 専用） | 新しいモデルを、検証が済むまで使わせない。[下記](#新しいモデルを検証前に使わせない--availablemodelsmatch-と-deniedmodels) を参照 |
+
+同じ 2.1.283 では、Windows の PowerShell tool で `cmd /c rd`・`rmdir`・`del`・`erase` を使うと、`Remove-Item` なら拒否されるドライブのルートやホームフォルダーを削除できた問題も修正されています。Windows で Claude Code を使う端末は、この版以降へ更新してください。
 
 運用確認では、managed file を置いたことではなく、**startup の警告、実際に解決された設定、subagent や別 session での挙動**まで確かめます。managed settings の解決結果は [`claude_code.managed_settings_resolved` OTel event](../dev-methods/harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions) で監査できます。
+
+### auto mode が既定の開始モードになる範囲 — 2.1.283
+
+Claude Code 2.1.283（2026-09-25）から、**どの設定ファイルも開始モードを指定していなければ、対話型のターミナルと VS Code 拡張のセッションは auto mode で始まります**。2.1.282 までは、Pro / Max / Team プランで feature flag を取得するセッションに限られていました。今回から **Enterprise プラン、Claude API、Amazon Bedrock、Google Cloud、Microsoft Foundry、Claude apps gateway** の対話セッションも対象です。
+
+auto mode は、承認プロンプトの代わりに**別のモデル（classifier）が操作を判定する**モードです。承認なしで何でも実行するモードではありませんが、判定するのは人ではなくなります。sandbox やコンテナは、引き続き別の防御層として必要です。なお、`claude -p` と Agent SDK は従来どおり Manual（`default`）で始まるため、非対話の自動化はこの変更の対象外です。
+
+| 決めたいこと | 設定 | 注意点 |
+|------------|------|--------|
+| auto mode 自体を使わせない | managed settings の `permissions.disableAutoMode: "disable"` | `Shift+Tab` の選択肢から消え、`--permission-mode auto` で起動しても Manual（`default`）で始まる。**組織として確実に止められるのはこのキー** |
+| 組織の既定の開始モードを決める | managed settings の `permissions.defaultMode` | ターミナルのセッションはそのモードで始まる。VS Code 拡張では、利用者の `claudeCode.initialPermissionMode` と、利用者が直前に選んだモードが優先される。どちらでも、実行中に auto mode へ切り替えられる |
+| 自分のセッションの開始モードを決める | `~/.claude/settings.json` の `permissions.defaultMode`、または起動時の `--permission-mode` | project の `.claude/settings.json` に書いた `auto` / `bypassPermissions` は、開始モードとしては効かない |
+| VS Code 拡張の開始モードを固定する | VS Code のユーザー設定 `claudeCode.initialPermissionMode` | `auto` は指定できない。VS Code 拡張は project の `.claude/settings.json` を開始モードの判定に読まない |
+
+Enterprise と API 利用の組織は、**更新だけで開始モードが変わる**点に注意してください。社内で「承認プロンプトが出る」前提の手順書や研修資料がある場合は、2.1.283 を配布する前に `permissions.defaultMode` か `disableAutoMode` を決めます。
+
+- Enterprise プラン、Claude API、Claude Platform on AWS、Bedrock、Google Cloud、Foundry では、**classifier の呼び出しがトークン使用量に計上**されます。読み取りと、保護されたパス以外の作業ディレクトリ内の編集は classifier を通らないため、増えるのは主にシェルコマンドとネットワーク操作の分です
+- インストール・更新の直後の最初のセッションは、feature flag の取得前に開始モードを決めることがあり、表と違うモードで始まる場合があります。次のセッションからは表どおりになります
+- auto mode が選ばれても、そのセッションで使えない場合（設定で無効にされている、対応していないモデルを使っている、Anthropic がサーバー側で一時的に止めている、など）は Manual で始まります
+- Pro / Max / Team で `~/.claude/settings.json` に auto 以外の `defaultMode` を書いている場合は、その設定が維持され、auto mode へ変えるかを 1 度だけ確認されます
+
+**→ 承認・sandbox・managed rule の関係は [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#claude-code-の-1-コマンド限定許可と-managed-mcp) を参照**
+
+### 新しいモデルを検証前に使わせない — `availableModelsMatch` と `deniedModels`
+
+組織で使えるモデルを絞る `availableModels` は、既定では**前方一致**です。`claude-opus-5` と書くと、Claude Code が対応した時点で Opus 5.5 のような後続版も許可されます。`opus` や `sonnet` のような family alias も、新しい版へ追従します。
+
+2.1.283 で、後続版を自動で許可しないための managed 専用のキーが 2 つ加わりました。
+
+| キー | 効果 | 使いどころ |
+|------|------|----------|
+| `availableModelsMatch: "exact"` | `availableModels` に**モデル ID で書いた項目**は、その版だけを許可する。新しい版は、一覧に追加するまで使えない | 「検証した版だけを使う」運用 |
+| `deniedModels` | 列挙したモデルを拒否する。`availableModels` が許可していても拒否が優先され、許可リストがなくても使える | 特定の版だけを保留する運用 |
+
+公式ドキュメントの例は、Opus と Sonnet を許可したうえで、Opus 5.5 を日付付き・プロバイダ固有の ID も含めて拒否するものです。
+
+```json
+{
+  "availableModels": ["opus", "sonnet"],
+  "deniedModels": ["claude-opus-5-5"]
+}
+```
+
+拒否されたモデルは `/model` の一覧に表示されず、`/model <名前>` でも選べません。`--model`、`ANTHROPIC_MODEL`、`model` 設定で指定しても、起動時に外されて Default が選ばれます。hook やバックグラウンドの要求が拒否されたモデルを指定した場合は、セッションのモデルで実行されます。`enforceAvailableModels` を設定していない場合、Default が拒否されたモデルに解決されるときは、同じ family の許可された最新版、より低コストの family（Sonnet、Haiku の順）、`availableModels` のうち許可されたモデルを指す最初の項目、の順に下がります。どれも許可されなければ、Default で始まるセッションは起動しません。
+
+導入時は次の 3 点を確認してください。
+
+- **2 つのキーは managed settings からしか読まれません**。user / project / local の設定や `--settings` に書いても、警告とともに無視されます
+- **2.1.282 以前はこの 2 つのキーを無視します**。古い版での起動を防ぐため、`requiredMinimumVersion` も併せて設定します
+- **配布経路によって届く面が違います**。cloud session には端末に置いた managed settings file が届かないため、claude.ai の管理画面から配る server-managed settings を使います。逆に Bedrock・Google Cloud・Foundry・Claude Platform on AWS のセッションには server-managed settings が届かないため、MDM か managed settings file で配ります
+
+Claude Enterprise では、claude.ai の管理画面でモデルを個別に無効にする方法もあります（2.1.187 以降、サーバー側でも強制）。この制限は、メンバーがサインインした場合と自分の API キーを使った場合に適用されますが、組織のサービスキーのように利用者に紐づかない資格情報には適用されません。そうした資格情報で動かす自動化には、`availableModels` 側の設定が必要です。GitHub Copilot 経由で Claude を使う場合のモデル単位の policy は、[Copilot ガイド](../copilot/README.md#2026-09-22-の新モデル--copilot-経由の利用条件)で扱います。
 
 ---
 
@@ -507,7 +573,10 @@ CLAUDE.md              # プロジェクトの前提・規約
 - [Claude Code v2.1.275](https://github.com/anthropics/claude-code/releases/tag/v2.1.275) — claude.ai の Skills / Plugins 同期と opt-out（公式・2026-09-17）
 - [Claude Code v2.1.277](https://github.com/anthropics/claude-code/releases/tag/v2.1.277) — `AGENTS.md` fallback と提供経路の制限（公式・2026-09-18）
 - [Claude Code v2.1.280](https://github.com/anthropics/claude-code/releases/tag/v2.1.280) ／ [v2.1.281](https://github.com/anthropics/claude-code/releases/tag/v2.1.281) ／ [v2.1.282](https://github.com/anthropics/claude-code/releases/tag/v2.1.282) — MCP description 上限、URL-mode elicitation、`plugin validate` の MCP 検査、setting source の伝播、managed settings の優先（公式・2026-09-22〜24）
-- [Claude Platform release notes](https://platform.claude.com/docs/en/release-notes/overview) — inline tools（2026-09-22、Beta）と `mcp_tool_listing`、cache diagnostics の GA（2026-09-23）（公式）
+- [Claude Code v2.1.283](https://github.com/anthropics/claude-code/releases/tag/v2.1.283) — auto mode の開始モードの拡大、`availableModelsMatch` / `deniedModels`、`/doctor prompt-audit`、managed `sandbox` の fail-closed、`plugin validate` の厳格化（公式・2026-09-25）
+- [Choose a permission mode](https://code.claude.com/docs/en/permission-modes) — 開始モードの決まり方、`disableAutoMode`、VS Code 拡張の判定順、classifier の利用量（公式）
+- [Model configuration — Restrict model selection](https://code.claude.com/docs/en/model-config#restrict-model-selection) — `availableModels` の前方一致、`availableModelsMatch`、`deniedModels`、配布経路ごとの適用範囲（公式）
+- [Claude Platform release notes](https://platform.claude.com/docs/en/release-notes/overview) — inline tools（2026-09-22、Beta）と `mcp_tool_listing`、cache diagnostics の GA（2026-09-23）、Compliance API の Claude in Chrome（2026-09-18、Beta）・Microsoft 365（2026-09-24）・Activity Feed の変更（2026-09-24）（公式）
 - [Inference hooks](https://platform.claude.com/docs/en/manage-claude/inference-hooks) — 推論前の allow / deny 判定（公式）
 - [Compliance API — Retrieve session transcripts](https://platform.claude.com/docs/en/manage-claude/compliance-sessions) — セッションのトランスクリプト取得（公式）
 - [Claude apps release notes](https://support.claude.com/en/articles/12138966-release-notes) — Skill / Plugin セキュリティスキャンの提供状況（公式）

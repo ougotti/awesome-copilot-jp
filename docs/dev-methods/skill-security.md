@@ -91,6 +91,8 @@ GitHub Copilot の **enterprise managed permissions** は、導入できる MCP 
 
 同じ操作へ複数の規則が一致した場合は **`deny` → `ask` → `allow`** の順で強い規則が優先されます。組織が `ask` にした操作は、その都度の新しい承認が必要です。利用者側の自動承認、承認バイパス、保存済みの許可、Hook で組織の確認を省略することはできません。
 
+ただし、**規則が届いていないセッションには効きません**。Copilot CLI は 1.0.88（2026-09-22）より前の版で、`copilot --acp`（ACP サーバー）、`copilot --ahp-host`、`--server` で公開したセッションを、managed の MCP・permission・plugin の policy なしで動かしていました。エディタ連携などで CLI が裏側から起動される経路も含めて、版と実際の挙動を確認してください。**→ 確認手順は [GitHub Copilot ガイド](../copilot/README.md#copilot-cli-の別経路にも-managed-settings-が効く--1087--1088) を参照**
+
 JetBrains では、同じ週に **enterprise managed sandbox** が Public Preview になりました。ファイルシステム、ネットワーク、プロキシ、開発ツール、macOS Keychain へのアクセスを中央設定し、利用者が制限を緩められないようにします。これはサンドボックスの管理であり、上記 4 セレクターによる操作単位の managed permissions が JetBrains でも一般提供された、という発表ではありません。
 
 JetBrains 1.18.0 の **assisted approvals** も Public Preview ですが、これは Copilot agent セッションの低リスクなツール呼び出しを自動承認し、高リスクな操作では確認を求める仕組みです。enterprise managed permissions の `ask` を省略できるという発表ではありません。また、組み込み GitHub MCP Server の有効・無効と、Copilot agent セッションの MCP ツールごとの永続設定が加わりました。組織の MCP allowlist、組み込みサーバーの切り替え、個別ツールの設定は、それぞれ異なる制御面として確認してください。
@@ -104,6 +106,8 @@ Claude Code 2.1.271 では、auto mode + sandbox の Bash / PowerShell / Monitor
 組織管理では、読み取れない / parse できない `managed-mcp.json` を黙って無視せず、**exclusive MCP control を維持したまま user / project / Plugin の MCP を読み込まない fail-closed** へ修正されました。また 2.1.273 では、server-managed settings と併用したときに `allowManagedMcpServersOnly` / `deniedMcpServers` / `disableClaudeAiConnectors` が無視される問題も修正されています。運用確認は「設定ファイルがあるか」だけでなく、startup warning と実際の MCP 一覧まで見ます。
 
 2.1.280〜2.1.282（2026-09-22〜24）では、この「managed を下位の設定で弱めない」方向がさらに広がりました。symlink 経由の書き込みは実際の着地点で判定され、repository 外への書き込みを `acceptEdits` や allow rule が承認しなくなりました。`allowManagedPermissionRulesOnly` の下では Skill / command / Plugin manifest の `allowed-tools` が自らの tool を事前承認できず、project / local 設定は sandbox の除外コマンドや OpenTelemetry の送信先を変えられません。`--setting-sources` の制限は teammates や `/bg` などの別 session にも引き継がれます。版ごとの一覧は [Claude Code のカスタマイズ機能](../claude-code/basics.md#managed-settings-を下位の設定で弱められない変更) にまとめています。
+
+2.1.283（2026-09-25）では、managed の `sandbox` に無効な値が 1 つあってもブロック全体が無視されなくなり（その値だけ fail-closed）、`Skill(anthropic-skills:<name>)` の deny は Claude Desktop が Plugin として配信した同じ Skill にも効くようになりました。また、**対話型のターミナルと VS Code 拡張のセッションは、設定がなければ auto mode で始まる**ようになり、対象が Enterprise・Claude API・Bedrock・Google Cloud・Foundry にも広がりました。承認の判定が人から classifier へ移るため、Enterprise / API 利用の組織は、配布前に managed の `permissions.disableAutoMode` か `permissions.defaultMode` を決めてください。**→ [auto mode が既定の開始モードになる範囲](../claude-code/basics.md#auto-mode-が既定の開始モードになる範囲--21283)**
 
 ### 実行場所ごとの隔離境界を分ける
 
@@ -275,6 +279,8 @@ memory は、組織が承認した規約ではなく**更新も削除もでき�
 - [Managed Agents permission policies](https://platform.claude.com/docs/en/managed-agents/permission-policies) — ツール呼び出し単位の権限判定（Anthropic 公式・Beta）
 - [Claude Code v2.1.271](https://github.com/anthropics/claude-code/releases/tag/v2.1.271) ／ [v2.1.273](https://github.com/anthropics/claude-code/releases/tag/v2.1.273) — command-scoped domain、Plugin command hash、managed MCP の fail-closed / 適用修正（公式）
 - [Claude Code v2.1.280](https://github.com/anthropics/claude-code/releases/tag/v2.1.280) ／ [v2.1.281](https://github.com/anthropics/claude-code/releases/tag/v2.1.281) ／ [v2.1.282](https://github.com/anthropics/claude-code/releases/tag/v2.1.282) — symlink の着地点判定、setting source の伝播、managed rule の優先（公式・2026-09-22〜24）
+- [Claude Code v2.1.283](https://github.com/anthropics/claude-code/releases/tag/v2.1.283) ／ [Choose a permission mode](https://code.claude.com/docs/en/permission-modes) — managed `sandbox` の fail-closed、Skill deny rule の適用範囲、auto mode の開始モードの拡大（Anthropic 公式・2026-09-25）
+- [Copilot CLI changelog](https://github.com/github/copilot-cli/blob/main/changelog.md) — 1.0.88 で ACP / AHP / `--server` のセッションに managed settings を適用（GitHub 公式・2026-09-22）
 - [Local sandboxing in the GitHub Copilot app](https://github.blog/changelog/2026-09-23-local-sandboxing-in-the-github-copilot-app/) — project 単位の local sandbox と、cloud / remote / CLI との区別（GitHub 公式・2026-09-23、Public Preview）
 - [VS Code 1.139 release notes](https://code.visualstudio.com/updates/v1_139) — remote host 上の Dev Container session（Microsoft 公式・2026-09-23）
 - [Codex CLI 0.157.0 release](https://github.com/openai/codex/releases/tag/rust-v0.157.0) — redirect 後と継続中の通信への network policy 適用（OpenAI 公式・2026-09-25）

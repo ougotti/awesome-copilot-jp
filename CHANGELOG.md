@@ -4,6 +4,15 @@
 
 ## 2026-09
 
+- **2026-09-27** Claude Code 2.1.283・Copilot CLI 1.0.87 / 1.0.88 など2026-09-25〜09-27の動向を反映（#218）
+  - **auto mode が開始モードになる範囲の拡大を整理** — 2.1.283 から、設定がなければ対話型のターミナルと VS Code 拡張のセッションが auto mode で始まる対象に、Enterprise・Claude API・Bedrock・Google Cloud・Foundry が加わった。組織として止める `disableAutoMode`、既定を決める `defaultMode`、VS Code 拡張での判定順、classifier のトークン計上を[Claude Code](docs/claude-code/basics.md#auto-mode-が既定の開始モードになる範囲--21283)へ記載した。
+  - **新モデルを検証前に使わせない設定を追加** — `availableModels` の前方一致で後続版が許可される仕組みと、managed 専用の `availableModelsMatch: "exact"`・`deniedModels`、古い版で無視されるため `requiredMinimumVersion` を併用すること、cloud session とクラウドプロバイダで配布経路が違うことを[Claude Code](docs/claude-code/basics.md#新しいモデルを検証前に使わせない--availablemodelsmatch-と-deniedmodels)に整理し、[Copilot ガイド](docs/copilot/README.md#2026-09-22-の新モデル--copilot-経由の利用条件)から導線を付けた。
+  - **Copilot CLI の統制漏れの修正を追加** — 1.0.88 より前は `copilot --acp`・`--ahp-host`・`--server` のセッションに managed の MCP・permission・plugin policy が適用されていなかったことと、1.0.87 の空の `strictKnownMarketplaces`・Auto routing tier の既定を[GitHub Copilot ガイド](docs/copilot/README.md#copilot-cli-の別経路にも-managed-settings-が効く--1087--1088)と[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#実行する操作を-deny--ask--allow-に分ける)へ記載した。
+  - **モデル更新時の prompt-audit を追加** — `/claude-api prompt-audit`（2.1.221〜）と `/doctor prompt-audit`（2.1.283〜）の対象を分け、公式手順書の原則（対象モデルを先に決める、提案 diff と同意、何も見つからなければ変えない、削除は仮説）と残すべき記述を[Skill / エージェントの評価](docs/dev-methods/evals.md#モデルの更新も変更として扱う--prompt-audit-で点検してから測る)に整理した。点検は eval の代わりにならないことも明記した。
+  - **監査・観測の変更を反映** — Compliance API の Claude for Microsoft 365（ベータ終了）・Claude in Chrome（Beta）のセッション取得と、Activity Feed がファイル名・タイトルを返さなくなった変更（過去分にも適用）を[Claude Code](docs/claude-code/basics.md#導入時に確認すること)へ、`OTEL_LOG_TOOL_CONTENT` の記録範囲に MCP・WebFetch・WebSearch の出力が加わったことを[ハーネス解説](docs/dev-methods/harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions)へ追加した。managed `sandbox` の fail-closed、Skill deny rule の適用範囲、`plugin validate` の厳格化、Windows PowerShell tool の削除範囲の修正も記載した。
+  - **`skills` CLI 1.5.24〜1.7.0 を反映** — TTY なしで確認が必要なときの非ゼロ終了、`add --json`、コミット SHA を ref に指定した導入を[skills.sh ガイド](docs/dev-methods/skills-sh.md)へ追加し、[Skills 最新動向](docs/trends.md#4-つの仕組みの比較)の比較表の「バージョン固定」を、`update` との関係が未文書化であることと併せて更新した。
+  - Anthropic・GitHub・Vercel の公式 changelog / ドキュメントを2026-09-27に確認し、[Skills 最新動向](docs/trends.md)の12・15節とREADMEの「最近の更新」を同期した。
+
 - **2026-09-27** エージェントの記憶基盤の比較ページを追加（#215）
   - **[エージェントの記憶基盤](docs/dev-methods/agent-memory.md)を新設** — GBrain・Mem0・Graphiti / Zep・Letta と、境界確認のための AnythingLLM・Open WebUI を、記憶層・時系列ナレッジグラフ・記憶を持つ実行基盤・RAG アプリの 4 カテゴリに分け、主用途・データモデル・記憶の更新・検索・LLM 依存・MCP・ローカル運用・コスト・マルチユーザー・権限・運用負荷・ライセンスで比較した。
   - **調査で分かった前提の変化を反映** — Letta の旧 API server は archive へ移り、現行は記憶を持つ実行基盤の Letta Code であること、Mem0 の公式 MCP サーバーはホスト型であること、AnythingLLM・Open WebUI は MCP を使う側であることを明記した。ベンチマークの数値は測定条件が違うため横並びにしない。
