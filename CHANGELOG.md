@@ -4,6 +4,11 @@
 
 ## 2026-09
 
+- **2026-09-27** エージェントの記憶基盤の比較ページを追加（#215）
+  - **[エージェントの記憶基盤](docs/dev-methods/agent-memory.md)を新設** — GBrain・Mem0・Graphiti / Zep・Letta と、境界確認のための AnythingLLM・Open WebUI を、記憶層・時系列ナレッジグラフ・記憶を持つ実行基盤・RAG アプリの 4 カテゴリに分け、主用途・データモデル・記憶の更新・検索・LLM 依存・MCP・ローカル運用・コスト・マルチユーザー・権限・運用負荷・ライセンスで比較した。
+  - **調査で分かった前提の変化を反映** — Letta の旧 API server は archive へ移り、現行は記憶を持つ実行基盤の Letta Code であること、Mem0 の公式 MCP サーバーはホスト型であること、AnythingLLM・Open WebUI は MCP を使う側であることを明記した。ベンチマークの数値は測定条件が違うため横並びにしない。
+  - [オントロジー](docs/dev-methods/ontology.md#形式的な定義を作らない選択肢--gbrain)の GBrain の説明を、共有ブレインの構成と README が示す信頼境界に合わせて更新し、[Skills 最新動向](docs/trends.md#11-エージェントに渡す知識オントロジー)と README に導線を追加した。各 README と公式ドキュメントは 2026-09-27 に確認。
+
 - **2026-09-27** Copilot Sandbox・Claude MCP拡張・Codex 0.157など2026-09-19〜09-26の動向を反映（#214）
   - **実行場所ごとの隔離境界を整理** — Copilot appのlocal sandbox（Public Preview）、VS Code 1.139のSSH / Tunnel / WSL上のDev Container session、Copilotのcloud sandbox、Codex CLI 0.157.0のredirect後・通信中にも効くnetwork policy、Claude Codeのsandboxを、実行場所・強制主体・設定単位で[比較](docs/dev-methods/skill-security.md#実行場所ごとの隔離境界を分ける)した。
   - **Copilotの管理者向け期限と検証を追加** — 新機能のglobal default policyは2026-10-22からUnconfiguredの項目に適用され、明示設定とPreviewのopt-inは保持されることを[GitHub Copilot ガイド](docs/copilot/README.md#新機能の既定ポリシー--2026-10-22-から適用)へ記載。managed settings validatorの検証対象と再確認手順も追加した。
