@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-23
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-27
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -76,6 +76,8 @@ Agent Plugins 1.0.0 は可搬なパッケージ形式を定めた一方で、安
 
 Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMarketplaces`・`strictKnownMarketplaces` で統制できます。2026-08-18 には GitHub Copilot for JetBrains も同じ `managed-settings.json` による統制対象に加わり、MCP の許可リスト・Plugin の marketplace 制限・エージェントの承認バイパス禁止（`permissions.disableBypassPermissionsMode`）を中央設定できるようになりました。Claude Code もこれらに相当する設定（`additionalMarketplaces` / `allowedMarketplaces` を同義エイリアスとして追加）を持っており、**設定キー名がツール間で近づき始めています**。
 
+2026-09-25 からは、これらの file の書式誤りや無効な team mapping を enterprise の AI controls ページの validator で確認できます。また、2026-10-22 から Copilot Business / Enterprise の「新機能の既定ポリシー」が適用され、**Unconfigured のまま**の MCP servers in Copilot などの policy は、選んだ global default に従います。明示した設定は保持されます。**→ 期限前の確認手順は [GitHub Copilot ガイド](../copilot/README.md#新機能の既定ポリシー--2026-10-22-から適用) を参照**
+
 ### 実行する操作を `deny` / `ask` / `allow` に分ける
 
 GitHub Copilot の **enterprise managed permissions** は、導入できる MCP や Plugin の範囲に加えて、エージェントが実行しようとする操作を中央で制御します（2026-09-09 一般提供）。対象は Copilot app、Copilot CLI、VS Code Agent Host のセッションです。
@@ -100,6 +102,24 @@ Claude Code 2.1.271 では、auto mode + sandbox の Bash / PowerShell / Monitor
 同じ版では Plugin install / update の `--json` が示したコマンドを、`--accept-command <sha256>` で完全一致した 1 件だけ承認できます。`-y` の代替として、承認対象のコマンドが後から変わっていないことを確認する境界です。
 
 組織管理では、読み取れない / parse できない `managed-mcp.json` を黙って無視せず、**exclusive MCP control を維持したまま user / project / Plugin の MCP を読み込まない fail-closed** へ修正されました。また 2.1.273 では、server-managed settings と併用したときに `allowManagedMcpServersOnly` / `deniedMcpServers` / `disableClaudeAiConnectors` が無視される問題も修正されています。運用確認は「設定ファイルがあるか」だけでなく、startup warning と実際の MCP 一覧まで見ます。
+
+2.1.280〜2.1.282（2026-09-22〜24）では、この「managed を下位の設定で弱めない」方向がさらに広がりました。symlink 経由の書き込みは実際の着地点で判定され、repository 外への書き込みを `acceptEdits` や allow rule が承認しなくなりました。`allowManagedPermissionRulesOnly` の下では Skill / command / Plugin manifest の `allowed-tools` が自らの tool を事前承認できず、project / local 設定は sandbox の除外コマンドや OpenTelemetry の送信先を変えられません。`--setting-sources` の制限は teammates や `/bg` などの別 session にも引き継がれます。版ごとの一覧は [Claude Code のカスタマイズ機能](../claude-code/basics.md#managed-settings-を下位の設定で弱められない変更) にまとめています。
+
+### 実行場所ごとの隔離境界を分ける
+
+2026-09 下旬には、sandbox と network の制御が複数の製品で同時に更新されました。名前が似ていても、**どこで動く処理を、誰が強制するか**が違います。
+
+| 仕組み | 実行場所 | 強制する主体 | 設定の単位 | 注意点 |
+|--------|---------|-------------|-----------|--------|
+| Copilot app の local sandbox（Public Preview） | 利用者のマシン上の local repository / working tree session | OS。強制できなければ sandboxed shell はエラーになる | project ごとの要求 policy。enterprise managed settings がより厳しければそちらが実効 policy | cloud sandbox、remote host、Copilot CLI の sandbox 設定とは別 |
+| VS Code の Dev Container session | local folder（1.138）または SSH / Tunnel / WSL 上の remote project（1.139） | container と、Docker が動く host | project の Dev Container configuration と `chat.agentHost.devContainer.enabled` | toolchain の隔離が主目的。network・secret・tool 権限は別に設計する |
+| Copilot の cloud sandbox | GitHub 側の cloud 環境 | GitHub | local sandbox とは別に管理される | local sandbox の設定は適用されない |
+| Codex CLI 0.157 の network policy | Codex が行う HTTP / WebSocket 通信 | Codex | Codex の network 設定 | redirect 先と継続中の通信にも適用され、policy 変更で失効した通信は cancel される |
+| Claude Code の sandbox | 利用者のマシン上の Bash など | Claude Code と OS | settings と managed settings | managed の制限下では、project / local 設定から除外コマンドを追加できない（2.1.282） |
+
+表の各行は互いに置き換えられません。たとえば Dev Container で動かしても、container から外部へ出る通信を制限したことにはならず、local sandbox を有効にしても cloud で動く session は守られません。導入時は、**エージェントが実際に動く場所**を先に特定し、その場所で効く制御を確認します。
+
+**→ 各製品の設定手順は [GitHub Copilot ガイド](../copilot/README.md#copilot-app-の-local-sandbox)・[Codex ガイド](../codex/README.md#codex-cli-0157--通信中も効く-network-policy-と-session-の継続) を参照**
 
 **→ ここまでは「何を許可するか」の話でした。「エージェント自身を誰として認証し、その権限を他のエージェントへどこまで委任してよいか」は [AIエージェントのID・認可・委任権限](agent-identity.md) を参照してください。**
 
@@ -175,6 +195,18 @@ GitHub Copilot の **content exclusion** は、機密ファイルを Copilot の
 
 **→ Codex の Plugin / MCP 運用は [Codex ガイド](../codex/README.md#5-plugin-でまとめて配る2026-08-の追加) を参照**
 
+### 学習した memory を policy とみなさない
+
+承認と同様に、**エージェントが書き込んだ memory がどこまで波及するか**も確認対象です。2026-09-25、GitHub の agentic autofix が Copilot Memory を使うようになりました（両機能とも Public Preview、Copilot Memory を有効にしている場合）。autofix は既存の memory を security alert 修正の文脈として読み、作成した修正の pattern を新しい memory として保存します。GitHub は、この memory が他の security alert の修正や、Copilot code review・Copilot cloud agent にも repository 固有の安全な開発 pattern として使われると説明しています。
+
+memory は、組織が承認した規約ではなく**更新も削除もできる repository 固有の文脈**です。誤った修正 pattern が保存されると、後続の review や cloud agent の作業にも影響し得ます。
+
+- security の規約として強制したい内容は、memory ではなく instructions・review の設定・managed settings など、レビューを通る場所に置く
+- autofix の結果をマージする前の人の確認を省略しない
+- どの memory が作られたかを定期的に確認し、誤りは削除・訂正する
+
+**→ memory を長時間タスクの状態管理と区別する考え方は [長時間タスクの信頼性設計](agent-reliability.md#学習する-memory-を-checkpoint-と混同しない) を参照**
+
 ### OAuth consentを操作承認とみなさない
 
 外部providerへのOAuth consentは、指定scopeで代理アクセスするgrantを作る手続きです。接続済みでtokenを再利用できても、個々の送信・公開・削除・購入まで承認済みという意味ではありません。
@@ -242,6 +274,12 @@ GitHub Copilot の **content exclusion** は、機密ファイルを Copilot の
 - [Compliance API — session transcripts](https://platform.claude.com/docs/en/manage-claude/compliance-sessions) — 実行後のセッション取得（Anthropic 公式）
 - [Managed Agents permission policies](https://platform.claude.com/docs/en/managed-agents/permission-policies) — ツール呼び出し単位の権限判定（Anthropic 公式・Beta）
 - [Claude Code v2.1.271](https://github.com/anthropics/claude-code/releases/tag/v2.1.271) ／ [v2.1.273](https://github.com/anthropics/claude-code/releases/tag/v2.1.273) — command-scoped domain、Plugin command hash、managed MCP の fail-closed / 適用修正（公式）
+- [Claude Code v2.1.280](https://github.com/anthropics/claude-code/releases/tag/v2.1.280) ／ [v2.1.281](https://github.com/anthropics/claude-code/releases/tag/v2.1.281) ／ [v2.1.282](https://github.com/anthropics/claude-code/releases/tag/v2.1.282) — symlink の着地点判定、setting source の伝播、managed rule の優先（公式・2026-09-22〜24）
+- [Local sandboxing in the GitHub Copilot app](https://github.blog/changelog/2026-09-23-local-sandboxing-in-the-github-copilot-app/) — project 単位の local sandbox と、cloud / remote / CLI との区別（GitHub 公式・2026-09-23、Public Preview）
+- [VS Code 1.139 release notes](https://code.visualstudio.com/updates/v1_139) — remote host 上の Dev Container session（Microsoft 公式・2026-09-23）
+- [Codex CLI 0.157.0 release](https://github.com/openai/codex/releases/tag/rust-v0.157.0) — redirect 後と継続中の通信への network policy 適用（OpenAI 公式・2026-09-25）
+- [Enterprise managed settings in-product validator](https://github.blog/changelog/2026-09-25-enterprise-managed-settings-in-product-validator/) ／ [Default enablement of Copilot features](https://github.blog/changelog/2026-09-24-default-enablement-of-copilot-features-for-copilot-business-and-enterprise/) — managed settings の検証と新機能の既定ポリシー（GitHub 公式）
+- [Agentic autofix now uses Copilot Memory](https://github.blog/changelog/2026-09-25-agentic-autofix-now-uses-copilot-memory/) — autofix による memory の読み書きと他機能への波及（GitHub 公式・2026-09-25、Public Preview）
 - [Connect to a running session](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/sessions-connect) — Managed Agents の実行中セッションへの接続（Anthropic 公式）
 - [CVE-2026-89332 — Kiro IDE Sensitive Workspace Data Exfiltration](https://aws.amazon.com/security/security-bulletins/2026-111-aws/) — AWSがImportantとして公開し、0.8.135以上で修正済み（`提供元`: Official / AWS ｜ `状態`: —）
 - [CVE Record: CVE-2026-89332](https://www.cve.org/CVERecord?id=CVE-2026-89332) — 公開済みのCVE登録情報（`提供元`: Official / CVE Program ｜ `状態`: —）

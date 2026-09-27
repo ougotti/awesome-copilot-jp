@@ -1,6 +1,6 @@
 # Skill / エージェントの評価（evals） — 変更時の回帰と本番品質を分けて測る
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・本番エージェント基盤ほか） ｜ **実行環境**: CLI（ターミナル）/ Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-23
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・本番エージェント基盤ほか） ｜ **実行環境**: CLI（ターミナル）/ Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-27
 
 > [Skill / Plugin のセキュリティ](skill-security.md)は「**導入前**に入れてよいものか」を扱います。このページはその先、「**変更した Skill / Plugin が効いているか**」と「**本番エージェントが目的を達成しているか**」を測る話です。両者は対象と実行頻度が異なります。
 
@@ -136,6 +136,26 @@ PR のテスト通過・マージ率だけでは、後から必要になる保�
 
 実務では、同じ期間・同じリポジトリ・近いタスク種別とPRサイズで、マージ後のrevert、手直し工数、security finding、レビュー負荷を併記します。成功率だけでなく**維持にかかった時間**を見て、変更の導入判断へ戻します。
 
+### PR のレビュー待ち時間を品質スコアと混同しない
+
+上の「初回待ち時間」は、GitHub の Copilot usage metrics API から取れるようになりました。2026-09-25、enterprise / organization の repository 単位の `repos-1-day` report に `pull_request_review_times` が加わりました。
+
+| 段階 | フィールド（median / p90、単位は分） | 長いときに疑うこと |
+|------|-----------------------------------|------------------|
+| ready for review → 初回 review | `median_minutes_ready_to_first_review` / `p90_minutes_ready_to_first_review` | 誰にも見られずに待っている |
+| 初回 review → 最終 review | `median_minutes_first_to_final_review` / `p90_minutes_first_to_final_review` | reviewer と author の往復が多い |
+| 最終 review → merge | `median_minutes_final_review_to_merge` / `p90_minutes_final_review_to_merge` | 承認済みのまま merge されていない |
+
+集計には次の前提があります。
+
+- **対象**: 人が開き、別の人が 1 人以上 review した PR。この release では `authored_by` / `reviewed_by` はどちらも human で、Copilot code review・その他の bot・author 自身の review は計時しない。人と Copilot code review の両方が review した PR は含まれる
+- **件数の違い**: `pull_request_review_times[].total_merged` は、review なしで merge された PR も数える `pull_requests.total_merged` より通常少ない
+- **欠測**: 2026-09-21 より前に ready for review になった PR は backfill されない。該当 PR がない日は 0 ではなく空配列 `[]`。review が 1 回だけの PR は、初回 → 最終の段階が 0 になる
+- **帰属**: 所要時間は PR が merge された日に計上される
+- **権限**: enterprise owner / billing manager、organization owner、`View Copilot Metrics` 権限を持つ custom role。Copilot usage metrics policy の有効化が必要
+
+この指標は**レビュー工程の流れ**を示すもので、エージェントの出力品質を採点するものではありません。この release では**エージェントが開いた PR は対象外**なので、エージェント PR のレビュー負荷を直接測る指標でもありません。待ち時間が短くなっても、merge 後の revert や手直しが増えていれば品質は下がっています。前の小節の merge 後の指標と並べて読みます。
+
 ### AWS 固有の実装例 — Amazon Bedrock AgentCore Evaluations
 
 > **提供元**: Official（AWS） ｜ **状態**: GA ｜ **確認日**: 2026-09-17
@@ -203,6 +223,7 @@ AWS外へこの考え方を持ち込む場合は、製品名ではなく、**tra
 ## 参考リンク
 
 - [Not All Agents Are Equal](https://arxiv.org/html/2609.17598) — エージェントPRのマージ後90日・レビュー負荷の観察研究（Kraishan、2026-09-12、プレプリント）
+- [Usage metrics API adds pull request review stages](https://github.blog/changelog/2026-09-25-usage-metrics-api-adds-pull-request-review-stages/) — `pull_request_review_times` の段階・対象・欠測・権限（GitHub 公式・2026-09-25）
 - [Testing Agent Skills Systematically with Evals](https://developers.openai.com/blog/eval-skills) — 8 段階の評価手順（OpenAI 公式）
 - [Evaluating Skills](https://www.langchain.com/blog/evaluating-skills) — Robert Xu、2026-03-05（LangChain 公式）
 - [adewale/skill-eval-harness](https://github.com/adewale/skill-eval-harness) — 決定論的な採点を行う比較用ハーネス（Community・MIT）
