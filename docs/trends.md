@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-27 | 11 節にエージェントの記憶基盤（GBrain・Mem0・Graphiti / Zep・Letta）の比較ページへの導線を追加し、RAG アプリとの境界を整理した |
 | 2026-09-27 | Copilot app local sandbox、VS Code 1.139 remote Dev Container、Codex CLI 0.157、Claude inline tools・Claude Code 2.1.280〜2.1.282、Copilot新機能の既定ポリシー（2026-10-22適用）を10・12節へ追加し、実行場所・通信・managed policy・観測の境界を整理した |
 | 2026-09-23 | エージェント生成PRのマージ後90日のrevert・churn・レビュー負荷を、観察研究の母数と限界つきで15節へ追加した |
 | 2026-09-23 | Claude Opus 5.5・GPT-6 Sol / Luna の利用場所と、Codex CLI 0.156 系の作業導線を製品別ページに反映した |
@@ -672,7 +673,10 @@ Copilot usage metrics APIは2026-09-17にCLI customizationの上位5件とdistin
 
 共通するのは、**AI が草案を作り、人が承認する**という前提と、**エージェントには統制された層を通して触らせる**という設計です。LLM にグラフのクエリをその場で生成させる方式には精度の限界があります。
 
+形式的な定義を作らない側では、エージェントの**外部記憶**をうたう OSS が並んでいますが、種類は同じではありません。GBrain・Mem0 は既存のエージェントに外付けする記憶層、Graphiti / Zep は事実の有効期間を持つ時系列ナレッジグラフ、Letta（現 Letta Code）は記憶を持つエージェントの実行基盤、AnythingLLM・Open WebUI は MCP を**使う側**の RAG チャットアプリです。複数のエージェントから使う共通の記憶にするには、自分で動かせる MCP サーバーがあるか、書き込みに LLM が要るか、記憶の正本がどこにあるかで絞ります。
+
 **→ オントロジー / ナレッジグラフ / RAG / GraphRAG の切り分け、いつ必要でいつ不要かの判断、実装例の比較は [オントロジー](dev-methods/ontology.md) を参照**
+**→ 記憶基盤の比較表、複数エージェントからの使い方、ローカル配置の注意、用途別の選び方は [エージェントの記憶基盤](dev-methods/agent-memory.md) を参照**
 
 ---
 
