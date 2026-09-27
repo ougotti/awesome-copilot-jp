@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-27** [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#実行場所ごとの隔離境界を分ける)などへCopilot app local sandbox・VS Code 1.139・Codex CLI 0.157・Claude Code 2.1.280〜2.1.282と、10-22適用のCopilot既定ポリシーを追加
 - **2026-09-23** [Skill / エージェントの評価](docs/dev-methods/evals.md#コーディングエージェントはマージ後も測る)にPRのマージ後品質と観察研究の限界を追加
 - **2026-09-23** [Codex ガイド](docs/codex/README.md#gpt-6-sol--luna-と-codex-cli-0156-系)などへOpus 5.5・GPT-6 Sol/LunaとCLI 0.156系の利用条件を追加
 - **2026-09-23** [GitHub Copilot ガイド](docs/copilot/README.md#jetbrains-1180--エージェントの承認共有設定mcp)へJetBrains 1.18.0の承認・共有Skill・MCP制御を追加
 - **2026-09-23** [GitHub Copilot ガイド](docs/copilot/README.md#copilot-app-の-opentelemetry-実行トレース)へCopilot appのOpenTelemetry実行トレースと利用集計との違いを追加
-- **2026-09-23** [Skill / エージェントの評価](docs/dev-methods/evals.md#skill-を選べたか手順を守れたかを別々に測る)へSkill選択・手順遵守・未起動を分ける評価方法を追加
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 

@@ -1,6 +1,6 @@
 # 長時間タスクの信頼性設計
 
-> **対象ツール**: ツール横断（Claude Code・Codex・MCP・LangGraph ほか） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-20
+> **対象ツール**: ツール横断（Claude Code・Codex・MCP・LangGraph ほか） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-27
 
 > [ループエンジニアリング](loop-engineering.md)はエージェントを反復実行する方法と停止条件を、[AI エージェントの実行基盤（ハーネス）](harness.md)は実行環境を扱います。このページはその間にある、**長時間・多段階の仕事で小さな失敗が累積する問題**と、それを抑える信頼性設計を扱います。評価ツールや telemetry の網羅ではなく、**実行中の故障を前提にした** checkpoint・再開・冪等性・検証・reliability budget が対象です。
 
@@ -122,8 +122,26 @@ Anthropic の実利用データは、経験を積んだ利用者ほど「操作�
 | Claude Code `claude_code.managed_settings_resolved` | managed-settings の source / policy helper state と、opt-in で redacted settings / digest を OTel に残す。実効設定を再現できるようにする |
 | Claude Code の scheduled task 修正 | `.claude/scheduled_tasks.json` を worktree 等へコピーしても、別 session を誤って実行しないよう修正。定義コピーと runtime identity を分離する |
 | Codex daemon recovery | daemon update / restart 後に saved threads と active goals を復元する。更新前後で thread / goal の継続を postflight する |
+| Codex background server（0.157.0） | eligible な interactive session で background server を自動起動し、設定が非互換なら明示的な recovery の選択肢を示す。起動できない状態を黙って通過させない |
+| Codex network policy の継続適用（0.157.0） | policy 変更で access が失効した通信を cancel する。長時間の接続が、開始時の許可のまま動き続けない |
 
-製品が recovery を備えていても、外部副作用の exactly-once は保証されません。再開後に同じ step が走る可能性を前提に、[5 節](#5-冪等性重複実行外部副作用の扱い)の冪等キーと中間成果物の検証を組み合わせます。
+製品が recovery を備えていても、外部副作用の exactly-once は保証されません。再開後に同じ step が走る可能性を前提に、[5 節](#5-冪等性重複実行外部副作用の扱い)の冪等キーと中間成果物の検証を組み合わせます。通信が途中で cancel された step も、どこまで副作用が進んだかを確認してから再実行します。
+
+### 学習する memory を checkpoint と混同しない
+
+2026-09-25、GitHub の agentic autofix が Copilot Memory を読み書きするようになりました（両機能とも Public Preview）。既存の memory を修正の文脈として読み、作成した修正の pattern を memory として保存します。保存された memory は、後の security alert の修正や Copilot code review・cloud agent にも使われます。
+
+これは checkpoint とは性質が違います。
+
+| | checkpoint | 学習する memory |
+|---|-----------|----------------|
+| 目的 | 同じタスクを途中から再開する | 次回以降の別のタスクへ知識を持ち越す |
+| 範囲 | 1 つのタスク | repository 内の複数の機能・タスク |
+| 誤りの影響 | そのタスクのやり直しで済む | 誤った pattern が他の修正や review に広がり得る |
+
+memory は**更新・削除できる repository 固有の文脈**として扱い、組織の正式な規約の代わりにしません。誤った修正 pattern が保存されていないかを定期的に確認し、見つけたら削除・訂正します。「以前うまくいった修正」を根拠に後続のタスクを無確認で進めないことが、[8 節](#8-reliability-budget-と段階的な人間承認)の reliability budget の考え方と一致します。
+
+**→ 統制と監査の観点は [Skill / Plugin のセキュリティ](skill-security.md#学習した-memory-を-policy-とみなさない) を参照**
 
 ## 10. 最小テストシナリオ
 
@@ -159,4 +177,5 @@ Anthropic の実利用データは、経験を積んだ利用者ほど「操作�
 - [Measuring AI agent autonomy in practice](https://www.anthropic.com/news/measuring-agent-autonomy) — 承認戦略が実績に応じて変わる実利用データ（Anthropic 公式）
 - [LangGraph: Persistence](https://docs.langchain.com/oss/python/langgraph/persistence) — checkpointer・store による状態永続化（公式）
 - [Claude Code v2.1.273](https://github.com/anthropics/claude-code/releases/tag/v2.1.273) ／ [v2.1.274](https://github.com/anthropics/claude-code/releases/tag/v2.1.274) — scheduled task / worktree、MCP startup wait、managed settings event（公式）
-- [ChatGPT & Codex changelog](https://learn.chatgpt.com/docs/changelog) — Codex CLI 0.155.0 の daemon update と thread / goal recovery（公式・2026-09-17）
+- [ChatGPT & Codex changelog](https://learn.chatgpt.com/docs/changelog) — Codex CLI 0.155.0 の daemon update と thread / goal recovery（公式・2026-09-17）、0.157.0 の background server と network policy の継続適用（公式・2026-09-25）
+- [Agentic autofix now uses Copilot Memory](https://github.blog/changelog/2026-09-25-agentic-autofix-now-uses-copilot-memory/) — autofix による memory の読み書きと他機能への波及（GitHub 公式・2026-09-25、Public Preview）

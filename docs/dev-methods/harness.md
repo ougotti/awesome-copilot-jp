@@ -1,6 +1,6 @@
 # AI エージェントの実行基盤（ハーネス）
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-23
+> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-27
 
 > エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew / OpenAI Agents API）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
 
@@ -232,6 +232,16 @@ VS Code 1.138 の Agent Host は、Agent Host Protocol（AHP）を基盤に agen
 
 つまり、**定義が可搬であること、会話が継続すること、同じ実行環境・権限で動くことは別**です。handoff / import / Dev Container 化のたびに、tool surface、workspace、secret、network、permission を実行先で再評価します。
 
+2026-09 下旬の更新で、この「継続する面」と「継続しない面」の組み合わせはさらに増えました。
+
+| 更新 | 継続・拡張されるもの | 実行先で決まり直すもの |
+|------|---------------------|----------------------|
+| VS Code 1.139（2026-09-23） | Dev Container session を SSH / Tunnel / WSL 上の remote project でも使える | remote host の Docker と Dev Container 構成、そこから出る通信 |
+| Codex CLI 0.157.0（2026-09-25） | `f` で別 app の conversation を fork し、draft と queued prompt を保持する。remote / local background-server session でも `/import` を使える | credential、承認、workspace trust、sandbox と network policy |
+| Claude Code 2.1.281（2026-09-23） | `--setting-sources` / SDK `settingSources` の制限が teammates、`/bg`、`claude agents`、`--worktree --tmux` の session へ引き継がれる | 引き継ぎ対象外の起動経路では、実効設定を別途確認する |
+
+Claude Code の修正は逆方向の例です。以前は親 session で設定の読み込み元を絞っても、起動した別 session には伝わっていませんでした。**「会話や作業を引き継ぐ」経路と「制限を引き継ぐ」経路は別々に実装される**ため、どちらか一方だけが継続する状態を前提に確認します。
+
 ## ハーネスを意識する理由
 
 - **ループの土台になる**: 無人で回すループは、ハーネスが用意した権限・サンドボックス・観測の範囲でしか安全にならない（[ループエンジニアリング](loop-engineering.md)）。
@@ -262,6 +272,12 @@ GitHub は 2026-09-22 に [Copilot app の OTel 対応](https://github.blog/chan
 **文書の対象表記に差があります（2026-09-23 確認）。** 9 月 22 日の発表は Copilot app 対応を明記しますが、[enterprise-managed settings の `telemetry` リファレンス](https://docs.github.com/en/copilot/reference/enterprise-administrators/enterprise-managed-settings#telemetry)は対応先をまだ Copilot CLI / VS Code と記載しています。app へ展開する前に対象バージョンと有効な設定を確認し、collector に実際の trace が届くことを試してください。
 
 Claude Code 2.1.274 では `claude_code.managed_settings_resolved` OTel event が追加されました。managed-settings の source と policy helper の状態を確認でき、`OTEL_LOG_MANAGED_SETTINGS=1` を設定すると**値を redaction した設定と digest**も記録します。設定値そのものを露出させず、「どの管理設定が解決されたか」を監査するための event です。
+
+2.1.280（2026-09-22）では、`hook_execution_complete` event に hook の出力サイズと、大きすぎて file へ退避した出力の数が加わりました。hook が大量の出力を返してコンテキストや処理時間を圧迫していないかを追えます。また 2.1.282（2026-09-24）からは、project / local settings で OTel の export 有効化・endpoint・本文取得に関わる変数を設定できなくなりました。clone した repository が監視データの送信先を変えられないようにするためです。
+
+API 側では、Claude の **cache diagnostics** が 2026-09-23 に GA になりました。Messages request に `diagnostics` object を含めると、prompt cache が前の request と比べて効かなかった理由を診断できます（`cache-diagnosis-2026-04-07` beta header は不要になりました）。会話途中で tool を追加する inline tools（Beta）のように cache を保つ設計を検証するときに使えます。
+
+これらは**実行基盤の観測値**であり、エージェントの出力品質を採点するものではありません。cache hit 率や hook の出力量が良くても、成果物が正しいとは限りません。品質の評価は [Skill / エージェントの評価](evals.md) で別に行います。
 
 この「動かした後に何が見えるか」は、[Skill / Plugin のセキュリティ 5 節「統制が効く 3 つの段階」](skill-security.md#5-統制が効く-3-つの段階)の**実行後（監査）**と直結します。あちらが「セッションのトランスクリプトを取得する」という組織向け機能（Compliance API）を扱うのに対し、ここでの OpenTelemetry は**ベンダー中立の計測データ**（メトリクス・ログ・トレース）を自分たちの監視基盤（OTLP 対応バックエンド）へ流す仕組みです。両者は排他ではなく、組織で使える統制の手段が違う層として併存します。
 
@@ -401,6 +417,9 @@ Console などファイルの外側でリソースが編集・アーカイブ・
 - [Monitor agent usage with OpenTelemetry](https://code.visualstudio.com/docs/agents/guides/monitoring-agents) — VS Code Copilot Chat の OTel 対応（公式）
 - [VS Code 1.138 release notes](https://code.visualstudio.com/updates/v1_138) — Agent Host、Dev Container、Codex session handoff と tool surface（Microsoft 公式・2026-09-16）
 - [Claude Code v2.1.274](https://github.com/anthropics/claude-code/releases/tag/v2.1.274) — managed settings OTel event と MCP startup wait（Anthropic 公式・2026-09-17）
+- [Claude Code v2.1.280](https://github.com/anthropics/claude-code/releases/tag/v2.1.280) ／ [v2.1.281](https://github.com/anthropics/claude-code/releases/tag/v2.1.281) ／ [v2.1.282](https://github.com/anthropics/claude-code/releases/tag/v2.1.282) — hook 出力の OTel 計測、setting source の伝播、project 設定からの OTel 変数の除外（Anthropic 公式・2026-09-22〜24）
+- [VS Code 1.139 release notes](https://code.visualstudio.com/updates/v1_139) — remote host 上の Dev Container session（Microsoft 公式・2026-09-23）
+- [Codex CLI 0.157.0 release](https://github.com/openai/codex/releases/tag/rust-v0.157.0) — background server、`f` による fork、`/import` の対象拡大（OpenAI 公式・2026-09-25）
 - [Export user activity with OpenTelemetry](https://kiro.dev/docs/enterprise/monitor-and-track/user-activity/opentelemetry/) — account-levelの日次usage metrics、OTLP、設定権限、export時刻、metric定義（`提供元`: Official / Kiro ｜ `状態`: GA、2026-09-16確認）
 - [Kiro changelog — Export Kiro usage metrics to OpenTelemetry](https://kiro.dev/changelog/) — 機能公開の一次情報（`提供元`: Official / Kiro ｜ `状態`: GA、2026-09-01）
 - [Add VS Code Agents to Copilot usage metrics](https://github.blog/changelog/2026-09-11-add-vs-code-agents-to-copilot-usage-metrics/) — 専用 Agents ウィンドウの利用指標（GitHub 公式・GA）
@@ -408,6 +427,6 @@ Console などファイルの外側でリソースが編集・アーカイブ・
 - [OpenTelemetry in the GitHub Copilot app](https://github.blog/changelog/2026-09-22-opentelemetry-in-the-github-copilot-app/) — app への管理設定からのOTel対応（GitHub公式・2026-09-22）
 - [OpenTelemetry for agent monitoring](https://docs.github.com/en/copilot/concepts/enterprise/opentelemetry) — trace / metric / eventと本文の既定除外（GitHub公式）
 - [Manage resources as code with `ant apply`](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/apply) — リソースの種類・`claude-lock.json`・フラグ・CI 運用の一次情報（Anthropic 公式）
-- [Claude Platform リリースノート](https://platform.claude.com/docs/en/release-notes/overview) — `ant` CLI 1.30.0 / `ant apply` の公開（2026-09-03、公式）
+- [Claude Platform リリースノート](https://platform.claude.com/docs/en/release-notes/overview) — `ant` CLI 1.30.0 / `ant apply` の公開（2026-09-03）、cache diagnostics の GA（2026-09-23）（公式）
 - [Managed Agents permission policies](https://platform.claude.com/docs/en/managed-agents/permission-policies) — `always_allow` / `always_ask` / `auto` とイベント形式（Anthropic 公式・Beta）
 - [Connect to a running session](https://platform.claude.com/docs/en/cli-sdks-libraries/cli/sessions-connect) — `ant beta:sessions connect` による追跡・介入（Anthropic 公式）

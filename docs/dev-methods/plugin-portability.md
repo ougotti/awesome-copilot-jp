@@ -1,6 +1,6 @@
 # プラグインの可搬性 — インストール前に `plugin.json` を見る
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・Cursor・Kiro ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-20
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・Cursor・Kiro ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-27
 
 > 「マルチエージェント対応」と書かれた Plugin が、実際に他のエージェントへ持っていけるとは限りません。ベンダー中立のオープン標準 **Agent Plugins 1.0.0** に乗っているかどうかは、`plugin.json` を 1 つ開けば判定できます。このページは、その判定手順と、判定した結果で何が変わるかを 1 か所にまとめた解説です。標準そのものの成り立ちと各ツールの対応状況は [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準)、Copilot での操作手順は [GitHub Copilot Plugins](../copilot/plugins.md) を参照してください。
 
@@ -130,6 +130,17 @@ Plugin が可搬でも、実行時の拡張セットまで端末間で同じに�
 
 また、Claude Code の Plugin install / update で外部コマンドの承認が必要な場合、2.1.271 以降の `--accept-command <sha256>` は `--json` で表示した**そのコマンドだけ**を受け入れます。可搬性とは別の、インストール時の supply-chain 境界として扱います。
 
+### tool 一覧の固定と構成の検証はクライアントごとに違う
+
+Agent Plugins 1.0.0 が標準化しているのは、Plugin に**何を同梱するか**（Skills と MCP 設定）までです。同梱した MCP server から**実行時にどの tool 一覧を取得して使うか**、読み込めない設定をどう検出するかは、各クライアントの実装に残ります。2026-09 下旬の Anthropic の更新が、その具体例です。
+
+| 変更 | 可搬な部分 | クライアント固有の部分 |
+|------|-----------|----------------------|
+| Claude Platform inline tools（2026-09-22、Beta）と `mcp_tool_listing` | MCP server と tool の定義そのもの | `inline-tools-2026-09-15` / `mcp-client-2026-09-15` beta header、response の `mcp_tool_listing` を次の request に返して tool 一覧を固定する手順 |
+| `claude plugin validate` の MCP 検査（Claude Code 2.1.281） | Plugin に含めた MCP 設定 | load 時に黙って捨てられる `.mcp.json` entry、未宣言の `${user_config.*}`、insecure URL を報告する検査 |
+
+同じ Plugin を別のクライアントへ持ち込んでも、tool 一覧を固定する手段や、設定を事前に検証する手段は同じではありません。**可搬形式で配ることと、実行時の tool 一覧を再現できることは別**です。クライアントごとに、固定・検証の手段と記録の残し方を確認してください。Claude 側の手順は [Claude Code のカスタマイズ機能](../claude-code/basics.md#2026-09-の-mcp-関連の変更) にまとめています。
+
 **→ 導入前に何を確認するか、組織でどう絞り込むかは [Skill / Plugin のセキュリティ](skill-security.md) を参照**
 
 ---
@@ -153,3 +164,5 @@ Plugin が可搬でも、実行時の拡張セットまで端末間で同じに�
 - [microsoft/azure-skills](https://github.com/microsoft/azure-skills) ／ [microsoft/power-platform-skills](https://github.com/microsoft/power-platform-skills) — 独自形式の実例（公式・MIT）
 - [Google Cloud Developer Plugin](https://github.com/google/skills/tree/main/plugins/cloud/google-cloud-developer) ／ [Google Cloud公式発表](https://cloud.google.com/blog/topics/developers-practitioners/introducing-the-google-cloud-developer-plugin-for-ai-coding-agents) — Skill単体と可搬Pluginを同じリポジトリで配る例（公式・Apache-2.0）
 - [Claude Code v2.1.271](https://github.com/anthropics/claude-code/releases/tag/v2.1.271) ／ [v2.1.275](https://github.com/anthropics/claude-code/releases/tag/v2.1.275) — Plugin コマンドのハッシュ承認と、アカウント Skills / Plugins の端末同期（公式）
+- [Claude Code v2.1.281](https://github.com/anthropics/claude-code/releases/tag/v2.1.281) — `claude plugin validate` の MCP 設定検査（公式・2026-09-23）
+- [Claude Platform release notes](https://platform.claude.com/docs/en/release-notes/overview) — inline tools と `mcp_tool_listing` による tool 一覧の固定（公式・2026-09-22、Beta）

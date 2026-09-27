@@ -4,6 +4,14 @@
 
 ## 2026-09
 
+- **2026-09-27** Copilot Sandbox・Claude MCP拡張・Codex 0.157など2026-09-19〜09-26の動向を反映（#214）
+  - **実行場所ごとの隔離境界を整理** — Copilot appのlocal sandbox（Public Preview）、VS Code 1.139のSSH / Tunnel / WSL上のDev Container session、Copilotのcloud sandbox、Codex CLI 0.157.0のredirect後・通信中にも効くnetwork policy、Claude Codeのsandboxを、実行場所・強制主体・設定単位で[比較](docs/dev-methods/skill-security.md#実行場所ごとの隔離境界を分ける)した。
+  - **Copilotの管理者向け期限と検証を追加** — 新機能のglobal default policyは2026-10-22からUnconfiguredの項目に適用され、明示設定とPreviewのopt-inは保持されることを[GitHub Copilot ガイド](docs/copilot/README.md#新機能の既定ポリシー--2026-10-22-から適用)へ記載。managed settings validatorの検証対象と再確認手順も追加した。
+  - **Claudeのtool追加とmanaged policyを整理** — Claude Platformのinline tools（Beta）と`mcp_tool_listing`による一覧の固定、Claude Code 2.1.280〜2.1.282のMCP description上限・URL-mode elicitation・`plugin validate`のMCP検査・setting sourceの伝播・managed settingsの優先を[Claude Code](docs/claude-code/basics.md#managed-settings-を下位の設定で弱められない変更)と[プラグインの可搬性](docs/dev-methods/plugin-portability.md#tool-一覧の固定と構成の検証はクライアントごとに違う)へ反映した。
+  - **Codex CLI 0.157.0のsession継続を追加** — background serverの自動起動、`f`によるfork、remote / background-server sessionでの`/import`を[Codex ガイド](docs/codex/README.md#codex-cli-0157--通信中も効く-network-policy-と-session-の継続)に追加し、`/import`の旧制約の記述を更新した。会話の継続とcredential・承認・workspace trustの継続を[ハーネス解説](docs/dev-methods/harness.md#定義の可搬性と実行コンテキストを分ける)で分けた。
+  - **memory・指標・診断を品質評価と区別** — agentic autofixのCopilot Memory利用を[長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md#学習する-memory-を-checkpoint-と混同しない)で可変コンテキストとして扱い、PRレビュー段階の`pull_request_review_times`を[評価ページ](docs/dev-methods/evals.md#pr-のレビュー待ち時間を品質スコアと混同しない)へ、Claude cache diagnosticsのGAとhook出力のOTel計測をハーネス解説へ追加した。
+  - GitHub、Microsoft、Anthropic、OpenAIの公式release notes / changelogを2026-09-27に再確認し、[Skills 最新動向](docs/trends.md)とREADMEの「最近の更新」を同期した。
+
 - **2026-09-23** エージェント生成PRのマージ後品質の読み方を追加（#208）
   - [Skill / エージェントの評価](docs/dev-methods/evals.md#コーディングエージェントはマージ後も測る)に、2026-09-12公開プレプリントの90日revert、変更行あたりの後続commit、security smell、人間のレビュー数を母数と定義つきで整理した。
   - タスク割当・PRサイズ・言語・静的解析・revert検出の限界を明記し、製品ランキングや因果効果として扱わない。[コーディングエージェント比較](docs/dev-methods/coding-agents.md#乗り換えるときに見る軸)、[Skills 最新動向](docs/trends.md#15-skill--エージェントの評価evals)、READMEを同期した。

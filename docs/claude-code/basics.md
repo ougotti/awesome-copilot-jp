@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-23
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-27
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -251,6 +251,8 @@ Claude Code 2.1.269 以降には、Plugin の eval suite を実行する `claude
 | `claude plugin validate <path>` | manifest、ディレクトリ構造、frontmatter などが読み込めるか | 構造・スキーマのエラー |
 | `claude plugin eval <path>` | 実際の prompt で Skill が発火し、期待した結果・ツール順・ファイルを作るか | score、Plugin なしの baseline との差、JSON、HTML report |
 
+2.1.281（2026-09-23）からは、`claude plugin validate` が Plugin の MCP 設定も検査します。load 時に**黙って捨てられる** `.mcp.json` の entry、宣言されていない `${user_config.*}` の参照、insecure な URL を報告します。shell 形式の hook で `${CLAUDE_PLUGIN_ROOT}` を quote していない場合の警告も加わりました。いずれも「読み込める構成か」の検査で、Skill が期待どおり動くかは引き続き `plugin eval` で確認します。
+
 `claude plugin eval init` で `evals/` に case と grader の草案を作れます。各 case は既定で Plugin あり / なしをそれぞれ 3 回実行し、`regex`、`tool_used`、`tool_order`、`file_exists`、LLM judge などで採点します。実際のモデル呼び出しとして利用枠または API 料金を消費します。
 
 > eval はセキュリティ検査ではありません。対象 Plugin の hooks と、明示的に起動した実 MCP server は agent の sandbox 外で動き得ます。信頼できる Plugin だけを評価し、CI では必要な tool だけを `--allow-tools` で許可してください。公式ドキュメントは server-side で command が利用不可になる場合も案内しているため、2.1.269 以上でも現在の利用可否を実行環境で確認します。
@@ -354,6 +356,23 @@ Claude Enterprise では、Skill や Plugin の「入れる前の確認」に加
 
 > 3 つとも「入れてよい Skill か」を人が読む作業を置き換えるものではありません。**スキャンは既知の悪意を検出する仕組み**であり、[導入前に中身を読む](../dev-methods/skill-security.md#2-導入前に何を確認するか)必要は変わりません。
 
+### managed settings を下位の設定で弱められない変更
+
+2026-09-22〜24 の Claude Code 2.1.280〜2.1.282 では、**repository・user・Plugin 側の設定から managed の制限を弱められない**方向の修正と追加が続きました。
+
+| 版 | 変更 | 意味 |
+|----|------|------|
+| 2.1.280 | symlink 経由の書き込みを、repository 内での見かけのパスではなく**実際に書き込まれる先**で判定する | `acceptEdits`、allow rule、auto mode が repository 外への書き込みを承認しなくなった。UI 変更ではなく write boundary の訂正 |
+| 2.1.281 | `--setting-sources`（SDK の `settingSources`）を teammates、`/bg`、`claude agents` の session、`--worktree --tmux` へ引き継ぐ | 親 session で読み込み元を絞っても、起動した別 session では絞られていなかった問題の修正。subagent への policy 継承として確認する |
+| 2.1.282 | `allowClaudeInChromeWithManagedMcp` を追加 | exclusive な `managed-mcp.json` の下でも `claude --chrome` を使えるようにする managed 専用の許可。Chrome がブロックされたときのエラーがこのキーを示す |
+| 2.1.282 | `allowManagedPermissionRulesOnly` の下では、repository・user・`--add-dir` の Skill / command と skills-directory Plugin の manifest が、`allowed-tools` で自らの tool を事前承認できない | 配布物の metadata が managed の permission rule を迂回しない |
+| 2.1.282 | managed の boolean lock key を誤った型で書いても lock が適用され、startup で key 名を示す。`permissions` / `autoMode` / `worktree` / `attribution` は一部の値が無効でも残りを適用する | 設定ミスで policy 全体が黙って無効化される状態を減らす |
+| 2.1.282 | managed settings または `--settings` で `allowUnsandboxedCommands: false`、あるいは managed で `allowManagedDomainsOnly: true` のとき、project / local の `sandbox.excludedCommands` を無視する | repository 側の設定で sandbox の例外を追加できない |
+| 2.1.282 | project / local settings から、OpenTelemetry の export 有効化・endpoint・本文取得に関わる変数（`CLAUDE_CODE_ENABLE_TELEMETRY`、`OTEL_LOG_*` など）を設定できない | clone した repository がテレメトリの送信先を変えられない |
+| 2.1.282 | Windows / WSL で、admin policy（HKLM、`managed-settings.json`）が存在するが無効・読めない場合、利用者が書き込める HKCU と WSL の `/etc/claude-code` を適用しない | fail-open を防ぐ |
+
+運用確認では、managed file を置いたことではなく、**startup の警告、実際に解決された設定、subagent や別 session での挙動**まで確かめます。managed settings の解決結果は [`claude_code.managed_settings_resolved` OTel event](../dev-methods/harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions) で監査できます。
+
 ---
 
 ## 設定ファイル（settings.json）
@@ -419,6 +438,26 @@ MCP サーバーを設定すると、ブラウザ操作・データベース接�
 
 > MCP サーバーは外部へ接続し、認証情報を扱います。導入前に接続先と権限範囲を確認してください。
 
+### 2026-09 の MCP 関連の変更
+
+| 版・日付 | 変更 | 注意点 |
+|---------|------|--------|
+| Claude Code 2.1.280（2026-09-22） | `CLAUDE_CODE_MAX_MCP_DESCRIPTION_LENGTH` で、MCP tool description と server instruction の 2,048 文字上限を変更できる | session 内のすべての MCP server に効く。上限を上げるとコンテキストを消費するため、必要な server があるときだけ変える |
+| Claude Code 2.1.281（2026-09-23） | 2026-07-28 版 protocol の接続で **URL-mode elicitation** に対応。server が browser での操作（認証など）を開くよう依頼できる | browser flow を開く経路であり、tool 実行や権限を自動承認する仕組みではない。tool permission・managed policy は別の層で判定される |
+| Claude Platform（2026-09-22、Beta） | 会話途中の system message で tool 定義を追加できる **inline tools**（`inline-tools-2026-09-15` beta header） | Claude Code ではなく Messages API の機能。下記を参照 |
+
+**inline tools** は、`tool_addition` block に完全な tool 定義を載せ、会話の途中で tool を追加する・schema を変える・server tool を新しい版へ移すための Beta 機能です。top-level の `tools` を変えないため、prompt cache を無効にしにくい設計です。同じ header で、参照による tool の追加・削除も扱えます。
+
+MCP connector の `mcp-client-2026-09-15` beta header と組み合わせると、定義に MCP toolset を指定でき、response の `mcp_tool_listing` block に各 server から取得した tool list が記録されます。**この block を次の request に返すと tool list が固定されます**。
+
+動的に tool を追加するアプリでは、次の 3 点を実行記録に残してください。
+
+1. 使った beta header
+2. 追加した tool 定義の出所（どの server・どの版から来たか）
+3. 固定した `mcp_tool_listing`
+
+動的な発見は、そのままでは同じ tool 一覧で再実行できることを意味しません。一覧を固定せずに再実行すると、server 側の変更で使える tool が変わる可能性があります。**→ 可搬性との関係は [プラグインの可搬性](../dev-methods/plugin-portability.md#tool-一覧の固定と構成の検証はクライアントごとに違う) を参照**
+
 ---
 
 ## セットアップ
@@ -467,6 +506,8 @@ CLAUDE.md              # プロジェクトの前提・規約
 - [Claude Code v2.1.271](https://github.com/anthropics/claude-code/releases/tag/v2.1.271) — `omitClaudeMd`、コマンド単位のドメイン許可、Plugin コマンドのハッシュ承認（公式・2026-09-14）
 - [Claude Code v2.1.275](https://github.com/anthropics/claude-code/releases/tag/v2.1.275) — claude.ai の Skills / Plugins 同期と opt-out（公式・2026-09-17）
 - [Claude Code v2.1.277](https://github.com/anthropics/claude-code/releases/tag/v2.1.277) — `AGENTS.md` fallback と提供経路の制限（公式・2026-09-18）
+- [Claude Code v2.1.280](https://github.com/anthropics/claude-code/releases/tag/v2.1.280) ／ [v2.1.281](https://github.com/anthropics/claude-code/releases/tag/v2.1.281) ／ [v2.1.282](https://github.com/anthropics/claude-code/releases/tag/v2.1.282) — MCP description 上限、URL-mode elicitation、`plugin validate` の MCP 検査、setting source の伝播、managed settings の優先（公式・2026-09-22〜24）
+- [Claude Platform release notes](https://platform.claude.com/docs/en/release-notes/overview) — inline tools（2026-09-22、Beta）と `mcp_tool_listing`、cache diagnostics の GA（2026-09-23）（公式）
 - [Inference hooks](https://platform.claude.com/docs/en/manage-claude/inference-hooks) — 推論前の allow / deny 判定（公式）
 - [Compliance API — Retrieve session transcripts](https://platform.claude.com/docs/en/manage-claude/compliance-sessions) — セッションのトランスクリプト取得（公式）
 - [Claude apps release notes](https://support.claude.com/en/articles/12138966-release-notes) — Skill / Plugin セキュリティスキャンの提供状況（公式）

@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-23
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-27
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -430,6 +430,37 @@ Agent Host は Agent Host Protocol（AHP）を基盤に、agent harness を **VS
 
 Codex session は ChatGPT app と VS Code の間で同じ会話を継続できます。ただし移動後の tool surface は VS Code 側の built-in / extension / MCP tools へ広がります。**会話が同じでも、使える tool と実行境界が同じとは限らない**ため、handoff 後に権限と接続先を再確認します。
 
+### VS Code 1.139 — Dev Container を remote host へ広げる
+
+VS Code 1.139（2026-09-23、Stable）では、Agent Host の Dev Container session が local folder だけでなく **SSH・Tunnel・WSL 上の project** でも使えるようになりました。1.138 の local 対応を置き換えるものではなく、**実行 host の範囲を広げる追加**です。
+
+| 前提 | 内容 |
+|------|------|
+| 設定 | `chat.agentHost.devContainer.enabled`。段階的ロールアウト中のため、既定で有効になっていない場合は手動で有効にする |
+| 操作 | Agents Window の folder menu から Use Dev Container を選ぶ |
+| remote 側 | remote folder に対応する Dev Container configuration があり、**remote host 上で Docker** が使えること |
+
+toolchain / dependencies を remote project 側で揃えたまま agent に build / test させられますが、container の中で動くことは、network・secret・tool 権限の設計が不要になることを意味しません。
+
+同じ release では、組織の account policy で Agent mode を無効にしている場合に、Welcome 画面や `code --agents` などの別経路から Agents Window を開けてしまう問題が修正されました。**起動経路の違いは policy の回避手段ではありません**。
+
+### Copilot app の local sandbox
+
+2026-09-23 に、Copilot app の **local sandboxing** が **Public Preview** になりました。local repository / working tree の session で、コマンドが触れる file・network・credential を project 単位で制限します。
+
+| 設定 | 選べる内容 |
+|------|-----------|
+| Filesystem | 追加の read / write folder、追加の read-only folder、denied folder |
+| Network | outbound internet、local network |
+| Credentials | 認証付き HTTPS git 操作の Git credential、GitHub CLI credential |
+
+- project の設定は、sandboxed session の開始時に app が**要求する policy** です。enterprise managed settings がより厳しければ、実効 policy はそちらになります
+- OS が要求した policy を強制できない場合、sandboxed shell は**sandbox なしで続行せずエラー**になります
+- 既定はオフです。app settings で project を選び、Sandbox の **Sandbox new sessions** をオンにします。対象は新しい session で、filesystem / network / credential の変更は既存 session の restart 後に反映されます
+- 実行中の local session だけを sandbox 化するには `/sandbox on` を使います。project の既定は変わりません
+
+> **別の sandbox 設定と混同しないでください。** local sandboxing は cloud sandbox session や remote host 上の session には適用されません。Copilot app と Copilot CLI の sandbox 設定も別々に構成します。実行場所ごとの比較は [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#実行場所ごとの隔離境界を分ける) を参照してください。
+
 ### Agentic CLI の customization 利用指標
 
 2026-09-17、Copilot usage metrics API に CLI の Skill / custom agent / MCP / slash command / Plugin 指標が加わりました。
@@ -442,6 +473,8 @@ Codex session は ChatGPT app と VS Code の間で同じ会話を継続でき�
 顧客定義名は privacy のため Skill / custom agent / MCP / Plugin では `other`、custom slash command では `custom` にまとめられます。MCP の `interaction_count` は**接続 / 再接続の試行回数**で、tool call 数ではありません（成功・失敗の両方を数える）。Plugin は Plugin に属する Skill invocation の subset で、同じ activity が Skill totals にも入るため、両者を加算しません。
 
 この指標が示すのは adoption、利用の偏り、enablement gap です。生産性、成果物の品質、MCP 接続の成功率を直接示す評価指標ではありません。
+
+2026-09-25 には repository 単位の `repos-1-day` report に `pull_request_review_times` が加わり、ready for review → 初回 review、初回 → 最終 review、最終 review → merge の各段階の median / p90 を取得できるようになりました。人が開き、別の人が review した PR だけが対象で、Copilot code review・bot・author 自身の review は計時しません。**→ 測定対象・欠測・読み方は [Skill / エージェントの評価](../dev-methods/evals.md#pr-のレビュー待ち時間を品質スコアと混同しない) を参照**
 
 ### Copilot app の OpenTelemetry 実行トレース
 
@@ -523,6 +556,17 @@ GitHub Copilot for JetBrains では、2026-09-08 に **enterprise managed sandbo
 
 **→ セレクター、承認を省略できない条件、JetBrains sandbox、Claude Managed Agents との比較は [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#実行する操作を-deny--ask--allow-に分ける) を参照**
 
+### managed settings を validator で確認する
+
+2026-09-25、enterprise managed settings の **in-product validator** が加わりました。JSON の書式誤り、未対応の構成、無効な team mapping など、**policy が意図どおり適用されない原因**を、enterprise の AI controls ページにある「Copilot settings validation」に表示します。各 issue には対象 file と JSON path が示されます。
+
+| 検証対象 | 内容 |
+|---------|------|
+| `copilot/managed-settings.json` | enterprise 全体の managed settings |
+| `copilot/team-mappings.json` | team mapping と、そこから参照される team settings file |
+
+修正は `.github-private` repository の **default branch へ commit** し、Agents ページを再読み込みしてから validator の結果を再確認します。「file を置いた」ことではなく「validator がエラーを出さない」ことを適用確認の最低ラインにしてください。
+
 ### JetBrains 1.18.0 — エージェントの承認・共有設定・MCP
 
 2026-09-22 の [GitHub 公式発表](https://github.blog/changelog/2026-09-22-new-features-and-improvements-in-copilot-for-jetbrains/)で、GitHub Copilot for JetBrains 1.18.0 に次の変更が加わりました。
@@ -536,6 +580,32 @@ GitHub Copilot for JetBrains では、2026-09-08 に **enterprise managed sandbo
 | 以前のメッセージの再編集 | Copilot agent session で過去のユーザーメッセージを再編集できる。置き換えを送信する前に、会話とファイル変更がその地点まで巻き戻されるため、残したい変更は事前に確認する |
 
 JetBrains Gateway / リモート開発環境では、inline chat とその入口が非表示になりました。通常の JetBrains IDE の説明をリモート環境にそのまま当てはめないでください。
+
+---
+
+## 新機能の既定ポリシー — 2026-10-22 から適用
+
+2026-09-24、Copilot Business / Enterprise の enterprise / organization 設定に、**一般提供（GA）された eligible な機能と client capability の global default policy** が追加されました。設定は今すぐできますが、利用者の機能アクセスに影響し始めるのは **2026-10-22** からです。
+
+> **確認日: 2026-09-27 / 状態: 設定受付中（2026-10-22 適用開始）**。適用後は公式文書と管理画面で実際の挙動を再確認してください。
+
+| 項目 | 内容 |
+|------|------|
+| 設定場所 | AI Controls → Copilot → **Default policy for new features** |
+| 対象 | Features & clients ページで管理される eligible な機能、Agents ページの **Copilot Code Review** policy、**MCP servers in Copilot** policy。eligibility と例外は公式の default availability 文書で確認する |
+| 選択肢 | **Enabled**（現在と将来の eligible 機能を既定で利用可能）／ **Disabled**（現在の eligible 機能は使えないまま、将来の機能は管理者の承認が必要）／ **Let organizations decide** |
+
+2026-10-22 以降の扱いは次のとおりです。
+
+- **Unconfigured のまま**の eligible な GA 機能は、選んだ global default に従います
+- **明示的に enable / disable した設定は保持**されます
+- **Preview は引き続き opt-in** です。Preview で選んだ設定は、その機能が後に GA になっても保持されます
+
+「全機能が自動で有効になる」わけではありません。一方、何も選ばなければ未設定の policy が新しい既定に従うため、管理者は期限前に次を確認します。
+
+1. Features & clients、Copilot Code Review、MCP servers in Copilot のうち、**Unconfigured のまま**の項目を洗い出す
+2. MCP server の利用可否は、[MCP allowlists](../dev-methods/skill-security.md#4-組織で許可範囲を絞る) と合わせて意図した状態にする
+3. 組織ごとに判断させる場合は、organization 管理者へ期限と判断基準を伝える
 
 ---
 
@@ -677,6 +747,12 @@ VS Code、Copilot CLI、Copilot app、cloud / coding agent、JetBrains などの
 - [Create and manage agent automations](https://code.visualstudio.com/docs/agents/run/automations) — Preview / rollout、`.automation.md` の portable boundary（Microsoft 公式）
 - [Agentic CLI customizations in the usage metrics API](https://github.blog/changelog/2026-09-17-agentic-cli-customizations-now-in-the-usage-metrics-api/) — 上位 5 件、distinct count、privacy と集計上の注意（GitHub 公式）
 - [OpenTelemetry in the GitHub Copilot app](https://github.blog/changelog/2026-09-22-opentelemetry-in-the-github-copilot-app/) — appからのOTel exportと本文の既定除外（GitHub公式・2026-09-22）
+- [VS Code 1.139 release notes](https://code.visualstudio.com/updates/v1_139) — SSH / Tunnel / WSL 上の Dev Container session と Agent mode policy の修正（Microsoft 公式・2026-09-23）
+- [Local sandboxing in the GitHub Copilot app](https://github.blog/changelog/2026-09-23-local-sandboxing-in-the-github-copilot-app/) — project 単位の file / network / credential 制限（GitHub 公式・2026-09-23、Public Preview）
+- [Default enablement of Copilot features for Copilot Business and Enterprise](https://github.blog/changelog/2026-09-24-default-enablement-of-copilot-features-for-copilot-business-and-enterprise/) — 新機能の global default policy と 2026-10-22 の適用開始（GitHub 公式・2026-09-24）
+- [Enterprise managed settings in-product validator](https://github.blog/changelog/2026-09-25-enterprise-managed-settings-in-product-validator/) — managed settings / team mappings の検証（GitHub 公式・2026-09-25）
+- [Usage metrics API adds pull request review stages](https://github.blog/changelog/2026-09-25-usage-metrics-api-adds-pull-request-review-stages/) — `pull_request_review_times` の段階別 median / p90（GitHub 公式・2026-09-25）
+- [GitHub Copilot weekly releases: September 21](https://github.blog/changelog/2026-09-25-github-copilot-weekly-releases-september-21/) — 同週の Copilot app・VS Code・JetBrains 等の更新一覧（GitHub 公式・2026-09-25）
 - [Cookbook](https://github.com/github/awesome-copilot/blob/main/cookbook/README.md) — Copilot SDK を活用した実践的コードレシピ集
 - [About GitHub Copilot plugins](https://docs.github.com/en/copilot/concepts/agents/about-plugins) — Plugin の概念と構成（公式）
 - [Manage agent skills with GitHub CLI](https://github.blog/changelog/2026-04-16-manage-agent-skills-with-github-cli/) — `gh skill` による Skill 管理（公式）

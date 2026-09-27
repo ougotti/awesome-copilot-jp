@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-23
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-27
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-27 | Copilot app local sandbox、VS Code 1.139 remote Dev Container、Codex CLI 0.157、Claude inline tools・Claude Code 2.1.280〜2.1.282、Copilot新機能の既定ポリシー（2026-10-22適用）を10・12節へ追加し、実行場所・通信・managed policy・観測の境界を整理した |
 | 2026-09-23 | エージェント生成PRのマージ後90日のrevert・churn・レビュー負荷を、観察研究の母数と限界つきで15節へ追加した |
 | 2026-09-23 | Claude Opus 5.5・GPT-6 Sol / Luna の利用場所と、Codex CLI 0.156 系の作業導線を製品別ページに反映した |
 | 2026-09-23 | JetBrains 1.18.0 の assisted approvals（Public Preview）と共有 Skill・MCP ツール制御を、既存の managed permissions / sandbox と分けて整理した |
@@ -652,6 +653,10 @@ Copilot usage metrics APIは2026-09-17にCLI customizationの上位5件とdistin
 
 長い会話の状態管理では、Claude Messages APIの`compact-2026-09-04` betaがtop-level `compaction`からsigned blockを返し、次回以降はそのblockをmessagesの先頭へ置くon-demand方式を追加しました。recent turnsをverbatimで残すkeep-tailにも使えます。これはアプリがtimingとmessage stateを管理する仕組みで、OpenAI Agents APIのmanaged context compactionとは責任主体が違います。
 
+2026-09-22〜25には、実行場所と session の継続がさらに広がりました。VS Code 1.139（2026-09-23）はDev Container sessionをSSH / Tunnel / WSL上のremote projectへ広げ（段階的ロールアウト）、Codex CLI 0.157.0（2026-09-25）は別appで開いているconversationの`f`によるforkと、remote / local background-server sessionでの`/import`を加えました。Claude Code 2.1.281は、`--setting-sources`の制限をteammates・`/bg`・`claude agents`などの別sessionへ引き継ぐよう修正しています。**会話や作業が継続しても、credential・承認・workspace trust・sandboxは実行先で決まり直します。**
+
+観測面では、Claudeのcache diagnosticsが2026-09-23にGAとなり、Claude Code 2.1.280は`hook_execution_complete` eventへhook出力のサイズを加えました。Copilot usage metrics APIには2026-09-25にPRのレビュー段階ごとの待ち時間（`pull_request_review_times`）が加わりましたが、対象は人が開き人がreviewしたPRだけです。いずれも実行基盤・工程の観測値で、エージェントの品質スコアではありません（[評価の詳細](dev-methods/evals.md#pr-のレビュー待ち時間を品質スコアと混同しない)）。
+
 **→ 概念、Microsoft Copilot Studio・QM・Kiro Crew・OpenAI Agents APIの実装、セキュリティポスチャ、導入の前提、OpenTelemetryでの可観測性は [AI エージェントの実行基盤（ハーネス）](dev-methods/harness.md) を参照**
 **→ ループの構成要素・停止条件の作り方・落とし穴は [ループエンジニアリング](dev-methods/loop-engineering.md) を参照**
 **→ サブエージェントや並列実行を「いつ使うべきか」という設計判断は [マルチエージェントを使う境界線](dev-methods/multi-agent.md) を参照**
@@ -690,6 +695,12 @@ AWSが2026-09-11に公開したKiro IDEのCVE-2026-89332（AWS公式・Important
 Claude Code 2.1.271〜2.1.277では、`AGENTS.md`は`CLAUDE.md`がない場合だけのfallback、`omitClaudeMd`はuser / project / local指示をサブエージェントから除外してもmanaged policyは残る、`allowed_domains`は1コマンド限定、`--accept-command <sha256>`はJSONで表示したPlugin commandだけを承認する、という境界が加わりました。読み取れない`managed-mcp.json`はexclusive controlを維持するfail-closedへ修正されています。アカウントSkills / Pluginsの端末同期は個別にopt-outできるため、repositoryだけでなくaccount / organization層も実効構成に含めます。
 
 Codex CLI 0.155.0のTouch IDは、対応Macのlocal TUIにおけるMCP requestの**current-user verification**です。OAuth identity、tool permission、action approvalとは別層で、本人確認がscopeや権限を広げるわけではありません。
+
+2026-09-23〜25には、**実行場所ごとの隔離**が各製品で同時に更新されました。Copilot appのlocal sandbox（Public Preview）はproject単位でfile / network / credentialを制限し、OSが強制できなければsandboxなしで続行せずエラーにします。cloud sandbox、remote host、Copilot CLIのsandbox設定とは別です。Codex CLI 0.157.0は、network restrictionをredirect先と継続中のHTTP / WebSocket通信にも適用し、policy変更で失効した通信をcancelします。Claude Code 2.1.280〜2.1.282では、symlink経由の書き込みを実際の着地点で判定し、repository・user・Pluginのmetadataがmanagedのpermission rule・sandbox除外・OTel送信先を弱められないよう修正されました。比較表は[詳細ページ](dev-methods/skill-security.md#実行場所ごとの隔離境界を分ける)にあります。
+
+組織の既定値にも期限があります。Copilot Business / Enterpriseでは、GAのeligibleな機能・Copilot Code Review・MCP servers in Copilotのpolicyについて、**2026-10-22からUnconfiguredの項目がglobal default policyに従います**。明示した設定は保持され、Previewはopt-inのままです（[確認手順](copilot/README.md#新機能の既定ポリシー--2026-10-22-から適用)）。また、agentic autofixがCopilot Memoryを読み書きするようになり（Public Preview）、修正patternがcode reviewやcloud agentにも波及します。memoryは組織の規約ではなく、訂正・削除できる文脈として扱います。
+
+MCP側では、Claude Code 2.1.281が2026-07-28版protocolのURL-mode elicitationに対応しました。これはserverがbrowserでの操作を開く経路であり、tool実行や権限の承認ではありません。Claude PlatformのInline tools（2026-09-22、Beta）は会話途中でtool定義を追加でき、`mcp_tool_listing`を返すことでMCPのtool一覧を固定します。動的な発見と再現性のある実行を同一視せず、beta header・定義の出所・固定した一覧を記録します（[Claude Codeの詳細](claude-code/basics.md#2026-09-の-mcp-関連の変更)）。
 
 外部サービスへ接続するときは、OAuth consentの後にも承認境界が残ります。AWSは2026-09-01にAgentCore Identityのmanaged Consent Portalを公開し、primary OIDC IdPで認証した利用者とGitHub / Slack等のoutbound grantをsession bindingし、token vaultへ保存する例を示しました。これは「指定scopeで接続してよい」という同意であり、個々の送信・公開・削除を実行してよいという承認ではありません。**OAuth consent、session binding、per-action approvalを別々に追跡します。**
 
@@ -879,6 +890,10 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 - [VS Code 1.138 release notes](https://code.visualstudio.com/updates/v1_138) ／ [Create and manage agent automations](https://code.visualstudio.com/docs/agents/run/automations) — Agent Host、Codex継続、`.automation.md`、Preview / rollout（Microsoft 公式）
 - [Add VS Code Agents to Copilot usage metrics](https://github.blog/changelog/2026-09-11-add-vs-code-agents-to-copilot-usage-metrics/) — 専用 Agents ウィンドウの利用指標（GitHub 公式・GA）
 - [Agentic CLI customizations in the usage metrics API](https://github.blog/changelog/2026-09-17-agentic-cli-customizations-now-in-the-usage-metrics-api/) — CLI customizationのtop 5 / distinct countと集計上の注意（GitHub 公式）
+- [VS Code 1.139 release notes](https://code.visualstudio.com/updates/v1_139) — SSH / Tunnel / WSL上のDev Container session（Microsoft 公式・2026-09-23）
+- [Codex CLI 0.157.0 release](https://github.com/openai/codex/releases/tag/rust-v0.157.0) — background server、`f`によるfork、`/import`の対象拡大（OpenAI 公式・2026-09-25）
+- [Usage metrics API adds pull request review stages](https://github.blog/changelog/2026-09-25-usage-metrics-api-adds-pull-request-review-stages/) — PRレビュー段階ごとのmedian / p90と対象範囲（GitHub 公式・2026-09-25）
+- [Claude Platform release notes](https://platform.claude.com/docs/en/release-notes/overview) — cache diagnosticsのGA（2026-09-23）とinline tools（2026-09-22、Beta）（Anthropic 公式）
 - [OpenTelemetry in the GitHub Copilot app](https://github.blog/changelog/2026-09-22-opentelemetry-in-the-github-copilot-app/) — appの実行トレースをmanaged settingsからexport（GitHub公式・2026-09-22）
 - [Claude Messages API compaction](https://platform.claude.com/docs/en/build-with-claude/compaction) — on-demand compaction、signed block、keep-tail（Anthropic 公式・Beta）
 
@@ -897,6 +912,11 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 - [Agents 一覧](copilot/agents.md) — 導入前監査に使える `trojan-skill-hunter` の解説（本ガイド）
 - [Claude Code v2.1.271](https://github.com/anthropics/claude-code/releases/tag/v2.1.271) ／ [v2.1.274](https://github.com/anthropics/claude-code/releases/tag/v2.1.274) ／ [v2.1.275](https://github.com/anthropics/claude-code/releases/tag/v2.1.275) ／ [v2.1.277](https://github.com/anthropics/claude-code/releases/tag/v2.1.277) — 読み込み・権限・同期・運用の更新（Anthropic 公式）
 - [ChatGPT & Codex changelog](https://learn.chatgpt.com/docs/changelog) — Codex CLI 0.155.0のMCP user verificationとdaemon recovery（OpenAI 公式）
+- [Claude Code v2.1.280](https://github.com/anthropics/claude-code/releases/tag/v2.1.280) ／ [v2.1.281](https://github.com/anthropics/claude-code/releases/tag/v2.1.281) ／ [v2.1.282](https://github.com/anthropics/claude-code/releases/tag/v2.1.282) — symlinkの着地点判定、URL-mode elicitation、managed ruleの優先（Anthropic 公式・2026-09-22〜24）
+- [Local sandboxing in the GitHub Copilot app](https://github.blog/changelog/2026-09-23-local-sandboxing-in-the-github-copilot-app/) — project単位のlocal sandbox（GitHub 公式・2026-09-23、Public Preview）
+- [Default enablement of Copilot features for Copilot Business and Enterprise](https://github.blog/changelog/2026-09-24-default-enablement-of-copilot-features-for-copilot-business-and-enterprise/) — 新機能の既定ポリシーと2026-10-22の適用開始（GitHub 公式）
+- [Enterprise managed settings in-product validator](https://github.blog/changelog/2026-09-25-enterprise-managed-settings-in-product-validator/) — managed settings / team mappingsの検証（GitHub 公式・2026-09-25）
+- [Agentic autofix now uses Copilot Memory](https://github.blog/changelog/2026-09-25-agentic-autofix-now-uses-copilot-memory/) — autofixによるmemoryの読み書き（GitHub 公式・2026-09-25、Public Preview）
 
 ### Skill が動く場所・MCP 仕様（本ページ 9・13 節）
 
