@@ -275,6 +275,8 @@ Claude Code 2.1.274 では `claude_code.managed_settings_resolved` OTel event �
 
 2.1.280（2026-09-22）では、`hook_execution_complete` event に hook の出力サイズと、大きすぎて file へ退避した出力の数が加わりました。hook が大量の出力を返してコンテキストや処理時間を圧迫していないかを追えます。また 2.1.282（2026-09-24）からは、project / local settings で OTel の export 有効化・endpoint・本文取得に関わる変数を設定できなくなりました。clone した repository が監視データの送信先を変えられないようにするためです。
 
+2.1.283（2026-09-25）では、`OTEL_LOG_TOOL_CONTENT=1` のときに `tool.output` span event へ記録される内容に、**MCP tool・WebFetch・WebSearch の出力**が加わりました。外部の Web ページや社内システムから取得した内容まで監視基盤へ送られる可能性があるため、この変数を有効にしている組織は、送信先の保存期間と閲覧権限を見直してください。
+
 API 側では、Claude の **cache diagnostics** が 2026-09-23 に GA になりました。Messages request に `diagnostics` object を含めると、prompt cache が前の request と比べて効かなかった理由を診断できます（`cache-diagnosis-2026-04-07` beta header は不要になりました）。会話途中で tool を追加する inline tools（Beta）のように cache を保つ設計を検証するときに使えます。
 
 これらは**実行基盤の観測値**であり、エージェントの出力品質を採点するものではありません。cache hit 率や hook の出力量が良くても、成果物が正しいとは限りません。品質の評価は [Skill / エージェントの評価](evals.md) で別に行います。
@@ -418,6 +420,7 @@ Console などファイルの外側でリソースが編集・アーカイブ・
 - [VS Code 1.138 release notes](https://code.visualstudio.com/updates/v1_138) — Agent Host、Dev Container、Codex session handoff と tool surface（Microsoft 公式・2026-09-16）
 - [Claude Code v2.1.274](https://github.com/anthropics/claude-code/releases/tag/v2.1.274) — managed settings OTel event と MCP startup wait（Anthropic 公式・2026-09-17）
 - [Claude Code v2.1.280](https://github.com/anthropics/claude-code/releases/tag/v2.1.280) ／ [v2.1.281](https://github.com/anthropics/claude-code/releases/tag/v2.1.281) ／ [v2.1.282](https://github.com/anthropics/claude-code/releases/tag/v2.1.282) — hook 出力の OTel 計測、setting source の伝播、project 設定からの OTel 変数の除外（Anthropic 公式・2026-09-22〜24）
+- [Claude Code v2.1.283](https://github.com/anthropics/claude-code/releases/tag/v2.1.283) — `tool.output` span event に MCP tool・WebFetch・WebSearch の出力を追加（Anthropic 公式・2026-09-25）
 - [VS Code 1.139 release notes](https://code.visualstudio.com/updates/v1_139) — remote host 上の Dev Container session（Microsoft 公式・2026-09-23）
 - [Codex CLI 0.157.0 release](https://github.com/openai/codex/releases/tag/rust-v0.157.0) — background server、`f` による fork、`/import` の対象拡大（OpenAI 公式・2026-09-25）
 - [Export user activity with OpenTelemetry](https://kiro.dev/docs/enterprise/monitor-and-track/user-activity/opentelemetry/) — account-levelの日次usage metrics、OTLP、設定権限、export時刻、metric定義（`提供元`: Official / Kiro ｜ `状態`: GA、2026-09-16確認）

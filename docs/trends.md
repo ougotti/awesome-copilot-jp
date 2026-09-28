@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-27 | Claude Code 2.1.283 の auto mode の開始モード拡大・`availableModelsMatch` / `deniedModels`・`/doctor prompt-audit`、Copilot CLI 1.0.87 / 1.0.88 の managed settings 適用範囲、Compliance API の取得範囲と Activity Feed の変更を 12・15 節へ追加した。7 節の比較表で `npx skills` のバージョン固定を CLI 1.5.24 以降の状況に合わせた |
 | 2026-09-27 | 11 節にエージェントの記憶基盤（GBrain・Mem0・Graphiti / Zep・Letta）の比較ページへの導線を追加し、RAG アプリとの境界を整理した |
 | 2026-09-27 | Copilot app local sandbox、VS Code 1.139 remote Dev Container、Codex CLI 0.157、Claude inline tools・Claude Code 2.1.280〜2.1.282、Copilot新機能の既定ポリシー（2026-10-22適用）を10・12節へ追加し、実行場所・通信・managed policy・観測の境界を整理した |
 | 2026-09-23 | エージェント生成PRのマージ後90日のrevert・churn・レビュー負荷を、観察研究の母数と限界つきで15節へ追加した |
@@ -420,7 +421,7 @@ apm install microsoft/azure-skills   # 個別に追加する（apm.yml に永続
 | 主用途 | Skill の検索・導入 | Skill のライフサイクル管理 | 複数拡張の一括配布 | チームの環境の再現 |
 | 配布単位 | Skill | Skill | Plugin | 依存ツリー（Skill / Plugin / MCP ほか） |
 | 更新追跡 | CLI 依存 | provenance（git tree SHA） | Marketplace のバージョン | ロックファイル |
-| バージョン固定 | — | `--pin` / コミット SHA 指定 | Marketplace のバージョン / `source.sha`（commit SHA） | `apm.lock`（解決結果を固定） |
+| バージョン固定 | 導入時の ref 指定（コミット SHA 可）。`update` との関係は未文書化 | `--pin` / コミット SHA 指定 | Marketplace のバージョン / `source.sha`（commit SHA） | `apm.lock`（解決結果を固定） |
 | 対応 Host | 複数エージェント | 複数エージェント | 主に Copilot CLI / VS Code | 複数エージェント |
 | 含められる要素 | Skills | Skills | Skills / Agents / Hooks / MCP / LSP | 上記に instructions / prompts を加えた範囲 |
 | サプライチェーン対策 | 配布元の確認 | `preview` / pin / immutable releases | Marketplace と Enterprise ポリシー | ロックファイルの整合性・ポリシーファイル |
@@ -704,6 +705,10 @@ Codex CLI 0.155.0のTouch IDは、対応Macのlocal TUIにおけるMCP request�
 
 組織の既定値にも期限があります。Copilot Business / Enterpriseでは、GAのeligibleな機能・Copilot Code Review・MCP servers in Copilotのpolicyについて、**2026-10-22からUnconfiguredの項目がglobal default policyに従います**。明示した設定は保持され、Previewはopt-inのままです（[確認手順](copilot/README.md#新機能の既定ポリシー--2026-10-22-から適用)）。また、agentic autofixがCopilot Memoryを読み書きするようになり（Public Preview）、修正patternがcode reviewやcloud agentにも波及します。memoryは組織の規約ではなく、訂正・削除できる文脈として扱います。
 
+2026-09-25のClaude Code 2.1.283では、設定がなければ対話型のターミナルとVS Code拡張のセッションが**auto modeで始まる範囲**が、Enterprise・Claude API・Bedrock・Google Cloud・Foundryにも広がりました。承認の判定が人からclassifierへ移るため、Enterprise / API利用の組織は、配布前にmanagedの`disableAutoMode`か`defaultMode`を決めます。同じ版で、新しいモデルを検証が済むまで使わせない`availableModelsMatch: "exact"`と`deniedModels`（managed専用）も加わりました。GitHub側では、Copilot CLI 1.0.88（2026-09-22）より前の版で、ACP・AHP・`--server`経由のセッションにmanaged settingsが適用されていなかった問題が修正されています。**配った設定ファイルではなく、実際に動くセッションで統制を確かめます**（[Claude Code](claude-code/basics.md#auto-mode-が既定の開始モードになる範囲--21283)・[Copilot](copilot/README.md#copilot-cli-の別経路にも-managed-settings-が効く--1087--1088)）。
+
+実行後の監査では、Compliance APIがClaude for Microsoft 365（2026-09-24にベータ終了）とClaude in Chrome（2026-09-18からBeta）のセッションも取得できるようになりました。一方でActivity Feedはファイル名・文書名・artifactのタイトルを返さなくなり、**過去分にも遡って適用**されています。名前で集計していた監査手順は見直します（[Claude Codeの詳細](claude-code/basics.md#導入時に確認すること)）。
+
 MCP側では、Claude Code 2.1.281が2026-07-28版protocolのURL-mode elicitationに対応しました。これはserverがbrowserでの操作を開く経路であり、tool実行や権限の承認ではありません。Claude PlatformのInline tools（2026-09-22、Beta）は会話途中でtool定義を追加でき、`mcp_tool_listing`を返すことでMCPのtool一覧を固定します。動的な発見と再現性のある実行を同一視せず、beta header・定義の出所・固定した一覧を記録します（[Claude Codeの詳細](claude-code/basics.md#2026-09-の-mcp-関連の変更)）。
 
 外部サービスへ接続するときは、OAuth consentの後にも承認境界が残ります。AWSは2026-09-01にAgentCore Identityのmanaged Consent Portalを公開し、primary OIDC IdPで認証した利用者とGitHub / Slack等のoutbound grantをsession bindingし、token vaultへ保存する例を示しました。これは「指定scopeで接続してよい」という同意であり、個々の送信・公開・削除を実行してよいという承認ではありません。**OAuth consent、session binding、per-action approvalを別々に追跡します。**
@@ -813,6 +818,8 @@ SkillsBench（[arXiv:2602.12670](https://arxiv.org/abs/2602.12670)）は、複�
 
 Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を組み込んだ `claude plugin eval` が追加されました。各 case を Plugin あり / なしで反復し、`regex`、tool、file、LLM judge の grader で採点して JSON / HTML report を出します。`plugin validate` が manifest / frontmatter の構造検査であるのに対し、`plugin eval` は挙動・退行の検査です。model call は利用枠または API 料金を消費し、server-side の利用可否にも従います。
 
+**モデルの更新も「変更」として扱います。** Claude Code 2.1.283（2026-09-25）の `/doctor prompt-audit` は、`CLAUDE.md`・Skill・agent・command に残った古いモデル向けの書き方（強い言葉、過剰な手順、役目を終えた回避策）や、古いパス・矛盾する指示を指摘します。API アプリ向けには 2.1.221 以降の `/claude-api prompt-audit` があります。点検は「短くする」作業ではなく、指摘は削除の候補です（`/claude-api prompt-audit` の手順書は、報告と提案 diff を出し、依頼がない限りファイルを書き換えないと定めています）。採用した変更は、同じ eval で退行がないかを確かめます（[詳細](dev-methods/evals.md#モデルの更新も変更として扱う--prompt-audit-で点検してから測る)）。
+
 **→ 退行パターン、測り方、`skill-eval-harness` 等の道具、本番エージェントの品質評価、改善・A/B test・昇格、インフラ監視との切り分けは [Skill / エージェントの評価（evals）](dev-methods/evals.md) を参照**
 
 ---
@@ -921,6 +928,9 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 - [Default enablement of Copilot features for Copilot Business and Enterprise](https://github.blog/changelog/2026-09-24-default-enablement-of-copilot-features-for-copilot-business-and-enterprise/) — 新機能の既定ポリシーと2026-10-22の適用開始（GitHub 公式）
 - [Enterprise managed settings in-product validator](https://github.blog/changelog/2026-09-25-enterprise-managed-settings-in-product-validator/) — managed settings / team mappingsの検証（GitHub 公式・2026-09-25）
 - [Agentic autofix now uses Copilot Memory](https://github.blog/changelog/2026-09-25-agentic-autofix-now-uses-copilot-memory/) — autofixによるmemoryの読み書き（GitHub 公式・2026-09-25、Public Preview）
+- [Claude Code v2.1.283](https://github.com/anthropics/claude-code/releases/tag/v2.1.283) ／ [Choose a permission mode](https://code.claude.com/docs/en/permission-modes) ／ [Restrict model selection](https://code.claude.com/docs/en/model-config#restrict-model-selection) — auto modeの開始モード拡大、`availableModelsMatch` / `deniedModels`（Anthropic 公式・2026-09-25）
+- [Copilot CLI changelog](https://github.com/github/copilot-cli/blob/main/changelog.md) — 1.0.88でACP / AHP / `--server`のセッションにmanaged settingsを適用（GitHub 公式・2026-09-22）
+- [Claude Platform release notes](https://platform.claude.com/docs/en/release-notes/overview) — Compliance APIのClaude in Chrome（2026-09-18、Beta）・Microsoft 365（2026-09-24）・Activity Feedの変更（Anthropic 公式）
 
 ### Skill が動く場所・MCP 仕様（本ページ 9・13 節）
 
@@ -954,6 +964,7 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 - [Evaluating Skills](https://www.langchain.com/blog/evaluating-skills) — Robert Xu、2026-03-05（LangChain 公式）
 - [adewale/skill-eval-harness](https://github.com/adewale/skill-eval-harness) — 決定論的な採点を行う比較用ハーネス（Community・MIT）
 - [Test plugins with evals](https://code.claude.com/docs/en/plugin-evals) — `claude plugin eval` の suite、baseline、grader、report（Anthropic 公式）
+- [Prompt Audit（`prompt-audit.md`）](https://github.com/anthropics/skills/blob/main/skills/claude-api/shared/prompt-audit.md) — 古いモデル向けの指示を点検する手順と、残すべき記述（Anthropic 公式）
 - [SkillsBench](https://arxiv.org/abs/2602.12670) — arXiv:2602.12670、2026-02-13 投稿
 - [Amazon Bedrock AgentCore Evaluations](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html) — 本番エージェントをon-demand / batch / onlineで評価するAWS固有の実装例（Official / GA）
 - [AgentCore optimization](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/optimization.html) — traceからrecommendation、offline評価、A/B testへ進むAWS固有の改善ループ（Official）

@@ -19,10 +19,10 @@
 -->
 
 - **2026-09-28** [作業中のエージェントへの指示の出し分け](docs/dev-methods/agent-commands.md)を追加し、Claude Code・Codex・Copilot CLIのsteer / queue・サイドチャット・`/goal`を比較
+- **2026-09-27** [Claude Code](docs/claude-code/basics.md#auto-mode-が既定の開始モードになる範囲--21283)へ2.1.283のauto mode開始モードの拡大・新モデルの許可制御を、[評価ページ](docs/dev-methods/evals.md#モデルの更新も変更として扱う--prompt-audit-で点検してから測る)へprompt-auditを、[Copilot ガイド](docs/copilot/README.md#copilot-cli-の別経路にも-managed-settings-が効く--1087--1088)へCLI 1.0.88の統制漏れ修正を追加
 - **2026-09-27** [エージェントの記憶基盤](docs/dev-methods/agent-memory.md)を追加し、GBrain・Mem0・Graphiti / Zep・Letta・RAG アプリを設計・運用・MCP 連携で比較
 - **2026-09-27** [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#実行場所ごとの隔離境界を分ける)などへCopilot app local sandbox・VS Code 1.139・Codex CLI 0.157・Claude Code 2.1.280〜2.1.282と、10-22適用のCopilot既定ポリシーを追加
 - **2026-09-23** [Skill / エージェントの評価](docs/dev-methods/evals.md#コーディングエージェントはマージ後も測る)にPRのマージ後品質と観察研究の限界を追加
-- **2026-09-23** [Codex ガイド](docs/codex/README.md#gpt-6-sol--luna-と-codex-cli-0156-系)などへOpus 5.5・GPT-6 Sol/LunaとCLI 0.156系の利用条件を追加
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 

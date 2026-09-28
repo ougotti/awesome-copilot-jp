@@ -53,6 +53,51 @@ OpenAI の解説記事は 8 段階の手順を示していますが、最小限�
 
 LangChain の解説記事（“Evaluating Skills”, Robert Xu, 2026-03-05）は、自社のタスクで Claude Code を Skill なし / ありで比較したところ「Skill なしでは完了率が低く、Skill ありで大きく改善した」と報告しています（対象タスクやモデルの詳細は記事に明記されていないため、数値の一般化はできません）。同記事は判定に `trajectory_evaluator.py` という構造化出力（JSON）を期待値と照合するスクリプトを使い、Skill 呼び出しの有無・完了ステップ数・ターン数・実行時間を追跡しています。
 
+### モデルの更新も「変更」として扱う — prompt-audit で点検してから測る
+
+Skill を書き換えていなくても、**モデルを更新すれば挙動は変わります**。Anthropic の点検手順書は、古いモデル向けに足した強い言葉・細かい手順・禁止事項が、指示をより文字どおりに受け取る新しいモデルでは、過剰な発火や過剰な計画の原因になると説明しています。Claude Code には、この点検を行う入口が 2 つあります。
+
+| 入口 | 点検する対象 | 必要な版 | 一次情報 |
+|------|-------------|---------|---------|
+| `/claude-api prompt-audit` | Claude API を使うアプリの system prompt、tool description、Skill、リクエストを組み立てるコード | Claude Code 2.1.221 以降 | [公式コマンドリファレンス](https://code.claude.com/docs/en/commands) |
+| `/doctor prompt-audit`（別名 `/checkup prompt-audit`） | Claude Code の設定（`CLAUDE.md`、Skill、agent、command） | Claude Code 2.1.283 以降（2026-09-25） | [CHANGELOG](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md)（2026-09-27 時点でコマンドリファレンスは未記載） |
+
+`/doctor prompt-audit` は、古いパス、使えなくなった command、互いに矛盾する指示ファイルを報告の先頭に出します。Claude Code が公式に案内している thinking のキーワードは、古い書き方として扱わずに残します。
+
+点検の進め方は、`/claude-api prompt-audit` が読み込む [手順書（`prompt-audit.md`）](https://github.com/anthropics/skills/blob/main/skills/claude-api/shared/prompt-audit.md) に書かれています。要点は次の 4 つです。
+
+1. **対象モデルを先に決める** — ある世代で必要だった指示が、次の世代では不要になる。何が不要かはモデルごとに違う
+2. **報告と提案 diff の 2 つを出し、ファイルは書き換えない** — 各指摘に場所・該当する型・根拠・確信度を付ける。適用は、依頼で明示されたときだけ
+3. **根拠を示せない指摘は diff に入れない** — 確信度の低い指摘は報告だけにする。**何も見つからなければ何も変えない**のが正しい結果
+4. **削除は仮説として扱う** — 変更の前後で挙動を確かめ、退行したら元の長い文ではなく最小の形で戻す。モデルが更新されるたびに点検し直す
+
+指摘される書き方の例です。
+
+| 型 | 例 | 新しいモデルで起きること |
+|----|----|------------------------|
+| 強い言葉 | `CRITICAL: You MUST ...` や `IMPORTANT: NEVER ...` がいくつも並ぶ | 過剰な発火、グレーな場面での硬直した応答 |
+| API の機能で置き換わった足場 | 「step by step で考えて」、JSON を出させるための prefill | thinking の設定や structured outputs で置き換える対象 |
+| 手順の過剰な指定 | 判断が必要な作業に STEP 1, 2, 3 ... と手順を書き込む | モデル自身の計画より出力の質が下がる |
+| 役目を終えた記述 | 特定の旧モデル向けの回避策、「以前は〜だったが今は〜」という差分の書き方 | 誰も削除しないまま積み上がる |
+| Skill に特有の型 | 1 回のセッションでの失敗から作った恒久ルール、固定のパスや版番号 | 次のセッションでは起きない問題を避け続け、実態ともずれる |
+
+一方で、手順書は**「短くする」作業ではない**と明記しています。次のものは残します。
+
+- 作成者しか知らない文脈 — 利用者、環境、品質基準、制約の**理由**
+- 破壊的な操作・認証・コンプライアンスなど、安全な手順が 1 つしかない作業の厳密な手順
+- 新しいモデルでも再現する失敗への禁止事項
+- Skill の `description` のような、呼び出すかどうかの判定に使う文言（意図して強めに書いている場合がある）
+
+tool description については、不足している方が多いとして**追記を提案**することもあります。
+
+点検は書かれた文面を読む静的な検査で、挙動を確かめる eval の代わりにはなりません。モデルを更新したときは、次の順に進めます。
+
+1. prompt-audit で指摘を得る（`/claude-api prompt-audit` では報告と提案 diff）
+2. 採用する変更を選ぶ（手順書は 1 つの指摘を 1 つの hunk にするため、選んで採用できる）
+3. 変更の前後で同じ eval（[`plugin eval`](#claude-code-組み込みの-plugin-eval) など）を回し、発火・手順・出力が退行していないか確かめる
+
+prompt-audit は Claude 向けの機能です。点検の観点（強い言葉、過剰な手順、役目を終えた回避策）は `AGENTS.md` や `.github/copilot-instructions.md` のようなツール横断の指示ファイルにも当てはまりますが、GitHub Copilot や Codex に同じ機能があるわけではありません。
+
 ## 5. 道具 — 「実行基盤のハーネス」と「評価用ハーネス」を区別する
 
 [AI エージェントの実行基盤（ハーネス）](harness.md)でいう「ハーネス」は、**エージェントを動かす裏側の仕組み**（ツール呼び出し・状態管理・ループ制御）を指します。このページで扱う「eval harness」は同じ単語を使いますが指すものが違い、**変更前後の実行結果を集めて採点する測定用の実行環境**です。前者はエージェントを動かすための土台、後者はその土台の上で「変えた結果どうなったか」を記録・採点するための足場です。両方が「ハーネス」と呼ばれるため、文脈で区別してください。
@@ -229,6 +274,9 @@ AWS外へこの考え方を持ち込む場合は、製品名ではなく、**tra
 - [adewale/skill-eval-harness](https://github.com/adewale/skill-eval-harness) — 決定論的な採点を行う比較用ハーネス（Community・MIT）
 - [Test plugins with evals](https://code.claude.com/docs/en/plugin-evals) — suite、baseline、grader、JSON / HTML report、分離と CI（Anthropic 公式）
 - [Claude Code v2.1.269](https://github.com/anthropics/claude-code/releases/tag/v2.1.269) — `claude plugin eval` の追加（Anthropic 公式・2026-09-11）
+- [Prompt Audit（`anthropics/skills` の `prompt-audit.md`）](https://github.com/anthropics/skills/blob/main/skills/claude-api/shared/prompt-audit.md) — 古いモデル向けの指示を見つける手順、報告と提案 diff、残すべき記述（Anthropic 公式）
+- [Claude Code v2.1.283](https://github.com/anthropics/claude-code/releases/tag/v2.1.283) — `/doctor prompt-audit` の追加（Anthropic 公式・2026-09-25）
+- [Claude Code commands](https://code.claude.com/docs/en/commands) — `/claude-api prompt-audit`（2.1.221 以降）と `/doctor`（Anthropic 公式）
 - [SkillsBench: Benchmarking How Well Agent Skills Work Across Diverse Tasks](https://arxiv.org/abs/2602.12670) — arXiv:2602.12670、2026-02-13 投稿
 - [Evaluate agent performance with Amazon Bedrock AgentCore Evaluations](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html) — 対象、telemetry、評価方式（AWS 公式）
 - [Amazon Bedrock AgentCore Evaluations is now generally available](https://aws.amazon.com/about-aws/whats-new/2026/03/agentcore-evaluations-generally-available/) — 2026-03-31 の GA 発表（AWS 公式）
