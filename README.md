@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-28** [作業中のエージェントへの指示の出し分け](docs/dev-methods/agent-commands.md)を追加し、Claude Code・Codex・Copilot CLIのsteer / queue・サイドチャット・`/goal`を比較
 - **2026-09-27** [エージェントの記憶基盤](docs/dev-methods/agent-memory.md)を追加し、GBrain・Mem0・Graphiti / Zep・Letta・RAG アプリを設計・運用・MCP 連携で比較
 - **2026-09-27** [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#実行場所ごとの隔離境界を分ける)などへCopilot app local sandbox・VS Code 1.139・Codex CLI 0.157・Claude Code 2.1.280〜2.1.282と、10-22適用のCopilot既定ポリシーを追加
 - **2026-09-23** [Skill / エージェントの評価](docs/dev-methods/evals.md#コーディングエージェントはマージ後も測る)にPRのマージ後品質と観察研究の限界を追加
 - **2026-09-23** [Codex ガイド](docs/codex/README.md#gpt-6-sol--luna-と-codex-cli-0156-系)などへOpus 5.5・GPT-6 Sol/LunaとCLI 0.156系の利用条件を追加
-- **2026-09-23** [GitHub Copilot ガイド](docs/copilot/README.md#jetbrains-1180--エージェントの承認共有設定mcp)へJetBrains 1.18.0の承認・共有Skill・MCP制御を追加
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -147,6 +147,7 @@
 | **[仕様駆動開発（SDD）](docs/dev-methods/spec-driven.md)** | 本ガイド | — | CLI / IDE | Spec Kit・OpenSpec・BMAD・Kiro Specsの違い、EARS、AI-DLCとの境界 |
 | **[AI エージェントの実行基盤（ハーネス）](docs/dev-methods/harness.md)** | 本ガイド | — | CLI / Cloud | エージェントを動かす裏側の仕組みと実装例（Copilot Studio / QM）、OpenTelemetry による可観測性 |
 | **[ループエンジニアリング](docs/dev-methods/loop-engineering.md)** | 本ガイド | — | CLI / Cloud | エージェントを目標へ向けて回すループの設計・停止条件・落とし穴 |
+| **[作業中のエージェントへの指示の出し分け](docs/dev-methods/agent-commands.md)** | 本ガイド | — | CLI | 実行中の steer / queue、サイドチャット（`/btw`・`/side`・`/ask`）、`/goal` の完了条件の書き方と Claude Code・Codex・Copilot CLI の差分 |
 | **[オントロジー](docs/dev-methods/ontology.md)** | 本ガイド | — | CLI / Cloud | 業務の意味（語彙・関係・規則）を定義してエージェントに渡す方法と実装例 |
 | **[エージェントの記憶基盤](docs/dev-methods/agent-memory.md)** | 本ガイド | — | CLI / Cloud | GBrain・Mem0・Graphiti / Zep・Letta・RAG アプリの比較、複数エージェントからの使い方、用途別の選び方 |
 | **[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md)** | 本ガイド | — | IDE / CLI | 導入前の確認手順、第三者監査の実態、組織での許可範囲の限定 |
