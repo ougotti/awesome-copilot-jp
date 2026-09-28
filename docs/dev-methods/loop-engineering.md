@@ -221,6 +221,7 @@ Claude Code には、ループを組むための機能がひととおり揃っ�
 - [Claude Code のカスタマイズ機能](../claude-code/basics.md) — `SKILL.md`・フック・MCP の設定
 - [マルチエージェントを使う境界線](multi-agent.md) — 1 つのループを複数エージェントに分けるべきかの判断基準。停止条件の考え方はここでも共通
 - [長時間タスクの信頼性設計](agent-reliability.md) — 「実行中に失敗が起きる」ことを前提にした checkpoint・再開・冪等性の設計。本ページの停止条件・落とし穴の先にある話
+- [作業中のエージェントへの指示の出し分け](agent-commands.md) — 1 セッションの中での `/goal` の完了条件の書き方と、実行中の追加指示・サイドチャットの使い分け（Claude Code・Codex・Copilot CLI）
 
 ## 参考リンク
 

@@ -4,6 +4,11 @@
 
 ## 2026-09
 
+- **2026-09-28** 作業中のエージェントへの指示の出し分けページを追加
+  - **[作業中のエージェントへの指示の出し分け](docs/dev-methods/agent-commands.md)を新設** — nwiizo 氏の記事「Codexを使うなら、/goalとサイドチャットを押さえておきたい」（2026-09-27）を出発点に、実行中に送る文章を steer・queue・サイドチャットの 3 種類に分け、Claude Code・Codex CLI・GitHub Copilot CLI のキー操作とコマンドを比較した。
+  - **ツール間で逆になる操作を明記** — `Enter` と `Ctrl+Enter` の意味がツールごとに違うこと、Claude Code の `Enter` はキューでもツールの切れ目で同じターンに渡ることを整理した。サイドチャットはツールの有無と見える文脈、`/goal` は完了の判定方法・止まる条件・権限の扱いで比べた。
+  - **完了条件の書き方と確認項目を追加** — 終了状態・確かめ方・守る条件・止まり方の 4 要素、段階の分け方、テストの期待値を変えて通していないかの確認を載せた。Copilot CLI の autopilot 継続回数の既定値が公式文書間で食い違う点も記録した。各社の公式文書は 2026-09-28 に確認。[ループエンジニアリング](docs/dev-methods/loop-engineering.md)と README に導線を追加した。
+
 - **2026-09-27** Claude Code 2.1.283・Copilot CLI 1.0.87 / 1.0.88 など2026-09-25〜09-27の動向を反映（#218）
   - **auto mode が開始モードになる範囲の拡大を整理** — 2.1.283 から、設定がなければ対話型のターミナルと VS Code 拡張のセッションが auto mode で始まる対象に、Enterprise・Claude API・Bedrock・Google Cloud・Foundry が加わった。組織として止める `disableAutoMode`、既定を決める `defaultMode`、VS Code 拡張での判定順、classifier のトークン計上を[Claude Code](docs/claude-code/basics.md#auto-mode-が既定の開始モードになる範囲--21283)へ記載した。
   - **新モデルを検証前に使わせない設定を追加** — `availableModels` の前方一致で後続版が許可される仕組みと、managed 専用の `availableModelsMatch: "exact"`・`deniedModels`、古い版で無視されるため `requiredMinimumVersion` を併用すること、cloud session とクラウドプロバイダで配布経路が違うことを[Claude Code](docs/claude-code/basics.md#新しいモデルを検証前に使わせない--availablemodelsmatch-と-deniedmodels)に整理し、[Copilot ガイド](docs/copilot/README.md#2026-09-22-の新モデル--copilot-経由の利用条件)から導線を付けた。
