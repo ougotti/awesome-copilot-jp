@@ -118,7 +118,7 @@
 | 位置づけ | 完了条件を毎ターン判定するループ | 会話に目的を固定する | autopilot モードの開始（`/autopilot` の別名） |
 | 完了の判定 | ターンごとに**別の小型モデル**（既定は Haiku）が会話を読み、未達 / 達成 / 不可能を判定する。判定役はツールを使わず、会話に出た証拠だけを見る | ファイル・テスト・ログ等の**具体的な証拠**で確かめてから完了とする方針（公式 cookbook） | エージェント自身がタスク完了と判断するまで続ける |
 | 止まる条件 | 達成・不可能の判定、利用者が直す必要のあるエラー、`/goal clear` | `/goal pause` / `/goal clear` | 完了、進めなくなった、`Ctrl+C`、継続回数の上限、AI credit の上限（`--max-ai-credits`） |
-| 操作 | `/goal`（状態表示）、`/goal clear` | `/goal`（表示）、`/goal edit`、`/goal pause`、`/goal resume`、`/goal clear` | `/goal on` / `off`、`--max-ai-credits N`、`Shift+Tab` でモード切り替え |
+| 操作 | `/goal <条件>`（設定・上書き）、`/goal`（状態表示）、`/goal clear` | `/goal <目的>`（設定）、`/goal`（表示）、`/goal edit`、`/goal pause`、`/goal resume`、`/goal clear` | `/goal <目的>`（開始・目的の付け直し）、`/goal <目的> --max-ai-credits N`（AI credit の上限付きで開始）、`/goal on` / `off`（目的を設定せずに autopilot を切り替え）、`Shift+Tab`（モード切り替え） |
 | 権限 | `/goal` は権限モードを変えない。無人で回すなら auto mode と組み合わせる | 公式文書に記述なし。`/permissions` で現在の承認設定を確かめてから使う | 全権限を付与するかを選ぶ画面が出る。制限付きで続けると、承認の要る操作は自動で拒否される |
 | 文字数 | 4,000 文字まで | 4,000 文字まで。長い指示はファイルに書いて参照させる | — |
 
