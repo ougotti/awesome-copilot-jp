@@ -1,6 +1,6 @@
 # エージェントに外部操作を与える手段の選び方 — API・connector・MCP・CLI・Computer Use
 
-> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-08
+> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-29
 
 > [Skills 最新動向「Computer Use / Browser Use」](../trends.md#6-computer-use--browser-use)は「専用 Plugin・コネクタ・MCP がある場合は構造化された連携を優先する」と述べています。このページはその判断基準を独立させ、**API・connector・MCP・CLI・Computer Use をどの順で検討し、どこで承認を挟むか**を整理します。Computer Use そのものの機能解説は [trends.md 6 節](../trends.md#6-computer-use--browser-use)を参照してください。
 
@@ -45,13 +45,7 @@
 
 connector との違いは、**「何ができるか」をエージェントが実行時に discovery できる**点です。connector は導入時に決まった機能だけを提供しますが、MCP サーバーはツール一覧とスキーマをその場で返します。
 
-仕様自身が明記するセキュリティ原則は次のとおりです。
-
-> Hosts must obtain explicit user consent before invoking any tool. Users should understand what each tool does before authorizing its use.
-
-> \[Tool] descriptions of tool behavior such as annotations should be considered **untrusted**, unless obtained from a trusted server.
-
-**ツールの説明文（annotation）自体を無条件に信用しない**、という点は、後述する「外部コンテンツを命令として扱わない」設計と直結します。
+[2026-07-28 版の Tools 仕様](https://modelcontextprotocol.io/specification/2026-07-28/server/tools)は、Tool の呼び出しを人が拒否できるようにすることを推奨しています。機微な操作の確認をクライアントに推奨する一方、**特定の承認 UI や毎回の承認をプロトコル上の必須条件にはしていません**。Tool の注釈も信頼済みサーバー以外では未信頼として扱います。実装する場合の入出力・副作用・失敗の契約は [MCP ツールの契約設計](mcp-tool-contracts.md)を参照してください。
 
 ---
 
@@ -138,6 +132,7 @@ OpenAI のエージェント構築ガイドは、MCP ツールを使う場面に
 - [AI エージェントの実行基盤（ハーネス）](harness.md) — ツール呼び出しを管理する裏側の仕組み
 - [ループエンジニアリング](loop-engineering.md) — 無人で回すループの停止条件・権限境界の設計
 - [Skill / Plugin のセキュリティ](skill-security.md) — 導入前に何を確認するか
+- [MCP ツールの契約設計](mcp-tool-contracts.md) — Tool の入出力・副作用・エラーの実装と検証
 - [生成AIを業務で安全に使う](../business/safety.md) — コードを書かない方向けの確認事項
 
 ## 参考リンク
