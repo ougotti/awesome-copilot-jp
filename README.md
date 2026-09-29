@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-09-29** [MCP ツールの契約設計](docs/dev-methods/mcp-tool-contracts.md)を追加し、入出力スキーマ・副作用・再試行・エラー・確認手順を整理
 - **2026-09-28** [作業中のエージェントへの指示の出し分け](docs/dev-methods/agent-commands.md)を追加し、Claude Code・Codex・Copilot CLIのsteer / queue・サイドチャット・`/goal`を比較
 - **2026-09-27** [Claude Code](docs/claude-code/basics.md#auto-mode-が既定の開始モードになる範囲--21283)へ2.1.283のauto mode開始モードの拡大・新モデルの許可制御を、[評価ページ](docs/dev-methods/evals.md#モデルの更新も変更として扱う--prompt-audit-で点検してから測る)へprompt-auditを、[Copilot ガイド](docs/copilot/README.md#copilot-cli-の別経路にも-managed-settings-が効く--1087--1088)へCLI 1.0.88の統制漏れ修正を追加
 - **2026-09-27** [エージェントの記憶基盤](docs/dev-methods/agent-memory.md)を追加し、GBrain・Mem0・Graphiti / Zep・Letta・RAG アプリを設計・運用・MCP 連携で比較
 - **2026-09-27** [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#実行場所ごとの隔離境界を分ける)などへCopilot app local sandbox・VS Code 1.139・Codex CLI 0.157・Claude Code 2.1.280〜2.1.282と、10-22適用のCopilot既定ポリシーを追加
-- **2026-09-23** [Skill / エージェントの評価](docs/dev-methods/evals.md#コーディングエージェントはマージ後も測る)にPRのマージ後品質と観察研究の限界を追加
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -153,6 +153,7 @@
 | **[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md)** | 本ガイド | — | IDE / CLI | 導入前の確認手順、第三者監査の実態、組織での許可範囲の限定 |
 | **[エージェントに外部操作を与える手段の選び方](docs/dev-methods/tool-selection.md)** | 本ガイド | — | CLI / IDE / Cloud | API・connector・MCP・CLI・Computer Use の選び方、fallback の昇格条件、承認境界 |
 | **[MCP と A2A — 役割の違いと併用方法](docs/dev-methods/agent-protocols.md)** | 本ガイド | — | CLI / IDE / Cloud | 両プロトコルの中核概念比較、併用構成例、A2A の導入判断 |
+| **[MCP ツールの契約設計](docs/dev-methods/mcp-tool-contracts.md)** | 本ガイド | — | CLI / IDE / Cloud | Tool の入出力スキーマ、副作用、再試行、エラー、承認と認可、検証手順 |
 | **[MCP Apps — 会話内にUIを追加する](docs/dev-methods/mcp-apps.md)** | 本ガイド | — | CLI / IDE / Cloud / Chat UI | tool 結果として UI を返す仕組み、最小例、対応ホストの確認と fallback、データ露出範囲 |
 | **[AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md)** | 本ガイド | — | CLI / IDE / Cloud | エージェント固有ID・OAuth scope/token audience・委任権限・control planeの設計 |
 | **[マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md)** | 本ガイド | — | CLI / IDE / Cloud | agent-as-tool・supervisor・peer/teamの使い分け、向く仕事・向かない仕事、導入判断フローチャート |

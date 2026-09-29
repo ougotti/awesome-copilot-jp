@@ -4,6 +4,10 @@
 
 ## 2026-09
 
+- **2026-09-29** MCP ツールの契約設計を追加
+  - [MCP ツールの契約設計](docs/dev-methods/mcp-tool-contracts.md)を新設。架空の Issue 管理サービスを例に、`inputSchema` / `outputSchema`、`structuredContent`、実行エラー、読み取りと更新の分離、重複実行の防止を、MCP 2026-07-28 版の公式仕様に沿って整理した。
+  - 注釈は強制的な安全制御ではないこと、クライアントの実行前確認とサーバーの認可は別であることを明記。Inspector での確認項目と README の導線を追加し、[外部操作の手段の選び方](docs/dev-methods/tool-selection.md)に残っていた旧版仕様の承認表現を現行版に合わせた。
+
 - **2026-09-28** 作業中のエージェントへの指示の出し分けページを追加
   - **[作業中のエージェントへの指示の出し分け](docs/dev-methods/agent-commands.md)を新設** — nwiizo 氏の記事「Codexを使うなら、/goalとサイドチャットを押さえておきたい」（2026-09-27）を出発点に、実行中に送る文章を steer・queue・サイドチャットの 3 種類に分け、Claude Code・Codex CLI・GitHub Copilot CLI のキー操作とコマンドを比較した。
   - **ツール間で逆になる操作を明記** — `Enter` と `Ctrl+Enter` の意味がツールごとに違うこと、Claude Code の `Enter` はキューでもツールの切れ目で同じターンに渡ることを整理した。サイドチャットはツールの有無と見える文脈、`/goal` は完了の判定方法・止まる条件・権限の扱いで比べた。
