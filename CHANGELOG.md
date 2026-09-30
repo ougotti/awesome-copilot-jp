@@ -4,6 +4,12 @@
 
 ## 2026-09
 
+- **2026-09-30** OpenAI関連エージェントの9月末更新を反映
+  - **[AI エージェントの実行基盤](docs/dev-methods/harness.md#agents-apiでブラウザを操作する2026-09-29)** — 9月29日追加のAgents API Computer Use（Official / Public Beta）について、OpenAI-hosted browser、network policy、origin承認、サインイン、操作ごとの確認とsession後の検証を分けた。APIの米国データ所在地とZDR非対応も公式overviewに基づき明記した。
+  - **[マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md#responses-apiのmulti-agent2026-09-29)** — Responses API Multi-agent（Official / Beta）のGPT-6.1 Sol対応、ベータ指定、同一request内のmodel / tools共有、function toolの処理、compactionと非対応パラメータをAgents API / Agents SDKと区別した。
+  - **[Codex ガイド](docs/codex/README.md#gpt-61-sol-と-codex-cli-01580159-系2026-09-29)** — Codex / ChatGPT WorkのGPT-6.1 Sol、CLI 0.158〜0.159.2のMCP・WebSocket認証、opt-inのsteer、モデルカタログ、Windows修正を追加した。実際の利用可否はplan・client・workspace設定に依存する。
+  - OpenAI Docsの[API changelog](https://developers.openai.com/api/docs/changelog)、[Agents API Computer Use](https://developers.openai.com/api/docs/guides/agents-api/tools/computer-use)、[Responses Multi-agent](https://developers.openai.com/api/docs/guides/responses-multi-agent)、[ChatGPT & Codex changelog](https://learn.chatgpt.com/docs/changelog)を2026-09-30に確認した。
+
 - **2026-09-29** MCP ツールの契約設計を追加
   - [MCP ツールの契約設計](docs/dev-methods/mcp-tool-contracts.md)を新設。架空の Issue 管理サービスを例に、`inputSchema` / `outputSchema`、`structuredContent`、実行エラー、読み取りと更新の分離、重複実行の防止を、MCP 2026-07-28 版の公式仕様に沿って整理した。
   - 注釈は強制的な安全制御ではないこと、クライアントの実行前確認とサーバーの認可は別であることを明記。Inspector での確認項目と README の導線を追加し、[外部操作の手段の選び方](docs/dev-methods/tool-selection.md)に残っていた旧版仕様の承認表現を現行版に合わせた。

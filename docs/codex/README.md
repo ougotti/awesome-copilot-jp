@@ -1,6 +1,6 @@
 # Codex ガイド（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-27
+> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-30
 
 [openai/skills](https://github.com/openai/skills) は OpenAI が公開している Codex 用の公式スキルカタログです。指示・スクリプト・リソースをフォルダにまとめた「スキル」を追加することで、デプロイ・ブラウザ自動化・外部サービス連携といったワークフローを Codex に持たせられます。
 
@@ -218,6 +218,19 @@ session 側の変更は、会話と下書きを別の面へ持ち越す仕組み
 
 0.157.1（2026-09-26）も公開されていますが、公式 changelog に機能上の変更点は記載されていません。
 
+### GPT-6.1 Sol と Codex CLI 0.158〜0.159 系（2026-09-29）
+
+[OpenAI Docsの更新履歴](https://learn.chatgpt.com/docs/changelog)では、GPT-6.1 SolがCodexとChatGPT Workへ追加されました。繰り返しの長時間作業や複雑なコード・アプリ・文書作業が用途です。**利用できるかはプラン、クライアント、workspace設定に依存**します。CLI 0.159.1では`gpt-6.1-sol`が同梱モデルカタログの既定になりましたが、すべてのアカウントで直ちに選択できるという意味ではありません。
+
+| 版 | エージェント運用に関わる変更 | 確認すること |
+|----|--------------------------|--------------|
+| 0.158.0（09-28） | 登録済みOAuth client secretが必要なMCP serverへ接続できる。direct exec-server WebSocket接続にbearer token認証を追加 | MCPの認証方式とWebSocket接続先の設定を確認する |
+| 0.159.0（09-29） | opt-inの`instant_interrupt`で、model応答中や長いcode-mode呼び出し中にも新しい入力で作業をsteerできる。app-server clientはthread履歴をitem位置からページングできる | 介入が必要な長時間taskで機能の有効化を確認し、履歴表示側は取りこぼしなくページを読む |
+| 0.159.1（09-29） | GPT-6.1 Solを同梱モデルカタログの既定へ追加 | 実際のmodel pickerとworkspaceの利用可否を確認する |
+| 0.159.2（09-29） | Windowsでbackground processやsandbox commandの起動時にconsole windowが点滅する問題を修正 | Windowsで画面操作を含むtaskを行う場合は実行中のCLI版を確認する |
+
+モデルの評価や運用手順を変えるときは、以前のGPT-6 Sol / Lunaの条件を上書きせず、**そのtaskで選択されたmodelとCLI版**を記録します。
+
 **→ 可搬形式（Agent Plugins 1.0.0）の仕様と他ツールの対応状況は [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準) を参照**
 
 ### Codexを製品へ組み込む入口を分ける
@@ -369,7 +382,7 @@ Codex には **subagents** という機能があります。**専門化した複
 - [Agent Skills – Codex 公式ドキュメント](https://developers.openai.com/codex/skills) — 公式スキル解説
 - [Plugins – Codex 公式ドキュメント](https://developers.openai.com/codex/plugins) — Plugin の導入・権限・Marketplace（公式）
 - [Codex MCP server removal](https://learn.chatgpt.com/docs/mcp-server) — 削除されたentry point、app serverへの移行、外部MCP接続への非影響（公式・2026-09-05）
-- [ChatGPT & Codex changelog](https://learn.chatgpt.com/docs/changelog) — GPT-6 Sol / Luna の提供条件と Codex CLI 0.154.0〜0.157.1 の変更（OpenAI Docs）
+- [ChatGPT & Codex changelog](https://learn.chatgpt.com/docs/changelog) — GPT-6.1 Solの提供条件とCodex CLI 0.158.0〜0.159.2の変更（OpenAI Docs）
 - [Codex CLI 0.157.0 release](https://github.com/openai/codex/releases/tag/rust-v0.157.0) — network policy の継続適用、background server、`f` による fork、`/import` の対象拡大（公式・2026-09-25）
 - [Models](https://learn.chatgpt.com/docs/models) ／ [Pricing](https://learn.chatgpt.com/docs/pricing) — Codex / Work のモデル選択と料金（OpenAI Docs）
 - [Subagents – Codex 公式ドキュメント](https://learn.chatgpt.com/docs/agent-configuration/subagents) — Availability、カスタムエージェントの定義方法（公式・2026-09-09 確認）

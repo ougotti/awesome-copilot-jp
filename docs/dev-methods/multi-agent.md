@@ -1,6 +1,6 @@
 # マルチエージェントを使う境界線
 
-> **対象ツール**: ツール横断（Claude Code・OpenAI Agents API / SDK・LangGraph ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-18
+> **対象ツール**: ツール横断（Claude Code・OpenAI Agents API / SDK・LangGraph ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-30
 
 > Codex・Claude Code・各種ハーネスでサブエージェントや並列実行が一般化し、「複数体にできるか」はもう問題ではなくなりました。残っているのは「**いつ複数体にすべきか**」という設計判断です。マルチエージェントは分業とコンテキスト分離に有効な一方、通信・重複作業・競合・権限増幅・集約時の誤りという追加コストを持ちます。このページはその判断基準を、機能の存在ではなく設計判断として整理します。
 
@@ -89,6 +89,20 @@ OpenAI Agents SDK の説明では、次のように使い分けます。
 - ある成果物を、別のエージェントにレビューさせる（相互レビュー）
 
 peer / team は、agent-as-tool や supervisor よりも**統合のコストが高い**構成です。並行して出てきた結果をどう突き合わせるかを、事前に設計しておく必要があります（[8 節](#8-通信コンテキストコスト権限停止条件)）。
+
+### Responses APIのMulti-agent（2026-09-29）
+
+[Responses APIのMulti-agent](https://developers.openai.com/api/docs/guides/responses-multi-agent)も`提供元`: Official / `状態`: Betaとして利用できます。2026-09-29の[API changelog](https://developers.openai.com/api/docs/changelog)では、GPT-6.1 Solへの対応が追加されました。公式ガイドはGPT-5.6系にも対応すると記しています。
+
+| 入口 | 分担を管理する場所 | 向く用途 |
+|------|------------------|---------|
+| Agents API | OpenAI管理のdurable session内 | 複数turnで続く作業やsandboxを含む業務エージェント |
+| Responses API Multi-agent | Responses APIのroot agentがsubagentを起動・統合 | PRの正しさ・セキュリティ・テスト観点を並行して調べるなど、独立した作業の分担 |
+| Agents SDK | アプリケーションコード内 | agentごとの役割やhandoffをコードで組み立てる |
+
+Responses APIでは`multi_agent.enabled: true`とベータ指定`responses_multi_agent=v1`で有効化し、`max_concurrent_subagents`で同時実行数を抑えます。**subagentは同じrequestのmodelとtoolsを共有**します。tool権限やmodelを役割ごとに分けたい設計では、この共有範囲を確認してください。自作のfunction toolをsubagentが呼んだ場合も、アプリケーションが実行して結果を返す必要があります。複数化によるtoken増加と、共有ファイルへの同時書き込みにも注意します。
+
+ベータでは`/responses/compact`、`reasoning.summary`、`max_tool_calls`をMulti-agentと併用できません。自動compactionはrootと各subagentのコンテキストに個別に適用されます。既存のResponses実装に追加する前に、利用中のrequest設定と出力itemの処理を確認します。
 
 ---
 
@@ -179,5 +193,6 @@ Claude Code のドキュメントが挙げる例は、独立した複数の探�
 - [Claude Code のサブエージェント](https://code.claude.com/docs/en/sub-agents) — 非 fork 型と fork 型のコンテキスト、system prompt / tools、model、prompt cache の差、権限制限、並列実行の上限、出力スキャンの一次情報（公式）
 - [OpenAI Agents SDK: Multi-agent](https://openai.github.io/openai-agents-python/multi_agent/) — agent-as-tool と handoff の定義・使い分け（公式）
 - [OpenAI Agents API: Multi-agent](https://developers.openai.com/api/docs/guides/agents-api/multi-agent) — managed session内でのsubagent作成・指示・待機（公式・Public Beta）
+- [Responses API: Multi-agent](https://developers.openai.com/api/docs/guides/responses-multi-agent) — request内でのsubagent分担、ベータの設定と制約（OpenAI公式・Beta）
 - [LangGraph: Use subgraphs](https://docs.langchain.com/oss/python/langgraph/use-subgraphs) — 状態共有・分離の仕組み、並列実行時のチェックポイント競合リスク（公式）
 - [Measuring AI agent autonomy in practice](https://www.anthropic.com/news/measuring-agent-autonomy) — 承認戦略が「都度承認」から「監視・介入」へ移る実利用データ（Anthropic 公式）
