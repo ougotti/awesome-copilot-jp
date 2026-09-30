@@ -1,6 +1,6 @@
 # AI エージェントの実行基盤（ハーネス）
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-27
+> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-30
 
 > エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew / OpenAI Agents API）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
 
@@ -214,9 +214,24 @@ Agentにはfunction、remote MCP、Plugin等のtoolsを設定できます。多�
 
 hosted sessionの完了turnから公開したfileはartifactとして取得できます。途中のworkspace fileと、完了後に配布するimmutable artifactを区別し、必要な成果物が公開されたことを終了条件として検証します。
 
+### Agents APIでブラウザを操作する（2026-09-29）
+
+[Agents APIのComputer Use](https://developers.openai.com/api/docs/guides/agents-api/tools/computer-use)が追加されました（`提供元`: Official / `状態`: Public Beta）。OpenAI-hostedのブラウザでWebアプリの画面確認や公開ページの調査を行う場合、`agent.tools`に`computer_use`を追加し、`environment.type`を`openai_hosted`、`environment.desktop.enabled`を`true`にします。
+
+| 境界 | アプリケーション側で確認すること |
+|------|------------------------------|
+| ネットワーク | sandboxのnetwork policyで接続先を許可する。許可済みでも、ブラウザが新しいWebサイトのoriginへ進む際は利用者の承認が別に必要 |
+| サインイン | 必要な場合だけアプリケーションが認証要求を扱う。認証情報をagentの指示文やログへ埋め込まない |
+| 個別操作 | originの承認は購入・削除などの操作ごとの確認を保証しない。確実な事前確認が必要なら、操作できない対象へブラウザを限定するか、自社管理のbrowser runtimeで制御する |
+| 完了確認 | session eventとブラウザの記録を確認し、結果を検証する。接続が途切れたら同じsessionを回復し、不要になったsessionを削除する |
+
+既存の`none` / `self_hosted`環境にこのブラウザ機能が自動で加わるわけではありません。APIの実行環境、network policy、Webサイトごとの承認を分けて設計します。
+
 ### 費用と導入前の確認
 
 Agents API自体を「定額のCodex利用枠」と見なさないでください。公式ドキュメントでは、選択したmodelのAPI料金、OpenAI toolの料金、OpenAI-hosted sandboxのcontainer料金がそれぞれ発生すると説明されています。価格を本文へ固定せず、導入時に[公式Pricing](https://developers.openai.com/api/docs/pricing)を確認します。
+
+[公式overview](https://developers.openai.com/api/docs/guides/agents-api/overview)は、Agents APIのデータ所在地を現時点で米国のみ、Zero Data Retention（ZDR）を非対応としています。`self_hosted`環境を選んでもAPI自体がZDR対象になるわけではないため、機密データを扱う前に保存・削除要件と照合します。
 
 - Public BetaのAPI変更と、利用可能なmodel / tool / environmentを再確認する。
 - sessionの保存対象、retention、削除、trace / artifactに含まれる情報を確認する。

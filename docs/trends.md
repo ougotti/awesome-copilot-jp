@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-27
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-30
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-09-30 | OpenAI Agents APIのComputer Use、Responses APIのMulti-agent Beta、GPT-6.1 SolとCodex CLI 0.158〜0.159系を追加した |
 | 2026-09-27 | Claude Code 2.1.283 の auto mode の開始モード拡大・`availableModelsMatch` / `deniedModels`・`/doctor prompt-audit`、Copilot CLI 1.0.87 / 1.0.88 の managed settings 適用範囲、Compliance API の取得範囲と Activity Feed の変更を 12・15 節へ追加した。7 節の比較表で `npx skills` のバージョン固定を CLI 1.5.24 以降の状況に合わせた |
 | 2026-09-27 | 11 節にエージェントの記憶基盤（GBrain・Mem0・Graphiti / Zep・Letta）の比較ページへの導線を追加し、RAG アプリとの境界を整理した |
 | 2026-09-27 | Copilot app local sandbox、VS Code 1.139 remote Dev Container、Codex CLI 0.157、Claude inline tools・Claude Code 2.1.280〜2.1.282、Copilot新機能の既定ポリシー（2026-10-22適用）を10・12節へ追加し、実行場所・通信・managed policy・観測の境界を整理した |
@@ -638,6 +639,12 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 実装はベンダー側からも出ました。**Kiro Crew**（AWS が 2026-08-04 に Apache-2.0 で公開。`提供元`: Official / `状態`: GA）は、Agent Client Protocol 経由で `kiro-cli` を駆動する**常駐型のハーネス**です。永続セッションとメモリ、定期ジョブ・ハートビート・認証済み webhook による起動、namespace / Seatbelt による分離（standard / strict / off）と監査コマンドを備え、Slack や Discord からも同じ実行環境へ入れます。ただし**本体が無償の OSS でも、動かすには Kiro のプランが必要**で、モデルの提供はベンダーに依存します。「OSS のハーネス」でも自前で完結するとは限らない、という点は導入判断で確認してください。
 
 2026-09-10には **OpenAI Agents API**（`提供元`: Official / `状態`: Public Beta）が公開されました。これはOpenAI管理のCodexハーネスをAPIとして提供し、durable session、orchestration、context compaction、recoveryをOpenAI側で担います。ただし実行環境は `none` / OpenAI-hosted / self-hostedから選ぶ別の層であり、APIを使うだけでsandbox、network、secret、tool権限の設計が不要になるわけではありません。Codex製品、Agents SDK、Codex SDK / app serverとも役割が異なります。
+
+2026-09-29には[Agents APIのComputer Use](https://developers.openai.com/api/docs/guides/agents-api/tools/computer-use)が追加されました。OpenAI-hosted browserでWeb画面を扱えますが、network policyとWebサイトのoriginごとの承認は別で、originの承認は購入・削除などの操作ごとの確認を保証しません。[ハーネス解説](dev-methods/harness.md#agents-apiでブラウザを操作する2026-09-29)に実行環境と承認の境界をまとめました。
+
+同日にGPT-6.1 Solが[Responses APIのMulti-agent](https://developers.openai.com/api/docs/guides/responses-multi-agent)（`提供元`: Official / `状態`: Beta）へ対応しました。これはResponses APIでsubagentに独立した作業を分担させる機能で、Agents APIのdurable sessionやAgents SDKのアプリケーション側orchestrationとは入口が異なります。modelとtoolsはrequest内のagentで共有するため、役割ごとの権限を分けたい場合は[マルチエージェント解説](dev-methods/multi-agent.md#responses-apiのmulti-agent2026-09-29)で制約を確認してください。
+
+Codex / ChatGPT WorkにもGPT-6.1 Solが追加され、CLIは0.158〜0.159.2へ更新されました。0.159.0のopt-in `instant_interrupt`は長いmodel応答中のsteerに使えます。利用可否はplan・client・workspace設定に依存します。詳細は[Codexガイド](codex/README.md#gpt-61-sol-と-codex-cli-01580159-系2026-09-29)を参照してください。
 
 2026 年半ばには、この 1 つ上の階として **ループエンジニアリング**（loop engineering）という呼び名が加わりました。Addy Osmani（Google Chrome）が [Loop Engineering](https://addyosmani.com/blog/loop-engineering/)（2026-06-07）で命名したもので、**人がプロンプトを打ち続けるのをやめ、エージェントを目標へ向けて回すループの側を設計する**という実践です。自動実行・ワークツリー・スキル・コネクタ・サブエージェント・外部状態を組み合わせ、機械が判定できる停止条件で止めます。ループはハーネスの上で回るため、**ハーネスが弱ければループは同じ誤りを繰り返し増幅します**。
 
