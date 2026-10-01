@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-30
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-01
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-01 | ChatGPTのdots・Team Tasksを個人のScheduled tasksと区別し、実行主体・接続・共有・停止方法と業務テンプレートへの導線を追加した。 |
 | 2026-09-30 | OpenAI Agents APIのComputer Use、Responses APIのMulti-agent Beta、GPT-6.1 SolとCodex CLI 0.158〜0.159系を追加した |
 | 2026-09-27 | Claude Code 2.1.283 の auto mode の開始モード拡大・`availableModelsMatch` / `deniedModels`・`/doctor prompt-audit`、Copilot CLI 1.0.87 / 1.0.88 の managed settings 適用範囲、Compliance API の取得範囲と Activity Feed の変更を 12・15 節へ追加した。7 節の比較表で `npx skills` のバージョン固定を CLI 1.5.24 以降の状況に合わせた |
 | 2026-09-27 | 11 節にエージェントの記憶基盤（GBrain・Mem0・Graphiti / Zep・Letta）の比較ページへの導線を追加し、RAG アプリとの境界を整理した |
@@ -670,6 +671,8 @@ Copilot usage metrics APIは2026-09-17にCLI customizationの上位5件とdistin
 **→ ループの構成要素・停止条件の作り方・落とし穴は [ループエンジニアリング](dev-methods/loop-engineering.md) を参照**
 **→ サブエージェントや並列実行を「いつ使うべきか」という設計判断は [マルチエージェントを使う境界線](dev-methods/multi-agent.md) を参照**
 **→ 長時間・多段階のタスクで失敗が累積する問題と、checkpoint・再開・冪等性の設計は [長時間タスクの信頼性設計](dev-methods/agent-reliability.md) を参照**
+
+2026-09-29の[DevDay公式まとめ](https://learn.chatgpt.com/docs/whats-new/devday-2026)は、ChatGPTのdotsとTeam Tasksを紹介しました。継続する責任を持つdot、保存した指示で起動する個人のScheduled task、チームのservice accountで動くTeam Taskでは、文脈・権限・共有先・停止対象が異なります。2026-10-01に提供条件と操作を確認し、[使い分け](codex/README.md#個人の定期作業dotsteam-tasksを選ぶ)と[業務テンプレート](business/use-cases.md#継続する案件確認とチームの週次報告)へ整理しました。
 
 ---
 

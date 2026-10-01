@@ -1,6 +1,6 @@
 # 長時間タスクの信頼性設計
 
-> **対象ツール**: ツール横断（Claude Code・Codex・MCP・LangGraph ほか） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-27
+> **対象ツール**: ツール横断（Claude Code・Codex・MCP・LangGraph ほか） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-01
 
 > [ループエンジニアリング](loop-engineering.md)はエージェントを反復実行する方法と停止条件を、[AI エージェントの実行基盤（ハーネス）](harness.md)は実行環境を扱います。このページはその間にある、**長時間・多段階の仕事で小さな失敗が累積する問題**と、それを抑える信頼性設計を扱います。評価ツールや telemetry の網羅ではなく、**実行中の故障を前提にした** checkpoint・再開・冪等性・検証・reliability budget が対象です。
 
@@ -95,6 +95,12 @@ MCP Tasks の仕様は、キャンセル済みタスクの再利用について�
 > Once a task is cancelled, it MUST remain in cancelled status even if execution continues to completion or fails.
 
 **「キャンセルした」という状態遷移そのものが、後から覆らない事実として扱われます。** これは長時間タスクの信頼性設計に共通する考え方です。取り消しは「なかったことにする」のではなく、「取り消したという事実を記録する」操作として設計してください。
+
+### 継続作業では停止対象も分けて記録する
+
+ChatGPTの[dots](https://learn.chatgpt.com/docs/dots/controls#stop-work)では、主タスクの **Pause** と、**Activity** の委譲タスク停止、**Scheduled** の定期タスク取消が別操作です。[Team Tasks](https://learn.chatgpt.com/docs/enterprise/teams#teams-and-team-tasks-faq)の一時停止は次回以降の起動を抑える操作で、実行中のrunを中断する保証はありません。主タスク・委譲先・次の起動を個別に確認し、完了済みの副作用も点検します。
+
+継続作業を任せるときは、出典・中間成果物と併せて「どの条件で人へ判断を求めるか」を指示に残します。利用者向けの実行主体・共有範囲・停止方法は[定期作業・dots・Team Tasksの選択](../codex/README.md#個人の定期作業dotsteam-tasksを選ぶ)を参照してください。
 
 ---
 
