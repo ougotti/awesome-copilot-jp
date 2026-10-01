@@ -1,6 +1,6 @@
 # Codex ガイド（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-10-01
+> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-10-02
 
 [openai/skills](https://github.com/openai/skills) は OpenAI が公開している Codex 用の公式スキルカタログです。指示・スクリプト・リソースをフォルダにまとめた「スキル」を追加することで、デプロイ・ブラウザ自動化・外部サービス連携といったワークフローを Codex に持たせられます。
 
@@ -249,6 +249,14 @@ Agents APIは **Public Beta** です。ハーネスはOpenAIが管理します�
 **→ harnessとenvironmentの責任分界、tools、artifact、導入前の確認事項は [AI エージェントの実行基盤](../dev-methods/harness.md#openai-agents-api--codexハーネスをマネージドapiで使う) を参照**
 
 ---
+
+### 端末を閉じても作業を続ける — Codex Cloud
+
+Webまたはdesktop appで **Work in → Cloud** を選び、準備・テストした環境を **Publish** してからタスクを始めます。各タスクは独立した作業領域を持ち、環境を **Republish** すると新規タスク向けのセットアップが更新されます。既存タスクは自身の状態を保持します。
+
+GitHubのコードを検査する **Codex Security Cloud（Official / Research Preview）** は、単発のscanと新しいcommitの監視を提供します。指摘の検証証拠と修正案を確認し、draft PRへ進めます。ローカル用Security pluginやLegacy環境とは手順を区別します。
+
+**→ [Codex Cloudの導入・接続・共有とSecurity Cloudのレビュー手順](cloud.md) を参照してください。**
 
 ## 6. 定期・イベントで動かす（Scheduled tasks）
 

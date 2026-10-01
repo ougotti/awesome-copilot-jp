@@ -4,6 +4,11 @@
 
 ## 2026-10
 
+- **2026-10-02** Codex CloudとSecurity Cloudの導入・運用を追加（#227）。
+  - [Codex Cloudガイド](docs/codex/cloud.md)を新設し、環境の準備・Publish・Republish、新規／既存タスク、network secret・接続先・共有範囲を整理した。
+  - Security Cloudの単発scan・commit監視・検証証拠・修正案からdraft PRまでを説明し、Research Previewとローカルplugin／Legacy環境の違いを明記した。
+  - [Codex入口](docs/codex/README.md)、[コーディングエージェントの選び方](docs/dev-methods/coding-agents.md)、[最新動向](docs/trends.md)とREADMEから導線を追加した。
+
 - **2026-10-01** ChatGPTのdots・Team Tasksを個人のScheduled tasksと比較（#226）。
   - [Codexガイド](docs/codex/README.md#個人の定期作業dotsteam-tasksを選ぶ)に実行主体、入力文脈、接続権限、共有範囲、段階的提供、初回確認、停止操作を追加した。
   - [ユースケース集](docs/business/use-cases.md#継続する案件確認とチームの週次報告)に案件確認・週次報告の説明用テンプレートを追加し、[信頼性設計](docs/dev-methods/agent-reliability.md#7-pause--resume--cancel--rollback)に主タスク・委譲・次回起動を分けて停止する確認を補足した。
