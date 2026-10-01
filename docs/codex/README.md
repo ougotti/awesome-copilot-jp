@@ -1,6 +1,6 @@
 # Codex ガイド（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-30
+> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-10-01
 
 [openai/skills](https://github.com/openai/skills) は OpenAI が公開している Codex 用の公式スキルカタログです。指示・スクリプト・リソースをフォルダにまとめた「スキル」を追加することで、デプロイ・ブラウザ自動化・外部サービス連携といったワークフローを Codex に持たせられます。
 
@@ -274,6 +274,36 @@ Agents APIは **Public Beta** です。ハーネスはOpenAIが管理します�
 役割で整理すると、**Skill = 手順の定義**、**Plugin = 外部接続**、**Scheduled task = 起動条件**、**worktree / サンドボックス = 実行境界**です。保守・共有したい処理は Skill 側に置き、タスク側には起動条件と対象だけを持たせると、後から読み解けます。
 
 **→ ループとして設計する考え方は [ループエンジニアリング](../dev-methods/loop-engineering.md) を参照**
+
+### 個人の定期作業・dots・Team Tasksを選ぶ
+
+同じ依頼を定期的に繰り返すなら **Scheduled tasks**、状況に応じて次の作業を考えて続けてほしいなら **dots**、チーム共通のアカウントで定型業務を回すなら **Team Tasks** が候補です。後者2つはChatGPTの製品機能で、[Agents API / Responses API / Agents SDK](../dev-methods/harness.md#openai-agents-api--codexハーネスをマネージドapiで使う)を組み込む開発とは導入手順が異なります。
+
+| 選択肢 | 仕事の持ち方・実行主体 | 入力コンテキスト・共有範囲 | 提供元・状態（2026-10-01確認） |
+|--------|----------------------|--------------------------|-----------------------------|
+| 個人のScheduled task | 時刻・対応イベントで起動する。WebはCloud、ローカル作業は接続した端末で実行する。 | 独立タスクは保存した指示、チャット内タスクはそのチャットの文脈を使う。必要な資料・接続を明示する。 | Official / 対応面・プラン・workspace設定に条件あり。 |
+| dots | 継続する責任を任せ、状況に応じてフォローする。専用のCloud computerで端末がオフでも作業できる。 | 会話、関連するChatGPT memory、dot自身のノートを参照する。メッセージ先の接続だけではアプリやPCのアクセスは増えない。 | Official / 段階的提供。対象プラン・地域・管理者設定に条件あり。 |
+| Team Tasks | 時刻・対応イベントで起動し、チームのservice accountと設定済み接続でCloud実行する。 | 作成者の個人memory・カスタム指示・履歴は引き継がない。加入者は過去の実行結果・生成ファイルも閲覧できる。 | Official / workspaceのチーム作成・タスク管理権限と接続設定が前提。 |
+
+**提供状態を一律にGAとは扱いません。** dotsは対象アカウントへ段階的に届きます。確認日時点でProの対象プランには年齢・地域制限があり、Business Premium / Enterpriseは世界各地へ展開中です。Enterpriseでは管理者による有効化が必要です。最新の条件は[公式Access](https://learn.chatgpt.com/docs/dots#access)、Team Tasksの管理条件は[公式ガイド](https://learn.chatgpt.com/docs/enterprise/teams)で確認してください。
+
+dotsが自分のPCを使うには、別途そのPCを接続し、オンラインかつChatGPTアプリを起動しておきます。dotのCloud browserとPCのbrowser sessionも別です。Team Tasksでは接続に使う外部アカウントの権限が実行範囲を決めるため、チームメンバー自身のアクセスより広い資料が見える場合があります。
+
+### 最初の結果を確認してから継続する
+
+| 選択肢 | 最小手順と、人が確認すること |
+|--------|----------------------------|
+| dots | Desktop appまたはdesktop browserで作成する。対象資料・任せる範囲・判断を求める条件を伝え、最初の出力の出典と抜けを確認する。 |
+| Team Tasks | ChatGPTの **Scheduled → + New Task → Team** で所有チームを選ぶ。起動条件・タイムゾーン・指示・接続・モデルを確認して作成し、**Run now → Previous runs** で出典・出力先・閲覧者を点検する。 |
+
+業務に使う指示の例は[継続作業のテンプレート](../business/use-cases.md#継続する案件確認とチームの週次報告)を参照してください。dotsの会話自体と、そこから始めるWork / Codexタスクは使用量の扱いが異なり、Team Tasksはworkspace creditsを使います。予算・上限は[公式dotsガイド](https://learn.chatgpt.com/docs/dots#access)と[Team Tasks FAQ](https://learn.chatgpt.com/docs/enterprise/teams#teams-and-team-tasks-faq)で確認します。
+
+| 止めたいもの | 操作と確認 |
+|--------------|------------|
+| dotの主タスク | **Pause**。委譲タスクは **Activity**、定期作業は **Scheduled** で個別に止める。通話終了だけでは作業は停止しない。 |
+| Team Taskの次回以降の起動 | タスクを一時停止する。停止・削除で実行中のrunが中断されるとは限らないため、runの状態と外部で完了した操作を確認する。 |
+
+停止は完了済みの変更を取り消しません。[信頼性設計の停止・再開](../dev-methods/agent-reliability.md#7-pause--resume--cancel--rollback)と、[dotsの停止操作](https://learn.chatgpt.com/docs/dots/controls#stop-work)も参照してください。
 
 ---
 

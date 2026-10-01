@@ -2,6 +2,12 @@
 
 本ガイドの主な更新を時系列で記録します。upstream の新規スキル検出への対応と、ガイド本体の構成変更・解説追加をここにまとめます。
 
+## 2026-10
+
+- **2026-10-01** ChatGPTのdots・Team Tasksを個人のScheduled tasksと比較（#226）。
+  - [Codexガイド](docs/codex/README.md#個人の定期作業dotsteam-tasksを選ぶ)に実行主体、入力文脈、接続権限、共有範囲、段階的提供、初回確認、停止操作を追加した。
+  - [ユースケース集](docs/business/use-cases.md#継続する案件確認とチームの週次報告)に案件確認・週次報告の説明用テンプレートを追加し、[信頼性設計](docs/dev-methods/agent-reliability.md#7-pause--resume--cancel--rollback)に主タスク・委譲・次回起動を分けて停止する確認を補足した。
+
 ## 2026-09
 
 - **2026-09-30** OpenAI関連エージェントの9月末更新を反映
