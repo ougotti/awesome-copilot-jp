@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-10-02** [ChatGPTのPlugin Extensions](docs/dev-methods/mcp-apps.md#chatgptのplugin-extensions2026-10-02確認)と[MCP Events](docs/dev-methods/mcp-events.md)を追加し、UIの対応面・Draftのevent連携・購読の更新と停止を整理。
 - **2026-10-02** [Codex Cloudガイド](docs/codex/cloud.md)を追加し、環境の公開・更新、接続・共有、Security Cloudの検査と修正案レビューを整理。
 - **2026-10-01** [dotsとTeam Tasksの使い分け](docs/codex/README.md#個人の定期作業dotsteam-tasksを選ぶ)に実行主体・接続・共有・停止方法を整理し、[案件確認・週次報告のテンプレート](docs/business/use-cases.md#継続する案件確認とチームの週次報告)を追加。
 - **2026-09-30** [Skills 最新動向](docs/trends.md)へOpenAI Agents APIのComputer Use、Responses APIのMulti-agent Beta、GPT-6.1 SolとCodex CLI 0.159系を追加
 - **2026-09-29** [MCP ツールの契約設計](docs/dev-methods/mcp-tool-contracts.md)を追加し、入出力スキーマ・副作用・再試行・エラー・確認手順を整理
-- **2026-09-28** [作業中のエージェントへの指示の出し分け](docs/dev-methods/agent-commands.md)を追加し、Claude Code・Codex・Copilot CLIのsteer / queue・サイドチャット・`/goal`を比較
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -156,6 +156,7 @@
 | **[MCP と A2A — 役割の違いと併用方法](docs/dev-methods/agent-protocols.md)** | 本ガイド | — | CLI / IDE / Cloud | 両プロトコルの中核概念比較、併用構成例、A2A の導入判断 |
 | **[MCP ツールの契約設計](docs/dev-methods/mcp-tool-contracts.md)** | 本ガイド | — | CLI / IDE / Cloud | Tool の入出力スキーマ、副作用、再試行、エラー、承認と認可、検証手順 |
 | **[MCP Apps — 会話内にUIを追加する](docs/dev-methods/mcp-apps.md)** | 本ガイド | — | CLI / IDE / Cloud / Chat UI | tool 結果として UI を返す仕組み、最小例、対応ホストの確認と fallback、データ露出範囲 |
+| **[MCP Events — 外部の更新から作業を続ける](docs/dev-methods/mcp-events.md)** | 本ガイド | — | Chat UI / Cloud | ChatGPTのDraft event連携、監視条件、購読・署名・再送・更新・解除と導入前の確認 |
 | **[AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md)** | 本ガイド | — | CLI / IDE / Cloud | エージェント固有ID・OAuth scope/token audience・委任権限・control planeの設計 |
 | **[マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md)** | 本ガイド | — | CLI / IDE / Cloud | agent-as-tool・supervisor・peer/teamの使い分け、向く仕事・向かない仕事、導入判断フローチャート |
 | **[長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md)** | 本ガイド | — | CLI / Cloud | time horizonと実行時間の違い、checkpoint・retry・冪等性・reliability budgetの設計、最小テストシナリオ |

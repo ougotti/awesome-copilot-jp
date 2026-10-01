@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-02 | ChatGPTのPlugin ExtensionsとMCP Eventsを追記し、UI拡張・Draftのevent連携・対応面・購読の更新と停止を詳細ページへ整理した。 |
 | 2026-10-02 | Codex Cloudの環境公開・再公開・接続・共有と、Security Cloud（Research Preview）の検査からdraft PRまでのレビュー手順を詳細ページへ追加した。 |
 | 2026-10-01 | ChatGPTのdots・Team Tasksを個人のScheduled tasksと区別し、実行主体・接続・共有・停止方法と業務テンプレートへの導線を追加した。 |
 | 2026-09-30 | OpenAI Agents APIのComputer Use、Responses APIのMulti-agent Beta、GPT-6.1 SolとCodex CLI 0.158〜0.159系を追加した |
@@ -766,9 +767,17 @@ Codex は 2026-09-05 に `codex mcp-server` command と standalone `codex-mcp-se
 
 **拡張の一つ「Apps」は、tool 呼び出しの結果として会話内にインタラクティブな UI（HTML/JS）を返せるようにするものです。** 対応ホストは Claude・Claude Desktop・VS Code GitHub Copilot など一部に限られ、「すべての MCP クライアントで動く」わけではありません。仕組み・最小例・対応ホストの確認方法・fallback の設計は [MCP Apps — 会話内にUIを追加する](dev-methods/mcp-apps.md) を参照してください。
 
+### ChatGPT固有のUI拡張とMCP Events（2026-10-02確認）
+
+OpenAI公式の **Plugin Extensions** はsidebar、conversation panels、file viewers / editors、Rich formsなどを提供します。MCP / MCP Appsを拡張するChatGPT固有の機能で、Agent Pluginsのmanifestにある`extensions`とは別です。Composer mentionsはdesktop限定、WebのFree / Go向けExtensionsはcoming soonです。全ホスト・全プラン対応と解釈せず、[UIの具体例と対応面](dev-methods/mcp-apps.md#chatgptのplugin-extensions2026-10-02確認)を参照してください。
+
+**MCP Events** は外部の更新で継続作業を起動する仕組みです。ChatGPTの公式実装はMCP 2.0（`2026-07-28`）を要求し、**Draft**のwebhook deliveryとcallback verificationに対応します。polling / streaming / `gap` / `terminated`は非対応です。WebのWork、desktopのWork＋Cloud、dotsで利用でき、workspace controlsも適用されます。[購読・受領・処理・更新・解除の手順](dev-methods/mcp-events.md)に利用者とサーバーの責任、文書コメントの例、重複・失効・自己起動の確認をまとめました。下のロードマップ全体が実装済みになった、という意味ではありません。
+
+出典：[Plugin Extensions](https://developers.openai.com/plugins/build/extensions)、[MCP Events](https://developers.openai.com/plugins/build/mcp-events)（OpenAI公式、2026-10-02確認）。ExtensionsのGA / Previewは参照ページで明示されていないため推測せず、Eventsの標準化状態とChatGPTでの実装を分けます。
+
 ### 次に来るもの — 2026-08-22 のロードマップ
 
-上記が**確定した仕様**であるのに対し、2026-08-22 に公開された[ロードマップ](https://blog.modelcontextprotocol.io/posts/mcp-roadmap/)は**これから取り組む重点領域**です。5 つあります。
+本節冒頭のMCP 2026-07-28 coreは**確定した仕様**です。2026-08-22 に公開された[ロードマップ](https://blog.modelcontextprotocol.io/posts/mcp-roadmap/)は**これから取り組む重点領域**で、前節のDraft Eventsの実装とも区別します。5 つあります。
 
 | 重点領域 | 何を解こうとしているか |
 |----------|----------------------|

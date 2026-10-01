@@ -1,6 +1,6 @@
 # MCP Apps — 会話内にUIを追加する
 
-> **対象ツール**: ツール横断（Claude・Claude Desktop・VS Code GitHub Copilot ほか対応ホスト） ｜ **実行環境**: CLI / IDE / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-09
+> **対象ツール**: ツール横断（Claude・Claude Desktop・VS Code GitHub Copilot・ChatGPT ほか対応ホスト） ｜ **実行環境**: CLI / IDE / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-02
 
 [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview) は、MCP サーバーが tool 呼び出しの結果として**インタラクティブな UI**（HTML/JS）を返せるようにする拡張です。テキストの戻り値だけでは伝えづらい・操作しづらい場面を補う手段として、いつ使うか・どう作るか・対応していないホストでどうなるかを整理します。
 
@@ -89,6 +89,28 @@ MCP Apps は既存の MCP の tool・resource の仕組みに乗ります。新�
 > Host support varies by client — 公式ページ自身がこう明記しています。上記リストは今後変わるため、導入前に[公式ページの Client support 節](https://modelcontextprotocol.io/extensions/apps/overview)で最新状況を確認してください。
 
 **対応していないホストでは何が起きるか。** tool 自体は通常の MCP tool として動作し続けます。UI resource が描画されないだけで、**tool のテキスト/構造化データとしての戻り値はそのまま使えます。** UI はあくまで戻り値に対する追加の表現手段であり、UI 抜きでも意味が通るテキスト結果を tool 側で用意しておくのが安全な設計です（対応ホストでは UI、非対応ホストではテキストにフォールバックする、という前提で tool の戻り値を設計してください）。
+
+---
+
+### ChatGPTのPlugin Extensions（2026-10-02確認）
+
+OpenAI公式の[Plugin Extensions](https://developers.openai.com/plugins/build/extensions)は、MCP / MCP Appsを拡張して、ChatGPTの画面にpluginのUIを組み込みます。会話内のtool結果に加えて、次の入口を提供します。
+
+| 画面・機能 | 利用者ができること |
+|------------|--------------------|
+| Sidebar apps / Conversation panels | sidebarから全画面のアプリを開く、会話の横にパネルを開く。 |
+| File viewers and editors | 対応ファイルを専用UIで読み、更新を表示し、変更を保存する。 |
+| Plugin settings / Rich forms | plugin固有の設定を変える、画像などの候補から条件を選んでtoolへ返す。 |
+| Display modes / Deep links | 表示面を選ぶ、アプリ内の対象項目を直接開く。 |
+| Model-App Context / Composer mentions | 双方向に文脈を共有する、入力欄からpluginの内容を選んで会話へ添える。 |
+
+**提供元はOfficial、GA / Previewの成熟度は参照ページで明示されていません。** 2026-10-02確認時点で、**Composer mentionsはdesktop app限定**、**WebのFree / Go向けExtensionsはcoming soon**です。既存plugin機能の提供状況とは区別し、他プランの一律提供もこの記述だけから推測しません。
+
+例えば、会話の横に案件報告ファイルのviewerを開き、Rich formで地域・期間を選び、選んだ条件で集計を依頼する構成が考えられます。これは説明用のUI案で、実際のplugin動作は未検証です。条件がtoolへ届くこと、表示・保存先、モデルへ共有する文脈を確認してから使います。
+
+実装では`_meta.ui.resourceUri`でUIを指定し、`openai/ui`のentrypoints（global / thread / fileなど）でChatGPTの入口を宣言します。**このホスト固有metadataを他のMCP Appsホストが解釈するとは限りません。** [Agent Pluginsのmanifestにある`extensions`](plugin-portability.md#標準が用意した逃げ道)とも別の仕組みです。SDK・仕様・公式サンプルBits & Boltsは[公式ガイド](https://developers.openai.com/plugins/build/extensions)から参照できます。
+
+UIを表示する対応と、更新で作業を再開する対応は別です。後者の条件・購読・停止は[MCP Events](mcp-events.md)を参照してください。
 
 ---
 
