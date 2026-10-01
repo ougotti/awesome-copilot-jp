@@ -4,6 +4,11 @@
 
 ## 2026-10
 
+- **2026-10-02** ChatGPTのPlugin ExtensionsとMCP Eventsを追加（#228）。
+  - [MCP Apps](docs/dev-methods/mcp-apps.md#chatgptのplugin-extensions2026-10-02確認)にsidebar・会話横・file viewer・Rich formsと提供面を追加し、[可搬性の解説](docs/dev-methods/plugin-portability.md)でmanifestの`extensions`との違いを明記した。
+  - [MCP Eventsガイド](docs/dev-methods/mcp-events.md)を新設し、MCP 2.0の前提、Draftの対応範囲、文書コメントから返信案を作る例、利用者とサーバーの責任、購読の更新・解除、重複・署名・期限・権限失効・自己起動の確認を整理した。
+  - [Codex入口](docs/codex/README.md)で既存Scheduled tasksと独自MCP Eventsの対応面を区別し、[最新動向](docs/trends.md)とREADMEに導線を追加した。OpenAI公式資料を2026-10-02に確認し、実際のplugin公開・購読・外部送信は行っていない。
+
 - **2026-10-02** Codex CloudとSecurity Cloudの導入・運用を追加（#227）。
   - [Codex Cloudガイド](docs/codex/cloud.md)を新設し、環境の準備・Publish・Republish、新規／既存タスク、network secret・接続先・共有範囲を整理した。
   - Security Cloudの単発scan・commit監視・検証証拠・修正案からdraft PRまでを説明し、Research Previewとローカルplugin／Legacy環境の違いを明記した。

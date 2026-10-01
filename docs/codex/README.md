@@ -121,6 +121,12 @@ CLI のプラグインブラウザは Marketplace ごとにタブが分かれ、
 
 > **入れすぎに注意**: Codex はコンテキストが逼迫すると Skill カタログを切り詰め、その旨を警告します。**使う分だけ有効にする**ほうが安定します（プラグインブラウザの <kbd>Space</kbd> で個別に無効化できます）。
 
+### ChatGPTのUI拡張と更新通知を使う
+
+ChatGPTの **Plugin Extensions** はsidebar・会話横のパネル・file viewer・Rich formsなどを提供するOpenAI固有のUI拡張です。Agent Pluginsの可搬manifestにある`extensions`とは区別し、Composer mentionsのdesktop限定やWebのFree / Go向けcoming soonなど、提供面を確認します。具体例と実装入口は[MCP AppsのChatGPT向け解説](../dev-methods/mcp-apps.md#chatgptのplugin-extensions2026-10-02確認)にあります。
+
+独自MCPサーバーの更新で作業を続ける **MCP Events** は、UI表示とは別の能力です。対応するWork / Cloudの面、利用者とサーバーの準備、文書コメントから返信案を作る例、購読の更新・解除は[MCP Eventsガイド](../dev-methods/mcp-events.md)を参照してください。
+
 ### CLI からリモートの marketplace を操作する（0.153.0）
 
 `/plugins` の UI に加えて、**Plugin CLI からリモート marketplace の Plugin を list / install / remove** できるようになりました（0.153.0、2026-09-03）。同バージョンで、`:` `@` `/` `.` を含むパッケージ形式の MCP サーバー名も扱えます。
@@ -276,12 +282,18 @@ GitHubのコードを検査する **Codex Security Cloud（Official / Research P
 | 確認すること | 内容 |
 |-------------|------|
 | プランと権限 | イベントトリガーは対象プランとワークスペースでの有効化が前提。管理者が「Allow event-triggered scheduled tasks」で制御する |
-| 対応する面 | **イベントトリガーはデスクトップアプリと CLI では使えない** |
+| 対応する面 | 上記Gmail / Slack / GitHubのScheduled tasksイベントトリガーは**デスクトップアプリと CLI では使えない** |
 | 実行の前提 | デスクトップアプリのタスクは、**マシンとアプリが起動したまま**である必要がある |
 
 役割で整理すると、**Skill = 手順の定義**、**Plugin = 外部接続**、**Scheduled task = 起動条件**、**worktree / サンドボックス = 実行境界**です。保守・共有したい処理は Skill 側に置き、タスク側には起動条件と対象だけを持たせると、後から読み解けます。
 
 **→ ループとして設計する考え方は [ループエンジニアリング](../dev-methods/loop-engineering.md) を参照**
+
+### 独自MCPサーバーの更新を受ける
+
+上のScheduled tasksの対応面と、plugin経由の **MCP Events** は別に確認します。2026-10-02の[公式資料](https://developers.openai.com/plugins/build/mcp-events)では、MCP Eventsは **WebのWorkチャット、desktop appでCloudを選んだWorkチャット、dots** に対応します。MCP 2.0（`2026-07-28`）が前提で、Events仕様はDraft、ChatGPTが扱うのはwebhook deliveryとcallback verificationです。
+
+監視条件・終了条件は利用者が指定し、認可・署名・永続購読・期限・重複・解除はサーバーが実装します。2xxの受領だけではtaskの完了を判断できません。**→ [MCP Eventsの手順と確認項目](../dev-methods/mcp-events.md)を参照してください。**
 
 ### 個人の定期作業・dots・Team Tasksを選ぶ
 
