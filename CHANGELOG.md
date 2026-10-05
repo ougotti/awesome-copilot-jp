@@ -4,6 +4,13 @@
 
 ## 2026-10
 
+- **2026-10-05** Claude Code の Mods を新規ページで解説し、Copilot code review の API 対応・`Balanced` 既定化とモデル廃止を追記。
+  - [Claude Code の Mods](docs/claude-code/mods.md)を新設し、mod と settings hook・Skill・MCP の違い、動く場所（描画が見えるのは端末とデスクトップだけ）、`claude plugin validate` の `hooks:` / `calls:` による導入前の確認、`allowManagedModsOnly`・`disableAllHooks`・policy mod による組織での止め方、2.1.287〜2.1.289 の変更を整理した。公式ドキュメントと変更ログを2026-10-05に確認した。
+  - mod が sandbox の外で利用者の権限で動くこと、`ask` ルールを上書きし得ること、`deny` ルールが mod 自身の `$.fs` / `$.process` を止めないこと、`disableAllHooks` が managed の `PreToolUse` も止めることを明記した。「You should know」は既定で無効で、利用可否がプラン・組織・テレメトリに依存する点も分けた。
+  - [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#実行コードを持つ拡張--claude-code-の-mods)、[Claude Code 入口](docs/claude-code/README.md)・[カスタマイズ機能](docs/claude-code/basics.md#プラグイン)、[最新動向 12 節](docs/trends.md#12-skill--plugin-のセキュリティ)から導線を追加した。
+  - [Copilot ガイド](docs/copilot/README.md#2026-09-28-から-default-は-balanced-を使う)で、`Default` が `Balanced` を使う変更を「予定」から「2026-09-28 から実施済み」へ改め、REST / GraphQL API からの review 依頼（2026-10-02、一般提供）と、API・approval・effort を分けた確認事項を追加した。API のエンドポイント名などは公式変更ログから確認できなかったため、未確認として明記した。
+  - [Copilot のモデル廃止](docs/copilot/README.md#モデルの廃止--2026-10-02-実施分と-2026-10-19-予定分)に、2026-10-02 実施分（Gemini 3.5 / 3.6 Flash・Kimi K2.7 Code・Claude Opus 4.7）と 2026-10-19 予定分（Gemini 3.7 Flash・GPT-5.5・GPT-5.4・GPT-5.4 mini・GPT-5 mini・Grok 4.5）、代替モデル、管理者の model policy による分岐を追加した。
+
 - **2026-10-02** Codex CloudとSecurity Cloudの導入・運用を追加（#227）。
   - [Codex Cloudガイド](docs/codex/cloud.md)を新設し、環境の準備・Publish・Republish、新規／既存タスク、network secret・接続先・共有範囲を整理した。
   - Security Cloudの単発scan・commit監視・検証証拠・修正案からdraft PRまでを説明し、Research Previewとローカルplugin／Legacy環境の違いを明記した。

@@ -214,6 +214,8 @@ Skill・コマンド・サブエージェント・フック・MCP 設定をま�
 /plugin install document-skills@anthropic-agent-skills
 ```
 
+> **2.1.287 以降のプラグインは「mod」を含められます。** mod は Claude Code の内部で動く関数で、画面の描画やツール呼び出しまで書き換えられます。フック・Skill・MCP と違って利用者の権限で、sandbox の外で動くため、入れる前の確認と組織での制御が別に要ります。→ [Mods](mods.md)
+
 > GitHub Copilot 側の Plugin との違い（含められる要素、Marketplace の扱い、組織での強制方法）は [GitHub Copilot Plugins](../copilot/plugins.md#claude-code-の-plugin-marketplace-との比較) の比較表を参照してください。
 
 ### 公式ディレクトリ `claude-plugins-official`

@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-27
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-05
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -500,15 +500,29 @@ toolchain / dependencies を remote project 側で揃えたまま agent に buil
 
 レビューの深さ（**effort levels**）も選べます（2026-08-07 一般提供）。`Lite` は単純な変更向け、`Balanced` はより高い推論能力が要る変更向けで、組織管理者が既定値を設定できます（組織設定 → Copilot → Copilot code review）。使用されたレベルはタイムラインと PR の概要コメントに表示されます。
 
-### Upcoming — `Default` が `Balanced` を使う予定
+### 2026-09-28 から `Default` は `Balanced` を使う
 
-GitHubは、**2026-09-28以降に**、組織またはリポジトリのreview effortが `Default` の場合に `Balanced` を使う予定です。これは[2026-08-28の公式告知](https://github.blog/changelog/2026-08-28-upcoming-changes-to-github-copilot-policies-and-billing/#copilot-code-review-default-is-changing-to-balanced-effort-level)に基づく**将来の変更**で、2026-09-16の確認時点では実施済みとして扱いません。
+[2026-10-02の公式変更ログ](https://github.blog/changelog/2026-10-02-copilot-code-review-api-support-and-new-default-effort-level/)は、**2026-09-28から**、review effortが `Default` の組織・リポジトリで `Balanced` が使われると記載しています（"the Default review effort level now uses Balanced for new and existing repositories"）。[2026-08-28の告知](https://github.blog/changelog/2026-08-28-upcoming-changes-to-github-copilot-policies-and-billing/#copilot-code-review-default-is-changing-to-balanced-effort-level)にあった**予定が実施された**ものです。
 
-- `Default` のままなら、変更後は既存・新規の組織とリポジトリで `Balanced` が使われる予定です。
-- `Lite` を維持したい管理者は、**2026-09-28より前に**組織またはリポジトリのreview effortを `Default` から明示的な `Lite` へ変更します。
-- 組織の既定値は、独自の値を選んでいない配下リポジトリへ適用されます。リポジトリの既定値は自動リクエストされたreviewへ適用され、手動リクエストではPRのReviewers欄からeffort levelを選べます。
+- `Default` のままの既存・新規の組織とリポジトリは、`Balanced` で review されます。
+- 明示的に `Lite` を選んでいた設定は、そのまま尊重されます。`Default` のまま `Lite` 相当を期待していた場合は、**組織またはリポジトリの設定で `Lite` を明示**してください。
+- 設定は Enterprise・Organization・Repository・個人の各層で変えられます。組織の既定値は、独自の値を選んでいない配下リポジトリへ適用されます。リポジトリの既定値は自動リクエストされたreviewへ適用され、手動リクエストではPRのReviewers欄からeffort levelを選べます。
+- **review の深さが変わると、所要時間と指摘の量も変わり得ます。** 既存のリポジトリで指摘数や待ち時間が変わっていないか、PRのタイムラインと概要コメントに表示されるeffort levelと合わせて確認してください。
 
-> 2026-09-28以降も、公式変更ログと実際の組織・リポジトリ設定画面を再確認してください。段階的なロールアウトや予定変更があり得るため、日付だけを根拠に適用済みと判断しないでください。
+### API から review を依頼する（2026-10-02）
+
+同じ変更ログで、**REST / GraphQL API から Copilot に review を依頼**できるようになりました（"You can now request a review from Copilot using the supported REST and GraphQL APIs"）。各リクエストで review effort level を指定することもできます（任意）。対象プランは Copilot Pro・Pro+・Max・Business・Enterprise で、公式の記載は一般提供です。
+
+CI・社内ツール・bot から review を起動する場合は、次の点を分けて設計します。
+
+| 観点 | 確認すること |
+|------|-------------|
+| 誰の権限で依頼するか | API を呼ぶトークンの持ち主と、その権限（PR への書き込み権限を持つ主体を、必要最小限にする） |
+| effort をどう決めるか | 呼び出し側で指定するか、リポジトリの既定に任せるか。指定しない呼び出しは、`Default` の解決先（現在は `Balanced`）に従う |
+| approval との関係 | review の依頼と、Copilot approval（[下の節](#プルリクエストの承認をどこまで-ai-に任せるか)）を required approvals に数える設定は**別**。API で review を起動しても、approval が merge 要件を満たすわけではない |
+| 起動の頻度 | push のたびに依頼する運用は、review の回数と待ち時間を増やす。対象パスや PR の状態で絞る |
+
+> **確認できていない点**: 具体的なエンドポイント名・リクエストのフィールド名・レート制限は、公式の変更ログ本文からは確認できていません。実装前に[公式ドキュメント](https://docs.github.com/en/copilot/how-tos/copilot-on-github/set-up-copilot/configure-code-review)で確認してください。
 
 **→ 経緯と他ツールの対応状況は [Skills 最新動向 9 節](../trends.md#9-skill-が動く場所の広がり) を参照**
 
@@ -759,6 +773,49 @@ VS Code、Copilot CLI、Copilot app、cloud / coding agent、JetBrains などの
 
 Copilot の model policy は Copilot 経由の利用にだけ効きます。同じ組織で Claude Code を直接使っている場合、新しいモデルを検証が済むまで使わせない設定は Claude Code 側の managed settings で別に行います（2.1.283 の `availableModelsMatch` / `deniedModels`）。**→ [Claude Code のカスタマイズ機能](../claude-code/basics.md#新しいモデルを検証前に使わせない--availablemodelsmatch-と-deniedmodels)を参照。**
 
+## モデルの廃止 — 2026-10-02 実施分と 2026-10-19 予定分
+
+Copilot では、モデルピッカーのモデルが短い間隔で入れ替わります。**自分のワークフロー・組織のポリシー・社内手順書が、廃止されるモデル名を固定していないか**を確認してください。
+
+### 2026-10-02 に廃止された（実施済み）
+
+[公式の変更ログ](https://github.blog/changelog/2026-10-02-selected-models-in-github-copilot-deprecated/)によると、2026-10-02 付けで次のモデルが廃止されました。
+
+| 廃止されたモデル | 移行先 |
+|-----------------|--------|
+| Gemini 3.5 Flash / Gemini 3.6 Flash | Gemini 3.8 Flash |
+| Kimi K2.7 Code | Kimi K3 |
+| Claude Opus 4.7 | Claude Opus 5.5 |
+
+廃止モデルを削除する作業は不要ですが、**ワークフローや連携は対応モデルへ更新**する必要があります。Copilot Enterprise の管理者は、代替モデルを使えるようにするため、Copilot 設定の model policy で有効化が必要な場合があります。
+
+### 2026-10-19 に廃止される（予定）
+
+[2026-09-18 の告知](https://github.blog/changelog/2026-09-18-upcoming-deprecation-of-selected-github-copilot-models-in-mid-october/)によると、**2026-10-19** に次のモデルが廃止されます。対象は Copilot Chat・インライン編集・ask / agent モード・コード補完を含むCopilotの各体験です。
+
+| 廃止されるモデル | 推奨される代替 |
+|-----------------|---------------|
+| Gemini 3.7 Flash | Gemini 3.8 Flash |
+| GPT-5.5 | GPT-5.6 Sol |
+| GPT-5.4 | GPT-5.6 Sol |
+| GPT-5.4 mini | GPT-5.6 Luna |
+| GPT-5 mini | GPT-5.6 Luna |
+| Grok 4.5 | Grok 4.6 |
+
+### 管理者が確認すること
+
+公式は、Copilot Enterprise と Business では、**global default の model enablement が有効で、管理者が当該モデルを明示的に無効にしていない限り**、推奨される代替モデルが自動で有効になると説明しています。つまり、次の 2 つの層で挙動が分かれます。
+
+| 組織の状態 | 廃止後の代替モデル |
+|-----------|-------------------|
+| global default を有効のまま、廃止モデルも明示的に無効にしていない | 自動で有効になる |
+| global default を無効にしている、または廃止モデルを明示的に無効にしている | **自動では有効にならない**。model policy で代替モデルへのアクセスを有効にする |
+
+- **モデルを個別に絞っている組織**は、廃止日の前に model policy を見直し、代替モデルを検証して有効にするか決めます。
+- 代替モデルは**世代と挙動が違います**（たとえば、廃止対象のGPT-5.5・GPT-5.4と、代替のGPT-5.6 Sol）。プロンプトや Skill・Instructions の評価を、モデルを固定して行っている場合は、代替モデルで再評価します（[Skill / エージェントの評価](../dev-methods/evals.md)）。
+- 同じモデル名を **Claude Code や Codex の側**で固定している場合、Copilot の廃止は影響しません。Copilot 経由の利用にだけ効く変更です（Claude Code 側は 2.1.283 の `availableModelsMatch` / `deniedModels` を参照）。
+- 日付と対象は変更され得ます。**廃止日の前に、公式変更ログと組織のモデルピッカーを再確認**してください。
+
 ## 参考リンク
 
 - [github/awesome-copilot](https://github.com/github/awesome-copilot) — カスタマイズの公式リポジトリ
@@ -783,6 +840,9 @@ Copilot の model policy は Copilot 経由の利用にだけ効きます。同�
 - [Cookbook](https://github.com/github/awesome-copilot/blob/main/cookbook/README.md) — Copilot SDK を活用した実践的コードレシピ集
 - [About GitHub Copilot plugins](https://docs.github.com/en/copilot/concepts/agents/about-plugins) — Plugin の概念と構成（公式）
 - [Manage agent skills with GitHub CLI](https://github.blog/changelog/2026-04-16-manage-agent-skills-with-github-cli/) — `gh skill` による Skill 管理（公式）
+- [Copilot code review: API support and new default effort level](https://github.blog/changelog/2026-10-02-copilot-code-review-api-support-and-new-default-effort-level/) — REST / GraphQL API からの review 依頼と、`Default` が `Balanced` を使う変更（GitHub 公式・2026-10-02）
+- [Selected models in GitHub Copilot deprecated](https://github.blog/changelog/2026-10-02-selected-models-in-github-copilot-deprecated/) — 2026-10-02 に廃止されたモデルと移行先（GitHub 公式）
+- [Upcoming deprecation of selected GitHub Copilot models in mid-October](https://github.blog/changelog/2026-09-18-upcoming-deprecation-of-selected-github-copilot-models-in-mid-october/) — 2026-10-19 に廃止予定のモデル、代替、管理者向けの扱い（GitHub 公式・2026-09-18）
 - [Copilot code review can now approve pull requests](https://github.blog/changelog/2026-09-01-copilot-code-review-can-now-approve-pull-requests/) — approval assessment と approval の区別（公式・2026-09-01、Public Preview）
 - [Configuring code review by GitHub Copilot](https://docs.github.com/en/copilot/how-tos/copilot-on-github/set-up-copilot/configure-code-review) — 設定階層・パス限定（最大 15 glob）の一次情報（公式）
 - [Enterprise managed permissions for GitHub Copilot agent operations](https://github.blog/changelog/2026-09-09-enterprise-managed-permissions-for-github-copilot-agent-operations/) — 操作単位の managed permissions 一般提供（公式・2026-09-09）
