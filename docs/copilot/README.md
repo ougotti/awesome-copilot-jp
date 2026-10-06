@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-05
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-06
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -773,6 +773,61 @@ VS Code、Copilot CLI、Copilot app、cloud / coding agent、JetBrains などの
 
 Copilot の model policy は Copilot 経由の利用にだけ効きます。同じ組織で Claude Code を直接使っている場合、新しいモデルを検証が済むまで使わせない設定は Claude Code 側の managed settings で別に行います（2.1.283 の `availableModelsMatch` / `deniedModels`）。**→ [Claude Code のカスタマイズ機能](../claude-code/basics.md#新しいモデルを検証前に使わせない--availablemodelsmatch-と-deniedmodels)を参照。**
 
+## Computer Use — デスクトップアプリを操作する（Public Preview）
+
+2026-10-01 から、**Copilot CLI と GitHub Copilot app** で、Copilot が macOS / Windows のデスクトップアプリを操作できるようになりました（[公式の変更ログ](https://github.blog/changelog/2026-10-01-github-copilot-can-now-interact-with-desktop-apps/)、**Public Preview**）。アクセシビリティ情報と、必要に応じたスクリーンショットで画面を読み、クリック・テキスト入力・キー操作・スクロール・ドラッグ・アプリ間の移動を行います。
+
+| 項目 | 内容 |
+|------|------|
+| 状態 | Public Preview（2026-10-01） |
+| 対象 | Copilot CLI と GitHub Copilot app。**macOS / Windows のローカルセッションのみ** |
+| 既定 | **無効**。使う前に明示的に有効化する |
+| 有効化 | CLI: `/computer on`（状態確認は `/computer show`、無効化は `/computer off`）／ app: Settings → Computer Use → Enable Computer Use |
+| 画面の読み方 | OS のアクセシビリティツリー。視覚的な文脈が要る場面ではスクリーンショット |
+| macOS の権限 | Accessibility（コントロールの操作）と Screen Recording（ウィンドウの確認） |
+| 組織の制御 | Enterprise 管理者は managed settings で無効化できる。ローカルで `/computer on` にしても、組織のポリシーは上書きできない |
+
+### 承認の流れ — 「Always allow」の範囲に注意する
+
+Computer Use は、CLI の**現在の permission mode** に従って承認を求めるかどうかが決まります（`/permissions show` で確認）。承認を求められたときの選択肢は次のとおりです。
+
+| 選択 | 効く範囲 |
+|------|---------|
+| **Allow** | 現在の Computer Use セッションのみ |
+| **Always allow** | 以降のセッションにも保存される。**同じコンピューターの Copilot app にも適用される** |
+| 拒否・キャンセル | そのリクエストを実行しない |
+
+- **`deny` ルールは、自動承認や保存済みの承認より優先されます。** 操作させたくないアプリは、承認の記憶に頼らず `deny` で止めます。
+- 公式は、**機密情報を含むアプリや、影響の大きい操作ができるアプリに「Always allow」を選ばない**よう勧めています。メール・会計・社内管理画面などは、毎回確認する運用が安全です。
+- 「Always allow」の一覧は見直し・リセットできると公式は説明しています（具体的な操作手順は[公式ドキュメント](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/computer-use)で確認してください）。
+- 実行中の操作は **Esc を 2 回**押すと中断できます。
+- 承認は「そのアプリを操作してよい」という範囲の許可です。アプリ内で何を送信・削除するかまで個別に確認されるとは限りません。承認の重さの考え方は[エージェントに外部操作を与える手段の選び方](../dev-methods/tool-selection.md#8-承認境界--読み取り入力送信購入削除で分ける)を参照してください。
+
+### いつ使うか — API・MCP・CLI が先
+
+公式ドキュメントは、**API・MCP サーバー・ターミナルコマンド・ファイル操作ツール・専用のブラウザツールで直接できる作業なら、そちらの方が構造化された情報と予測しやすい結果を返す**としています。Computer Use が向くのは、API や CLI、MCP 連携のないレガシーソフトや、GUI でしか操作できないアプリです。
+
+| 向く作業 | 向かない作業 |
+|---------|-------------|
+| API のない社内ツールの画面から状態を読み取る | GitHub の Issue や PR の操作（`gh` や GitHub MCP で足りる） |
+| GUI 専用アプリでの E2E 確認・画面の最終確認 | 大量データの反復処理（API・CLI の方が速く確実） |
+| 複数アプリにまたがる手作業の手順を、読み取り中心で自動化する | 取り消せない送信・購入・削除を無人で行う |
+
+指示は、**目的・対象アプリ・してはいけないこと**を含めて書きます。公式の例は次のとおりです。
+
+```text
+Open APP_NAME and summarize the status information shown in the main window. Do not change any values or submit any forms.
+```
+
+### 公式が挙げる限界とリスク
+
+- 間違ったコントロールを選ぶ、違う場所に入力する、非標準・動的なコントロールや複雑な手順で失敗することがある。
+- 指示が曖昧だったり、**画面上に予期しない内容があったりすると、意図しない操作**がデバイス・データ・接続アカウントに及ぶことがある。画面に表示された文字列は「データ」であって「指示」ではありません（[プロンプトインジェクションの扱い](../dev-methods/tool-selection.md#8-承認境界--読み取り入力送信購入削除で分ける)）。
+- アプリのウィンドウには機密情報が表示され得る。公式ドキュメントは、どのデータがモデルへ送られるかを詳しく述べていないため、**コンテキストとして共有される内容を利用者が確認する**前提で使います。
+- 公式は「Computer Use は人の判断の代わりにはならない」と明記しています。
+
+> **他社の Computer Use との違い**: Codex / ChatGPT Work の Computer Use、OpenAI Agents API の Computer Use（OpenAI-hosted ブラウザ）とは、実行場所・承認の単位・管理方法が異なります。比較は [Skills 最新動向 6 節](../trends.md#6-computer-use--browser-use)を参照してください。
+
 ## モデルの廃止 — 2026-10-02 実施分と 2026-10-19 予定分
 
 Copilot では、モデルピッカーのモデルが短い間隔で入れ替わります。**自分のワークフロー・組織のポリシー・社内手順書が、廃止されるモデル名を固定していないか**を確認してください。
@@ -840,6 +895,8 @@ Copilot では、モデルピッカーのモデルが短い間隔で入れ替わ
 - [Cookbook](https://github.com/github/awesome-copilot/blob/main/cookbook/README.md) — Copilot SDK を活用した実践的コードレシピ集
 - [About GitHub Copilot plugins](https://docs.github.com/en/copilot/concepts/agents/about-plugins) — Plugin の概念と構成（公式）
 - [Manage agent skills with GitHub CLI](https://github.blog/changelog/2026-04-16-manage-agent-skills-with-github-cli/) — `gh skill` による Skill 管理（公式）
+- [GitHub Copilot can now interact with desktop apps with computer use](https://github.blog/changelog/2026-10-01-github-copilot-can-now-interact-with-desktop-apps/) — Copilot CLI / app の Computer Use（GitHub 公式・2026-10-01、Public Preview）
+- [About computer use in GitHub Copilot](https://docs.github.com/en/copilot/concepts/agents/computer-use) ／ [Using GitHub Copilot CLI to interact with desktop applications](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/computer-use) — 使いどころ・限界・承認の流れ（GitHub 公式）
 - [Copilot code review: API support and new default effort level](https://github.blog/changelog/2026-10-02-copilot-code-review-api-support-and-new-default-effort-level/) — REST / GraphQL API からの review 依頼と、`Default` が `Balanced` を使う変更（GitHub 公式・2026-10-02）
 - [Selected models in GitHub Copilot deprecated](https://github.blog/changelog/2026-10-02-selected-models-in-github-copilot-deprecated/) — 2026-10-02 に廃止されたモデルと移行先（GitHub 公式）
 - [Upcoming deprecation of selected GitHub Copilot models in mid-October](https://github.blog/changelog/2026-09-18-upcoming-deprecation-of-selected-github-copilot-models-in-mid-october/) — 2026-10-19 に廃止予定のモデル、代替、管理者向けの扱い（GitHub 公式・2026-09-18）

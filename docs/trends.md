@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-05
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-06
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-06 | 6 節に GitHub Copilot の Computer Use（CLI / app、2026-10-01、Public Preview）を追加し、Codex / ChatGPT・OpenAI Agents API と実行場所・承認・管理方法を比較した。詳細は Copilot ガイドへ集約した |
 | 2026-10-05 | Claude Code 2.1.287〜2.1.289 の Mods（プラグインが Claude Code 内部で動き、画面描画・ツール呼び出しまで書き換えられる）を 12 節へ追加し、信頼境界と組織での止め方を詳細ページへ集約した。9-1 節に Copilot code review の API 対応（2026-10-02）と、`Default` が `Balanced` を使う変更の実施を反映した。Copilot のモデル廃止（2026-10-02 実施・2026-10-19 予定）は Copilot ガイドへ追加した |
 | 2026-10-02 | Codex Cloudの環境公開・再公開・接続・共有と、Security Cloud（Research Preview）の検査からdraft PRまでのレビュー手順を詳細ページへ追加した。 |
 | 2026-10-01 | ChatGPTのdots・Team Tasksを個人のScheduled tasksと区別し、実行主体・接続・共有・停止方法と業務テンプレートへの導線を追加した。 |
@@ -248,6 +249,20 @@ skills.shで公開されている注目スキル集の一覧と導入方法は�
 ## 6. Computer Use / Browser Use
 
 [Computer Use](https://learn.chatgpt.com/docs/computer-use) は、CodexまたはChatGPT WorkがGUIを見て、クリック、入力、メニュー操作、画面検証を行う機能です。CLIやMCPでは届かないデスクトップアプリや、APIのない画面操作に使います。Google も 2026-06-24 に Gemini 3.5 Flash で同種の機能（ブラウザ・モバイル・デスクトップ横断）を発表しており、単一ベンダーの機能ではなくなっています。
+
+### GitHub Copilot にも来た — 2026-10-01
+
+GitHub Copilot も 2026-10-01 に、**Copilot CLI と GitHub Copilot app** で macOS / Windows のデスクトップアプリを操作する Computer Use を公開しました（GitHub 公式・**Public Preview**、既定は無効）。CLI では `/computer on` で有効化し、承認は CLI の permission mode に従います。**「Always allow」は以降のセッションと、同じコンピューターの Copilot app にも引き継がれる**ため、機密情報を扱うアプリでは選ばないよう公式が勧めています。
+
+| | Codex / ChatGPT Work | GitHub Copilot（CLI / app） | OpenAI Agents API |
+|--|---------------------|-----------------------------|-------------------|
+| 操作対象 | 組み込みブラウザ・Chrome・macOS / Windows アプリ | macOS / Windows のデスクトップアプリ（ローカルセッションのみ） | OpenAI-hosted ブラウザ（Web アプリ） |
+| 実行場所 | 利用者のマシン（ブラウザは ChatGPT 内） | 利用者のマシン | OpenAI のホスト環境 |
+| 承認の単位 | 本ガイドでは未整理（[公式](https://learn.chatgpt.com/docs/computer-use)で確認） | アプリごと（Allow / Always allow / 拒否）。`deny` ルールが優先 | network policy と Web サイトの origin ごとの承認 |
+| 組織の制御 | 本ガイドでは未整理（同上） | Enterprise の managed settings で無効化（ローカル設定で上書き不可） | API 側の設定（[ハーネス解説](dev-methods/harness.md#agents-apiでブラウザを操作する2026-09-29)） |
+| 状態 | 本ガイドでは未整理（同上） | Public Preview | Public Beta |
+
+3 社とも「API・MCP・CLI などの構造化された手段で済むなら、そちらを優先する」という立場は共通です。**→ Copilot の承認の流れ・向く作業・限界は [GitHub Copilot ガイド](copilot/README.md#computer-use--デスクトップアプリを操作するpublic-preview) を参照**
 
 ### Browser Useとの関係
 
@@ -881,6 +896,7 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 - [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills)
 - [OpenAI Record & Replay](https://learn.chatgpt.com/docs/extend/record-and-replay)
 - [OpenAI Computer Use](https://learn.chatgpt.com/docs/computer-use)
+- [GitHub Copilot can now interact with desktop apps with computer use](https://github.blog/changelog/2026-10-01-github-copilot-can-now-interact-with-desktop-apps/) ／ [About computer use in GitHub Copilot](https://docs.github.com/en/copilot/concepts/agents/computer-use)
 
 ### Skill の発見・配布・更新（本ページ 7 節）
 

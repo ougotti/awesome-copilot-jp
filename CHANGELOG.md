@@ -4,6 +4,12 @@
 
 ## 2026-10
 
+- **2026-10-06** GitHub Copilot の Computer Use（2026-10-01、Public Preview）を追加。
+  - [Copilot ガイド](docs/copilot/README.md#computer-use--デスクトップアプリを操作するpublic-preview)に、対象（CLI / app、macOS / Windows のローカルセッション）、既定で無効、`/computer on` / `show` / `off`、managed settings による無効化を整理した。
+  - 承認は permission mode に従い、「Always allow」が以降のセッションと同じコンピューターの Copilot app に引き継がれること、`deny` ルールが優先されること、機密アプリで「Always allow」を避ける公式の推奨を明記した。
+  - 公式ドキュメントの使いどころ（API・MCP・CLI を優先）、限界とリスクを整理した。モデルへ送られるデータの範囲と「Always allow」のリセット手順は公式から確認できなかったため、推測で書かず公式ドキュメントへ誘導した。
+  - [最新動向 6 節](docs/trends.md#6-computer-use--browser-use)に Codex / ChatGPT・Copilot・OpenAI Agents API の比較表を追加し、[外部操作の手段の選び方](docs/dev-methods/tool-selection.md#6-computer-use--api-のない-gui-と最終画面確認)へ GitHub の位置づけを追記した。
+
 - **2026-10-05** Claude Code の Mods を新規ページで解説し、Copilot code review の API 対応・`Balanced` 既定化とモデル廃止を追記。
   - [Claude Code の Mods](docs/claude-code/mods.md)を新設し、mod と settings hook・Skill・MCP の違い、動く場所（描画が見えるのは端末とデスクトップだけ）、`claude plugin validate` の `hooks:` / `calls:` による導入前の確認、`allowManagedModsOnly`・`disableAllHooks`・policy mod による組織での止め方、2.1.287〜2.1.289 の変更を整理した。公式ドキュメントと変更ログを2026-10-05に確認した。
   - mod が sandbox の外で利用者の権限で動くこと、`ask` ルールを上書きし得ること、`deny` ルールが mod 自身の `$.fs` / `$.process` を止めないこと、`disableAllHooks` が managed の `PreToolUse` も止めることを明記した。「You should know」は既定で無効で、利用可否がプラン・組織・テレメトリに依存する点も分けた。
