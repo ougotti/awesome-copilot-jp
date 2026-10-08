@@ -199,6 +199,10 @@ GitHub Copilot の **content exclusion** は、機密ファイルを Copilot の
 
 **→ 対応面・非対応面の一覧は [GitHub Copilot ガイド](../copilot/README.md#組織の統制--content-exclusion) を参照**
 
+### 自然言語の判断と、強制する制御を分ける
+
+Claude Code の `prompt` / `agent` フックは、モデルが自然言語の条件を解釈して許可・拒否を決めます。2.1.294（2026-10-08）では、「〜をブロックせよ」のような**命令文で書いたフックが、本来ブロックすべき操作を通していた**問題が修正されました。モデルの判断は言い回し・版・入力で変わり得るうえ、出力が壊れた場合やタイムアウト時にどちらへ倒れるかも公式には記載がありません。**必ず止めたい操作は、permission ルール・`command` フック・managed settings・sandbox で止め**、自然言語のフックは補助的なチェックに使います。**→ [Claude Code のカスタマイズ機能](../claude-code/basics.md#自然言語のフックは書き方で結果が変わる--21294-の修正)**
+
 ### ローカルモデル・offline・telemetry は別の境界
 
 「ローカルモデルを使う」ことと、「外部へ何も送らない」ことは同じではありません。GitHub Copilot CLI 1.0.94-0（2026-10-07）は `/model` で起動中の Ollama のモデルを追加できるようになりましたが、公式は**ローカルモデルの選択では offline mode にならず、GitHub の telemetry も止まらない**と明記しています。offline mode（`COPILOT_OFFLINE=true`）を有効にしても、provider がリモートならプロンプトとコード文脈はその provider へ送られます。**モデル・送信先・offline・telemetry を別々に確認**してください。**→ [GitHub Copilot ガイド](../copilot/README.md#ローカルモデルを使う--ollama-の発見と-offline-modecli-1094-0)**

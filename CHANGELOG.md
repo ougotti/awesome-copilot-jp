@@ -4,6 +4,12 @@
 
 ## 2026-10
 
+- **2026-10-08** Claude Code の自然言語フックの検証と 2.1.294 の修正を追加（#238）。
+  - [Claude Code のカスタマイズ機能](docs/claude-code/basics.md#フックの種類--誰が判定するか)に、5 種類のフック（`command` / `http` / `mcp_tool` / `prompt` / `agent`）の判定主体、`prompt` / `agent` の応答（`ok` / `reason` / `impossible`）、対応イベント、イベントごとの `ok: false` の意味、`agent` フックが Experimental である点を整理した。
+  - 2.1.294 の「命令文のフックがブロックすべき操作を通していた修正」と「Stop / SubagentStop の早期終了の改善」を別の変更として説明し、`echo` だけを使う無害な検証例、Stop の連続継続の上限（8 回）、`stop_hook_active` を加えた。
+  - 出力の破損・タイムアウト・モデルのエラー時の挙動は公式に記載がなく未確認と明記し、2.1.288 のフック起動の修正とは別の問題として区別した。
+  - [評価](docs/dev-methods/evals.md#フックを変更したら許可拒否継続終了を測る)に許可・拒否・継続・終了の評価表を、[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#自然言語の判断と強制する制御を分ける)と[最新動向 12 節](docs/trends.md#12-skill--plugin-のセキュリティ)に要約を追加した。公式の Hooks reference と 2.1.294 の release を2026-10-08に確認した。
+
 - **2026-10-08** Copilot の local sandbox の GA（2026-10-07）を反映（#237）。
   - [Copilot ガイド](docs/copilot/README.md#copilot-の-local-sandboxga)の Copilot app 向け Public Preview の節を、CLI・app・Agent Host を使う VS Code を対象とする GA の内容へ書き換えた。MXC、モデルの実行とツールの隔離の分離、CLI（`/sandbox enable`）と app の有効化・制御範囲の差、credential のプレースホルダーとプロキシ、MCP / LSP の扱い（リモート MCP は対象外）、OS が強制できないときの挙動、`sandbox.enabled` / `sandbox.failIfUnavailable` による必須化、OS 要件と限界を整理した。
   - VS Code の Agent Host は変更ログにあり、公式の概念ページには記載がない点、設定の優先順位の全体像や cloud agent・remote host・Dev Container への適用が未記載である点を明記した。
