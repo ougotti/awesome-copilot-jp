@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-27
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-05
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -108,6 +108,14 @@ Claude Code 2.1.271 では、auto mode + sandbox の Bash / PowerShell / Monitor
 2.1.280〜2.1.282（2026-09-22〜24）では、この「managed を下位の設定で弱めない」方向がさらに広がりました。symlink 経由の書き込みは実際の着地点で判定され、repository 外への書き込みを `acceptEdits` や allow rule が承認しなくなりました。`allowManagedPermissionRulesOnly` の下では Skill / command / Plugin manifest の `allowed-tools` が自らの tool を事前承認できず、project / local 設定は sandbox の除外コマンドや OpenTelemetry の送信先を変えられません。`--setting-sources` の制限は teammates や `/bg` などの別 session にも引き継がれます。版ごとの一覧は [Claude Code のカスタマイズ機能](../claude-code/basics.md#managed-settings-を下位の設定で弱められない変更) にまとめています。
 
 2.1.283（2026-09-25）では、managed の `sandbox` に無効な値が 1 つあってもブロック全体が無視されなくなり（その値だけ fail-closed）、`Skill(anthropic-skills:<name>)` の deny は Claude Desktop が Plugin として配信した同じ Skill にも効くようになりました。また、**対話型のターミナルと VS Code 拡張のセッションは、設定がなければ auto mode で始まる**ようになり、対象が Enterprise・Claude API・Bedrock・Google Cloud・Foundry にも広がりました。承認の判定が人から classifier へ移るため、Enterprise / API 利用の組織は、配布前に managed の `permissions.disableAutoMode` か `permissions.defaultMode` を決めてください。**→ [auto mode が既定の開始モードになる範囲](../claude-code/basics.md#auto-mode-が既定の開始モードになる範囲--21283)**
+
+### 実行コードを持つ拡張 — Claude Code の Mods
+
+Claude Code 2.1.287（2026-10-01）の **Mods** は、プラグインが Claude Code の**内部で関数として動く**仕組みです。Skill が「読ませる文書」、MCP が「外部のツール」であるのに対し、mod は**利用者の権限で動くローカルのコード**で、すべてのプロンプトとツール呼び出しを見て書き換え、承認プロンプトが出る前にツール呼び出しを承認することもできます。**sandbox は mod を囲いません**（sandbox が隔離するのは Claude が実行する Bash コマンドです）。
+
+導入前の確認は、`claude plugin validate ./some-mod` の `hooks:`（受けるイベント）と `calls:`（`$.fs.write`・`$.process.run`・`$.http.fetch` など、外へ出る手段）を読むことから始めます。組織では、既定のガード `sec-default` が managed の hook・system prompt・managed MCP を利用者の mod から守りますが、それ以外は許可されます。利用者の mod を止める `allowManagedModsOnly`、全フックまで止める `disableAllHooks`（**managed の `PreToolUse` も効かなくなる**）、`deny` ルールが mod 自身の `$.fs` / `$.process` を止めない点など、境界の詳細は専用ページにまとめています。
+
+**→ [Claude Code の Mods](../claude-code/mods.md#3-入れる前に--信頼の境界を理解する)**
 
 ### 実行場所ごとの隔離境界を分ける
 
@@ -259,6 +267,7 @@ memory は、組織が承認した規約ではなく**更新も削除もでき�
 - [生成AIを業務で安全に使う](../business/safety.md) — **コードを書かない方向け**。入力してよい情報、外部送信、出力後の確認項目
 - [Skills 最新動向](../trends.md) — 本ページの要約と、その他のテーマの動向
 - [AI エージェントの実行基盤（ハーネス）](harness.md) — 標準が定めていない権限・承認・サンドボックスが実際に決まる層
+- [Claude Code の Mods](../claude-code/mods.md) — 実行コードを持つ拡張の信頼境界、`plugin validate` での事前確認、`allowManagedModsOnly`
 - [Agents 一覧](../copilot/agents.md) — 導入前監査に使える `trojan-skill-hunter` の解説
 - [GitHub Copilot Plugins](../copilot/plugins.md) — `enabledPlugins` と Marketplace 制限の設定方法
 

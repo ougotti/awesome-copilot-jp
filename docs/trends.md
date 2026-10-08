@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-02
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-08
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,9 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-08 | 10 節に GitHub Copilot の HydraFusion（VS Code / app へ拡大、Research preview）と Dynamic workflows（Public preview）を追加し、「複数モデル」と「コードで定義した複数エージェント」を区別した。詳細は Copilot ガイドとマルチエージェントのページへ集約した |
+| 2026-10-06 | 6 節に GitHub Copilot の Computer Use（CLI / app、2026-10-01、Public Preview）を追加し、Codex / ChatGPT・OpenAI Agents API と実行場所・承認・管理方法を比較した。詳細は Copilot ガイドへ集約した |
+| 2026-10-05 | Claude Code 2.1.287〜2.1.289 の Mods（プラグインが Claude Code 内部で動き、画面描画・ツール呼び出しまで書き換えられる）を 12 節へ追加し、信頼境界と組織での止め方を詳細ページへ集約した。9-1 節に Copilot code review の API 対応（2026-10-02）と、`Default` が `Balanced` を使う変更の実施を反映した。Copilot のモデル廃止（2026-10-02 実施・2026-10-19 予定）は Copilot ガイドへ追加した |
 | 2026-10-02 | Codex Cloudの環境公開・再公開・接続・共有と、Security Cloud（Research Preview）の検査からdraft PRまでのレビュー手順を詳細ページへ追加した。 |
 | 2026-10-01 | ChatGPTのdots・Team Tasksを個人のScheduled tasksと区別し、実行主体・接続・共有・停止方法と業務テンプレートへの導線を追加した。 |
 | 2026-09-30 | OpenAI Agents APIのComputer Use、Responses APIのMulti-agent Beta、GPT-6.1 SolとCodex CLI 0.158〜0.159系を追加した |
@@ -247,6 +250,20 @@ skills.shで公開されている注目スキル集の一覧と導入方法は�
 ## 6. Computer Use / Browser Use
 
 [Computer Use](https://learn.chatgpt.com/docs/computer-use) は、CodexまたはChatGPT WorkがGUIを見て、クリック、入力、メニュー操作、画面検証を行う機能です。CLIやMCPでは届かないデスクトップアプリや、APIのない画面操作に使います。Google も 2026-06-24 に Gemini 3.5 Flash で同種の機能（ブラウザ・モバイル・デスクトップ横断）を発表しており、単一ベンダーの機能ではなくなっています。
+
+### GitHub Copilot にも来た — 2026-10-01
+
+GitHub Copilot も 2026-10-01 に、**Copilot CLI と GitHub Copilot app** で macOS / Windows のデスクトップアプリを操作する Computer Use を公開しました（GitHub 公式・**Public Preview**、既定は無効）。CLI では `/computer on` で有効化し、承認は CLI の permission mode に従います。**「Always allow」は以降のセッションと、同じコンピューターの Copilot app にも引き継がれる**ため、機密情報を扱うアプリでは選ばないよう公式が勧めています。
+
+| | Codex / ChatGPT Work | GitHub Copilot（CLI / app） | OpenAI Agents API |
+|--|---------------------|-----------------------------|-------------------|
+| 操作対象 | 組み込みブラウザ・Chrome・macOS / Windows アプリ | macOS / Windows のデスクトップアプリ（ローカルセッションのみ） | OpenAI-hosted ブラウザ（Web アプリ） |
+| 実行場所 | 利用者のマシン（ブラウザは ChatGPT 内） | 利用者のマシン | OpenAI のホスト環境 |
+| 承認の単位 | 本ガイドでは未整理（[公式](https://learn.chatgpt.com/docs/computer-use)で確認） | アプリごと（Allow / Always allow / 拒否）。`deny` ルールが優先 | network policy と Web サイトの origin ごとの承認 |
+| 組織の制御 | 本ガイドでは未整理（同上） | Enterprise の managed settings で無効化（ローカル設定で上書き不可） | API 側の設定（[ハーネス解説](dev-methods/harness.md#agents-apiでブラウザを操作する2026-09-29)） |
+| 状態 | 本ガイドでは未整理（同上） | Public Preview | Public Beta |
+
+3 社とも「API・MCP・CLI などの構造化された手段で済むなら、そちらを優先する」という立場は共通です。**→ Copilot の承認の流れ・向く作業・限界は [GitHub Copilot ガイド](copilot/README.md#computer-use--デスクトップアプリを操作するpublic-preview) を参照**
 
 ### Browser Useとの関係
 
@@ -589,6 +606,8 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 
 レビューごとに選べるほか、組織管理者が既定値を設定できます（組織設定 → Copilot → Copilot code review）。使用されたレベルは、タイムラインと PR の概要コメントに表示されます。
 
+**2026-09-28 から、`Default` は `Balanced` を使います**（[公式の変更ログ](https://github.blog/changelog/2026-10-02-copilot-code-review-api-support-and-new-default-effort-level/)、2026-10-02）。既存・新規の組織とリポジトリが対象で、明示的に選ばれた `Lite` は尊重されます。同じ変更ログで、**REST / GraphQL API から review を依頼**できるようになりました（Pro・Pro+・Max・Business・Enterprise、一般提供）。依頼ごとに effort level を指定することもできます。API で review を起動することと、Copilot approval を required approvals に数えることは**別の設定**です（[9-3 節](#9-3-pr-を-merge-ready-にするまで--修復ループと-ai-の-approval)）。**→ 運用上の確認事項は [GitHub Copilot ガイド](copilot/README.md#api-から-review-を依頼する2026-10-02) を参照**
+
 2026-09-11 には review の検証範囲が広がり、Copilot SDK の full shell tools を **Copilot agent firewall の内側**で使って build、test、対象 script を実行できるようになりました。これは review agent の分析経路の変更であり、上表の **MCP tool は read-only** という制約が撤廃された発表ではありません。
 
 同じ更新で、後続 commit が指摘を修正したと rereview が判断すると、その comment を自動 resolve するようになりました。未対応の指摘は open のまま残ります。返信しただけで直ったと扱う機能ではなく、後続差分を rereview する挙動です。
@@ -670,6 +689,8 @@ Copilot usage metrics APIは2026-09-17にCLI customizationの上位5件とdistin
 
 **→ 概念、Microsoft Copilot Studio・QM・Kiro Crew・OpenAI Agents APIの実装、セキュリティポスチャ、導入の前提、OpenTelemetryでの可観測性は [AI エージェントの実行基盤（ハーネス）](dev-methods/harness.md) を参照**
 **→ ループの構成要素・停止条件の作り方・落とし穴は [ループエンジニアリング](dev-methods/loop-engineering.md) を参照**
+GitHub Copilot では 2026-09-30〜10-01 に、性質の違う 2 つの「組み合わせ」が広がりました。**HydraFusion**（Research preview）はモデルピッカーに出る調整役で、1 ターンの中で複数のモデルを Single / Cascade / Critique のいずれかで協調させます（サブエージェントは起動しません）。**Dynamic workflows**（Public preview）は、手順をコードで定義し、判断が要る部分だけをエージェントに任せる Copilot extension です。毎回 Copilot が計画する `/fleet` や autopilot と違い、手順とルールが毎回同じになります。どちらも単一モデルより AI credits を使い得るため、Dynamic workflows では上限（エージェント数・実行時間・おおよその credits）を決めます。`copilot workflow run` は承認の確認を出さず、extension のコードは権限の確認の外で動く点にも注意します（[Copilot ガイド](copilot/README.md#複数のモデルエージェントを組み合わせる--hydrafusion-と-dynamic-workflows)）。
+
 **→ サブエージェントや並列実行を「いつ使うべきか」という設計判断は [マルチエージェントを使う境界線](dev-methods/multi-agent.md) を参照**
 **→ 長時間・多段階のタスクで失敗が累積する問題と、checkpoint・再開・冪等性の設計は [長時間タスクの信頼性設計](dev-methods/agent-reliability.md) を参照**
 
@@ -711,6 +732,8 @@ GitHub Copilot for JetBrains 1.18.0（2026-09-22）では、Copilot agent セッ
 AWSが2026-09-11に公開したKiro IDEのCVE-2026-89332（AWS公式・Important）は、確認画面に変更内容とURLが表示されても、応答前にsettings fileが書き込まれ、別操作から外部requestが発生し得た事例です。対象はKiro IDE 0.8.135未満で、0.8.135以上では修正済みです。**確認画面の有無と、副作用の前に実際に停止するかは分けて検証します。** 攻撃の順序、対象範囲、利用者の確認事項は[詳細ページ](dev-methods/skill-security.md#承認画面が副作用より先とは限らない--kiro-ideの修正済み事例)へ集約しています。
 
 Claude Code 2.1.271〜2.1.277では、`AGENTS.md`は`CLAUDE.md`がない場合だけのfallback、`omitClaudeMd`はuser / project / local指示をサブエージェントから除外してもmanaged policyは残る、`allowed_domains`は1コマンド限定、`--accept-command <sha256>`はJSONで表示したPlugin commandだけを承認する、という境界が加わりました。読み取れない`managed-mcp.json`はexclusive controlを維持するfail-closedへ修正されています。アカウントSkills / Pluginsの端末同期は個別にopt-outできるため、repositoryだけでなくaccount / organization層も実効構成に含めます。
+
+2026-10-01（Claude Code 2.1.287）には、プラグインが Claude Code の**内部で関数として動く Mods** が加わりました。Skill が文書、MCP が外部ツールであるのに対し、mod は**利用者の権限で動くローカルのコード**で、画面の描画・ツール呼び出し・プロンプトを見て書き換え、承認プロンプトの前にツール呼び出しを承認することもできます。sandbox は mod を囲いません。導入前は `claude plugin validate` の `hooks:` / `calls:` で、受けるイベントと外へ出る手段を読みます。組織では、既定のガード（`sec-default`）が managed の hook・system prompt・managed MCP を守る一方、それ以外は許可されます。利用者の mod を止めるのは `allowManagedModsOnly`、全フックまで止めるのは `disableAllHooks`（**managed の `PreToolUse` も効かなくなります**）で、`deny` ルールは mod 自身の `$.fs` / `$.process` を止めません。2.1.289 では、管理マシンで mod の承認が `deny` / `ask` に勝てた問題や、利用者のプラグインが managed MCP のサインイン用ツールの説明を書き換えられた問題が修正されています。**→ [Claude Code の Mods](claude-code/mods.md)**
 
 Codex CLI 0.155.0のTouch IDは、対応Macのlocal TUIにおけるMCP requestの**current-user verification**です。OAuth identity、tool permission、action approvalとは別層で、本人確認がscopeや権限を広げるわけではありません。
 
@@ -876,6 +899,8 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 - [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills)
 - [OpenAI Record & Replay](https://learn.chatgpt.com/docs/extend/record-and-replay)
 - [OpenAI Computer Use](https://learn.chatgpt.com/docs/computer-use)
+- [HydraFusion in VS Code and the GitHub Copilot app](https://github.blog/changelog/2026-09-30-hydrafusion-in-vs-code-and-the-github-copilot-app/) ／ [Dynamic workflows in Copilot CLI and the Copilot app](https://github.blog/changelog/2026-10-01-dynamic-workflows-in-copilot-cli-and-the-copilot-app/)
+- [GitHub Copilot can now interact with desktop apps with computer use](https://github.blog/changelog/2026-10-01-github-copilot-can-now-interact-with-desktop-apps/) ／ [About computer use in GitHub Copilot](https://docs.github.com/en/copilot/concepts/agents/computer-use)
 
 ### Skill の発見・配布・更新（本ページ 7 節）
 
@@ -923,6 +948,8 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 
 ### Skill / Plugin のセキュリティ（本ページ 12 節・詳細は [解説ページ](dev-methods/skill-security.md)）
 
+- [Mods overview](https://code.claude.com/docs/en/plugins/mods/overview) ／ [Manage mods for your organization](https://code.claude.com/docs/en/plugins/mods/admin) — Claude Code Mods の信頼境界、組み込みガード、`allowManagedModsOnly`（Anthropic 公式・2.1.287 以降）
+- [Claude Code changelog](https://code.claude.com/docs/en/changelog) — 2.1.287〜2.1.289 の Mods 関連の追加・修正（Anthropic 公式）
 - [Future Considerations](https://github.com/agentplugins/agent-plugins-spec/blob/main/FUTURE_CONSIDERATIONS.md) — v1.0.0 が扱わない領域（公式）
 - [Snyk ToxicSkills study](https://snyk.io/blog/toxicskills-malicious-ai-agent-skills-clawhub/) — ClawHub / skills.sh の 3,984 Skill の監査結果（Snyk・2026-02-05）
 - [MCP allowlists in enterprise managed settings](https://github.blog/changelog/2026-08-06-mcp-allowlists-in-enterprise-managed-settings/) — MCP 許可リスト（公式）
@@ -948,6 +975,7 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 ### Skill が動く場所・MCP 仕様（本ページ 9・13 節）
 
 - [Copilot code review: Agent skills and MCP now generally available](https://github.blog/changelog/2026-07-29-copilot-code-review-agent-skills-and-mcp-now-generally-available/) — レビューでの Skill / MCP 対応（公式）
+- [Copilot code review: API support and new default effort level](https://github.blog/changelog/2026-10-02-copilot-code-review-api-support-and-new-default-effort-level/) — API からの review 依頼と `Default` の `Balanced` 化（公式・2026-10-02）
 - [Copilot code review effort levels are generally available](https://github.blog/changelog/2026-08-07-copilot-code-review-effort-levels-are-generally-available/) — レビューの深さの選択（公式）
 - [Auto-resolution and analysis updates in Copilot code review](https://github.blog/changelog/2026-09-11-auto-resolution-and-analysis-updates-in-copilot-code-review/) — comment の自動 resolve と shell tools による検証（公式）
 - [GitHub MCP Server supports the next MCP specification](https://github.blog/changelog/2026-07-23-github-mcp-server-supports-the-next-mcp-specification/) — MCP 次期仕様への対応（公式）

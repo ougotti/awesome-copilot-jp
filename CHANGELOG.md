@@ -4,6 +4,25 @@
 
 ## 2026-10
 
+- **2026-10-08** GitHub Copilot の HydraFusion（2026-09-30、Research preview）と Dynamic workflows（2026-10-01、Public preview）を追加。
+  - [Copilot ガイド](docs/copilot/README.md#複数のモデルエージェントを組み合わせる--hydrafusion-と-dynamic-workflows)に、両者の違い（組み合わせるもの・手順を決める主体・状態・対象）の比較表を置いた。
+  - HydraFusion は Single / Cascade / Critique の実行パターン、有効化（`chat.copilot.hydraFusion.enabled`）、対象プラン、プレビュー機能ポリシーと model policy、課金（各モデルの通常単価・Auto 割引なし・credits 増の可能性）、破棄された下書きの編集が戻らない注意を整理した。データの保持・学習利用は公式に記載がないため推測で書かなかった。
+  - Dynamic workflows は autopilot・`/fleet` との違い、extension としての置き場所、`copilot workflow run`、一時停止・再開・中止、上限（優先順位と「おおよそ」である点）、権限の引き継ぎ・`workflow run` が確認を出さない点・extension のコードが権限確認の外で動く点を明記した。対象プランは変更ログと概念ページで記載が異なるため両方を示した。
+  - [マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md#copilot-の-hydrafusion-と-dynamic-workflows2026-09-3010-01)で supervisor / peer の分類に当てはめ、[最新動向 10 節](docs/trends.md#10-aiエージェントの実行基盤ハーネス)に要約を追加した。
+
+- **2026-10-06** GitHub Copilot の Computer Use（2026-10-01、Public Preview）を追加。
+  - [Copilot ガイド](docs/copilot/README.md#computer-use--デスクトップアプリを操作するpublic-preview)に、対象（CLI / app、macOS / Windows のローカルセッション）、既定で無効、`/computer on` / `show` / `off`、managed settings による無効化を整理した。
+  - 承認は permission mode に従い、「Always allow」が以降のセッションと同じコンピューターの Copilot app に引き継がれること、`deny` ルールが優先されること、機密アプリで「Always allow」を避ける公式の推奨を明記した。
+  - 公式ドキュメントの使いどころ（API・MCP・CLI を優先）、限界とリスクを整理した。モデルへ送られるデータの範囲と「Always allow」のリセット手順は公式から確認できなかったため、推測で書かず公式ドキュメントへ誘導した。
+  - [最新動向 6 節](docs/trends.md#6-computer-use--browser-use)に Codex / ChatGPT・Copilot・OpenAI Agents API の比較表を追加し、[外部操作の手段の選び方](docs/dev-methods/tool-selection.md#6-computer-use--api-のない-gui-と最終画面確認)へ GitHub の位置づけを追記した。
+
+- **2026-10-05** Claude Code の Mods を新規ページで解説し、Copilot code review の API 対応・`Balanced` 既定化とモデル廃止を追記。
+  - [Claude Code の Mods](docs/claude-code/mods.md)を新設し、mod と settings hook・Skill・MCP の違い、動く場所（描画が見えるのは端末とデスクトップだけ）、`claude plugin validate` の `hooks:` / `calls:` による導入前の確認、`allowManagedModsOnly`・`disableAllHooks`・policy mod による組織での止め方、2.1.287〜2.1.289 の変更を整理した。公式ドキュメントと変更ログを2026-10-05に確認した。
+  - mod が sandbox の外で利用者の権限で動くこと、`ask` ルールを上書きし得ること、`deny` ルールが mod 自身の `$.fs` / `$.process` を止めないこと、`disableAllHooks` が managed の `PreToolUse` も止めることを明記した。「You should know」は既定で無効で、利用可否がプラン・組織・テレメトリに依存する点も分けた。
+  - [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#実行コードを持つ拡張--claude-code-の-mods)、[Claude Code 入口](docs/claude-code/README.md)・[カスタマイズ機能](docs/claude-code/basics.md#プラグイン)、[最新動向 12 節](docs/trends.md#12-skill--plugin-のセキュリティ)から導線を追加した。
+  - [Copilot ガイド](docs/copilot/README.md#2026-09-28-から-default-は-balanced-を使う)で、`Default` が `Balanced` を使う変更を「予定」から「2026-09-28 から実施済み」へ改め、REST / GraphQL API からの review 依頼（2026-10-02、一般提供）と、API・approval・effort を分けた確認事項を追加した。API のエンドポイント名などは公式変更ログから確認できなかったため、未確認として明記した。
+  - [Copilot のモデル廃止](docs/copilot/README.md#モデルの廃止--2026-10-02-実施分と-2026-10-19-予定分)に、2026-10-02 実施分（Gemini 3.5 / 3.6 Flash・Kimi K2.7 Code・Claude Opus 4.7）と 2026-10-19 予定分（Gemini 3.7 Flash・GPT-5.5・GPT-5.4・GPT-5.4 mini・GPT-5 mini・Grok 4.5）、代替モデル、管理者の model policy による分岐を追加した。
+
 - **2026-10-02** Codex CloudとSecurity Cloudの導入・運用を追加（#227）。
   - [Codex Cloudガイド](docs/codex/cloud.md)を新設し、環境の準備・Publish・Republish、新規／既存タスク、network secret・接続先・共有範囲を整理した。
   - Security Cloudの単発scan・commit監視・検証証拠・修正案からdraft PRまでを説明し、Research Previewとローカルplugin／Legacy環境の違いを明記した。

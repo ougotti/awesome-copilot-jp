@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-27
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-08
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -500,15 +500,29 @@ toolchain / dependencies を remote project 側で揃えたまま agent に buil
 
 レビューの深さ（**effort levels**）も選べます（2026-08-07 一般提供）。`Lite` は単純な変更向け、`Balanced` はより高い推論能力が要る変更向けで、組織管理者が既定値を設定できます（組織設定 → Copilot → Copilot code review）。使用されたレベルはタイムラインと PR の概要コメントに表示されます。
 
-### Upcoming — `Default` が `Balanced` を使う予定
+### 2026-09-28 から `Default` は `Balanced` を使う
 
-GitHubは、**2026-09-28以降に**、組織またはリポジトリのreview effortが `Default` の場合に `Balanced` を使う予定です。これは[2026-08-28の公式告知](https://github.blog/changelog/2026-08-28-upcoming-changes-to-github-copilot-policies-and-billing/#copilot-code-review-default-is-changing-to-balanced-effort-level)に基づく**将来の変更**で、2026-09-16の確認時点では実施済みとして扱いません。
+[2026-10-02の公式変更ログ](https://github.blog/changelog/2026-10-02-copilot-code-review-api-support-and-new-default-effort-level/)は、**2026-09-28から**、review effortが `Default` の組織・リポジトリで `Balanced` が使われると記載しています（"the Default review effort level now uses Balanced for new and existing repositories"）。[2026-08-28の告知](https://github.blog/changelog/2026-08-28-upcoming-changes-to-github-copilot-policies-and-billing/#copilot-code-review-default-is-changing-to-balanced-effort-level)にあった**予定が実施された**ものです。
 
-- `Default` のままなら、変更後は既存・新規の組織とリポジトリで `Balanced` が使われる予定です。
-- `Lite` を維持したい管理者は、**2026-09-28より前に**組織またはリポジトリのreview effortを `Default` から明示的な `Lite` へ変更します。
-- 組織の既定値は、独自の値を選んでいない配下リポジトリへ適用されます。リポジトリの既定値は自動リクエストされたreviewへ適用され、手動リクエストではPRのReviewers欄からeffort levelを選べます。
+- `Default` のままの既存・新規の組織とリポジトリは、`Balanced` で review されます。
+- 明示的に `Lite` を選んでいた設定は、そのまま尊重されます。`Default` のまま `Lite` 相当を期待していた場合は、**組織またはリポジトリの設定で `Lite` を明示**してください。
+- 設定は Enterprise・Organization・Repository・個人の各層で変えられます。組織の既定値は、独自の値を選んでいない配下リポジトリへ適用されます。リポジトリの既定値は自動リクエストされたreviewへ適用され、手動リクエストではPRのReviewers欄からeffort levelを選べます。
+- **review の深さが変わると、所要時間と指摘の量も変わり得ます。** 既存のリポジトリで指摘数や待ち時間が変わっていないか、PRのタイムラインと概要コメントに表示されるeffort levelと合わせて確認してください。
 
-> 2026-09-28以降も、公式変更ログと実際の組織・リポジトリ設定画面を再確認してください。段階的なロールアウトや予定変更があり得るため、日付だけを根拠に適用済みと判断しないでください。
+### API から review を依頼する（2026-10-02）
+
+同じ変更ログで、**REST / GraphQL API から Copilot に review を依頼**できるようになりました（"You can now request a review from Copilot using the supported REST and GraphQL APIs"）。各リクエストで review effort level を指定することもできます（任意）。対象プランは Copilot Pro・Pro+・Max・Business・Enterprise で、公式の記載は一般提供です。
+
+CI・社内ツール・bot から review を起動する場合は、次の点を分けて設計します。
+
+| 観点 | 確認すること |
+|------|-------------|
+| 誰の権限で依頼するか | API を呼ぶトークンの持ち主と、その権限（PR への書き込み権限を持つ主体を、必要最小限にする） |
+| effort をどう決めるか | 呼び出し側で指定するか、リポジトリの既定に任せるか。指定しない呼び出しは、`Default` の解決先（現在は `Balanced`）に従う |
+| approval との関係 | review の依頼と、Copilot approval（[下の節](#プルリクエストの承認をどこまで-ai-に任せるか)）を required approvals に数える設定は**別**。API で review を起動しても、approval が merge 要件を満たすわけではない |
+| 起動の頻度 | push のたびに依頼する運用は、review の回数と待ち時間を増やす。対象パスや PR の状態で絞る |
+
+> **確認できていない点**: 具体的なエンドポイント名・リクエストのフィールド名・レート制限は、公式の変更ログ本文からは確認できていません。実装前に[公式ドキュメント](https://docs.github.com/en/copilot/how-tos/copilot-on-github/set-up-copilot/configure-code-review)で確認してください。
 
 **→ 経緯と他ツールの対応状況は [Skills 最新動向 9 節](../trends.md#9-skill-が動く場所の広がり) を参照**
 
@@ -759,6 +773,197 @@ VS Code、Copilot CLI、Copilot app、cloud / coding agent、JetBrains などの
 
 Copilot の model policy は Copilot 経由の利用にだけ効きます。同じ組織で Claude Code を直接使っている場合、新しいモデルを検証が済むまで使わせない設定は Claude Code 側の managed settings で別に行います（2.1.283 の `availableModelsMatch` / `deniedModels`）。**→ [Claude Code のカスタマイズ機能](../claude-code/basics.md#新しいモデルを検証前に使わせない--availablemodelsmatch-と-deniedmodels)を参照。**
 
+## 複数のモデル・エージェントを組み合わせる — HydraFusion と Dynamic workflows
+
+2026-09-30〜10-01 に、Copilot で「複数を組み合わせる」機能が 2 つ広がりました。名前は似た印象ですが、**組み合わせるもの・誰が手順を決めるか**が違います。
+
+| | HydraFusion | Dynamic workflows |
+|--|-------------|-------------------|
+| 組み合わせるもの | **複数のモデル**（1 ターンの中で） | 自動化した手順と**複数のエージェント** |
+| 手順を決めるのは | HydraFusion（プロンプトごとに実行パターンを選ぶ） | **ワークフローの作者**（コードで定義） |
+| 使い方 | モデルピッカーで選ぶ | 名前を指定して実行（`copilot workflow run` も可） |
+| 状態 | **Research preview**（本番利用向けではなく、SLA なし） | **Public preview** |
+| 対象 | VS Code（1.140 以降 / Insiders）、Copilot app、Copilot CLI | Copilot CLI（`--experimental`）、Copilot app、Copilot SDK |
+
+### HydraFusion — モデルピッカーに出る「調整役」
+
+[HydraFusion](https://github.blog/changelog/2026-09-30-hydrafusion-in-vs-code-and-the-github-copilot-app/) は、モデルピッカーに表示されますが、**単一のモデルではなく、複数のモデルを調整する仕組み**です。2026-09-30 に、Copilot CLI に加えて VS Code と Copilot app でも使えるようになりました。プロンプトごとに、次の 3 つの実行パターンから 1 つを選びます。
+
+| パターン | 動き |
+|---------|------|
+| **Single** | 1 つのモデルがそのまま解く |
+| **Cascade** | 効率のよいモデルが下書きし、品質ゲートが採用するか、より強いモデルへ引き上げるかを決める |
+| **Critique** | 1 つのモデルが下書きし、**別系統のモデルが読み取り専用で批評**し、最初のモデルが 1 回だけ直す（CLI の Rubber Duck と同じレビューの型） |
+
+| 項目 | 内容 |
+|------|------|
+| 有効化 | VS Code: モデルピッカーで HydraFusion を選ぶ。出てこなければ `chat.copilot.hydraFusion.enabled` を有効化／app: Settings で「HydraFusion」を検索してオンにし、モデルピッカーで選ぶ |
+| 対象プラン | Copilot Pro・Pro+・Business・Enterprise |
+| 組織の制御 | プレビュー機能のポリシーに従う。Business / Enterprise は管理者がプレビュー機能を許可する必要がある。**組織の model policy で許可されたモデルだけ**を使い、使えるモデルがなければピッカーに出ない |
+| 課金 | 使った各モデルが通常単価で課金される（HydraFusion 自体の追加料金はない）。**Auto の割引は適用されず、単一モデルより多くの AI credits を使うことがある** |
+| どのパターンが動いたか | CLI: 進捗表示と会話の要約／VS Code: 完了した応答のフッターにホバー／app: 応答にホバー／詳細: `/collect-debug-logs` |
+
+**Auto との違い**: Auto はリクエストごとに**1 つのモデルを選びます**。HydraFusion は**実行パターンを選び、1 ターンの中で複数のモデルを協調させます**。
+
+運用上の注意（公式ドキュメントより）:
+
+- **途中の下書きは表示されず、破棄されることがあります。破棄された下書きが行ったファイル編集は自動では元に戻りません。** コミット前に差分を確認してください。
+- サブエージェントとは別の仕組みで、サブエージェントを起動しません。
+- 使うモデルの一覧は固定されておらず、利用者は選べません。プレビュー中にパターンやモデルが変わることがあります。
+- 補助するモデル（批評役など）には「必要な文脈だけ」が渡されると説明されていますが、保持期間や学習への利用は公式ページに記載がありません。**扱う情報の範囲は、Copilot 全体のデータ取り扱いの文書で確認**してください。
+
+### Dynamic workflows — 手順をコードで決めて、判断だけエージェントに任せる
+
+[Dynamic workflows](https://github.blog/changelog/2026-10-01-dynamic-workflows-in-copilot-cli-and-the-copilot-app/) は、**タスクの進め方をコードで定義したプログラム**です。自動化した手順とエージェントの作業を組み合わせ、順番に・並列に・その両方で実行できます。手順・いつエージェントを使うか・結果をどう使うかはコードが決め、エージェントは分析や判断が要る部分を担います。
+
+できること（公式の説明）:
+
+- コマンドの実行、ツールの利用、他サービスの呼び出し
+- 目標をタスクに分け、独立したものを並列に実行する
+- 段階から段階へ、構造化した結果を渡す
+- サブエージェント同士に検証させる
+- 利用者に入力を求める（クライアントが対応する場合）
+- 途中で一時停止して確認し、再開する
+
+**autopilot・`/fleet` との違い**（公式ドキュメントの比較表より）:
+
+| | autopilot | `/fleet` | Dynamic workflow |
+|--|-----------|----------|------------------|
+| 目的 | 入力を待たずに自律的に進める | 並列のサブエージェントへ仕事を任せる | コードで定義した手順を実行する |
+| 手順を決めるのは | Copilot | Copilot（毎回） | ワークフローの作者 |
+| 再現性 | Copilot の判断で変わる | Copilot の判断で変わる | 毎回同じ手順とルール。ただし経路とエージェントの出力は変わり得る |
+
+#### 作る・置く・実行する
+
+| やること | 方法 |
+|---------|------|
+| CLI で使えるようにする | `copilot --experimental`、または対話中に `/experimental on`（app は設定不要） |
+| 作る | 目的・手順の順番・エージェントに任せる部分・上限を説明して Copilot に作らせる。自分で書く場合は `Show me the guidance for writing dynamic workflows.` と頼むと組み込みのガイドが出る |
+| 実体 | **Copilot extension**（例: `extensions/java-security-checks/extension.mjs`） |
+| 置き場所 | 既定はセッション内。個人は `~/.copilot/extensions/`、リポジトリは `.github/extensions/`、配布は plugin |
+| 実行（対話） | 名前と入力を書いて頼み、承認で **Yes** を選ぶ |
+| 実行（コマンド） | `copilot workflow run <名前> --args @input.json --allow-tool=read`（`--result-file` で結果を JSON 保存） |
+| 一時停止・再開・中止 | CLI: `/workflows` で P（一時停止）・R（再開）・X（中止）／app: **Workflows** パネル。**中止した実行は再開できない** |
+
+#### 上限を必ず決める
+
+公式は、上限の設定を任意としつつ、AI credits の管理のために**推奨**しています。
+
+- 設定できる上限: 同時に動くエージェント数（超えた分は待ち行列に入る）、1 回の実行で起動するエージェントの総数、実行時間（一時停止中は数えない）、**おおよその AI credits**
+- 指定する場所と優先順位: **プロンプト → ワークフローのコード → 個人の `/settings`（`workflows.defaultLimits.*`）**
+- **credits の上限は「おおよそ」です。** 使用量は事後に報告されるため、厳密な上限にはなりません。大きな実行の前に小さく試して使用量を測るよう、公式も勧めています。
+- 上限で止まった実行を再開するときの新しい上限は、**実行全体の合計**です（新たな枠が追加されるわけではありません）。
+
+#### 権限と信頼の境界
+
+- サブエージェントは **CLI の権限の仕組みを使い、セッションで既に与えた許可を引き継ぎます。** セッションで一度許可した操作は、それを必要とするすべてのサブエージェントに効きます。
+- 対話中は、未承認の操作で通常どおり確認が出ます。**`copilot workflow run` は確認を表示しません。** 事前に `--allow-tool` / `--allow-url` で許可し、それ以外の要求は拒否されます。
+- **extension は自分のコードを直接実行でき、これは上記の権限の確認の外側で動きます**（"An extension can also run its own code directly, outside these permission prompts."）。共有された workflow を使う前に、`extension.mjs` の中身を確認してください。考え方は Claude Code の [Mods](../claude-code/mods.md#3-入れる前に--信頼の境界を理解する) と同じで、**実行コードを持つ拡張**として扱います。
+- CI では `COPILOT_GITHUB_TOKEN` などで認証します。未信頼のディレクトリでプロジェクトの extension を読ませる `GITHUB_COPILOT_PROMPT_MODE_EXTENSIONS=true` は、公式も「**信頼できるコードにだけ**」使うよう警告しています。
+- 公式ドキュメントには、組織の管理者が Dynamic workflows を制御する設定や、workflow のコードの隔離（sandbox）についての記載が見当たりませんでした。
+
+> **対象プランの表記に差があります**: 変更ログは「すべての Copilot プラン」としていますが、概念ページは「旧来のリクエスト課金に残る Copilot Pro / Pro+ の年払いプランを除く」としています。導入前に、自分のプランで使えるかを確認してください。
+
+**→ 複数エージェントにすべきかどうかの判断基準は [マルチエージェントを使う境界線](../dev-methods/multi-agent.md#copilot-の-hydrafusion-と-dynamic-workflows2026-09-3010-01) を参照**
+
+## Computer Use — デスクトップアプリを操作する（Public Preview）
+
+2026-10-01 から、**Copilot CLI と GitHub Copilot app** で、Copilot が macOS / Windows のデスクトップアプリを操作できるようになりました（[公式の変更ログ](https://github.blog/changelog/2026-10-01-github-copilot-can-now-interact-with-desktop-apps/)、**Public Preview**）。アクセシビリティ情報と、必要に応じたスクリーンショットで画面を読み、クリック・テキスト入力・キー操作・スクロール・ドラッグ・アプリ間の移動を行います。
+
+| 項目 | 内容 |
+|------|------|
+| 状態 | Public Preview（2026-10-01） |
+| 対象 | Copilot CLI と GitHub Copilot app。**macOS / Windows のローカルセッションのみ** |
+| 既定 | **無効**。使う前に明示的に有効化する |
+| 有効化 | CLI: `/computer on`（状態確認は `/computer show`、無効化は `/computer off`）／ app: Settings → Computer Use → Enable Computer Use |
+| 画面の読み方 | OS のアクセシビリティツリー。視覚的な文脈が要る場面ではスクリーンショット |
+| macOS の権限 | Accessibility（コントロールの操作）と Screen Recording（ウィンドウの確認） |
+| 組織の制御 | Enterprise 管理者は managed settings で無効化できる。ローカルで `/computer on` にしても、組織のポリシーは上書きできない |
+
+### 承認の流れ — 「Always allow」の範囲に注意する
+
+Computer Use は、CLI の**現在の permission mode** に従って承認を求めるかどうかが決まります（`/permissions show` で確認）。承認を求められたときの選択肢は次のとおりです。
+
+| 選択 | 効く範囲 |
+|------|---------|
+| **Allow** | 現在の Computer Use セッションのみ |
+| **Always allow** | 以降のセッションにも保存される。**同じコンピューターの Copilot app にも適用される** |
+| 拒否・キャンセル | そのリクエストを実行しない |
+
+- **`deny` ルールは、自動承認や保存済みの承認より優先されます。** 操作させたくないアプリは、承認の記憶に頼らず `deny` で止めます。
+- 公式は、**機密情報を含むアプリや、影響の大きい操作ができるアプリに「Always allow」を選ばない**よう勧めています。メール・会計・社内管理画面などは、毎回確認する運用が安全です。
+- 「Always allow」の一覧は見直し・リセットできると公式は説明しています（具体的な操作手順は[公式ドキュメント](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/computer-use)で確認してください）。
+- 実行中の操作は **Esc を 2 回**押すと中断できます。
+- 承認は「そのアプリを操作してよい」という範囲の許可です。アプリ内で何を送信・削除するかまで個別に確認されるとは限りません。承認の重さの考え方は[エージェントに外部操作を与える手段の選び方](../dev-methods/tool-selection.md#8-承認境界--読み取り入力送信購入削除で分ける)を参照してください。
+
+### いつ使うか — API・MCP・CLI が先
+
+公式ドキュメントは、**API・MCP サーバー・ターミナルコマンド・ファイル操作ツール・専用のブラウザツールで直接できる作業なら、そちらの方が構造化された情報と予測しやすい結果を返す**としています。Computer Use が向くのは、API や CLI、MCP 連携のないレガシーソフトや、GUI でしか操作できないアプリです。
+
+| 向く作業 | 向かない作業 |
+|---------|-------------|
+| API のない社内ツールの画面から状態を読み取る | GitHub の Issue や PR の操作（`gh` や GitHub MCP で足りる） |
+| GUI 専用アプリでの E2E 確認・画面の最終確認 | 大量データの反復処理（API・CLI の方が速く確実） |
+| 複数アプリにまたがる手作業の手順を、読み取り中心で自動化する | 取り消せない送信・購入・削除を無人で行う |
+
+指示は、**目的・対象アプリ・してはいけないこと**を含めて書きます。公式の例は次のとおりです。
+
+```text
+Open APP_NAME and summarize the status information shown in the main window. Do not change any values or submit any forms.
+```
+
+### 公式が挙げる限界とリスク
+
+- 間違ったコントロールを選ぶ、違う場所に入力する、非標準・動的なコントロールや複雑な手順で失敗することがある。
+- 指示が曖昧だったり、**画面上に予期しない内容があったりすると、意図しない操作**がデバイス・データ・接続アカウントに及ぶことがある。画面に表示された文字列は「データ」であって「指示」ではありません（[プロンプトインジェクションの扱い](../dev-methods/tool-selection.md#8-承認境界--読み取り入力送信購入削除で分ける)）。
+- アプリのウィンドウには機密情報が表示され得る。公式ドキュメントは、どのデータがモデルへ送られるかを詳しく述べていないため、**コンテキストとして共有される内容を利用者が確認する**前提で使います。
+- 公式は「Computer Use は人の判断の代わりにはならない」と明記しています。
+
+> **他社の Computer Use との違い**: Codex / ChatGPT Work の Computer Use、OpenAI Agents API の Computer Use（OpenAI-hosted ブラウザ）とは、実行場所・承認の単位・管理方法が異なります。比較は [Skills 最新動向 6 節](../trends.md#6-computer-use--browser-use)を参照してください。
+
+## モデルの廃止 — 2026-10-02 実施分と 2026-10-19 予定分
+
+Copilot では、モデルピッカーのモデルが短い間隔で入れ替わります。**自分のワークフロー・組織のポリシー・社内手順書が、廃止されるモデル名を固定していないか**を確認してください。
+
+### 2026-10-02 に廃止された（実施済み）
+
+[公式の変更ログ](https://github.blog/changelog/2026-10-02-selected-models-in-github-copilot-deprecated/)によると、2026-10-02 付けで次のモデルが廃止されました。
+
+| 廃止されたモデル | 移行先 |
+|-----------------|--------|
+| Gemini 3.5 Flash / Gemini 3.6 Flash | Gemini 3.8 Flash |
+| Kimi K2.7 Code | Kimi K3 |
+| Claude Opus 4.7 | Claude Opus 5.5 |
+
+廃止モデルを削除する作業は不要ですが、**ワークフローや連携は対応モデルへ更新**する必要があります。Copilot Enterprise の管理者は、代替モデルを使えるようにするため、Copilot 設定の model policy で有効化が必要な場合があります。
+
+### 2026-10-19 に廃止される（予定）
+
+[2026-09-18 の告知](https://github.blog/changelog/2026-09-18-upcoming-deprecation-of-selected-github-copilot-models-in-mid-october/)によると、**2026-10-19** に次のモデルが廃止されます。対象は Copilot Chat・インライン編集・ask / agent モード・コード補完を含むCopilotの各体験です。
+
+| 廃止されるモデル | 推奨される代替 |
+|-----------------|---------------|
+| Gemini 3.7 Flash | Gemini 3.8 Flash |
+| GPT-5.5 | GPT-5.6 Sol |
+| GPT-5.4 | GPT-5.6 Sol |
+| GPT-5.4 mini | GPT-5.6 Luna |
+| GPT-5 mini | GPT-5.6 Luna |
+| Grok 4.5 | Grok 4.6 |
+
+### 管理者が確認すること
+
+公式は、Copilot Enterprise と Business では、**global default の model enablement が有効で、管理者が当該モデルを明示的に無効にしていない限り**、推奨される代替モデルが自動で有効になると説明しています。つまり、次の 2 つの層で挙動が分かれます。
+
+| 組織の状態 | 廃止後の代替モデル |
+|-----------|-------------------|
+| global default を有効のまま、廃止モデルも明示的に無効にしていない | 自動で有効になる |
+| global default を無効にしている、または廃止モデルを明示的に無効にしている | **自動では有効にならない**。model policy で代替モデルへのアクセスを有効にする |
+
+- **モデルを個別に絞っている組織**は、廃止日の前に model policy を見直し、代替モデルを検証して有効にするか決めます。
+- 代替モデルは**世代と挙動が違います**（たとえば、廃止対象のGPT-5.5・GPT-5.4と、代替のGPT-5.6 Sol）。プロンプトや Skill・Instructions の評価を、モデルを固定して行っている場合は、代替モデルで再評価します（[Skill / エージェントの評価](../dev-methods/evals.md)）。
+- 同じモデル名を **Claude Code や Codex の側**で固定している場合、Copilot の廃止は影響しません。Copilot 経由の利用にだけ効く変更です（Claude Code 側は 2.1.283 の `availableModelsMatch` / `deniedModels` を参照）。
+- 日付と対象は変更され得ます。**廃止日の前に、公式変更ログと組織のモデルピッカーを再確認**してください。
+
 ## 参考リンク
 
 - [github/awesome-copilot](https://github.com/github/awesome-copilot) — カスタマイズの公式リポジトリ
@@ -783,6 +988,13 @@ Copilot の model policy は Copilot 経由の利用にだけ効きます。同�
 - [Cookbook](https://github.com/github/awesome-copilot/blob/main/cookbook/README.md) — Copilot SDK を活用した実践的コードレシピ集
 - [About GitHub Copilot plugins](https://docs.github.com/en/copilot/concepts/agents/about-plugins) — Plugin の概念と構成（公式）
 - [Manage agent skills with GitHub CLI](https://github.blog/changelog/2026-04-16-manage-agent-skills-with-github-cli/) — `gh skill` による Skill 管理（公式）
+- [HydraFusion in VS Code and the GitHub Copilot app](https://github.blog/changelog/2026-09-30-hydrafusion-in-vs-code-and-the-github-copilot-app/) ／ [HydraFusion（docs）](https://docs.github.com/early-access/copilot/hydrafusion) — 実行パターン、課金、組織の制御、注意点（GitHub 公式・2026-09-30、Research preview）
+- [Dynamic workflows in Copilot CLI and the Copilot app](https://github.blog/changelog/2026-10-01-dynamic-workflows-in-copilot-cli-and-the-copilot-app/) ／ [About dynamic workflows](https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows) ／ [Use dynamic workflows](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows) — autopilot・`/fleet` との違い、上限、権限、CI（GitHub 公式・2026-10-01、Public preview）
+- [GitHub Copilot can now interact with desktop apps with computer use](https://github.blog/changelog/2026-10-01-github-copilot-can-now-interact-with-desktop-apps/) — Copilot CLI / app の Computer Use（GitHub 公式・2026-10-01、Public Preview）
+- [About computer use in GitHub Copilot](https://docs.github.com/en/copilot/concepts/agents/computer-use) ／ [Using GitHub Copilot CLI to interact with desktop applications](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/computer-use) — 使いどころ・限界・承認の流れ（GitHub 公式）
+- [Copilot code review: API support and new default effort level](https://github.blog/changelog/2026-10-02-copilot-code-review-api-support-and-new-default-effort-level/) — REST / GraphQL API からの review 依頼と、`Default` が `Balanced` を使う変更（GitHub 公式・2026-10-02）
+- [Selected models in GitHub Copilot deprecated](https://github.blog/changelog/2026-10-02-selected-models-in-github-copilot-deprecated/) — 2026-10-02 に廃止されたモデルと移行先（GitHub 公式）
+- [Upcoming deprecation of selected GitHub Copilot models in mid-October](https://github.blog/changelog/2026-09-18-upcoming-deprecation-of-selected-github-copilot-models-in-mid-october/) — 2026-10-19 に廃止予定のモデル、代替、管理者向けの扱い（GitHub 公式・2026-09-18）
 - [Copilot code review can now approve pull requests](https://github.blog/changelog/2026-09-01-copilot-code-review-can-now-approve-pull-requests/) — approval assessment と approval の区別（公式・2026-09-01、Public Preview）
 - [Configuring code review by GitHub Copilot](https://docs.github.com/en/copilot/how-tos/copilot-on-github/set-up-copilot/configure-code-review) — 設定階層・パス限定（最大 15 glob）の一次情報（公式）
 - [Enterprise managed permissions for GitHub Copilot agent operations](https://github.blog/changelog/2026-09-09-enterprise-managed-permissions-for-github-copilot-agent-operations/) — 操作単位の managed permissions 一般提供（公式・2026-09-09）

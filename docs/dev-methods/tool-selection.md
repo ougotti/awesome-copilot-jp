@@ -1,6 +1,6 @@
 # エージェントに外部操作を与える手段の選び方 — API・connector・MCP・CLI・Computer Use
 
-> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-29
+> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-06
 
 > [Skills 最新動向「Computer Use / Browser Use」](../trends.md#6-computer-use--browser-use)は「専用 Plugin・コネクタ・MCP がある場合は構造化された連携を優先する」と述べています。このページはその判断基準を独立させ、**API・connector・MCP・CLI・Computer Use をどの順で検討し、どこで承認を挟むか**を整理します。Computer Use そのものの機能解説は [trends.md 6 節](../trends.md#6-computer-use--browser-use)を参照してください。
 
@@ -60,6 +60,8 @@ connector との違いは、**「何ができるか」をエージェントが�
 Computer Use は、**専用の API・connector・MCP サーバーが存在しないサービスに対する最後の手段**です。OpenAI の公式ドキュメントも、対象アプリが専用 Plugin または MCP サーバーを公開している場合は「その構造化統合を優先する」と明記し、Computer Use は「コマンドラインツールや構造化統合では十分でない」タスク（ビジュアル検証、GUI 操作が本質的に必要な作業、アプリ横断のワークフロー）に絞るべきだとしています。
 
 Google も 2026-06-24 に Gemini 3.5 Flash の Computer Use を発表し、ブラウザ・モバイル・デスクトップを横断して操作できるとしています。同発表は、これが関数呼び出しや組み込みツールに**代わる**ものではなく、それらを**補完する**ものだと位置づけています。
+
+GitHub も 2026-10-01 に Copilot CLI / app の Computer Use（Public Preview）を公開し、公式ドキュメントで「API・MCP サーバー・ターミナルコマンド・ファイル操作ツール・専用のブラウザツールで直接できる作業なら、そちらの方が構造化された情報と予測しやすい結果を返す」としています（[Copilot ガイド](../copilot/README.md#computer-use--デスクトップアプリを操作するpublic-preview)）。
 
 いずれのベンダーも「構造化された手段が使えるなら、そちらを優先する」という原則は共通しています。Computer Use 固有の機能・OS ごとの権限・Browser Use との違いは [trends.md 6 節](../trends.md#6-computer-use--browser-use)にまとめています。
 
@@ -138,6 +140,7 @@ OpenAI のエージェント構築ガイドは、MCP ツールを使う場面に
 ## 参考リンク
 
 - [Computer Use](https://learn.chatgpt.com/docs/computer-use) — OpenAI 公式ドキュメント
+- [About computer use in GitHub Copilot](https://docs.github.com/en/copilot/concepts/agents/computer-use) — GitHub 公式ドキュメント（Public Preview）
 - [Introducing computer use in Gemini 3.5 Flash](https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-computer-use-gemini-3-5-flash/) — Google 公式発表（2026-06-24）
 - [MCP Specification（2026-07-28）](https://modelcontextprotocol.io/specification/) — Model Context Protocol 公式仕様
 - [Safety in building agents](https://developers.openai.com/api/docs/guides/agent-builder-safety) — OpenAI 公式ガイド（信頼できない入力の扱い、ツール承認）
