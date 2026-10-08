@@ -4,6 +4,11 @@
 
 ## 2026-10
 
+- **2026-10-08** mattpocock/skills の新規 Skill 3 件を反映（#233）。
+  - [mattpocock/skills 解説](docs/dev-methods/mattpocock-skills.md#新規-skill-の使い分け2026-10-05-追加分)に、`implement-spec`（仕様全体を統合ブランチへ、タスクグラフの frontier ごとにサブエージェントで並列実装）・`retro`（セッション後の環境改善）をユーザー呼び出しへ、`pr`（Summary / Evidence / Merge Danger の PR 本文の型）をモデル呼び出しへ追加した。
+  - 推奨ワークフローに `implement-spec`・`pr`・`retro` を加え、`implement` との使い分けと注意点の表を追加した。
+  - `scripts/known-files.json` の `mattpocock_skills` に 3 件を追加した。upstream の SKILL.md と README を2026-10-08に確認した。
+
 - **2026-10-08** Claude Code 2.1.292 の Windows・UNC パスの権限修正と共有フォルダの運用を追加（#239）。
   - [Claude Code のカスタマイズ機能](docs/claude-code/basics.md#共有フォルダと-windows-のパスを扱う前に--21292-の修正)に、2.1.292 の 4 つの修正（UNC パスの読み取りで確認が飛ばされていた問題、8.3 短縮名などの別表記での `rm -rf`、読み取り中のリンク差し替え、途中で現れた sandbox の読み取り拒否パス）を、ずれていた範囲と影響を受けやすい使い方の表にした。
   - ローカル・UNC・ドライブ割り当て・シンボリックリンク / ジャンクション・Windows の別表記を区別し、公式の扱い（UNC は確認が出る・working directory に追加できない・ドライブに割り当てて `--add-dir`、リンクは両方のパスで判定）を整理した。
