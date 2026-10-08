@@ -4,6 +4,12 @@
 
 ## 2026-10
 
+- **2026-10-08** GitHub Copilot の HydraFusion（2026-09-30、Research preview）と Dynamic workflows（2026-10-01、Public preview）を追加。
+  - [Copilot ガイド](docs/copilot/README.md#複数のモデルエージェントを組み合わせる--hydrafusion-と-dynamic-workflows)に、両者の違い（組み合わせるもの・手順を決める主体・状態・対象）の比較表を置いた。
+  - HydraFusion は Single / Cascade / Critique の実行パターン、有効化（`chat.copilot.hydraFusion.enabled`）、対象プラン、プレビュー機能ポリシーと model policy、課金（各モデルの通常単価・Auto 割引なし・credits 増の可能性）、破棄された下書きの編集が戻らない注意を整理した。データの保持・学習利用は公式に記載がないため推測で書かなかった。
+  - Dynamic workflows は autopilot・`/fleet` との違い、extension としての置き場所、`copilot workflow run`、一時停止・再開・中止、上限（優先順位と「おおよそ」である点）、権限の引き継ぎ・`workflow run` が確認を出さない点・extension のコードが権限確認の外で動く点を明記した。対象プランは変更ログと概念ページで記載が異なるため両方を示した。
+  - [マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md#copilot-の-hydrafusion-と-dynamic-workflows2026-09-3010-01)で supervisor / peer の分類に当てはめ、[最新動向 10 節](docs/trends.md#10-aiエージェントの実行基盤ハーネス)に要約を追加した。
+
 - **2026-10-06** GitHub Copilot の Computer Use（2026-10-01、Public Preview）を追加。
   - [Copilot ガイド](docs/copilot/README.md#computer-use--デスクトップアプリを操作するpublic-preview)に、対象（CLI / app、macOS / Windows のローカルセッション）、既定で無効、`/computer on` / `show` / `off`、managed settings による無効化を整理した。
   - 承認は permission mode に従い、「Always allow」が以降のセッションと同じコンピューターの Copilot app に引き継がれること、`deny` ルールが優先されること、機密アプリで「Always allow」を避ける公式の推奨を明記した。

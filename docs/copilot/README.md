@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-06
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-08
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -773,6 +773,99 @@ VS Code、Copilot CLI、Copilot app、cloud / coding agent、JetBrains などの
 
 Copilot の model policy は Copilot 経由の利用にだけ効きます。同じ組織で Claude Code を直接使っている場合、新しいモデルを検証が済むまで使わせない設定は Claude Code 側の managed settings で別に行います（2.1.283 の `availableModelsMatch` / `deniedModels`）。**→ [Claude Code のカスタマイズ機能](../claude-code/basics.md#新しいモデルを検証前に使わせない--availablemodelsmatch-と-deniedmodels)を参照。**
 
+## 複数のモデル・エージェントを組み合わせる — HydraFusion と Dynamic workflows
+
+2026-09-30〜10-01 に、Copilot で「複数を組み合わせる」機能が 2 つ広がりました。名前は似た印象ですが、**組み合わせるもの・誰が手順を決めるか**が違います。
+
+| | HydraFusion | Dynamic workflows |
+|--|-------------|-------------------|
+| 組み合わせるもの | **複数のモデル**（1 ターンの中で） | 自動化した手順と**複数のエージェント** |
+| 手順を決めるのは | HydraFusion（プロンプトごとに実行パターンを選ぶ） | **ワークフローの作者**（コードで定義） |
+| 使い方 | モデルピッカーで選ぶ | 名前を指定して実行（`copilot workflow run` も可） |
+| 状態 | **Research preview**（本番利用向けではなく、SLA なし） | **Public preview** |
+| 対象 | VS Code（1.140 以降 / Insiders）、Copilot app、Copilot CLI | Copilot CLI（`--experimental`）、Copilot app、Copilot SDK |
+
+### HydraFusion — モデルピッカーに出る「調整役」
+
+[HydraFusion](https://github.blog/changelog/2026-09-30-hydrafusion-in-vs-code-and-the-github-copilot-app/) は、モデルピッカーに表示されますが、**単一のモデルではなく、複数のモデルを調整する仕組み**です。2026-09-30 に、Copilot CLI に加えて VS Code と Copilot app でも使えるようになりました。プロンプトごとに、次の 3 つの実行パターンから 1 つを選びます。
+
+| パターン | 動き |
+|---------|------|
+| **Single** | 1 つのモデルがそのまま解く |
+| **Cascade** | 効率のよいモデルが下書きし、品質ゲートが採用するか、より強いモデルへ引き上げるかを決める |
+| **Critique** | 1 つのモデルが下書きし、**別系統のモデルが読み取り専用で批評**し、最初のモデルが 1 回だけ直す（CLI の Rubber Duck と同じレビューの型） |
+
+| 項目 | 内容 |
+|------|------|
+| 有効化 | VS Code: モデルピッカーで HydraFusion を選ぶ。出てこなければ `chat.copilot.hydraFusion.enabled` を有効化／app: Settings で「HydraFusion」を検索してオンにし、モデルピッカーで選ぶ |
+| 対象プラン | Copilot Pro・Pro+・Business・Enterprise |
+| 組織の制御 | プレビュー機能のポリシーに従う。Business / Enterprise は管理者がプレビュー機能を許可する必要がある。**組織の model policy で許可されたモデルだけ**を使い、使えるモデルがなければピッカーに出ない |
+| 課金 | 使った各モデルが通常単価で課金される（HydraFusion 自体の追加料金はない）。**Auto の割引は適用されず、単一モデルより多くの AI credits を使うことがある** |
+| どのパターンが動いたか | CLI: 進捗表示と会話の要約／VS Code: 完了した応答のフッターにホバー／app: 応答にホバー／詳細: `/collect-debug-logs` |
+
+**Auto との違い**: Auto はリクエストごとに**1 つのモデルを選びます**。HydraFusion は**実行パターンを選び、1 ターンの中で複数のモデルを協調させます**。
+
+運用上の注意（公式ドキュメントより）:
+
+- **途中の下書きは表示されず、破棄されることがあります。破棄された下書きが行ったファイル編集は自動では元に戻りません。** コミット前に差分を確認してください。
+- サブエージェントとは別の仕組みで、サブエージェントを起動しません。
+- 使うモデルの一覧は固定されておらず、利用者は選べません。プレビュー中にパターンやモデルが変わることがあります。
+- 補助するモデル（批評役など）には「必要な文脈だけ」が渡されると説明されていますが、保持期間や学習への利用は公式ページに記載がありません。**扱う情報の範囲は、Copilot 全体のデータ取り扱いの文書で確認**してください。
+
+### Dynamic workflows — 手順をコードで決めて、判断だけエージェントに任せる
+
+[Dynamic workflows](https://github.blog/changelog/2026-10-01-dynamic-workflows-in-copilot-cli-and-the-copilot-app/) は、**タスクの進め方をコードで定義したプログラム**です。自動化した手順とエージェントの作業を組み合わせ、順番に・並列に・その両方で実行できます。手順・いつエージェントを使うか・結果をどう使うかはコードが決め、エージェントは分析や判断が要る部分を担います。
+
+できること（公式の説明）:
+
+- コマンドの実行、ツールの利用、他サービスの呼び出し
+- 目標をタスクに分け、独立したものを並列に実行する
+- 段階から段階へ、構造化した結果を渡す
+- サブエージェント同士に検証させる
+- 利用者に入力を求める（クライアントが対応する場合）
+- 途中で一時停止して確認し、再開する
+
+**autopilot・`/fleet` との違い**（公式ドキュメントの比較表より）:
+
+| | autopilot | `/fleet` | Dynamic workflow |
+|--|-----------|----------|------------------|
+| 目的 | 入力を待たずに自律的に進める | 並列のサブエージェントへ仕事を任せる | コードで定義した手順を実行する |
+| 手順を決めるのは | Copilot | Copilot（毎回） | ワークフローの作者 |
+| 再現性 | Copilot の判断で変わる | Copilot の判断で変わる | 毎回同じ手順とルール。ただし経路とエージェントの出力は変わり得る |
+
+#### 作る・置く・実行する
+
+| やること | 方法 |
+|---------|------|
+| CLI で使えるようにする | `copilot --experimental`、または対話中に `/experimental on`（app は設定不要） |
+| 作る | 目的・手順の順番・エージェントに任せる部分・上限を説明して Copilot に作らせる。自分で書く場合は `Show me the guidance for writing dynamic workflows.` と頼むと組み込みのガイドが出る |
+| 実体 | **Copilot extension**（例: `extensions/java-security-checks/extension.mjs`） |
+| 置き場所 | 既定はセッション内。個人は `~/.copilot/extensions/`、リポジトリは `.github/extensions/`、配布は plugin |
+| 実行（対話） | 名前と入力を書いて頼み、承認で **Yes** を選ぶ |
+| 実行（コマンド） | `copilot workflow run <名前> --args @input.json --allow-tool=read`（`--result-file` で結果を JSON 保存） |
+| 一時停止・再開・中止 | CLI: `/workflows` で P（一時停止）・R（再開）・X（中止）／app: **Workflows** パネル。**中止した実行は再開できない** |
+
+#### 上限を必ず決める
+
+公式は、上限の設定を任意としつつ、AI credits の管理のために**推奨**しています。
+
+- 設定できる上限: 同時に動くエージェント数（超えた分は待ち行列に入る）、1 回の実行で起動するエージェントの総数、実行時間（一時停止中は数えない）、**おおよその AI credits**
+- 指定する場所と優先順位: **プロンプト → ワークフローのコード → 個人の `/settings`（`workflows.defaultLimits.*`）**
+- **credits の上限は「おおよそ」です。** 使用量は事後に報告されるため、厳密な上限にはなりません。大きな実行の前に小さく試して使用量を測るよう、公式も勧めています。
+- 上限で止まった実行を再開するときの新しい上限は、**実行全体の合計**です（新たな枠が追加されるわけではありません）。
+
+#### 権限と信頼の境界
+
+- サブエージェントは **CLI の権限の仕組みを使い、セッションで既に与えた許可を引き継ぎます。** セッションで一度許可した操作は、それを必要とするすべてのサブエージェントに効きます。
+- 対話中は、未承認の操作で通常どおり確認が出ます。**`copilot workflow run` は確認を表示しません。** 事前に `--allow-tool` / `--allow-url` で許可し、それ以外の要求は拒否されます。
+- **extension は自分のコードを直接実行でき、これは上記の権限の確認の外側で動きます**（"An extension can also run its own code directly, outside these permission prompts."）。共有された workflow を使う前に、`extension.mjs` の中身を確認してください。考え方は Claude Code の [Mods](../claude-code/mods.md#3-入れる前に--信頼の境界を理解する) と同じで、**実行コードを持つ拡張**として扱います。
+- CI では `COPILOT_GITHUB_TOKEN` などで認証します。未信頼のディレクトリでプロジェクトの extension を読ませる `GITHUB_COPILOT_PROMPT_MODE_EXTENSIONS=true` は、公式も「**信頼できるコードにだけ**」使うよう警告しています。
+- 公式ドキュメントには、組織の管理者が Dynamic workflows を制御する設定や、workflow のコードの隔離（sandbox）についての記載が見当たりませんでした。
+
+> **対象プランの表記に差があります**: 変更ログは「すべての Copilot プラン」としていますが、概念ページは「旧来のリクエスト課金に残る Copilot Pro / Pro+ の年払いプランを除く」としています。導入前に、自分のプランで使えるかを確認してください。
+
+**→ 複数エージェントにすべきかどうかの判断基準は [マルチエージェントを使う境界線](../dev-methods/multi-agent.md#copilot-の-hydrafusion-と-dynamic-workflows2026-09-3010-01) を参照**
+
 ## Computer Use — デスクトップアプリを操作する（Public Preview）
 
 2026-10-01 から、**Copilot CLI と GitHub Copilot app** で、Copilot が macOS / Windows のデスクトップアプリを操作できるようになりました（[公式の変更ログ](https://github.blog/changelog/2026-10-01-github-copilot-can-now-interact-with-desktop-apps/)、**Public Preview**）。アクセシビリティ情報と、必要に応じたスクリーンショットで画面を読み、クリック・テキスト入力・キー操作・スクロール・ドラッグ・アプリ間の移動を行います。
@@ -895,6 +988,8 @@ Copilot では、モデルピッカーのモデルが短い間隔で入れ替わ
 - [Cookbook](https://github.com/github/awesome-copilot/blob/main/cookbook/README.md) — Copilot SDK を活用した実践的コードレシピ集
 - [About GitHub Copilot plugins](https://docs.github.com/en/copilot/concepts/agents/about-plugins) — Plugin の概念と構成（公式）
 - [Manage agent skills with GitHub CLI](https://github.blog/changelog/2026-04-16-manage-agent-skills-with-github-cli/) — `gh skill` による Skill 管理（公式）
+- [HydraFusion in VS Code and the GitHub Copilot app](https://github.blog/changelog/2026-09-30-hydrafusion-in-vs-code-and-the-github-copilot-app/) ／ [HydraFusion（docs）](https://docs.github.com/early-access/copilot/hydrafusion) — 実行パターン、課金、組織の制御、注意点（GitHub 公式・2026-09-30、Research preview）
+- [Dynamic workflows in Copilot CLI and the Copilot app](https://github.blog/changelog/2026-10-01-dynamic-workflows-in-copilot-cli-and-the-copilot-app/) ／ [About dynamic workflows](https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows) ／ [Use dynamic workflows](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows) — autopilot・`/fleet` との違い、上限、権限、CI（GitHub 公式・2026-10-01、Public preview）
 - [GitHub Copilot can now interact with desktop apps with computer use](https://github.blog/changelog/2026-10-01-github-copilot-can-now-interact-with-desktop-apps/) — Copilot CLI / app の Computer Use（GitHub 公式・2026-10-01、Public Preview）
 - [About computer use in GitHub Copilot](https://docs.github.com/en/copilot/concepts/agents/computer-use) ／ [Using GitHub Copilot CLI to interact with desktop applications](https://docs.github.com/en/copilot/how-tos/copilot-cli/use-copilot-cli/computer-use) — 使いどころ・限界・承認の流れ（GitHub 公式）
 - [Copilot code review: API support and new default effort level](https://github.blog/changelog/2026-10-02-copilot-code-review-api-support-and-new-default-effort-level/) — REST / GraphQL API からの review 依頼と、`Default` が `Balanced` を使う変更（GitHub 公式・2026-10-02）

@@ -1,6 +1,6 @@
 # マルチエージェントを使う境界線
 
-> **対象ツール**: ツール横断（Claude Code・OpenAI Agents API / SDK・LangGraph ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-30
+> **対象ツール**: ツール横断（Claude Code・GitHub Copilot・OpenAI Agents API / SDK・LangGraph ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-08
 
 > Codex・Claude Code・各種ハーネスでサブエージェントや並列実行が一般化し、「複数体にできるか」はもう問題ではなくなりました。残っているのは「**いつ複数体にすべきか**」という設計判断です。マルチエージェントは分業とコンテキスト分離に有効な一方、通信・重複作業・競合・権限増幅・集約時の誤りという追加コストを持ちます。このページはその判断基準を、機能の存在ではなく設計判断として整理します。
 
@@ -105,6 +105,23 @@ Responses APIでは`multi_agent.enabled: true`とベータ指定`responses_multi
 ベータでは`/responses/compact`、`reasoning.summary`、`max_tool_calls`をMulti-agentと併用できません。自動compactionはrootと各subagentのコンテキストに個別に適用されます。既存のResponses実装に追加する前に、利用中のrequest設定と出力itemの処理を確認します。
 
 ---
+
+### Copilot の HydraFusion と Dynamic workflows（2026-09-30〜10-01）
+
+GitHub Copilot では、「複数を組み合わせる」仕組みが性質の違う 2 つに分かれて提供されています。このページの分類に当てはめると次のとおりです。
+
+| 機能 | 組み合わせるもの | このページの分類に近いもの | 手順を決めるのは |
+|------|-----------------|--------------------------|----------------|
+| **HydraFusion**（Research preview） | 1 ターンの中の**複数モデル** | Critique パターンは [peer / team](#5-peer--team-並列探索と相互レビュー) の相互レビューに近い。ただしサブエージェントは起動しない | HydraFusion（プロンプトごと） |
+| **`/fleet`** | 並列の**サブエージェント** | [supervisor](#4-supervisor-分解委任統合を-1-体が担当) | Copilot（毎回） |
+| **Dynamic workflows**（Public preview） | コードで定義した手順と**複数エージェント** | supervisor の「分解・委任・統合」を**コードに固定**したもの | ワークフローの作者 |
+
+設計上のポイントは 2 つです。
+
+1. **再現性が欲しいなら、手順をコードに寄せる。** Dynamic workflows は「毎回同じ手順とルール」で動き、エージェントは判断が要る部分だけを担います。毎回 Copilot が計画する `/fleet` や autopilot より、[8 節](#8-通信コンテキストコスト権限停止条件)のコスト・権限・停止条件を事前に決めやすくなります。上限（エージェント数・実行時間・おおよその AI credits）は公式も推奨しています。
+2. **モデルを増やしても、エージェントが増えるわけではない。** HydraFusion の Critique は別系統のモデルによる読み取り専用の批評で、コンテキスト分離や並列化の効果はありません。一方、単一モデルより多くの AI credits を使うことがあり、途中で破棄された下書きのファイル編集は自動では戻りません。
+
+**→ 有効化・上限・権限（`copilot workflow run` は確認を出さず、extension のコードは権限の確認の外で動く）の詳細は [GitHub Copilot ガイド](../copilot/README.md#複数のモデルエージェントを組み合わせる--hydrafusion-と-dynamic-workflows) を参照**
 
 ## 6. 向く仕事: 独立調査、異なる専門性、比較可能な成果物
 

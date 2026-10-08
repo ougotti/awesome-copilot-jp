@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-06
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-08
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-08 | 10 節に GitHub Copilot の HydraFusion（VS Code / app へ拡大、Research preview）と Dynamic workflows（Public preview）を追加し、「複数モデル」と「コードで定義した複数エージェント」を区別した。詳細は Copilot ガイドとマルチエージェントのページへ集約した |
 | 2026-10-06 | 6 節に GitHub Copilot の Computer Use（CLI / app、2026-10-01、Public Preview）を追加し、Codex / ChatGPT・OpenAI Agents API と実行場所・承認・管理方法を比較した。詳細は Copilot ガイドへ集約した |
 | 2026-10-05 | Claude Code 2.1.287〜2.1.289 の Mods（プラグインが Claude Code 内部で動き、画面描画・ツール呼び出しまで書き換えられる）を 12 節へ追加し、信頼境界と組織での止め方を詳細ページへ集約した。9-1 節に Copilot code review の API 対応（2026-10-02）と、`Default` が `Balanced` を使う変更の実施を反映した。Copilot のモデル廃止（2026-10-02 実施・2026-10-19 予定）は Copilot ガイドへ追加した |
 | 2026-10-02 | Codex Cloudの環境公開・再公開・接続・共有と、Security Cloud（Research Preview）の検査からdraft PRまでのレビュー手順を詳細ページへ追加した。 |
@@ -688,6 +689,8 @@ Copilot usage metrics APIは2026-09-17にCLI customizationの上位5件とdistin
 
 **→ 概念、Microsoft Copilot Studio・QM・Kiro Crew・OpenAI Agents APIの実装、セキュリティポスチャ、導入の前提、OpenTelemetryでの可観測性は [AI エージェントの実行基盤（ハーネス）](dev-methods/harness.md) を参照**
 **→ ループの構成要素・停止条件の作り方・落とし穴は [ループエンジニアリング](dev-methods/loop-engineering.md) を参照**
+GitHub Copilot では 2026-09-30〜10-01 に、性質の違う 2 つの「組み合わせ」が広がりました。**HydraFusion**（Research preview）はモデルピッカーに出る調整役で、1 ターンの中で複数のモデルを Single / Cascade / Critique のいずれかで協調させます（サブエージェントは起動しません）。**Dynamic workflows**（Public preview）は、手順をコードで定義し、判断が要る部分だけをエージェントに任せる Copilot extension です。毎回 Copilot が計画する `/fleet` や autopilot と違い、手順とルールが毎回同じになります。どちらも単一モデルより AI credits を使い得るため、Dynamic workflows では上限（エージェント数・実行時間・おおよその credits）を決めます。`copilot workflow run` は承認の確認を出さず、extension のコードは権限の確認の外で動く点にも注意します（[Copilot ガイド](copilot/README.md#複数のモデルエージェントを組み合わせる--hydrafusion-と-dynamic-workflows)）。
+
 **→ サブエージェントや並列実行を「いつ使うべきか」という設計判断は [マルチエージェントを使う境界線](dev-methods/multi-agent.md) を参照**
 **→ 長時間・多段階のタスクで失敗が累積する問題と、checkpoint・再開・冪等性の設計は [長時間タスクの信頼性設計](dev-methods/agent-reliability.md) を参照**
 
@@ -896,6 +899,7 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 - [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills)
 - [OpenAI Record & Replay](https://learn.chatgpt.com/docs/extend/record-and-replay)
 - [OpenAI Computer Use](https://learn.chatgpt.com/docs/computer-use)
+- [HydraFusion in VS Code and the GitHub Copilot app](https://github.blog/changelog/2026-09-30-hydrafusion-in-vs-code-and-the-github-copilot-app/) ／ [Dynamic workflows in Copilot CLI and the Copilot app](https://github.blog/changelog/2026-10-01-dynamic-workflows-in-copilot-cli-and-the-copilot-app/)
 - [GitHub Copilot can now interact with desktop apps with computer use](https://github.blog/changelog/2026-10-01-github-copilot-can-now-interact-with-desktop-apps/) ／ [About computer use in GitHub Copilot](https://docs.github.com/en/copilot/concepts/agents/computer-use)
 
 ### Skill の発見・配布・更新（本ページ 7 節）

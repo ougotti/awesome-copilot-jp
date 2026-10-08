@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-10-08** Copilot の [HydraFusion と Dynamic workflows](docs/copilot/README.md#複数のモデルエージェントを組み合わせる--hydrafusion-と-dynamic-workflows)を追加し、「複数モデル」と「コードで定義した複数エージェント」の違い、上限・権限の注意点を整理。
 - **2026-10-06** [Copilot の Computer Use](docs/copilot/README.md#computer-use--デスクトップアプリを操作するpublic-preview)（CLI / app、Public Preview）を追加し、承認の範囲と他社の Computer Use との違いを[最新動向](docs/trends.md#6-computer-use--browser-use)で比較。
 - **2026-10-05** [Claude Code の Mods](docs/claude-code/mods.md)を追加（2.1.287〜2.1.289）し、信頼境界・導入前の確認・組織での止め方を整理。[Copilot code review](docs/copilot/README.md#2026-09-28-から-default-は-balanced-を使う)のAPI対応と`Balanced`既定化、[Copilotのモデル廃止](docs/copilot/README.md#モデルの廃止--2026-10-02-実施分と-2026-10-19-予定分)（2026-10-19予定）も反映。
 - **2026-10-02** [Codex Cloudガイド](docs/codex/cloud.md)を追加し、環境の公開・更新、接続・共有、Security Cloudの検査と修正案レビューを整理。
 - **2026-10-01** [dotsとTeam Tasksの使い分け](docs/codex/README.md#個人の定期作業dotsteam-tasksを選ぶ)に実行主体・接続・共有・停止方法を整理し、[案件確認・週次報告のテンプレート](docs/business/use-cases.md#継続する案件確認とチームの週次報告)を追加。
-- **2026-09-30** [Skills 最新動向](docs/trends.md)へOpenAI Agents APIのComputer Use、Responses APIのMulti-agent Beta、GPT-6.1 SolとCodex CLI 0.159系を追加
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
