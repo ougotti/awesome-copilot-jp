@@ -4,6 +4,12 @@
 
 ## 2026-10
 
+- **2026-10-08** Copilot CLI のローカルモデル（Ollama）の発見と offline mode の違いを追加（#236）。
+  - [Copilot ガイド](docs/copilot/README.md#ローカルモデルを使う--ollama-の発見と-offline-modecli-1094-0)に、CLI 1.0.94-0 の `/model` による発見・追加の最小手順（事前準備、provider / endpoint の確認、Add and use / Add without switching）とモデルの要件を追加した。
+  - モデルの選択・送信先・offline mode（`COPILOT_OFFLINE=true`）・telemetry を別の設定として表にし、構成ごとの送信先を整理した。offline mode でもリモート provider へは送られる点を明記した。
+  - 対象プラン・組織ポリシー、BYOK 時の GitHub 認証の要否、offline mode が MCP 等をどこまで止めるかは公式に記載がなく、未確認として明記した。intelligent routing は発表段階として扱った。
+  - [生成AIを業務で安全に使う](docs/business/safety.md#外部への送信とファイルの保持)・[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#ローカルモデルofflinetelemetry-は別の境界)・[最新動向 12 節](docs/trends.md#12-skill--plugin-のセキュリティ)に要約と導線を追加した。公式の変更ログと BYOK ドキュメントを2026-10-08に確認した。
+
 - **2026-10-08** GitHub Copilot の HydraFusion（2026-09-30、Research preview）と Dynamic workflows（2026-10-01、Public preview）を追加。
   - [Copilot ガイド](docs/copilot/README.md#複数のモデルエージェントを組み合わせる--hydrafusion-と-dynamic-workflows)に、両者の違い（組み合わせるもの・手順を決める主体・状態・対象）の比較表を置いた。
   - HydraFusion は Single / Cascade / Critique の実行パターン、有効化（`chat.copilot.hydraFusion.enabled`）、対象プラン、プレビュー機能ポリシーと model policy、課金（各モデルの通常単価・Auto 割引なし・credits 増の可能性）、破棄された下書きの編集が戻らない注意を整理した。データの保持・学習利用は公式に記載がないため推測で書かなかった。

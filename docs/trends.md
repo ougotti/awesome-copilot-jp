@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-08 | 12 節に Copilot CLI 1.0.94-0 のローカルモデル（Ollama）の発見を追加し、モデルの選択・送信先・offline mode・telemetry が別々の設定であることを整理した。詳細は Copilot ガイドへ集約した |
 | 2026-10-08 | 10 節に GitHub Copilot の HydraFusion（VS Code / app へ拡大、Research preview）と Dynamic workflows（Public preview）を追加し、「複数モデル」と「コードで定義した複数エージェント」を区別した。詳細は Copilot ガイドとマルチエージェントのページへ集約した |
 | 2026-10-06 | 6 節に GitHub Copilot の Computer Use（CLI / app、2026-10-01、Public Preview）を追加し、Codex / ChatGPT・OpenAI Agents API と実行場所・承認・管理方法を比較した。詳細は Copilot ガイドへ集約した |
 | 2026-10-05 | Claude Code 2.1.287〜2.1.289 の Mods（プラグインが Claude Code 内部で動き、画面描画・ツール呼び出しまで書き換えられる）を 12 節へ追加し、信頼境界と組織での止め方を詳細ページへ集約した。9-1 節に Copilot code review の API 対応（2026-10-02）と、`Default` が `Balanced` を使う変更の実施を反映した。Copilot のモデル廃止（2026-10-02 実施・2026-10-19 予定）は Copilot ガイドへ追加した |
@@ -734,6 +735,8 @@ AWSが2026-09-11に公開したKiro IDEのCVE-2026-89332（AWS公式・Important
 Claude Code 2.1.271〜2.1.277では、`AGENTS.md`は`CLAUDE.md`がない場合だけのfallback、`omitClaudeMd`はuser / project / local指示をサブエージェントから除外してもmanaged policyは残る、`allowed_domains`は1コマンド限定、`--accept-command <sha256>`はJSONで表示したPlugin commandだけを承認する、という境界が加わりました。読み取れない`managed-mcp.json`はexclusive controlを維持するfail-closedへ修正されています。アカウントSkills / Pluginsの端末同期は個別にopt-outできるため、repositoryだけでなくaccount / organization層も実効構成に含めます。
 
 2026-10-01（Claude Code 2.1.287）には、プラグインが Claude Code の**内部で関数として動く Mods** が加わりました。Skill が文書、MCP が外部ツールであるのに対し、mod は**利用者の権限で動くローカルのコード**で、画面の描画・ツール呼び出し・プロンプトを見て書き換え、承認プロンプトの前にツール呼び出しを承認することもできます。sandbox は mod を囲いません。導入前は `claude plugin validate` の `hooks:` / `calls:` で、受けるイベントと外へ出る手段を読みます。組織では、既定のガード（`sec-default`）が managed の hook・system prompt・managed MCP を守る一方、それ以外は許可されます。利用者の mod を止めるのは `allowManagedModsOnly`、全フックまで止めるのは `disableAllHooks`（**managed の `PreToolUse` も効かなくなります**）で、`deny` ルールは mod 自身の `$.fs` / `$.process` を止めません。2.1.289 では、管理マシンで mod の承認が `deny` / `ask` に勝てた問題や、利用者のプラグインが managed MCP のサインイン用ツールの説明を書き換えられた問題が修正されています。**→ [Claude Code の Mods](claude-code/mods.md)**
+
+2026-10-07 の Copilot CLI 1.0.94-0 では、`/model` が起動中の Ollama から対応モデルを見つけて追加できるようになりました。ただし公式は、**ローカルモデルを選んでも offline mode にはならず（`COPILOT_OFFLINE=true` で明示する）、GitHub の telemetry も止まらない**と明記しています。offline mode でも provider がリモートなら、プロンプトとコード文脈はその provider へ送られます。「ローカルで動かしている」ことと「外部へ送らない」ことを分けて確認します（[Copilot ガイド](copilot/README.md#ローカルモデルを使う--ollama-の発見と-offline-modecli-1094-0)）。
 
 Codex CLI 0.155.0のTouch IDは、対応Macのlocal TUIにおけるMCP requestの**current-user verification**です。OAuth identity、tool permission、action approvalとは別層で、本人確認がscopeや権限を広げるわけではありません。
 

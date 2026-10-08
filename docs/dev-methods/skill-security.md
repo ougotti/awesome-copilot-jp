@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-05
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-08
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -198,6 +198,10 @@ GitHub と Anthropic の機能は、どちらも「実行時の権限」を扱�
 GitHub Copilot の **content exclusion** は、機密ファイルを Copilot のコンテキストへ取り込ませない組織設定です（Copilot app / CLI で 2026-09-02 に GA、Copilot Business / Enterprise）。ただし **これは「Copilot が取り込む経路」への制御であり、MCP サーバーや Skill が別の経路で同じファイルを読む場合の防御にはなりません。** VS Code の Copilot Chat の Edit mode / Agent mode は現時点で非対応であるなど、対応面にも差があります。本節の allowlist・推論前の判定と**組み合わせて**使ってください。
 
 **→ 対応面・非対応面の一覧は [GitHub Copilot ガイド](../copilot/README.md#組織の統制--content-exclusion) を参照**
+
+### ローカルモデル・offline・telemetry は別の境界
+
+「ローカルモデルを使う」ことと、「外部へ何も送らない」ことは同じではありません。GitHub Copilot CLI 1.0.94-0（2026-10-07）は `/model` で起動中の Ollama のモデルを追加できるようになりましたが、公式は**ローカルモデルの選択では offline mode にならず、GitHub の telemetry も止まらない**と明記しています。offline mode（`COPILOT_OFFLINE=true`）を有効にしても、provider がリモートならプロンプトとコード文脈はその provider へ送られます。**モデル・送信先・offline・telemetry を別々に確認**してください。**→ [GitHub Copilot ガイド](../copilot/README.md#ローカルモデルを使う--ollama-の発見と-offline-modecli-1094-0)**
 
 ### 承認の記憶がどこまで及ぶか
 
