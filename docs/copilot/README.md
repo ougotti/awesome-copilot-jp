@@ -773,6 +773,63 @@ VS Code、Copilot CLI、Copilot app、cloud / coding agent、JetBrains などの
 
 Copilot の model policy は Copilot 経由の利用にだけ効きます。同じ組織で Claude Code を直接使っている場合、新しいモデルを検証が済むまで使わせない設定は Claude Code 側の managed settings で別に行います（2.1.283 の `availableModelsMatch` / `deniedModels`）。**→ [Claude Code のカスタマイズ機能](../claude-code/basics.md#新しいモデルを検証前に使わせない--availablemodelsmatch-と-deniedmodels)を参照。**
 
+## ローカルモデルを使う — Ollama の発見と offline mode（CLI 1.0.94-0〜）
+
+> **確認日: 2026-10-08**。対象は Copilot CLI 1.0.94-0 以降の `/model` です（[公式の変更ログ](https://github.blog/changelog/2026-10-07-discover-local-models-in-github-copilot-cli/)、2026-10-07）。
+
+Copilot CLI 1.0.94-0 から、`/model` が**起動中のローカル Ollama から対応モデルを見つけて**、設定済みのモデルや Copilot のクラウドモデルと並べて表示するようになりました。
+
+### 最小の手順
+
+| 手順 | 内容 |
+|------|------|
+| 1. 事前準備 | **Ollama とモデルを先に入れて、Ollama を起動しておく。** この操作は runtime のインストールやモデルのダウンロードを行わない |
+| 2. 探す | CLI で `/model` を開く。起動中の Ollama にある対応モデルが一覧に出る |
+| 3. 確かめる | 選んだモデルの **provider と endpoint** を確認する（ローカルの Ollama を指しているか） |
+| 4. 追加する | 「**Add and use for this session**」（追加して今のセッションで使う）か「**Add without switching**」（追加だけして切り替えない）を選ぶ。CLI の再起動は不要 |
+
+- **見つかったモデルは自動では追加されません。** 選んで追加したものだけが使われます。
+- モデルは **tool calling と streaming に対応**している必要があります。対応しないモデルでは CLI がエラーを返します。BYOK の公式ドキュメントは、**128k トークン以上のコンテキスト**を推奨しています。
+- provider への接続に失敗した場合は、モデルピッカーに理由が表示されます。
+
+### 「ローカルモデル」「offline」「telemetry」は別々の設定
+
+ここが最も誤解しやすい点です。公式の変更ログは次の 2 点を明記しています。
+
+- **ローカルモデルを選んでも、offline mode にはならない。** CLI の offline mode は `COPILOT_OFFLINE=true` で**明示的に**有効にする。
+- **ローカルモデルを選んでも、GitHub の telemetry は止まらない。**
+
+| 設定 | 決めるもの | 設定方法 |
+|------|-----------|---------|
+| どのモデルを使うか | 推論に使うモデル | `/model`、`COPILOT_MODEL` / `--model` |
+| どこへ送るか（provider） | プロンプトとコード文脈の送信先 | `/model` で追加したモデルの endpoint、または `COPILOT_PROVIDER_BASE_URL` など |
+| offline mode | Copilot CLI が **GitHub のサーバーへ接続しない**ようにする | `COPILOT_OFFLINE=true` |
+| telemetry | GitHub への利用データの送信 | ローカルモデルの選択では変わらない（止め方は公式ドキュメントで確認） |
+
+組み合わせごとの送信先を整理すると、次のとおりです。
+
+| 構成 | プロンプト・コード文脈の送信先 | GitHub への通信 |
+|------|-----------------------------|----------------|
+| Copilot のクラウドモデル | GitHub / モデル提供元 | あり |
+| ローカル Ollama（offline mode なし） | 手元の Ollama | **あり**（telemetry を含む） |
+| ローカル Ollama ＋ `COPILOT_OFFLINE=true` | 手元の Ollama | 止める設定 |
+| リモートの provider ＋ `COPILOT_OFFLINE=true` | **そのリモート provider へネットワーク経由で送られる** | 止める設定 |
+
+公式ドキュメントは、**完全なネットワーク隔離には provider もローカル（または同じ隔離環境）にある必要がある**と明記しています。offline mode でも、base URL がリモートなら「プロンプトとコード文脈はその provider へ送られる」ためです。
+
+### 使い終わった後・使う前に確認すること
+
+- `/model` で、**今のセッションがどのモデルを使っているか**と、その endpoint を確認する。「Add without switching」を選んだ場合、セッションは切り替わっていません。
+- コードを社外へ出せない作業では、**モデルの選択だけで判断しない**。endpoint がローカルか、`COPILOT_OFFLINE=true` が設定されているかを別々に確かめる。
+- MCP サーバーや Web 取得など、モデル以外の外部接続も別に存在します。offline mode がそれらをどこまで止めるかは、公式ドキュメントに記載が見当たりませんでした。
+
+### まだ確認できていないこと
+
+- この機能の**対象プランや組織ポリシー**は、変更ログに記載がありません。組織で BYOK・ローカルモデルを制御する設定は、別の公式文書（enterprise 向けのカスタムモデル設定）を確認してください。
+- BYOK 利用時に GitHub 認証が必要かどうかも、BYOK のページには記載がありませんでした。
+- 変更ログが触れている**ローカルモデルとの intelligent routing は「今後提供」**の発表段階です。現時点で使える機能として扱いません。
+- Copilot app にも独自の BYOK 設定があります（[公式ドキュメント](https://docs.github.com/copilot/how-tos/github-copilot-app/use-byok-models)）。CLI の `/model` の発見機能とは別の手順です。
+
 ## 複数のモデル・エージェントを組み合わせる — HydraFusion と Dynamic workflows
 
 2026-09-30〜10-01 に、Copilot で「複数を組み合わせる」機能が 2 つ広がりました。名前は似た印象ですが、**組み合わせるもの・誰が手順を決めるか**が違います。
@@ -988,6 +1045,8 @@ Copilot では、モデルピッカーのモデルが短い間隔で入れ替わ
 - [Cookbook](https://github.com/github/awesome-copilot/blob/main/cookbook/README.md) — Copilot SDK を活用した実践的コードレシピ集
 - [About GitHub Copilot plugins](https://docs.github.com/en/copilot/concepts/agents/about-plugins) — Plugin の概念と構成（公式）
 - [Manage agent skills with GitHub CLI](https://github.blog/changelog/2026-04-16-manage-agent-skills-with-github-cli/) — `gh skill` による Skill 管理（公式）
+- [Discover local models in GitHub Copilot CLI](https://github.blog/changelog/2026-10-07-discover-local-models-in-github-copilot-cli/) — `/model` による Ollama の発見と、offline mode・telemetry との違い（GitHub 公式・2026-10-07、CLI 1.0.94-0〜）
+- [Using your own LLM models in GitHub Copilot CLI](https://docs.github.com/copilot/how-tos/copilot-cli/customize-copilot/use-byok-models) — provider の種類、`COPILOT_PROVIDER_*`・`COPILOT_OFFLINE`、モデルの要件（GitHub 公式）
 - [HydraFusion in VS Code and the GitHub Copilot app](https://github.blog/changelog/2026-09-30-hydrafusion-in-vs-code-and-the-github-copilot-app/) ／ [HydraFusion（docs）](https://docs.github.com/early-access/copilot/hydrafusion) — 実行パターン、課金、組織の制御、注意点（GitHub 公式・2026-09-30、Research preview）
 - [Dynamic workflows in Copilot CLI and the Copilot app](https://github.blog/changelog/2026-10-01-dynamic-workflows-in-copilot-cli-and-the-copilot-app/) ／ [About dynamic workflows](https://docs.github.com/en/copilot/concepts/agents/dynamic-workflows) ／ [Use dynamic workflows](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/use-dynamic-workflows) — autopilot・`/fleet` との違い、上限、権限、CI（GitHub 公式・2026-10-01、Public preview）
 - [GitHub Copilot can now interact with desktop apps with computer use](https://github.blog/changelog/2026-10-01-github-copilot-can-now-interact-with-desktop-apps/) — Copilot CLI / app の Computer Use（GitHub 公式・2026-10-01、Public Preview）
