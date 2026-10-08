@@ -123,15 +123,15 @@ Claude Code 2.1.287（2026-10-01）の **Mods** は、プラグインが Claude 
 
 | 仕組み | 実行場所 | 強制する主体 | 設定の単位 | 注意点 |
 |--------|---------|-------------|-----------|--------|
-| Copilot app の local sandbox（Public Preview） | 利用者のマシン上の local repository / working tree session | OS。強制できなければ sandboxed shell はエラーになる | project ごとの要求 policy。enterprise managed settings がより厳しければそちらが実効 policy | cloud sandbox、remote host、Copilot CLI の sandbox 設定とは別 |
+| Copilot の local sandbox（**GA**、2026-10-07） | 利用者のマシン上で Copilot が起動するツールとコマンド（CLI・app・Agent Host を使う VS Code の session） | OS（MXC が共通 policy を各 OS の制御へ変換）。CLI は強制できなければその session で無効化し、managed の `sandbox.failIfUnavailable` でモデルとツールの実行を止められる | CLI と app で別々に設定。enterprise の managed settings で必須化でき、通常の設定では解除できない | ローカルの MCP / LSP サーバーは既定で対象、**リモートの MCP サーバーは対象外**。組み込みのファイル操作はベストエフォート。VM / コンテナではない軽量な隔離 |
 | VS Code の Dev Container session | local folder（1.138）または SSH / Tunnel / WSL 上の remote project（1.139） | container と、Docker が動く host | project の Dev Container configuration と `chat.agentHost.devContainer.enabled` | toolchain の隔離が主目的。network・secret・tool 権限は別に設計する |
-| Copilot の cloud sandbox | GitHub 側の cloud 環境 | GitHub | local sandbox とは別に管理される | local sandbox の設定は適用されない |
+| Copilot の cloud sandbox（Public Preview） | GitHub がホストする使い捨ての Linux 環境 | GitHub | 組織の「Cloud Sandbox access」ポリシー（既定は無効）。cloud agent のポリシーと設定を共有する | local sandbox の設定は適用されない。利用量に応じて課金 |
 | Codex CLI 0.157 の network policy | Codex が行う HTTP / WebSocket 通信 | Codex | Codex の network 設定 | redirect 先と継続中の通信にも適用され、policy 変更で失効した通信は cancel される |
 | Claude Code の sandbox | 利用者のマシン上の Bash など | Claude Code と OS | settings と managed settings | managed の制限下では、project / local 設定から除外コマンドを追加できない（2.1.282） |
 
 表の各行は互いに置き換えられません。たとえば Dev Container で動かしても、container から外部へ出る通信を制限したことにはならず、local sandbox を有効にしても cloud で動く session は守られません。導入時は、**エージェントが実際に動く場所**を先に特定し、その場所で効く制御を確認します。
 
-**→ 各製品の設定手順は [GitHub Copilot ガイド](../copilot/README.md#copilot-app-の-local-sandbox)・[Codex ガイド](../codex/README.md#codex-cli-0157--通信中も効く-network-policy-と-session-の継続) を参照**
+**→ 各製品の設定手順は [GitHub Copilot ガイド](../copilot/README.md#copilot-の-local-sandboxga)・[Codex ガイド](../codex/README.md#codex-cli-0157--通信中も効く-network-policy-と-session-の継続) を参照**
 
 **→ ここまでは「何を許可するか」の話でした。「エージェント自身を誰として認証し、その権限を他のエージェントへどこまで委任してよいか」は [AIエージェントのID・認可・委任権限](agent-identity.md) を参照してください。**
 

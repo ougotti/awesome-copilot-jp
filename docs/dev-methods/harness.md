@@ -1,6 +1,6 @@
 # AI エージェントの実行基盤（ハーネス）
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-30
+> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-10-08
 
 > エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew / OpenAI Agents API）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
 
@@ -256,6 +256,12 @@ VS Code 1.138 の Agent Host は、Agent Host Protocol（AHP）を基盤に agen
 | Claude Code 2.1.281（2026-09-23） | `--setting-sources` / SDK `settingSources` の制限が teammates、`/bg`、`claude agents`、`--worktree --tmux` の session へ引き継がれる | 引き継ぎ対象外の起動経路では、実効設定を別途確認する |
 
 Claude Code の修正は逆方向の例です。以前は親 session で設定の読み込み元を絞っても、起動した別 session には伝わっていませんでした。**「会話や作業を引き継ぐ」経路と「制限を引き継ぐ」経路は別々に実装される**ため、どちらか一方だけが継続する状態を前提に確認します。
+
+### モデルの実行とツールの隔離は別の層 — Copilot の local sandbox（2026-10-07 GA）
+
+GitHub Copilot の local sandbox は、Copilot CLI・Copilot app・Agent Host を使う VS Code の session で、**Copilot が起動するツールとコマンド**の filesystem・network・credential へのアクセスを制限します。共通の sandbox policy を **Microsoft eXecution Container（MXC）** が Windows・macOS・Linux の OS の制御へ変換し、GitHub は「どのモデルを使っていても、sandbox の policy はツールの実行に適用される」と説明しています。
+
+ハーネスの観点では、**どのモデルで推論するか（モデルの実行）と、その結果として動くコマンドを何に触れさせるか（ツールの隔離）は別の層**です。ローカルモデルに切り替えてもツールの権限は狭まらず、逆に sandbox を有効にしてもプロンプトの送信先は変わりません。リモートの MCP サーバーは sandbox の対象外で、組み込みのファイル操作はベストエフォートで policy を確認する、という境界もあります。**→ 設定と制限項目は [GitHub Copilot ガイド](../copilot/README.md#copilot-の-local-sandboxga)**
 
 ## ハーネスを意識する理由
 

@@ -444,22 +444,72 @@ toolchain / dependencies を remote project 側で揃えたまま agent に buil
 
 同じ release では、組織の account policy で Agent mode を無効にしている場合に、Welcome 画面や `code --agents` などの別経路から Agents Window を開けてしまう問題が修正されました。**起動経路の違いは policy の回避手段ではありません**。
 
-### Copilot app の local sandbox
+### Copilot の local sandbox（GA）
 
-2026-09-23 に、Copilot app の **local sandboxing** が **Public Preview** になりました。local repository / working tree の session で、コマンドが触れる file・network・credential を project 単位で制限します。
+> **確認日: 2026-10-08**。2026-09-23 に Copilot app で Public Preview になった local sandboxing は、**2026-10-07 に一般提供（GA）**になりました（[公式の変更ログ](https://github.blog/changelog/2026-10-07-local-sandboxing-for-github-copilot-now-generally-available/)）。追加料金はかかりません。
 
-| 設定 | 選べる内容 |
-|------|-----------|
-| Filesystem | 追加の read / write folder、追加の read-only folder、denied folder |
-| Network | outbound internet、local network |
-| Credentials | 認証付き HTTPS git 操作の Git credential、GitHub CLI credential |
+Copilot が起動するツールとコマンドを、**filesystem・network・credential などへのアクセスを制限した状態**で動かす仕組みです。共通の sandbox policy を、**Microsoft eXecution Container（MXC）** が Windows・macOS・Linux それぞれの OS の制御へ変換します。公式は、**モデルの実行とツールの隔離は別**であり、どのモデルを使っていても sandbox の policy はツールの実行に適用されると説明しています。
 
-- project の設定は、sandboxed session の開始時に app が**要求する policy** です。enterprise managed settings がより厳しければ、実効 policy はそちらになります
-- OS が要求した policy を強制できない場合、sandboxed shell は**sandbox なしで続行せずエラー**になります
-- 既定はオフです。app settings で project を選び、Sandbox の **Sandbox new sessions** をオンにします。対象は新しい session で、filesystem / network / credential の変更は既存 session の restart 後に反映されます
-- 実行中の local session だけを sandbox 化するには `/sandbox on` を使います。project の既定は変わりません
+| 項目 | 内容 |
+|------|------|
+| 対象 | Copilot CLI、Copilot app、**Agent Host を使う VS Code の session**（変更ログより。公式の概念ページは CLI と app のみを記載） |
+| 既定 | **オフ** |
+| 有効化（CLI） | `/sandbox enable`。以降のセッションにも保存され、`/sandbox disable` で解除する |
+| 有効化（app） | project の設定が、新しい local repository / working tree session の既定になる。実行中の session だけ切り替えることもでき、その場合は project の既定は変わらない |
+| CLI と app の関係 | **設定は別々**。片方で有効にしても、もう片方には効かない |
 
-> **別の sandbox 設定と混同しないでください。** local sandboxing は cloud sandbox session や remote host 上の session には適用されません。Copilot app と Copilot CLI の sandbox 設定も別々に構成します。実行場所ごとの比較は [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#実行場所ごとの隔離境界を分ける) を参照してください。
+#### 制限できるもの — CLI と app で範囲が違う
+
+| 対象 | Copilot CLI | Copilot app |
+|------|------------|-------------|
+| Filesystem | 特定パスの read-only / read-write、拒否するパス | 同じ種類の制御の一部 |
+| Network | internet と local network、**ホスト単位の allow / deny** | internet と local network の許可・遮断 |
+| Credential | Git と `gh` の認証、**追加の環境変数のマスク** | Git と `gh` の認証 |
+| その他 | macOS の keychain へのアクセス、コマンド単位で sandbox の外で実行する例外 | 個別のコマンドを sandbox の外で実行するよう承認を求められることがある（project の設定では、この要求を許すかどうかを制御できない） |
+
+credential は、sandbox 内のツールには**プレースホルダー**が渡され、ローカルのプロキシが**承認済みの HTTPS 送信先にだけ**本物の credential を付けます。
+
+#### MCP サーバーと language server
+
+- **ローカルの MCP サーバーと LSP サーバーは、既定で sandbox に含まれます。** sandbox 内で動かすかどうかは選べます。
+- **リモートの MCP サーバーは sandbox の対象になりません。** 接続先側で動くためです。
+- 組み込みのファイル操作ツールは Copilot のプロセス内で動くため、OS の sandbox からは見えません。公式は、これらは policy を「**ベストエフォート**」で確認すると説明しています。
+
+#### OS が sandbox を強制できないとき
+
+| 面 | 挙動 |
+|----|------|
+| CLI | 保存した設定はそのセッションだけ無効になり、通知が出る（保存値の `sandbox.enabled` は変わらない）。`/sandbox enable` は拒否される |
+| app | セッションは始まり得るが、sandbox 化したプロセスは起動時に失敗する。保存した設定は残る |
+| 拒否パスを強制できない場合（app） | 弱い制限で動かさず、そのコマンドを失敗させる |
+| enterprise の managed settings | `sandbox.enabled` と `sandbox.failIfUnavailable` がともに `true` なら、CLI は**モデルへのリクエストとツールの実行を止める** |
+
+#### 組織で必須にする
+
+- enterprise の managed settings（server-managed・MDM・ファイル）で `sandbox.enabled` と `sandbox.failIfUnavailable` を設定できます。
+- **組織が sandbox を必須にした場合、通常の設定や起動オプションでは無効にできません。** policy が回避を許していれば、現在のセッションだけ無効にでき、保存された policy は変わりません。
+- 端末管理の設定は、未対応のホストでも sandbox を必須にできます。この場合、コマンドは sandbox なしで動かず、失敗します。
+- project・ユーザー・enterprise の設定の優先順位の全体像は、公式の概念ページに記載がありません。確実なのは「app では project の設定が既定になる」「enterprise の要件が通常の設定より優先される」の 2 点です。
+
+#### OS の要件と限界
+
+| OS | 要件 |
+|----|------|
+| macOS | Seatbelt を使用。macOS 15（Sequoia）以降（それより古い版は禁止されないが未検証） |
+| Linux | bubblewrap 0.5.0 以降（`bwrap` が `PATH` にあること）。外向き通信の制御には `slirp4netns`、util-linux 2.35 以降の `unshare` / `nsenter`、iptables / ip6tables の restore（nf_tables 推奨）、`/dev/net/tun` も必要 |
+| Windows | sandbox に対応した最近の Windows 11。一部の機能は Windows の版に依存する |
+
+- **軽量な隔離です。** OS レベルの封じ込めであり、VM やコンテナではありません。
+- Linux では、起動したプロセスの local network へのアクセスを個別に制御できません（Copilot のプロセス内の操作には local network の設定が効きます）。
+- Windows のプロキシ制御は、プログラムがプロキシ設定に従うことが前提です。macOS / Linux のように直接接続まで遮断するわけではありません。
+
+#### 実行後に確認すること
+
+- CLI では `/sandbox` の状態と、組織の managed settings が要求しているかを確認する。app では project の既定と、実行中の session の設定を分けて確認する。
+- 許可したホストや書き込み可能なパスに、意図しないものが入っていないかを見る。
+- リモートの MCP サーバーや、sandbox の外で実行する例外を承認したコマンドは、sandbox の対象外として別に管理する。
+
+> **別の sandbox 設定と混同しないでください。** local sandbox は利用者のマシン上で動くツールを制限するものです。GitHub がホストする **cloud sandbox**（Public Preview、組織の「Cloud Sandbox access」ポリシーで有効化、既定は無効、利用量に応じて課金）とは別物です。公式の概念ページは、local sandbox が cloud agent・remote host・Dev Container に適用されるかを記載していません。JetBrains の managed sandbox（Public Preview）も別機能で、今回の GA の対象ではありません。実行場所ごとの比較は [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#実行場所ごとの隔離境界を分ける) を参照してください。
 
 ### Agentic CLI の customization 利用指標
 
@@ -1035,6 +1085,7 @@ Copilot では、モデルピッカーのモデルが短い間隔で入れ替わ
 - [Agentic CLI customizations in the usage metrics API](https://github.blog/changelog/2026-09-17-agentic-cli-customizations-now-in-the-usage-metrics-api/) — 上位 5 件、distinct count、privacy と集計上の注意（GitHub 公式）
 - [OpenTelemetry in the GitHub Copilot app](https://github.blog/changelog/2026-09-22-opentelemetry-in-the-github-copilot-app/) — appからのOTel exportと本文の既定除外（GitHub公式・2026-09-22）
 - [VS Code 1.139 release notes](https://code.visualstudio.com/updates/v1_139) — SSH / Tunnel / WSL 上の Dev Container session と Agent mode policy の修正（Microsoft 公式・2026-09-23）
+- [Local sandboxing for GitHub Copilot now generally available](https://github.blog/changelog/2026-10-07-local-sandboxing-for-github-copilot-now-generally-available/) ／ [About cloud and local sandboxes](https://docs.github.com/copilot/concepts/security-governance-and-network-settings/about-cloud-and-local-sandboxes) — local sandbox の GA、MXC、制御項目、managed settings、OS 要件（GitHub 公式・2026-10-07）
 - [Local sandboxing in the GitHub Copilot app](https://github.blog/changelog/2026-09-23-local-sandboxing-in-the-github-copilot-app/) — project 単位の file / network / credential 制限（GitHub 公式・2026-09-23、Public Preview）
 - [Default enablement of Copilot features for Copilot Business and Enterprise](https://github.blog/changelog/2026-09-24-default-enablement-of-copilot-features-for-copilot-business-and-enterprise/) — 新機能の global default policy と 2026-10-22 の適用開始（GitHub 公式・2026-09-24）
 - [Enterprise managed settings in-product validator](https://github.blog/changelog/2026-09-25-enterprise-managed-settings-in-product-validator/) — managed settings / team mappings の検証（GitHub 公式・2026-09-25）

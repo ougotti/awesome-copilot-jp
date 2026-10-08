@@ -4,6 +4,11 @@
 
 ## 2026-10
 
+- **2026-10-08** Copilot の local sandbox の GA（2026-10-07）を反映（#237）。
+  - [Copilot ガイド](docs/copilot/README.md#copilot-の-local-sandboxga)の Copilot app 向け Public Preview の節を、CLI・app・Agent Host を使う VS Code を対象とする GA の内容へ書き換えた。MXC、モデルの実行とツールの隔離の分離、CLI（`/sandbox enable`）と app の有効化・制御範囲の差、credential のプレースホルダーとプロキシ、MCP / LSP の扱い（リモート MCP は対象外）、OS が強制できないときの挙動、`sandbox.enabled` / `sandbox.failIfUnavailable` による必須化、OS 要件と限界を整理した。
+  - VS Code の Agent Host は変更ログにあり、公式の概念ページには記載がない点、設定の優先順位の全体像や cloud agent・remote host・Dev Container への適用が未記載である点を明記した。
+  - [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#実行場所ごとの隔離境界を分ける)の比較表で local / cloud sandbox の行を更新し、[ハーネス](docs/dev-methods/harness.md#モデルの実行とツールの隔離は別の層--copilot-の-local-sandbox2026-10-07-ga)と[最新動向 12 節](docs/trends.md#12-skill--plugin-のセキュリティ)に要約を追加した。公式の変更ログと概念ページを2026-10-08に確認した。
+
 - **2026-10-08** Copilot CLI のローカルモデル（Ollama）の発見と offline mode の違いを追加（#236）。
   - [Copilot ガイド](docs/copilot/README.md#ローカルモデルを使う--ollama-の発見と-offline-modecli-1094-0)に、CLI 1.0.94-0 の `/model` による発見・追加の最小手順（事前準備、provider / endpoint の確認、Add and use / Add without switching）とモデルの要件を追加した。
   - モデルの選択・送信先・offline mode（`COPILOT_OFFLINE=true`）・telemetry を別の設定として表にし、構成ごとの送信先を整理した。offline mode でもリモート provider へは送られる点を明記した。
