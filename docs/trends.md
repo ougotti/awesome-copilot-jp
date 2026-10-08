@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-08 | 12 節に Claude Code 2.1.292 の UNC パス・Windows の別表記・リンク差し替え・sandbox 読み取り拒否パスの修正を追加し、共有フォルダを扱う前の確認を 4 つの層に分けた。詳細は Claude Code のカスタマイズ機能へ集約した |
 | 2026-10-08 | 12 節に Claude Code 2.1.294 の自然言語フック（`prompt` / `agent`）の修正を追加し、命令文で書いたフックのすり抜けと、Stop / SubagentStop の早期終了の改善を分けて整理した。詳細は Claude Code のカスタマイズ機能と評価のページへ集約した |
 | 2026-10-08 | 12 節に Copilot の local sandbox の GA（2026-10-07、CLI・app・Agent Host を使う VS Code）を追加し、MXC、CLI と app の制御範囲の差、managed settings による必須化、リモート MCP が対象外である点を整理した。詳細は Copilot ガイドへ集約した |
 | 2026-10-08 | 12 節に Copilot CLI 1.0.94-0 のローカルモデル（Ollama）の発見を追加し、モデルの選択・送信先・offline mode・telemetry が別々の設定であることを整理した。詳細は Copilot ガイドへ集約した |
@@ -739,6 +740,8 @@ Claude Code 2.1.271〜2.1.277では、`AGENTS.md`は`CLAUDE.md`がない場合�
 2026-10-01（Claude Code 2.1.287）には、プラグインが Claude Code の**内部で関数として動く Mods** が加わりました。Skill が文書、MCP が外部ツールであるのに対し、mod は**利用者の権限で動くローカルのコード**で、画面の描画・ツール呼び出し・プロンプトを見て書き換え、承認プロンプトの前にツール呼び出しを承認することもできます。sandbox は mod を囲いません。導入前は `claude plugin validate` の `hooks:` / `calls:` で、受けるイベントと外へ出る手段を読みます。組織では、既定のガード（`sec-default`）が managed の hook・system prompt・managed MCP を守る一方、それ以外は許可されます。利用者の mod を止めるのは `allowManagedModsOnly`、全フックまで止めるのは `disableAllHooks`（**managed の `PreToolUse` も効かなくなります**）で、`deny` ルールは mod 自身の `$.fs` / `$.process` を止めません。2.1.289 では、管理マシンで mod の承認が `deny` / `ask` に勝てた問題や、利用者のプラグインが managed MCP のサインイン用ツールの説明を書き換えられた問題が修正されています。**→ [Claude Code の Mods](claude-code/mods.md)**
 
 2026-10-07 の Copilot CLI 1.0.94-0 では、`/model` が起動中の Ollama から対応モデルを見つけて追加できるようになりました。ただし公式は、**ローカルモデルを選んでも offline mode にはならず（`COPILOT_OFFLINE=true` で明示する）、GitHub の telemetry も止まらない**と明記しています。offline mode でも provider がリモートなら、プロンプトとコード文脈はその provider へ送られます。「ローカルで動かしている」ことと「外部へ送らない」ことを分けて確認します（[Copilot ガイド](copilot/README.md#ローカルモデルを使う--ollama-の発見と-offline-modecli-1094-0)）。
+
+Claude Code 2.1.292（2026-10-06）では、**ネットワーク（UNC）パスのファイル読み取りで、`PreToolUse` フックの承認や auto mode が確認を飛ばしていた**問題が修正されました。同じ版で、Windows の 8.3 短縮名などの別表記で指定したホームフォルダ・ドライブの `rm -rf`、読み取り中のリンク差し替えによる範囲外の notebook / PDF の読み取り、途中で現れた managed sandbox の読み取り拒否パスの扱いも修正されています。共有フォルダは UNC のまま渡さずドライブに割り当てて必要なサブフォルダだけを渡し、permission ルール・sandbox・共有側のアクセス権を別々に確かめます（[Claude Code の詳細](claude-code/basics.md#共有フォルダと-windows-のパスを扱う前に--21292-の修正)）。
 
 Claude Code 2.1.294（2026-10-08）では、`prompt` / `agent` フックを「〜をブロックせよ」のような**命令文で書くと、ブロックすべき操作を通していた**問題が修正されました。同じ版で、命令文の Stop / SubagentStop フックで早く止まりすぎる問題も改善されています。自然言語のフックは書き方・版・入力で判定が変わり得るため、許可・拒否・継続・終了を無害な入力で確かめ、必ず止めたい操作は permission ルールや `command` フックで止めます（[Claude Code の詳細](claude-code/basics.md#自然言語のフックは書き方で結果が変わる--21294-の修正)・[評価](dev-methods/evals.md#フックを変更したら許可拒否継続終了を測る)）。
 

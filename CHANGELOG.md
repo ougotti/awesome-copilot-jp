@@ -4,6 +4,12 @@
 
 ## 2026-10
 
+- **2026-10-08** Claude Code 2.1.292 の Windows・UNC パスの権限修正と共有フォルダの運用を追加（#239）。
+  - [Claude Code のカスタマイズ機能](docs/claude-code/basics.md#共有フォルダと-windows-のパスを扱う前に--21292-の修正)に、2.1.292 の 4 つの修正（UNC パスの読み取りで確認が飛ばされていた問題、8.3 短縮名などの別表記での `rm -rf`、読み取り中のリンク差し替え、途中で現れた sandbox の読み取り拒否パス）を、ずれていた範囲と影響を受けやすい使い方の表にした。
+  - ローカル・UNC・ドライブ割り当て・シンボリックリンク / ジャンクション・Windows の別表記を区別し、公式の扱い（UNC は確認が出る・working directory に追加できない・ドライブに割り当てて `--add-dir`、リンクは両方のパスで判定）を整理した。
+  - 共有フォルダを使う前の確認（版・範囲・deny ルール・層の区別）と、ダミー文書だけを使う検証表を追加した。2.1.292 を LTS や安全性の保証とは書かなかった。
+  - [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#共有フォルダを読ませる前に4-つの層を別々に確認する)・[生成AIを業務で安全に使う](docs/business/safety.md#情報の取り扱い)・[最新動向 12 節](docs/trends.md#12-skill--plugin-のセキュリティ)に要約と導線を追加した。公式の release と Permissions / Sandboxing を2026-10-08に確認した。
+
 - **2026-10-08** Claude Code の自然言語フックの検証と 2.1.294 の修正を追加（#238）。
   - [Claude Code のカスタマイズ機能](docs/claude-code/basics.md#フックの種類--誰が判定するか)に、5 種類のフック（`command` / `http` / `mcp_tool` / `prompt` / `agent`）の判定主体、`prompt` / `agent` の応答（`ok` / `reason` / `impossible`）、対応イベント、イベントごとの `ok: false` の意味、`agent` フックが Experimental である点を整理した。
   - 2.1.294 の「命令文のフックがブロックすべき操作を通していた修正」と「Stop / SubagentStop の早期終了の改善」を別の変更として説明し、`echo` だけを使う無害な検証例、Stop の連続継続の上限（8 回）、`stop_hook_active` を加えた。
