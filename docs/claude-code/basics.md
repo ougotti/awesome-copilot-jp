@@ -530,6 +530,51 @@ Claude Enterprise では、claude.ai の管理画面でモデルを個別に無�
 
 ---
 
+### 共有フォルダと Windows のパスを扱う前に — 2.1.292 の修正
+
+> **確認日: 2026-10-08**。Claude Code v2.1.292 の [release](https://github.com/anthropics/claude-code/releases/tag/v2.1.292)（2026-10-06 公開）と、公式の [Permissions](https://code.claude.com/docs/en/permissions)・[Sandboxing](https://code.claude.com/docs/en/sandboxing) に基づきます。2.1.292 は「次の修正が入った版」であり、公式の LTS や安全性の保証を意味するものではありません。導入時は、その時点の最新版を選んでください。
+
+2.1.292 では、**許可した範囲と、実際にアクセスする範囲がずれる**問題がいくつか修正されました。
+
+| 修正（release の記載） | 何がずれていたか | 影響を受けやすい使い方 |
+|----------------------|----------------|---------------------|
+| PreToolUse hook approvals and auto mode bypassing the permission prompt for file reads from network (UNC) paths | ネットワーク（UNC）パスのファイル読み取りで、`PreToolUse` フックの承認や auto mode が**承認の確認を飛ばしていた** | 社内の共有フォルダ（`\\server\share\…`）を読ませる |
+| `rm -rf` on the 8.3 short name or another alternate Windows spelling of the home folder or a drive not being treated as removing it | Windows の 8.3 短縮名（例: `C:\Users\TARO~1`）などの**別表記**で指定したホームフォルダやドライブの削除が、その削除として認識されていなかった | Windows で Bash / PowerShell を使う |
+| a notebook or PDF read on macOS and Windows being able to return a file outside what was approved, through a link swapped in mid-read | 読み取り中に**リンクを差し替える**と、承認した範囲の外の notebook / PDF が返り得た | リンクを含むフォルダの PDF・notebook を読ませる |
+| a managed sandbox read-deny path ... that appears or re-points mid-session not dropping project grants inside it or ending credential injection from files it covers | セッション途中に**現れた・付け替えられた** sandbox の読み取り拒否パスで、許可や credential の注入が止まっていなかった | 組織の managed settings で sandbox の `denyRead` を使う |
+
+#### パスの種類を区別する
+
+| パスの種類 | 例 | Claude Code の扱い（公式ドキュメントより） |
+|-----------|----|-----------------------------------------|
+| ローカルのパス | `C:\work\project`、`~/work` | permission ルール（`Read(...)` / `Edit(...)`）で判定する |
+| **ネットワーク（UNC）パス** | `\\server\share\file` | Bash / PowerShell の引数に含むと**確認が出る**。アクセスすると、その名前のホストへ **Windows の credential が送られ得る**ため。UNC の共有は、ほとんどの場合 working directory に追加できない |
+| ドライブに割り当てた共有 | `Z:\` | 公式は、共有をドライブ文字に割り当て、起動時に `--add-dir` で渡す方法を案内している |
+| シンボリックリンク・ジャンクション | `./project/link` → `~/.ssh/...` | 要求したパスと解決先の**両方**で判定する。allow は両方が一致したときだけ、deny は**どちらかが一致すれば**効く。開くときにも解決先が承認時と同じかを確かめる |
+| Windows の別表記 | 8.3 短縮名など | 2.1.292 で、ホームフォルダ・ドライブの削除として認識されるよう修正 |
+
+#### 共有フォルダを使う前に確認すること
+
+1. **Claude Code を 2.1.292 以降にする**（`claude --version`）。上の修正が入っていない版では、UNC パスの読み取りで確認が出ないことがあります。
+2. **共有は UNC のまま渡さず、ドライブに割り当てて必要なサブフォルダだけ** `--add-dir` で渡す。共有全体を渡さない。
+3. **機密を含むパスは `Read` の deny ルールで止める**。Windows のドライブや共有を指すパスの書き方は、公式の [Permissions](https://code.claude.com/docs/en/permissions) のパスの書式で確認し、下の「ダミー文書で確かめる」で実際に拒否されるかを確かめる。
+4. **層を混同しない。** Claude Code の permission ルール、フック・auto mode の判断、sandbox の `denyRead`、**共有フォルダ側・OS 側のアクセス権**は、それぞれ別の制御です。たとえば sandbox の `denyRead` は Read ツールを止めません（Read は permission ルールに従う）。Claude Code の設定で許可しても、共有側のアクセス権が上限になります。
+
+#### ダミー文書で確かめる
+
+本物の業務データを使わず、**検証専用の共有フォルダにダミー文書だけを置いて**確かめます。
+
+| 試すこと | 期待する結果 |
+|---------|-------------|
+| 許可したサブフォルダのダミー文書を読ませる | 読める |
+| `Read` の deny ルールで止めたダミー文書を読ませる | 拒否される |
+| auto mode で UNC パスのダミー文書を読ませる | 2.1.292 以降では確認が出る |
+| 許可したフォルダ内のリンクから、範囲外のダミー文書を読ませる | 拒否される（allow は解決先も一致する必要がある） |
+
+削除操作の実演や、共有・OS・managed settings の設定変更は、この確認に含めません。
+
+> **非エンジニアの方へ**: 業務の共有フォルダを AI に読ませる前の考え方は、[生成AIを業務で安全に使う](../business/safety.md#情報の取り扱い) にまとめています。
+
 ## 設定ファイル（settings.json）
 
 `.claude/settings.json`（プロジェクト）または `~/.claude/settings.json`（ユーザー）で動作を制御します。

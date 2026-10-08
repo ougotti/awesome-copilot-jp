@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-10-08** [Claude Code 2.1.292 の共有フォルダ（UNC）・Windows パスの修正](docs/claude-code/basics.md#共有フォルダと-windows-のパスを扱う前に--21292-の修正)と、共有フォルダを読ませる前の確認手順を追加。
 - **2026-10-08** [Claude Code の自然言語フック](docs/claude-code/basics.md#自然言語のフックは書き方で結果が変わる--21294-の修正)（`prompt` / `agent`）の種類・2.1.294 の修正・検証方法を追加し、強制する制御との分担を整理。
 - **2026-10-08** [Copilot の local sandbox の GA](docs/copilot/README.md#copilot-の-local-sandboxga)（CLI・app・VS Code の Agent Host）を反映し、CLI と app の制御範囲・managed settings での必須化・OS 要件を整理。
 - **2026-10-08** [Copilot CLI のローカルモデル（Ollama）](docs/copilot/README.md#ローカルモデルを使う--ollama-の発見と-offline-modecli-1094-0)の追加手順と、モデル・送信先・offline mode・telemetry の違いを整理。
 - **2026-10-08** Copilot の [HydraFusion と Dynamic workflows](docs/copilot/README.md#複数のモデルエージェントを組み合わせる--hydrafusion-と-dynamic-workflows)を追加し、「複数モデル」と「コードで定義した複数エージェント」の違い、上限・権限の注意点を整理。
-- **2026-10-06** [Copilot の Computer Use](docs/copilot/README.md#computer-use--デスクトップアプリを操作するpublic-preview)（CLI / app、Public Preview）を追加し、承認の範囲と他社の Computer Use との違いを[最新動向](docs/trends.md#6-computer-use--browser-use)で比較。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
