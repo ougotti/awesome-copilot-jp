@@ -257,6 +257,12 @@ VS Code 1.138 の Agent Host は、Agent Host Protocol（AHP）を基盤に agen
 
 Claude Code の修正は逆方向の例です。以前は親 session で設定の読み込み元を絞っても、起動した別 session には伝わっていませんでした。**「会話や作業を引き継ぐ」経路と「制限を引き継ぐ」経路は別々に実装される**ため、どちらか一方だけが継続する状態を前提に確認します。
 
+### VS Code 1.140 — Copilot harness を Agent Host で動かし、remote host へ委任する
+
+VS Code 1.140（2026-09-30）では、Copilot SDK を使う **Copilot harness** が、Agent Host Protocol（AHP）ベースの専用 process で動くようになりました（従来の Local harness とは別の選択肢）。同じ版の Experimental 機能として、Agents window から **remote host へ session を委任**する tool（`list_agent_hosts`・`create_remote_session` など）も入っています。
+
+委任先では**元の workspace は clone もコピーもされず**、通常の承認が適用され、**最終回答は自動では戻ってきません**。つまり「会話を別の host へ渡せる」ことと、「同じファイル・同じ権限で動く」ことは別です。この節の冒頭で整理した「定義の可搬性・会話の継続・実行環境」の区別がそのまま当てはまります。**→ [GitHub Copilot ガイド](../copilot/README.md#vs-code-1140--copilot-harness複数フォルダの-sessionremote-host-への委任)**
+
 ### モデルの実行とツールの隔離は別の層 — Copilot の local sandbox（2026-10-07 GA）
 
 GitHub Copilot の local sandbox は、Copilot CLI・Copilot app・Agent Host を使う VS Code の session で、**Copilot が起動するツールとコマンド**の filesystem・network・credential へのアクセスを制限します。共通の sandbox policy を **Microsoft eXecution Container（MXC）** が Windows・macOS・Linux の OS の制御へ変換し、GitHub は「どのモデルを使っていても、sandbox の policy はツールの実行に適用される」と説明しています。

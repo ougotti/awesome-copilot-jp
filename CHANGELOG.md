@@ -4,6 +4,12 @@
 
 ## 2026-10
 
+- **2026-10-08** 2026-09-26〜10-03 の最新動向の残りを反映（#232）。Computer Use・Dynamic workflows・Code Review API は 10-05〜06 の更新で対応済み。
+  - [GitHub Copilot ガイド](docs/copilot/README.md#vs-code-1140--copilot-harness複数フォルダの-sessionremote-host-への委任)に VS Code 1.140（Copilot harness と Local harness の区別、Agents window の複数フォルダの session と remote host への委任＝Experimental、MCP の保存先と `.vscode/mcp.json` の deprecated、OTel の identity capture は既定オフで Local harness のみ）と、Copilot CLI 1.0.89〜1.0.91（`.claude/rules` 互換、`oauthScopes`、`--mcp-github-auth`、read-only のディレクトリ承認、`copilot sandbox ca`、読み取り専用 pipeline の review）を追加した。
+  - [複数ルート運用](docs/copilot/multi-root.md#agents-window-の複数フォルダの-session-は別機能vs-code-1140)の「Agents window は対象外」を保ったまま、1.140 の Agents window の機能を別機能として比較表で区別した。
+  - [Claude Code のカスタマイズ機能](docs/claude-code/basics.md#21285〜21288-の統制に関わる変更)に 2.1.288 の修正（remote MCP の二重実行、`bash -c` 内の危険な `rm`、フックのスキップ、plugin agent の設定、cloud session のモデル、path 限定ルール、バックグラウンドの時間制限）と、2.1.285〜2.1.287（`plugin configure`、`.mcpb`、`allowedProviders`、managed settings の読み取りエラーの境界、`prompt_text`、`bareElicitationCapability`、`__proto__`）を追加し、2.1.288 以上を推奨下限の候補として示した（LTS とは書かない）。
+  - [Codex ガイド](docs/codex/README.md#codex-cli-01600（2026-10-01）)に 0.160.0 を追加し、[信頼性設計](docs/dev-methods/agent-reliability.md#5-冪等性重複実行外部副作用の扱い)・[プラグインの可搬性](docs/dev-methods/plugin-portability.md#instruction-ファイルは別のエージェントにも読まれる)・[ハーネス](docs/dev-methods/harness.md)・[最新動向](docs/trends.md)に要約を追加した。各一次情報を2026-10-08に確認した。
+
 - **2026-10-08** mattpocock/skills の新規 Skill 3 件を反映（#233）。
   - [mattpocock/skills 解説](docs/dev-methods/mattpocock-skills.md#新規-skill-の使い分け2026-10-05-追加分)に、`implement-spec`（仕様全体を統合ブランチへ、タスクグラフの frontier ごとにサブエージェントで並列実装）・`retro`（セッション後の環境改善）をユーザー呼び出しへ、`pr`（Summary / Evidence / Merge Danger の PR 本文の型）をモデル呼び出しへ追加した。
   - 推奨ワークフローに `implement-spec`・`pr`・`retro` を加え、`implement` との使い分けと注意点の表を追加した。

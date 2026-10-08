@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-10-08** 9/26〜10/3 の残りを反映: [VS Code 1.140](docs/copilot/README.md#vs-code-1140--copilot-harness複数フォルダの-sessionremote-host-への委任)・[Claude Code 2.1.285〜2.1.288](docs/claude-code/basics.md#21285〜21288-の統制に関わる変更)・Copilot CLI 1.0.89〜1.0.91・[Codex CLI 0.160.0](docs/codex/README.md#codex-cli-01600（2026-10-01）)。
 - **2026-10-08** [mattpocock/skills](docs/dev-methods/mattpocock-skills.md#新規-skill-の使い分け2026-10-05-追加分)に `implement-spec`・`pr`・`retro` を追加し、推奨ワークフローに PR 作成と振り返りを加えた。
 - **2026-10-08** [Claude Code 2.1.292 の共有フォルダ（UNC）・Windows パスの修正](docs/claude-code/basics.md#共有フォルダと-windows-のパスを扱う前に--21292-の修正)と、共有フォルダを読ませる前の確認手順を追加。
 - **2026-10-08** [Claude Code の自然言語フック](docs/claude-code/basics.md#自然言語のフックは書き方で結果が変わる--21294-の修正)（`prompt` / `agent`）の種類・2.1.294 の修正・検証方法を追加し、強制する制御との分担を整理。
 - **2026-10-08** [Copilot の local sandbox の GA](docs/copilot/README.md#copilot-の-local-sandboxga)（CLI・app・VS Code の Agent Host）を反映し、CLI と app の制御範囲・managed settings での必須化・OS 要件を整理。
-- **2026-10-08** [Copilot CLI のローカルモデル（Ollama）](docs/copilot/README.md#ローカルモデルを使う--ollama-の発見と-offline-modecli-1094-0)の追加手順と、モデル・送信先・offline mode・telemetry の違いを整理。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 

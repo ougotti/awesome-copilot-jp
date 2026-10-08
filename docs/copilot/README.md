@@ -444,6 +444,32 @@ toolchain / dependencies を remote project 側で揃えたまま agent に buil
 
 同じ release では、組織の account policy で Agent mode を無効にしている場合に、Welcome 画面や `code --agents` などの別経路から Agents Window を開けてしまう問題が修正されました。**起動経路の違いは policy の回避手段ではありません**。
 
+### VS Code 1.140 — Copilot harness・複数フォルダの session・remote host への委任
+
+> **確認日: 2026-10-08**。[VS Code 1.140 release notes](https://code.visualstudio.com/updates/v1_140)（2026-09-30、Stable）に基づきます。個別の機能には Experimental が含まれます。
+
+| 機能 | 状態 | 内容 | 注意点 |
+|------|------|------|-------|
+| **Copilot harness** | 記載なし | Copilot SDK を使う harness が、Agent Host Protocol（AHP）ベースの専用の agent host process で動く。chat 入力の harness picker で選び、環境によっては既定になっている | Copilot app / CLI と挙動を揃える目的の変更。従来の **Local harness** とは別の選択肢 |
+| **Agents window の複数フォルダの session** | **Experimental**（既定は無効） | session ごとに別のリポジトリ・フォルダ・worktree を開ける。`chat.agentHost.copilotAgent.multiRootEnabled`（Claude / Codex は同名の `claudeAgent` / `codexAgent`）をユーザーの `settings.json` で `true` にする | 設定画面には出ない。エディタウィンドウの multi-root とは別機能（[複数ルート運用](multi-root.md#agents-window-の複数フォルダの-session-は別機能vs-code-1140)） |
+| **remote host への委任** | **Experimental**（既定は無効） | `chat.remoteAgentHostsEnabled` と `chat.remoteSessions.tools.enabled`（Agents window のみ）で、`list_agent_hosts`・`create_remote_session`・`get_remote_session`・`send_remote_message` の tool が使える | **元の workspace は clone もコピーもされない**。remote 側でも通常の承認が適用される。remote の**最終回答は自動では転送されない**ので明示的に取得する。調整役の Agents window を開いたまま接続しておく必要がある |
+| MCP の設定の保存先 | 記載なし | global は `$COPILOT_HOME/mcp-config.json`（未設定なら `~/.copilot/mcp-config.json`）、workspace は `.mcp.json` | `.vscode/mcp.json` は workspace の保存先として **deprecated** |
+| OpenTelemetry の identity capture | 記載なし | `github.copilot.chat.otel.captureIdentity` で、`user.name` などを span に加える | **既定はオフ**で、本文の capture とは独立。現時点では **Local harness のみ**に適用（agent host 側は未対応） |
+
+### Copilot CLI 1.0.89〜1.0.91 — instruction の互換・MCP 認証・sandbox
+
+[Copilot CLI changelog](https://github.com/github/copilot-cli/blob/main/changelog.md) から、可搬性と安全な運用に関わる変更を抜き出します。
+
+| 版（日付） | 変更 | 確認すること |
+|-----------|------|-------------|
+| 1.0.89（09-28） | **Claude Code の `.claude/rules` のルールファイルを custom instructions として読む**ようになった | Claude Code 向けに書いたルールが Copilot CLI にも効く。意図しないルールが効いていないか、両方のエージェントで確かめる（[プラグインの可搬性](../dev-methods/plugin-portability.md#instruction-ファイルは別のエージェントにも読まれる)） |
+| 1.0.89 | 事前登録した MCP の OAuth client が、設定した `oauthScopes` に従う。managed の MCP policy の適用中に extension が読み込みに失敗する問題を修正。直接インストールした plugin を `copilot plugin enable` / `disable` できる | scope を絞った設定が効いているか |
+| 1.0.90（09-30） | **`--mcp-github-auth`** で、GitHub アカウントの認証を**承認した MCP server の origin にだけ**渡せる | GitHub の認証を、承認していない MCP server へ渡していないか |
+| 1.0.90 | パスへのアクセス確認に、**session 限定の read-only のディレクトリ承認**を追加。MCP の tool が一時的な discovery の失敗から再起動なしで回復する | 読み取りだけを許すべき場所を read-only で承認しているか |
+| 1.0.91（10-01） | **`copilot sandbox ca`** で、proxy の CA の信頼を check / create / trust / rotate / remove できる（`/sandbox ca install` は `create` と `trust` に分かれた） | CA の作成・信頼・破棄の手順を、運用手順に含める |
+| 1.0.91 | 静的に完全に解析できる**読み取り専用の shell pipeline** は execution-evidence review に入り、不完全・未束縛の pipeline は**明示的な承認**が必要 | 解析できないコマンドが自動で通っていないか |
+| 1.0.91 | Windows で filesystem の列挙に対応しない版でも sandbox 内でコマンドが動くが、PowerShell の現在位置が誤り得る警告が出る | Windows では警告の有無を確認する |
+
 ### Copilot の local sandbox（GA）
 
 > **確認日: 2026-10-08**。2026-09-23 に Copilot app で Public Preview になった local sandboxing は、**2026-10-07 に一般提供（GA）**になりました（[公式の変更ログ](https://github.blog/changelog/2026-10-07-local-sandboxing-for-github-copilot-now-generally-available/)）。追加料金はかかりません。
@@ -1089,7 +1115,8 @@ Copilot では、モデルピッカーのモデルが短い間隔で入れ替わ
 - [Local sandboxing in the GitHub Copilot app](https://github.blog/changelog/2026-09-23-local-sandboxing-in-the-github-copilot-app/) — project 単位の file / network / credential 制限（GitHub 公式・2026-09-23、Public Preview）
 - [Default enablement of Copilot features for Copilot Business and Enterprise](https://github.blog/changelog/2026-09-24-default-enablement-of-copilot-features-for-copilot-business-and-enterprise/) — 新機能の global default policy と 2026-10-22 の適用開始（GitHub 公式・2026-09-24）
 - [Enterprise managed settings in-product validator](https://github.blog/changelog/2026-09-25-enterprise-managed-settings-in-product-validator/) — managed settings / team mappings の検証（GitHub 公式・2026-09-25）
-- [Copilot CLI changelog](https://github.com/github/copilot-cli/blob/main/changelog.md) — 1.0.87（2026-09-21）の `strictKnownMarketplaces` と Auto routing tier、1.0.88（2026-09-22）の ACP / AHP / `--server` への managed settings 適用（GitHub 公式）
+- [VS Code 1.140 release notes](https://code.visualstudio.com/updates/v1_140) — Copilot harness、Agents window の複数フォルダの session と remote host への委任（Experimental）、MCP の保存先、OTel の identity capture（Microsoft 公式・2026-09-30）
+- [Copilot CLI changelog](https://github.com/github/copilot-cli/blob/main/changelog.md) — 1.0.89〜1.0.91 の `.claude/rules` 互換・`--mcp-github-auth`・`copilot sandbox ca`、1.0.87（2026-09-21）の `strictKnownMarketplaces` と Auto routing tier、1.0.88（2026-09-22）の ACP / AHP / `--server` への managed settings 適用（GitHub 公式）
 - [Copilot CLI ACP server](https://docs.github.com/en/copilot/reference/copilot-cli-reference/acp-server) — `copilot --acp` の起動方法と ACP の役割（GitHub 公式）
 - [Usage metrics API adds pull request review stages](https://github.blog/changelog/2026-09-25-usage-metrics-api-adds-pull-request-review-stages/) — `pull_request_review_times` の段階別 median / p90（GitHub 公式・2026-09-25）
 - [GitHub Copilot weekly releases: September 21](https://github.blog/changelog/2026-09-25-github-copilot-weekly-releases-september-21/) — 同週の Copilot app・VS Code・JetBrains 等の更新一覧（GitHub 公式・2026-09-25）
