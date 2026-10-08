@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-10-08** [MCP Events](docs/dev-methods/mcp-events.md)を追加し、ChatGPT の draft 仕様への対応範囲と購読から解除までの確認点を整理。[ChatGPT の Plugin Extensions](docs/dev-methods/mcp-apps.md#chatgpt-固有の拡張--plugin-extensions)も追記。
 - **2026-10-08** 9/26〜10/3 の残りを反映: [VS Code 1.140](docs/copilot/README.md#vs-code-1140--copilot-harness複数フォルダの-sessionremote-host-への委任)・[Claude Code 2.1.285〜2.1.288](docs/claude-code/basics.md#21285〜21288-の統制に関わる変更)・Copilot CLI 1.0.89〜1.0.91・[Codex CLI 0.160.0](docs/codex/README.md#codex-cli-01600（2026-10-01）)。
 - **2026-10-08** [mattpocock/skills](docs/dev-methods/mattpocock-skills.md#新規-skill-の使い分け2026-10-05-追加分)に `implement-spec`・`pr`・`retro` を追加し、推奨ワークフローに PR 作成と振り返りを加えた。
 - **2026-10-08** [Claude Code 2.1.292 の共有フォルダ（UNC）・Windows パスの修正](docs/claude-code/basics.md#共有フォルダと-windows-のパスを扱う前に--21292-の修正)と、共有フォルダを読ませる前の確認手順を追加。
 - **2026-10-08** [Claude Code の自然言語フック](docs/claude-code/basics.md#自然言語のフックは書き方で結果が変わる--21294-の修正)（`prompt` / `agent`）の種類・2.1.294 の修正・検証方法を追加し、強制する制御との分担を整理。
-- **2026-10-08** [Copilot の local sandbox の GA](docs/copilot/README.md#copilot-の-local-sandboxga)（CLI・app・VS Code の Agent Host）を反映し、CLI と app の制御範囲・managed settings での必須化・OS 要件を整理。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -156,6 +156,7 @@
 | **[エージェントに外部操作を与える手段の選び方](docs/dev-methods/tool-selection.md)** | 本ガイド | — | CLI / IDE / Cloud | API・connector・MCP・CLI・Computer Use の選び方、fallback の昇格条件、承認境界 |
 | **[MCP と A2A — 役割の違いと併用方法](docs/dev-methods/agent-protocols.md)** | 本ガイド | — | CLI / IDE / Cloud | 両プロトコルの中核概念比較、併用構成例、A2A の導入判断 |
 | **[MCP ツールの契約設計](docs/dev-methods/mcp-tool-contracts.md)** | 本ガイド | — | CLI / IDE / Cloud | Tool の入出力スキーマ、副作用、再試行、エラー、承認と認可、検証手順 |
+| **[MCP Events — 外部の変化を受けてエージェントを動かす](docs/dev-methods/mcp-events.md)** | 本ガイド | — | Chat UI / Cloud | ChatGPT の MCP Events（draft）の前提、利用者とサーバー開発者の作業、重複・期限・権限喪失・自己再発火のテスト観点 |
 | **[MCP Apps — 会話内にUIを追加する](docs/dev-methods/mcp-apps.md)** | 本ガイド | — | CLI / IDE / Cloud / Chat UI | tool 結果として UI を返す仕組み、最小例、対応ホストの確認と fallback、データ露出範囲 |
 | **[AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md)** | 本ガイド | — | CLI / IDE / Cloud | エージェント固有ID・OAuth scope/token audience・委任権限・control planeの設計 |
 | **[マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md)** | 本ガイド | — | CLI / IDE / Cloud | agent-as-tool・supervisor・peer/teamの使い分け、向く仕事・向かない仕事、導入判断フローチャート |

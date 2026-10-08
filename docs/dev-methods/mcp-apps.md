@@ -1,6 +1,6 @@
 # MCP Apps — 会話内にUIを追加する
 
-> **対象ツール**: ツール横断（Claude・Claude Desktop・VS Code GitHub Copilot ほか対応ホスト） ｜ **実行環境**: CLI / IDE / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-09
+> **対象ツール**: ツール横断（Claude・Claude Desktop・VS Code GitHub Copilot ほか対応ホスト） ｜ **実行環境**: CLI / IDE / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-08
 
 [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview) は、MCP サーバーが tool 呼び出しの結果として**インタラクティブな UI**（HTML/JS）を返せるようにする拡張です。テキストの戻り値だけでは伝えづらい・操作しづらい場面を補う手段として、いつ使うか・どう作るか・対応していないホストでどうなるかを整理します。
 
@@ -122,6 +122,26 @@ UI は**サンドボックス化された iframe**内で動きます。境界は
 **多くの tool にとって、UI は「あれば嬉しい」であって「必須」ではありません。** 対応ホストが限られる以上、UI 抜きでも成立するテキスト結果を先に作り、UI はその上に重ねる追加要素として位置づけるのが安全です。
 
 ---
+
+## ChatGPT 固有の拡張 — Plugin Extensions
+
+> **確認日: 2026-10-08**。OpenAI の [Plugin Extensions](https://developers.openai.com/plugins/build/extensions) に基づきます。
+
+ChatGPT は、MCP と MCP Apps の仕様を**拡張**して、plugin を ChatGPT の画面の各所につなげる **Plugin Extensions** を提供しています。MCP Apps の UI を、会話の中だけでなく次の場所から開けます。
+
+| 種類 | 内容 |
+|------|------|
+| サイドバーのアプリ | 全体のサイドバーに入口を追加し、MCP App を全画面で開く |
+| 会話横のパネル | 会話の横にアプリを開き、作業とチャットを並べる |
+| ファイルビューア・エディタ | 対応するファイルを自分の UI で開き、読み取り・更新・保存を扱う |
+| リッチなフォーム | 構造化した入力や画像の選択を求め、その回答を tool へ返す |
+| composer のメンション | ChatGPT の composer から plugin の内容を探して選ぶ（**デスクトップアプリのみ**） |
+
+- 拡張は、MCP App の tool を登録するときの `_meta`（`ui.resourceUri`、`"openai/ui"` の `entrypoints` など）で宣言します。
+- Web での Plugin Extensions は、ChatGPT Free / Go 向けに「今後提供」とされています。
+- 公式ページは、セキュリティ・権限・データアクセスについて記載していません。[6 節](#6-データの見え方外部通信権限の境界)の考え方を同じように適用してください。
+
+**可搬性に注意してください。** これは ChatGPT 固有の拡張で、他の MCP Apps 対応ホストで同じ入口が使える保証はありません。また、Agent Plugins の manifest にある `extensions` フィールド（クライアント固有の設定を置く場所）とは**名前が似ているだけの別物**です（[プラグインの可搬性](plugin-portability.md#標準が用意した逃げ道)）。外部の変化を受けて作業を始める仕組みは [MCP Events](mcp-events.md) を参照してください。
 
 ## 対象外
 

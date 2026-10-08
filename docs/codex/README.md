@@ -309,6 +309,10 @@ GitHubのコードを検査する **Codex Security Cloud（Official / Research P
 
 dotsが自分のPCを使うには、別途そのPCを接続し、オンラインかつChatGPTアプリを起動しておきます。dotのCloud browserとPCのbrowser sessionも別です。Team Tasksでは接続に使う外部アカウントの権限が実行範囲を決めるため、チームメンバー自身のアクセスより広い資料が見える場合があります。
 
+### 外部の変化をきっかけに動かす — MCP Events
+
+時刻ではなく、**外部で起きた変化（文書へのコメントなど）**をきっかけに ChatGPT の Work chats や dots で作業を始めるには、MCP Events に対応した MCP サーバーが必要です。MCP Events は draft の仕様で、ChatGPT は webhook による配信に対応しています。購読条件・やること・終了条件を最初に決め、依頼した作業が新しいイベントを起こして繰り返さないかを確認します。**→ [MCP Events](../dev-methods/mcp-events.md)**
+
 ### 最初の結果を確認してから継続する
 
 | 選択肢 | 最小手順と、人が確認すること |

@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-08 | 13 節に ChatGPT の MCP Events（draft 仕様への部分対応）と Plugin Extensions を追加し、独立ページ [MCP Events](dev-methods/mcp-events.md) へ誘導した |
 | 2026-10-08 | 9-2 節・12 節に 2026-09-26〜10-03 の残りの更新を追加した。VS Code 1.140（Copilot harness、Agents window の複数フォルダの session と remote host への委任＝Experimental、MCP の保存先、OTel の identity capture）、Claude Code 2.1.285〜2.1.288（remote MCP の二重実行、`bash -c` 内の危険な `rm`、フックのスキップ、`allowedProviders`、`prompt_text`）、Copilot CLI 1.0.89〜1.0.91（`.claude/rules` 互換、`--mcp-github-auth`、`copilot sandbox ca`）、Codex CLI 0.160.0。詳細は各製品ページへ集約した |
 | 2026-10-08 | 12 節に Claude Code 2.1.292 の UNC パス・Windows の別表記・リンク差し替え・sandbox 読み取り拒否パスの修正を追加し、共有フォルダを扱う前の確認を 4 つの層に分けた。詳細は Claude Code のカスタマイズ機能へ集約した |
 | 2026-10-08 | 12 節に Claude Code 2.1.294 の自然言語フック（`prompt` / `agent`）の修正を追加し、命令文で書いたフックのすり抜けと、Stop / SubagentStop の早期終了の改善を分けて整理した。詳細は Claude Code のカスタマイズ機能と評価のページへ集約した |
@@ -821,6 +822,10 @@ Codex は 2026-09-05 に `codex mcp-server` command と standalone `codex-mcp-se
 このうち **progressive discovery** は、[7-2 節](#7-2-agent-finder--ard--必要な時に見つける)の Agent Finder / ARD と同じ「必要なものだけ後から見つける」方向です。Skill と MCP サーバーが増えるほどコンテキストを圧迫する問題への回答が、発見側とプロトコル側の両方で進んでいます。
 
 > ロードマップは**方向性の表明**であり、確定仕様ではありません。実装を決める際は 2026-07-28 版の仕様と区別して扱ってください。
+
+### 外部の変化で起動する — ChatGPT の MCP Events（draft）
+
+ChatGPT は、**draft の MCP Events 仕様**のうち webhook による配信と callback の検証に対応しました（MCP 2.0 / protocol version `2026-07-28` が前提。polling・streaming は未対応）。外部の変化をサーバーが通知し、ChatGPT の Work chats や dots で作業が始まります。webhook の受け取り（`2xx`）とタスクの完了は別で、重複・順不同・期限切れ・権限の取り消し・**自己再発火**を考慮する必要があります。同時に、MCP Apps の UI をサイドバーや会話横のパネルから開ける **Plugin Extensions** も ChatGPT 固有の拡張として提供されています。**→ [MCP Events](dev-methods/mcp-events.md)・[MCP Apps の ChatGPT 固有の拡張](dev-methods/mcp-apps.md#chatgpt-固有の拡張--plugin-extensions)**
 
 ### エージェント間プロトコルの統治の集約 — A2A が AAIF に合流
 

@@ -4,6 +4,11 @@
 
 ## 2026-10
 
+- **2026-10-08** ChatGPT の Plugin Extensions と MCP Events の対応範囲を追加（#228）。
+  - [MCP Events](docs/dev-methods/mcp-events.md)を新設し、通常の tool・MCP Apps・Plugin Extensions・Events の役割の違い、前提（MCP 2.0 / `2026-07-28`、webhook と callback の検証のみ）、使える場所、利用者が決めること（購読条件・やること・終了条件）、サーバー開発者の責任、配信・重複・期限・再起動の扱い、失敗の観点ごとのテスト表を整理した。draft を GA や標準化完了とは書かず、ChatGPT の対応を他のクライアントへ一般化しなかった。
+  - [MCP Apps](docs/dev-methods/mcp-apps.md#chatgpt-固有の拡張--plugin-extensions)に ChatGPT 固有の Plugin Extensions（サイドバー・会話横のパネル・ファイルビューア・フォーム・composer のメンション）と可搬性の注意を、[プラグインの可搬性](docs/dev-methods/plugin-portability.md#標準が用意した逃げ道)に manifest の `extensions` との区別を追加した。
+  - [Codex ガイド](docs/codex/README.md#外部の変化をきっかけに動かす--mcp-events)・[最新動向 13 節](docs/trends.md#外部の変化で起動する--chatgpt-の-mcp-eventsdraft)・README から導線を追加した。公式の Plugin Extensions・MCP Events を2026-10-08に確認した。
+
 - **2026-10-08** 2026-09-26〜10-03 の最新動向の残りを反映（#232）。Computer Use・Dynamic workflows・Code Review API は 10-05〜06 の更新で対応済み。
   - [GitHub Copilot ガイド](docs/copilot/README.md#vs-code-1140--copilot-harness複数フォルダの-sessionremote-host-への委任)に VS Code 1.140（Copilot harness と Local harness の区別、Agents window の複数フォルダの session と remote host への委任＝Experimental、MCP の保存先と `.vscode/mcp.json` の deprecated、OTel の identity capture は既定オフで Local harness のみ）と、Copilot CLI 1.0.89〜1.0.91（`.claude/rules` 互換、`oauthScopes`、`--mcp-github-auth`、read-only のディレクトリ承認、`copilot sandbox ca`、読み取り専用 pipeline の review）を追加した。
   - [複数ルート運用](docs/copilot/multi-root.md#agents-window-の複数フォルダの-session-は別機能vs-code-1140)の「Agents window は対象外」を保ったまま、1.140 の Agents window の機能を別機能として比較表で区別した。
