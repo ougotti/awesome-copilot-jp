@@ -1,6 +1,6 @@
 # プラグインの可搬性 — インストール前に `plugin.json` を見る
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・Cursor・Kiro ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-09-27
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・Cursor・Kiro ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-08
 
 > 「マルチエージェント対応」と書かれた Plugin が、実際に他のエージェントへ持っていけるとは限りません。ベンダー中立のオープン標準 **Agent Plugins 1.0.0** に乗っているかどうかは、`plugin.json` を 1 つ開けば判定できます。このページは、その判定手順と、判定した結果で何が変わるかを 1 か所にまとめた解説です。標準そのものの成り立ちと各ツールの対応状況は [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準)、Copilot での操作手順は [GitHub Copilot Plugins](../copilot/plugins.md) を参照してください。
 
@@ -129,6 +129,10 @@ Plugin が可搬でも、実行時の拡張セットまで端末間で同じに�
 | 組織 | managed settings、許可された Marketplace / MCP、強制ポリシー |
 
 また、Claude Code の Plugin install / update で外部コマンドの承認が必要な場合、2.1.271 以降の `--accept-command <sha256>` は `--json` で表示した**そのコマンドだけ**を受け入れます。可搬性とは別の、インストール時の supply-chain 境界として扱います。
+
+### instruction ファイルは別のエージェントにも読まれる
+
+Copilot CLI 1.0.89（2026-09-28）は、**Claude Code の `.claude/rules` のルールファイルを custom instructions として読む**ようになりました。可搬性の観点では便利ですが、Claude Code 向けに書いたルール（Claude Code 固有のツール名やコマンドを前提にしたものなど）が、**意図せず Copilot CLI にも効く**ことになります。リポジトリに置いた instruction ファイルは、どのエージェントが読むのかを確認し、エージェント固有の内容は分けて書きます。逆に、Claude Code 2.1.288 では path を限定した `.claude/rules` が Write / Edit 時にも読まれるよう修正されており、同じファイルでもエージェントや版によって**読まれるタイミング**が違います。**→ [GitHub Copilot ガイド](../copilot/README.md#copilot-cli-10891091--instruction-の互換mcp-認証sandbox)**
 
 ### tool 一覧の固定と構成の検証はクライアントごとに違う
 

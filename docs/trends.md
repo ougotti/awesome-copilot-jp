@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-08 | 9-2 節・12 節に 2026-09-26〜10-03 の残りの更新を追加した。VS Code 1.140（Copilot harness、Agents window の複数フォルダの session と remote host への委任＝Experimental、MCP の保存先、OTel の identity capture）、Claude Code 2.1.285〜2.1.288（remote MCP の二重実行、`bash -c` 内の危険な `rm`、フックのスキップ、`allowedProviders`、`prompt_text`）、Copilot CLI 1.0.89〜1.0.91（`.claude/rules` 互換、`--mcp-github-auth`、`copilot sandbox ca`）、Codex CLI 0.160.0。詳細は各製品ページへ集約した |
 | 2026-10-08 | 12 節に Claude Code 2.1.292 の UNC パス・Windows の別表記・リンク差し替え・sandbox 読み取り拒否パスの修正を追加し、共有フォルダを扱う前の確認を 4 つの層に分けた。詳細は Claude Code のカスタマイズ機能へ集約した |
 | 2026-10-08 | 12 節に Claude Code 2.1.294 の自然言語フック（`prompt` / `agent`）の修正を追加し、命令文で書いたフックのすり抜けと、Stop / SubagentStop の早期終了の改善を分けて整理した。詳細は Claude Code のカスタマイズ機能と評価のページへ集約した |
 | 2026-10-08 | 12 節に Copilot の local sandbox の GA（2026-10-07、CLI・app・Agent Host を使う VS Code）を追加し、MXC、CLI と app の制御範囲の差、managed settings による必須化、リモート MCP が対象外である点を整理した。詳細は Copilot ガイドへ集約した |
@@ -628,6 +629,8 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 | Codex | Agent Plugins に対応。**ローカル / 個人 / ワークスペース / リモート**のカタログを横断検索できる。Cursor 管理の Skill をインポートできる |
 | Claude Code | Plugin marketplace が **GitLab に対応**（nested subgroup を含む）。`plugin validate` は構造を検査し、2.1.269 以降の `plugin eval` は Plugin あり / なしの挙動を反復評価する |
 
+2026-09-28〜10-01 には、**他のエージェントの設定ファイルを読む**動きも出ました。Copilot CLI 1.0.89 は Claude Code の `.claude/rules` を custom instructions として読み、VS Code 1.140 は Agents window で session ごとに複数のフォルダを開ける機能と、remote host へ session を委任する機能を Experimental で加えました（委任先では workspace は clone されず、最終回答は自動で戻りません）。**→ [GitHub Copilot ガイド](copilot/README.md#vs-code-1140--copilot-harness複数フォルダの-sessionremote-host-への委任)・[プラグインの可搬性](dev-methods/plugin-portability.md#instruction-ファイルは別のエージェントにも読まれる)**
+
 > **実務上の落とし穴**: Codex は、コンテキストが逼迫すると Skill カタログを切り詰め、その旨を警告します。Skill は入れるほど良いわけではなく、**使う分だけ有効にする**ほうが安定します。
 
 > 各ツールの機能は月次で更新されます。詳細と最新状態は、末尾の公式リリースノートを確認してください。
@@ -740,6 +743,8 @@ Claude Code 2.1.271〜2.1.277では、`AGENTS.md`は`CLAUDE.md`がない場合�
 2026-10-01（Claude Code 2.1.287）には、プラグインが Claude Code の**内部で関数として動く Mods** が加わりました。Skill が文書、MCP が外部ツールであるのに対し、mod は**利用者の権限で動くローカルのコード**で、画面の描画・ツール呼び出し・プロンプトを見て書き換え、承認プロンプトの前にツール呼び出しを承認することもできます。sandbox は mod を囲いません。導入前は `claude plugin validate` の `hooks:` / `calls:` で、受けるイベントと外へ出る手段を読みます。組織では、既定のガード（`sec-default`）が managed の hook・system prompt・managed MCP を守る一方、それ以外は許可されます。利用者の mod を止めるのは `allowManagedModsOnly`、全フックまで止めるのは `disableAllHooks`（**managed の `PreToolUse` も効かなくなります**）で、`deny` ルールは mod 自身の `$.fs` / `$.process` を止めません。2.1.289 では、管理マシンで mod の承認が `deny` / `ask` に勝てた問題や、利用者のプラグインが managed MCP のサインイン用ツールの説明を書き換えられた問題が修正されています。**→ [Claude Code の Mods](claude-code/mods.md)**
 
 2026-10-07 の Copilot CLI 1.0.94-0 では、`/model` が起動中の Ollama から対応モデルを見つけて追加できるようになりました。ただし公式は、**ローカルモデルを選んでも offline mode にはならず（`COPILOT_OFFLINE=true` で明示する）、GitHub の telemetry も止まらない**と明記しています。offline mode でも provider がリモートなら、プロンプトとコード文脈はその provider へ送られます。「ローカルで動かしている」ことと「外部へ送らない」ことを分けて確認します（[Copilot ガイド](copilot/README.md#ローカルモデルを使う--ollama-の発見と-offline-modecli-1094-0)）。
+
+Claude Code 2.1.288（2026-10-02）では、**リモート MCP server の大きな結果で tool 呼び出しが 2 回実行され得た**問題、`bash -c` 内の危険な `rm` が bypassPermissions や allow ルールの下で確認なしに動き得た問題、`PreToolUse` / `PermissionRequest` のフックがマッチングの失敗でスキップされていた問題（修正後はブロック）が直りました。2.1.285 の `allowedProviders`、2.1.287 の OTel `prompt_text`（`prompt` と同じくマスクが必要）も統制に関わります（[Claude Code の詳細](claude-code/basics.md#21285〜21288-の統制に関わる変更)）。Copilot CLI 1.0.90 の `--mcp-github-auth` は、GitHub の認証を承認した MCP server の origin にだけ渡します。
 
 Claude Code 2.1.292（2026-10-06）では、**ネットワーク（UNC）パスのファイル読み取りで、`PreToolUse` フックの承認や auto mode が確認を飛ばしていた**問題が修正されました。同じ版で、Windows の 8.3 短縮名などの別表記で指定したホームフォルダ・ドライブの `rm -rf`、読み取り中のリンク差し替えによる範囲外の notebook / PDF の読み取り、途中で現れた managed sandbox の読み取り拒否パスの扱いも修正されています。共有フォルダは UNC のまま渡さずドライブに割り当てて必要なサブフォルダだけを渡し、permission ルール・sandbox・共有側のアクセス権を別々に確かめます（[Claude Code の詳細](claude-code/basics.md#共有フォルダと-windows-のパスを扱う前に--21292-の修正)）。
 

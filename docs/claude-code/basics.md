@@ -530,6 +530,37 @@ Claude Enterprise では、claude.ai の管理画面でモデルを個別に無�
 
 ---
 
+### 2.1.285〜2.1.288 の統制に関わる変更
+
+> **確認日: 2026-10-08**。[Claude Code changelog](https://code.claude.com/docs/en/changelog) に基づきます。
+
+**2.1.288（2026-10-02）— 実行結果と統制に直結する修正**
+
+| 修正 | 運用上の意味 |
+|------|-------------|
+| リモート MCP server の結果が 16 MB を超える・解析できない場合に、**MCP の tool 呼び出しが 2 回実行されることがあった** | 外部に副作用がある tool（送信・作成など）は重複し得た。冪等性の考え方は [長時間タスクの信頼性設計](../dev-methods/agent-reliability.md#5-冪等性重複実行外部副作用の扱い) |
+| `bash -c` / `sh -c` の中の危険な `rm`（`/` やホームディレクトリ）が、bypassPermissions モードや shell の allow ルールの下で確認なしに実行され得た | allow ルールを広く書いている場合に影響 |
+| `PreToolUse` / `PermissionRequest` のフックが、マッチングの失敗やツール入力の JSON 化の失敗で**スキップされていた** | 修正後はその呼び出しが**ブロックされる**（fail closed） |
+| agent team で名前指定で起動した plugin 定義の agent が、自分の prompt・tools・`disallowedTools`・effort ではなく既定値で動いていた | plugin の agent で `disallowedTools` を使っている場合に影響 |
+| 再起動した cloud session が、組織が強制するモデル一覧で拒否されるモデルを復元していた | `availableModels` などのモデル制限を使っている場合に影響 |
+| path を限定した `.claude/rules` とネストした `CLAUDE.md` が、Write / Edit でファイルを作成・変更したときに読み込まれていなかった（Read のときだけ読まれていた） | ルールを path 単位で分けている場合に影響 |
+| （変更）バックグラウンドのコマンドの時間制限は、無人のセッション（`-p`・Agent SDK・CI・cloud）だけに適用される。端末・デスクトップ・VS Code では制限なし | 対話で使う場合、長時間のコマンドが打ち切られなくなる |
+
+remote MCP・危険な shell・権限フックを使う組織では、**2.1.288 以上を推奨下限の候補**として扱えます。ただし公式の LTS 宣言ではなく、その後の版（2.1.292・2.1.294 など）にも統制の修正が続いています。導入時はその時点の最新版を選んでください。
+
+**2.1.285〜2.1.287 — plugin・managed settings・MCP**
+
+| 版 | 変更 | 確認すること |
+|----|------|-------------|
+| 2.1.285（09-29） | `claude plugin configure <plugin>`（`--values-stdin` で値を保存）。`claude plugin install --config` に `<server>.<key>=<value>` を追加し、同梱の `.mcpb` MCP server の設定をインストール時に渡せる | plugin の設定を CI などで自動化する場合の手順 |
+| 2.1.285 | managed setting の **`allowedProviders`** で、端末が使える API provider（Anthropic API・独自 endpoint・Bedrock・Mantle・Vertex AI・Foundry・Claude Platform on AWS・Cloud gateway）を限定できる | 組織で接続先を限定する場合 |
+| 2.1.285 | OS が managed settings file の読み取りを拒否した場合、起動を拒否せず**警告して、そのファイルの policy なしで起動する**ようになった。**それ以外の読み取りエラーや解析できないファイルでは、すべてのセッションが止まる** | 「警告で起動」と「停止」の境界を一般化しない。配布後に警告が出ていないか確認する |
+| 2.1.285 | `@` を含む URL のパスワードの一部が、redact したログやトランスクリプトに出ていた問題を修正 | ログを外部へ送っている場合 |
+| 2.1.287（10-01） | **Mods** を追加（[Mods](mods.md)） | — |
+| 2.1.287 | OpenTelemetry の `user_prompt` event に **`prompt_text`**（`prompt` の写し）を追加 | **`prompt` を削除・マスクしている箇所では `prompt_text` も同じように扱う** |
+| 2.1.287 | 2025-11-25 版 protocol の MCP server からの URL prompt（サインインなど）に対応。更新後に接続できなくなった server は、MCP の設定に `"bareElicitationCapability": true` を加える | 古い MCP server の接続 |
+| 2.1.287 | `__proto__` という名前の MCP tool で、組織の tool ごとの権限の上限が黙って外れていた問題を修正 | 組織で tool 単位の上限を使っている場合 |
+
 ### 共有フォルダと Windows のパスを扱う前に — 2.1.292 の修正
 
 > **確認日: 2026-10-08**。Claude Code v2.1.292 の [release](https://github.com/anthropics/claude-code/releases/tag/v2.1.292)（2026-10-06 公開）と、公式の [Permissions](https://code.claude.com/docs/en/permissions)・[Sandboxing](https://code.claude.com/docs/en/sandboxing) に基づきます。2.1.292 は「次の修正が入った版」であり、公式の LTS や安全性の保証を意味するものではありません。導入時は、その時点の最新版を選んでください。

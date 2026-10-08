@@ -1,6 +1,6 @@
 # VS Code エディタウィンドウでの複数ルート運用（Experimental）
 
-> **対象ツール**: VS Code 上の GitHub Copilot / Claude ｜ **実行環境**: IDE（VS Code） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-09
+> **対象ツール**: VS Code 上の GitHub Copilot / Claude ｜ **実行環境**: IDE（VS Code） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-08
 
 > VS Code 1.136（2026-09-02 公開）で、**エディタウィンドウの Chat view** にある Copilot / Claude のエージェントセッションが、multi-root workspace（複数フォルダを 1 つのワークスペースにまとめる構成）を **Experimental** としてサポートしました。複数リポジトリを横断して扱う際に、設定・適用範囲・hooks の読み込み元をどう判断するかをまとめます。
 
@@ -25,7 +25,7 @@
 | 項目 | 内容 |
 |------|------|
 | 提供元・状態 | Official（Microsoft）／**Experimental**（2026-09-02 公開、VS Code 1.136） |
-| 対象 | **エディタウィンドウの Chat view** にある Copilot / Claude のエージェントセッション。**Agents window は対象外**です（同じ挙動だと一般化しないでください） |
+| 対象 | **エディタウィンドウの Chat view** にある Copilot / Claude のエージェントセッション。**Agents window は対象外**です（同じ挙動だと一般化しないでください。Agents window の複数フォルダの session は [VS Code 1.140 の別機能](#agents-window-の複数フォルダの-session-は別機能vs-code-1140)） |
 | 設定 | `chat.agentHost.copilotAgent.multiRootEnabled` / `chat.agentHost.claudeAgent.multiRootEnabled` を settings.json、または VS Code の設定画面（Settings UI）で有効化する |
 
 > 前提となる拡張機能・認証の詳細は公式ページに明示的な記載がありません。導入前に手元の VS Code バージョンで [公式ページ](https://code.visualstudio.com/updates/v1_136#_multi-root-workspaces-in-editor-window-experimental) を確認してください。
@@ -80,6 +80,19 @@ instructions・Skill の検索範囲が multi-root でどう扱われるかは�
 - 不可逆な操作（push・デプロイ等）は、フォルダを横断する依頼であっても通常どおり承認境界の対象です（[エージェントに外部操作を与える手段の選び方](../dev-methods/tool-selection.md#8-承認境界--読み取り入力送信購入削除で分ける)）
 
 ---
+
+## Agents window の複数フォルダの session は別機能（VS Code 1.140）
+
+VS Code 1.140（2026-09-30）では、**Agents window** で、session ごとに別のリポジトリ・フォルダ・worktree を開ける機能が Experimental（既定は無効）で入りました。このページが扱うエディタウィンドウの multi-root とは**別の機能**です。
+
+| | エディタウィンドウの multi-root（本ページ） | Agents window の複数フォルダの session |
+|--|------------------------------------------|--------------------------------------|
+| 開く場所 | エディタウィンドウの Chat view | Agents window |
+| 範囲 | workspace に含まれる複数フォルダ | session ごとに指定するリポジトリ・フォルダ・worktree |
+| 有効化 | 設定画面または settings.json | ユーザーの settings.json のみ（設定画面には出ない）。`chat.agentHost.copilotAgent.multiRootEnabled` / `claudeAgent` / `codexAgent` |
+| 状態 | Experimental（1.136） | Experimental（1.140） |
+
+設定キーの名前が同じでも、**どの window で、どの単位でフォルダを扱うか**が違います。本ページの手順や Hooks の読み込み元の説明を、Agents window の session へそのまま当てはめないでください。**→ [GitHub Copilot ガイド](README.md#vs-code-1140--copilot-harness複数フォルダの-sessionremote-host-への委任)**
 
 ## 関連ドキュメント
 
