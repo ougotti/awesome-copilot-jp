@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-05
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-08
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -343,6 +343,93 @@ if [ -n "$(git status --porcelain)" ]; then
   git commit -m "chore: auto-commit by Claude Code session"
 fi
 ```
+
+### フックの種類 — 誰が判定するか
+
+> **確認日: 2026-10-08**。公式の [Hooks reference](https://code.claude.com/docs/en/hooks) に基づきます。
+
+上の例はすべて `type: "command"`（シェルコマンド）ですが、フックには 5 種類あり、**判定する主体**が違います。
+
+| 種類 | 判定する主体 | 結果の決まり方 | 向く用途 |
+|------|-------------|---------------|---------|
+| `command` | 自分で書いたスクリプト | 終了コード（`exit 2` でブロック）や JSON 出力 | 必ず同じ判定にしたい制御 |
+| `http` | 自分のサーバー | HTTP の応答 | 組織の判定サーバーへの問い合わせ |
+| `mcp_tool` | MCP サーバーのツール | ツールの結果 | 既存の MCP サーバーで判定する |
+| `prompt` | **Claude のモデル**（1 回の判定） | モデルが返す JSON（`ok` / `reason`） | 文脈を読まないと判断できない条件 |
+| `agent` | **ツールを使えるサブエージェント**（Experimental） | 同上。Read / Grep / Glob などで調べてから判定（最大 50 ターン） | ファイルやテスト結果を実際に確かめたい条件 |
+
+`prompt` と `agent` は**自然言語で条件を書くフック**です。`$ARGUMENTS` にフックの入力 JSON が入り、モデルは次の形で答えます。
+
+```json
+{ "ok": true | false, "reason": "判断の理由", "impossible": true | false }
+```
+
+- 既定のタイムアウトは `prompt` が 30 秒、`agent` が 60 秒です。既定のモデルは、Claude Code が背景処理に使うモデルです（`model` で変更可）。
+- 使えるイベントは限られます。`PreToolUse`・`PostToolUse`・`Stop`・`SubagentStop`・`UserPromptSubmit` などは両方に対応しますが、`SessionStart`・`Notification`・`PreCompact` などは `prompt` / `agent` に対応しません。`PermissionRequest` は `prompt` だけ対応し、しかも `ok: false` は**効果がありません**（承認を拒否するには `command` フックを使う）。
+- **`ok: false` の意味はイベントで変わります。** `PreToolUse` ではツール呼び出しを拒否し、既定ではターンが終わります（`continueOnBlock: true` で理由を Claude に返して続行）。`Stop` / `SubagentStop` では理由が Claude の次の指示になり、**作業が続きます**（`impossible: true` なら終了を許可）。
+- `agent` フックは公式が「Experimental。本番のワークフローには `command` フックを推奨」と明記しています。
+- `/goal` は、セッション単位の `prompt` 型 `Stop` フックの組み込みショートカットです（[作業中のエージェントへの指示の出し分け](../dev-methods/agent-commands.md)）。
+
+### 自然言語のフックは「書き方」で結果が変わる — 2.1.294 の修正
+
+2.1.294（2026-10-08）の変更ログには、自然言語のフックについて 2 つの変更があります。**別々の変更**として読んでください。
+
+| 種類 | 変更ログの記載 | 意味 |
+|------|---------------|------|
+| 修正 | Fixed `prompt` and `agent` hooks written as instructions (such as "Block commands that...") allowing what they should block | 「〜するコマンドをブロックせよ」のような**命令文**で書いたフックが、**本来ブロックすべき操作を通していた**。2.1.293 以前を使っている場合は、命令文のフックが効いていなかった可能性がある |
+| 改善 | Improved how `prompt` hooks on Stop and SubagentStop written as instructions (such as "Carry on if the build is broken") are judged, so Claude is less likely to stop early | 「ビルドが壊れていたら続けよ」のような命令文の `Stop` / `SubagentStop` フックで、**早く止まりすぎる**ことが減った |
+
+ここから言えるのは、**自然言語のフックは、書いた意図どおりに判定される保証がない**ということです。モデルが条件を解釈するため、言い回しや版によって結果が変わり得ます。「禁止」と書いただけで禁止が保証されるわけではありません。
+
+#### 使う前に、期待する結果を決めて確かめる
+
+無害な架空の入力で、**許可・拒否・継続・終了**のそれぞれが期待どおりになるかを確認します。以下は、`echo` だけを使う検証用の例です（実際の危険な操作は再現しません）。
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Does the command in this input contain the string HOOK-TEST-DENY? If it does, respond ok:false with a reason. Otherwise respond ok:true. Input: $ARGUMENTS"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+| 試す入力（Claude に実行を頼む） | 期待する結果 | 確認する場所 |
+|-------------------------------|-------------|-------------|
+| `echo hello` | 許可（実行される） | トランスクリプト |
+| `echo HOOK-TEST-DENY` | 拒否（実行されず、ターンが終わる） | 警告行に `reason` が出る |
+| 同じ条件を命令文（"Block commands that contain HOOK-TEST-DENY"）で書いた版 | 上と同じ結果になること | 2.1.293 以前と 2.1.294 以降で比べると差が見える |
+
+`Stop` も同じ考え方で確かめます。`Stop` フックには Claude の最後の応答が `last_assistant_message` として渡されるので、「最後の応答に `VERIFY-DONE` という文字列がなければ ok:false」のような条件にすると、**継続する場合と終了する場合**の両方を無害に試せます。
+
+- 継続が止まらない事故に備えて、Claude Code は**連続 8 回**で `Stop` フックによる継続を打ち切ります（`CLAUDE_CODE_STOP_HOOK_BLOCK_CAP` で変更可）。
+- `Stop` の入力の `stop_hook_active` が `true` のときは、すでにフックによって継続中です。満たせない条件で回り続けないよう、条件に含めるか、`prompt` フックでは `impossible: true` を返せるようにします。
+
+#### 公式に記載がなく、確認できていないこと
+
+- `prompt` / `agent` フックの**出力が JSON として壊れていた場合、タイムアウトした場合、モデルがエラーを返した場合**に、許可側・拒否側のどちらに倒れるか（fail open / fail closed）は、公式リファレンスで確認できませんでした。**ブロックしたい操作は、この挙動に依存させない**のが安全です。
+- （参考）2.1.288 では、`PreToolUse` / `PermissionRequest` のフックが、マッチングの失敗やツール入力の JSON 化の失敗で**スキップされていた**問題が修正され、その場合は呼び出しがブロックされるようになりました。これは「フックが起動したか」の問題で、2.1.294 の「自然言語の判定」の問題とは別です。
+
+#### 強制したい制御は、自然言語に任せない
+
+| 制御 | 主体 | 性質 |
+|------|------|------|
+| `prompt` / `agent` フック | モデルの判断 | 柔軟だが、言い回し・版・入力で結果が変わり得る |
+| `command` フック | 自分のスクリプト | 同じ入力なら同じ結果。テストできる |
+| permission ルール（`deny` / `ask` / `allow`） | Claude Code | 宣言的で、モデルの解釈を挟まない |
+| managed settings | 組織 | 利用者が弱められない |
+| sandbox（OS の隔離） | OS | ツールが何に触れられるかを物理的に制限する |
+
+**「必ず止めたいもの」は permission ルールや `command` フック、sandbox で止め、`prompt` / `agent` フックは「文脈を読まないと判断できない補助的なチェック」に使う**、という分担が安全です。フックの変更時の評価の組み方は [Skill / エージェントの評価](../dev-methods/evals.md#フックを変更したら許可拒否継続終了を測る) を参照してください。
 
 ---
 

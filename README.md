@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-10-08** [Claude Code の自然言語フック](docs/claude-code/basics.md#自然言語のフックは書き方で結果が変わる--21294-の修正)（`prompt` / `agent`）の種類・2.1.294 の修正・検証方法を追加し、強制する制御との分担を整理。
 - **2026-10-08** [Copilot の local sandbox の GA](docs/copilot/README.md#copilot-の-local-sandboxga)（CLI・app・VS Code の Agent Host）を反映し、CLI と app の制御範囲・managed settings での必須化・OS 要件を整理。
 - **2026-10-08** [Copilot CLI のローカルモデル（Ollama）](docs/copilot/README.md#ローカルモデルを使う--ollama-の発見と-offline-modecli-1094-0)の追加手順と、モデル・送信先・offline mode・telemetry の違いを整理。
 - **2026-10-08** Copilot の [HydraFusion と Dynamic workflows](docs/copilot/README.md#複数のモデルエージェントを組み合わせる--hydrafusion-と-dynamic-workflows)を追加し、「複数モデル」と「コードで定義した複数エージェント」の違い、上限・権限の注意点を整理。
 - **2026-10-06** [Copilot の Computer Use](docs/copilot/README.md#computer-use--デスクトップアプリを操作するpublic-preview)（CLI / app、Public Preview）を追加し、承認の範囲と他社の Computer Use との違いを[最新動向](docs/trends.md#6-computer-use--browser-use)で比較。
-- **2026-10-05** [Claude Code の Mods](docs/claude-code/mods.md)を追加（2.1.287〜2.1.289）し、信頼境界・導入前の確認・組織での止め方を整理。[Copilot code review](docs/copilot/README.md#2026-09-28-から-default-は-balanced-を使う)のAPI対応と`Balanced`既定化、[Copilotのモデル廃止](docs/copilot/README.md#モデルの廃止--2026-10-02-実施分と-2026-10-19-予定分)（2026-10-19予定）も反映。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
