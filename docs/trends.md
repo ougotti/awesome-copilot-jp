@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-08 | 12 節に Copilot の local sandbox の GA（2026-10-07、CLI・app・Agent Host を使う VS Code）を追加し、MXC、CLI と app の制御範囲の差、managed settings による必須化、リモート MCP が対象外である点を整理した。詳細は Copilot ガイドへ集約した |
 | 2026-10-08 | 12 節に Copilot CLI 1.0.94-0 のローカルモデル（Ollama）の発見を追加し、モデルの選択・送信先・offline mode・telemetry が別々の設定であることを整理した。詳細は Copilot ガイドへ集約した |
 | 2026-10-08 | 10 節に GitHub Copilot の HydraFusion（VS Code / app へ拡大、Research preview）と Dynamic workflows（Public preview）を追加し、「複数モデル」と「コードで定義した複数エージェント」を区別した。詳細は Copilot ガイドとマルチエージェントのページへ集約した |
 | 2026-10-06 | 6 節に GitHub Copilot の Computer Use（CLI / app、2026-10-01、Public Preview）を追加し、Codex / ChatGPT・OpenAI Agents API と実行場所・承認・管理方法を比較した。詳細は Copilot ガイドへ集約した |
@@ -740,7 +741,9 @@ Claude Code 2.1.271〜2.1.277では、`AGENTS.md`は`CLAUDE.md`がない場合�
 
 Codex CLI 0.155.0のTouch IDは、対応Macのlocal TUIにおけるMCP requestの**current-user verification**です。OAuth identity、tool permission、action approvalとは別層で、本人確認がscopeや権限を広げるわけではありません。
 
-2026-09-23〜25には、**実行場所ごとの隔離**が各製品で同時に更新されました。Copilot appのlocal sandbox（Public Preview）はproject単位でfile / network / credentialを制限し、OSが強制できなければsandboxなしで続行せずエラーにします。cloud sandbox、remote host、Copilot CLIのsandbox設定とは別です。Codex CLI 0.157.0は、network restrictionをredirect先と継続中のHTTP / WebSocket通信にも適用し、policy変更で失効した通信をcancelします。Claude Code 2.1.280〜2.1.282では、symlink経由の書き込みを実際の着地点で判定し、repository・user・Pluginのmetadataがmanagedのpermission rule・sandbox除外・OTel送信先を弱められないよう修正されました。比較表は[詳細ページ](dev-methods/skill-security.md#実行場所ごとの隔離境界を分ける)にあります。
+2026-10-07には、Copilot の **local sandbox が GA** になり、対象が Copilot CLI・Copilot app・Agent Host を使う VS Code の session に広がりました。Microsoft eXecution Container（MXC）が共通の policy を Windows・macOS・Linux の OS 制御へ変換し、enterprise の managed settings（`sandbox.enabled`・`sandbox.failIfUnavailable`）で必須にできます。CLI と app は設定が別々で、制限できる範囲も異なります（ホスト単位の allow / deny や環境変数のマスクは CLI のみ）。**ローカルの MCP / LSP サーバーは既定で対象ですが、リモートの MCP サーバーは対象外**です（[Copilot ガイド](copilot/README.md#copilot-の-local-sandboxga)）。
+
+2026-09-23〜25には、**実行場所ごとの隔離**が各製品で同時に更新されました。Copilot appのlocal sandbox（2026-09-23時点ではPublic Preview）はproject単位でfile / network / credentialを制限し、OSが強制できなければsandboxなしで続行せずエラーにします。cloud sandbox、remote host、Copilot CLIのsandbox設定とは別です。Codex CLI 0.157.0は、network restrictionをredirect先と継続中のHTTP / WebSocket通信にも適用し、policy変更で失効した通信をcancelします。Claude Code 2.1.280〜2.1.282では、symlink経由の書き込みを実際の着地点で判定し、repository・user・Pluginのmetadataがmanagedのpermission rule・sandbox除外・OTel送信先を弱められないよう修正されました。比較表は[詳細ページ](dev-methods/skill-security.md#実行場所ごとの隔離境界を分ける)にあります。
 
 組織の既定値にも期限があります。Copilot Business / Enterpriseでは、GAのeligibleな機能・Copilot Code Review・MCP servers in Copilotのpolicyについて、**2026-10-22からUnconfiguredの項目がglobal default policyに従います**。明示した設定は保持され、Previewはopt-inのままです（[確認手順](copilot/README.md#新機能の既定ポリシー--2026-10-22-から適用)）。また、agentic autofixがCopilot Memoryを読み書きするようになり（Public Preview）、修正patternがcode reviewやcloud agentにも波及します。memoryは組織の規約ではなく、訂正・削除できる文脈として扱います。
 
