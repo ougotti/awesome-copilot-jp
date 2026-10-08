@@ -1,6 +1,6 @@
 # mattpocock/skills - 実務エンジニア向け Agent Skills
 
-> **対象ツール**: ツール横断（Claude Code ほか Agent Skills 対応ツール） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-22
+> **対象ツール**: ツール横断（Claude Code ほか Agent Skills 対応ツール） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-08
 
 > [mattpocock/skills](https://github.com/mattpocock/skills) は、TypeScript教育者として知られる **Matt Pocock** 氏が実務で使うAgent Skills集です。「vibe coding」ではなく、要件の認識合わせ、仕様化、TDD、デバッグ、設計、レビューといったソフトウェア開発の基本を、小さく組み合わせ可能なSkillとしてエージェントへ与えます。
 
@@ -76,7 +76,9 @@ claude plugins install mattpocock-skills
 | **to-spec** | 現在の会話を仕様へ整理し、Issue trackerへ公開する |
 | **to-tickets** | 計画や仕様を、依存関係を持つtracer-bullet型チケットへ分解する |
 | **implement** | 仕様やチケットを実装し、合意した境界でTDDとコードレビューを回す |
+| **implement-spec** | 仕様全体を1本の**統合ブランチ**へ実装する。チケットを依存関係のタスクグラフとして扱い、着手可能なチケット（frontier）ごとに実装用サブエージェントを並列に動かし、最後に `code-review` で仕上げる |
 | **wayfinder** | 1セッションでは収まらない大規模作業を調査チケットの地図にする |
+| **retro** | コーディングセッションを振り返り、エージェントの**環境**（ファイルへの案内、自動チェック、コーディング規約、AGENTS.md などの指示ファイル、ツールの効率、情報へのアクセス）の改善候補を重大な順に示す |
 
 ### モデル呼び出し
 
@@ -91,6 +93,7 @@ claude plugins install mattpocock-skills
 | **domain-modeling** | 用語、境界条件、エッジケースを通してドメインモデルを更新する |
 | **codebase-design** | 小さなインターフェースの背後に多くの振る舞いを持つ深いモジュールを設計する |
 | **code-review** | StandardsとSpecの2軸を別々にレビューする |
+| **pr** | PR本文の型。変更を伝える最小の図（疑似コード・呼び出しツリー・ファイルツリー・Mermaid・diff）による Summary、Before / After の Evidence、Merge Danger（一方通行か引き返せるか、影響範囲）の3節で書く |
 | **resolving-merge-conflicts** | merge / rebaseの競合を、両側の意図と一次情報からhunk単位で解決する |
 | **wizard** | 人手でしかできない手順（インフラ準備、資格情報やCIシークレットの設定、1回限りの移行）を対話型のbashウィザードとして生成する |
 
@@ -126,11 +129,26 @@ to-spec
   ↓ 会話を仕様化
 to-tickets
   ↓ 依存関係を持つ実装単位へ分解
-implement
+implement（1件ずつ） / implement-spec（仕様全体を並列に）
   ├─ tdd
   ├─ diagnosing-bugs
   └─ code-review
+  ↓
+pr
+  ↓ PR本文を Summary / Evidence / Merge Danger で書く
+retro
+  ↓ セッション後に、次回のための環境の改善点を洗い出す
 ```
+
+### 新規 Skill の使い分け（2026-10-05 追加分）
+
+| Skill | 呼び出し | 使う場面 | 注意点 |
+|-------|---------|---------|-------|
+| **implement-spec** | ユーザー | `to-spec` と `to-tickets` で作った仕様とチケットを、まとめて実装したい | Issue tracker の設定（`setup-matt-pocock-skills`）が前提。チケットごとに**別の worktree・別ブランチ**で実装用サブエージェントを動かし、終わったものから統合ブランチへマージする。サブエージェント間のやり取りは、仕様・チケット・調査メモ・コミットへの**参照（ポインタ）**で行う。終了後に worktree を片付ける |
+| **pr** | モデル | PR本文を書くとき | 冗長な前置きを避け、`GLOSSARY.md` の用語で簡潔に書く。Merge Danger では、元に戻せない変更（one-way door）かどうかと影響範囲を明記する |
+| **retro** | ユーザー | セッションが終わった後、同じ失敗を繰り返さない環境に直したい | 指摘は「規約を書く」より「**機械的に検査できるものは自動チェックにする**」を優先する。`CLAUDE.md` / `AGENTS.md` は案内のポインタに絞り、判断を要する規約はレビュー時に読む `CODING_STANDARDS.md` に置く、という考え方 |
+
+`implement` と `implement-spec` の違いは、**1件ずつ自分で実装するか、仕様全体をタスクグラフとして並列に進めるか**です。並列化は速い一方、サブエージェント・worktree・マージの管理が増えます。複数エージェントにすべきかの判断は [マルチエージェントを使う境界線](multi-agent.md) を参照してください。
 
 大規模で不確実性が高い作業では、最初に `wayfinder` を使い、`research` で調査結果を一次情報付きで蓄積します。
 
