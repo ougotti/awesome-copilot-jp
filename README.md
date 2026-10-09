@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-10-10** [AI コードレビューはどの指示を読むか](docs/dev-methods/review-instructions.md)を追加し、Copilot code review（head）と Claude Code Code Review（`CLAUDE.md` は base）の参照元の違いと、レビュー基準を変えるときの検証・承認の手順を整理。
 - **2026-10-09** [MCP Events](docs/dev-methods/mcp-events.md#購読から解除までの流れ)に購読から解除までのサーバー側の流れを、[MCP Apps](docs/dev-methods/mcp-apps.md#chatgpt-固有の拡張--plugin-extensions)に Plugin Extensions の残りの種類を追加（PR #231 から移植）。
 - **2026-10-09** [金融サービス向けスキル](docs/business/financial-services.md)を upstream と照合し、垂直プラグイン（6 種＋パートナー 2 種）・コマンド・Microsoft 365 アドインの準備ツールを現状に合わせて更新。
 - **2026-10-08** [MCP Events](docs/dev-methods/mcp-events.md)を追加し、ChatGPT の draft 仕様への対応範囲と購読から解除までの確認点を整理。[ChatGPT の Plugin Extensions](docs/dev-methods/mcp-apps.md#chatgpt-固有の拡張--plugin-extensions)も追記。
 - **2026-10-08** 9/26〜10/3 の残りを反映: [VS Code 1.140](docs/copilot/README.md#vs-code-1140--copilot-harness複数フォルダの-sessionremote-host-への委任)・[Claude Code 2.1.285〜2.1.288](docs/claude-code/basics.md#21285〜21288-の統制に関わる変更)・Copilot CLI 1.0.89〜1.0.91・[Codex CLI 0.160.0](docs/codex/README.md#codex-cli-01600（2026-10-01）)。
-- **2026-10-08** [mattpocock/skills](docs/dev-methods/mattpocock-skills.md#新規-skill-の使い分け2026-10-05-追加分)に `implement-spec`・`pr`・`retro` を追加し、推奨ワークフローに PR 作成と振り返りを加えた。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -162,6 +162,7 @@
 | **[マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md)** | 本ガイド | — | CLI / IDE / Cloud | agent-as-tool・supervisor・peer/teamの使い分け、向く仕事・向かない仕事、導入判断フローチャート |
 | **[長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md)** | 本ガイド | — | CLI / Cloud | time horizonと実行時間の違い、checkpoint・retry・冪等性・reliability budgetの設計、最小テストシナリオ |
 | **[プラグインの可搬性](docs/dev-methods/plugin-portability.md)** | 本ガイド | — | IDE / CLI | `plugin.json` を見て、他のエージェントへ持ち出せる Plugin かを判定する手順 |
+| **[AI コードレビューはどの指示を読むか](docs/dev-methods/review-instructions.md)** | 本ガイド | — | Cloud | Copilot code review（head）と Claude Code Code Review（`CLAUDE.md` は base）の参照元、レビュー基準の更新・検証・CODEOWNERS での承認 |
 | **[Skill / エージェントの評価（evals）](docs/dev-methods/evals.md)** | 本ガイド | — | CLI / Cloud | Skill / Plugin変更時の回帰評価と、本番エージェントの継続的な品質評価を分けて設計する |
 
 ### 共通・事務活用
