@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-10-10** [Claude Code コマンド一覧](docs/claude-code/commands.md)を公式と照合し、`/plan`・`/goal`・`/subtask`・`/background`・`/ultrareview` などを追加。[事務・バックオフィス活用ガイド](docs/business/office-work.md)のファイル作成の既定値を更新。
 - **2026-10-10** [AI コードレビューはどの指示を読むか](docs/dev-methods/review-instructions.md)を追加し、Copilot code review（head）と Claude Code Code Review（`CLAUDE.md` は base）の参照元の違いと、レビュー基準を変えるときの検証・承認の手順を整理。
 - **2026-10-09** [MCP Events](docs/dev-methods/mcp-events.md#購読から解除までの流れ)に購読から解除までのサーバー側の流れを、[MCP Apps](docs/dev-methods/mcp-apps.md#chatgpt-固有の拡張--plugin-extensions)に Plugin Extensions の残りの種類を追加（PR #231 から移植）。
 - **2026-10-09** [金融サービス向けスキル](docs/business/financial-services.md)を upstream と照合し、垂直プラグイン（6 種＋パートナー 2 種）・コマンド・Microsoft 365 アドインの準備ツールを現状に合わせて更新。
 - **2026-10-08** [MCP Events](docs/dev-methods/mcp-events.md)を追加し、ChatGPT の draft 仕様への対応範囲と購読から解除までの確認点を整理。[ChatGPT の Plugin Extensions](docs/dev-methods/mcp-apps.md#chatgpt-固有の拡張--plugin-extensions)も追記。
-- **2026-10-08** 9/26〜10/3 の残りを反映: [VS Code 1.140](docs/copilot/README.md#vs-code-1140--copilot-harness複数フォルダの-sessionremote-host-への委任)・[Claude Code 2.1.285〜2.1.288](docs/claude-code/basics.md#21285〜21288-の統制に関わる変更)・Copilot CLI 1.0.89〜1.0.91・[Codex CLI 0.160.0](docs/codex/README.md#codex-cli-01600（2026-10-01）)。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -96,7 +96,7 @@
 
 **コードを書かない方向けの入口です。ターミナルやコマンドの知識は必要ありません。**
 
-1. **[Claude.ai](https://claude.ai) に登録し、ファイル作成を有効にする** — 設定 → Capabilities（機能）で「コード実行とファイル作成」をオンにすると、Word／Excel／PowerPoint／PDF を作れるようになります。**無料プランでも利用できます**（Team / Enterprise は既定でオン）。
+1. **[Claude.ai](https://claude.ai) に登録し、ファイル作成を有効にする** — 「コード実行とファイル作成」で Word／Excel／PowerPoint／PDF を作れます。**無料プランでも利用でき**、個人プランと Team は既定でオンです。オフになっていたら設定 → Capabilities（機能）でオンにします（Team / Enterprise は組織のオーナーが無効にできます）。
 2. **ファイルを添付して、日本語で頼むだけ** — 例：「この議事録メモを、決定事項と ToDo に分けた Word にして」
 3. **出力をダウンロードして確認・微修正** — 生成されたファイルはダウンロードするか Google Drive へ保存できます。数値や固有名詞は必ず自分で確認しましょう。
 

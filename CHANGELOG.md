@@ -4,6 +4,10 @@
 
 ## 2026-10
 
+- **2026-10-10** 「最終更新」が 45 日を超えた 2 ページを点検（#251）。
+  - [Claude Code コマンド一覧](docs/claude-code/commands.md)を公式の Commands・Interactive mode と照合した。「作業の進め方・並行作業」（`/plan`・`/goal`・`/btw`・`/subtask`・`/background`）を新設し、`/import`・`/ultrareview`・`/skill-doctor`・`/reload-skills`・`/batch`・`/deep-research` を追加した。`/code-review` の努力度と `ultra`、`/doctor prompt-audit`、`/simplify` がバグを探さないこと、`/stats` の別名、`/ultraplan` の削除と `/fork` の意味の変化を反映し、キーボードショートカット（`Esc`・`Esc` 2 回・`Shift+Tab`・`Ctrl+B`・`Ctrl+O`）を公式の説明に合わせた。
+  - [事務・バックオフィス活用ガイド](docs/business/office-work.md)で、「コード実行とファイル作成」が Free・Pro・Max・Team と新しい Enterprise の組織で既定でオンになった点、Team / Enterprise のネットワーク接続が既定で無効な点を反映し、Excel 監査スキル（`/debug-model`）と Microsoft 365 アドインの準備ツールへの記述を #225 の更新に合わせた。同じ記述のある README と[業務活用ガイド](docs/business/README.md)も直した。
+
 - **2026-10-10** AI コードレビューが読む指示の参照元とレビュー基準の更新手順を追加（#249）。
   - [AI コードレビューはどの指示を読むか](docs/dev-methods/review-instructions.md)を新設し、head / base の区別、Copilot code review が custom instructions・agent instructions・agent skills を head から読むこと、Claude Code の Code Review が PR で編集された `CLAUDE.md` の base 版を使うこと（v2.1.292）、Copilot も `CLAUDE.md`・`REVIEW.md` を読むため同じファイルが製品ごとに別の版で読まれ得ること、実行場所（IDE・ローカルの `/code-review`・自前の Actions）による違いを整理した。
   - 基準を更新するときの手順、正常例・違反例・同時変更の検証例（実測ではない設計例と明記）、記録項目、base 側の CODEOWNERS と code owner の承認の組み合わせを追加した。`REVIEW.md` の参照元は出典で確定できないため断定しなかった。
