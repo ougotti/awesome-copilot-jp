@@ -1,15 +1,15 @@
 # anthropics/financial-services - 金融・経理業務向け Claude スキル
 
-> **対象ツール**: Claude.ai・Claude Code ｜ **実行環境**: Chat UI（プラグイン導入）／ CLI ｜ **提供元**: Official（Anthropic） ｜ **対象読者**: 経理・財務・金融 ｜ **最終更新**: 2026-08-01
+> **対象ツール**: Claude.ai・Claude Code ｜ **実行環境**: Chat UI（プラグイン導入）／ CLI ｜ **提供元**: Official（Anthropic） ｜ **対象読者**: 経理・財務・金融 ｜ **最終更新**: 2026-10-09
 
 > [anthropics/financial-services](https://github.com/anthropics/financial-services) は Anthropic が公開している**金融サービス業界向けのエージェント・スキル・データコネクタ**の参照実装リポジトリです。投資銀行・リサーチ・PE・ファンド管理・ウェルスマネジメント・コンプライアンスといった業務を、すぐに導入できる形でカバーしています。
 
 ## このリポジトリの特徴
 
-- **業務ワークフロー単位**でパッケージ化されたエージェント（10 種）と垂直スキルプラグイン（7 種 + パートナー提供 2 種）を収録
+- **業務ワークフロー単位**でパッケージ化されたエージェント（10 種）と垂直スキルプラグイン（6 種 + パートナー提供 2 種）を収録（2026-10-09 時点の marketplace。以前あった `wealth-management` は marketplace から外れている）
 - **Claude Cowork プラグイン**として直接インストール、または **Managed Agents API**（`/v1/agents`）でバックエンド展開、のいずれも可能（同じシステムプロンプト・スキルを使い、実行環境だけ選べる）
-- 11 種の金融データプロバイダーと **MCP** 経由で連携可能
-- **Microsoft 365（Excel / PowerPoint / Word / Outlook）連携**のプロビジョニングを同梱
+- 金融データプロバイダーと **MCP** 経由で連携可能（公式 README は「11 種」と記載し、一覧では Egnyte と Box を別々に掲載）
+- **Microsoft 365（Excel / PowerPoint / Word / Outlook）アドイン**を自社のクラウド（Vertex AI・Bedrock・社内の LLM gateway）向けに準備する管理者用ツール（Claude Code plugin）を同梱
 
 > [!IMPORTANT]
 > このリポジトリは**法的・投資助言ではありません**。エージェントはあくまで**ドラフト作成支援**であり、投資推奨・取引執行・リスク承認・台帳記帳・オンボーディング承認などは行いません。すべての出力は**有資格者による確認（ヒューマン・イン・ザ・ループ）が前提**です。
@@ -39,6 +39,17 @@ export ANTHROPIC_API_KEY=sk-ant-...
 scripts/deploy-managed-agent.sh gl-reconciler
 ```
 
+> サブエージェントへの委任（`callable_agents`）は **Research Preview** の機能です。セキュリティと受け渡しの注意は、各エージェントの README を確認してください。
+
+### Microsoft 365 アドインの準備（管理者向け）
+
+Excel・PowerPoint・Word・Outlook の Claude アドインを、Anthropic の API ではなく自社のクラウド経由で使う場合の管理者用ツールです。Cowork の plugin ではなく **Claude Code の plugin** です。
+
+```bash
+claude plugin install claude-for-msft-365-install@claude-for-financial-services
+/claude-for-msft-365-install:setup
+```
+
 ---
 
 ## カバーする業務ワークフロー
@@ -49,7 +60,7 @@ scripts/deploy-managed-agent.sh gl-reconciler
 | **エクイティリサーチ（Equity Research）** | 決算レビュー、モデル更新、調査ノート、セクター分析、銘柄スクリーニング |
 | **プライベートエクイティ（PE）** | ディール発掘・スクリーニング、DD チェックリスト、IC メモ、ポートフォリオ監視、IRR/MOIC 分析 |
 | **ファンド管理・経理（Fund Admin & Finance Ops）** | **GL（総勘定元帳）照合**、**月次決算**（見越計上・ロールフォワード・差異説明）、LP 報告書監査、NAV 照合 |
-| **ウェルスマネジメント** | クライアント面談準備、ファイナンシャルプラン、ポートフォリオリバランス、租税損失収穫（TLH） |
+| **ウェルスマネジメント** | クライアント面談準備（`Meeting Prep Agent`）。※以前の `wealth-management` 垂直プラグインは 2026-10-09 時点の marketplace に含まれていない |
 | **オペレーション・コンプライアンス** | KYC スクリーニング、オンボーディング書類のパース → ルールエンジン実行 |
 
 ---
@@ -81,11 +92,10 @@ scripts/deploy-managed-agent.sh gl-reconciler
 
 | プラグイン | 主なスキル |
 |-----------|-----------|
-| **financial-analysis** | Comps（`/comps`）、DCF（`/dcf`）、LBO（`/lbo`）、3 計算書、Excel 監査、デック QC、全データコネクタ |
-| **investment-banking** | CIM、ティーザー、バイヤーリスト、M&A モデル、ディール追跡 |
-| **equity-research** | 決算分析、カバレッジ開始（`/initiate`）、モデル更新、朝礼ノート、セクター分析 |
-| **private-equity** | 発掘、スクリーニング、DD チェックリスト、IC メモ、ポートフォリオ監視 |
-| **wealth-management** | クライアントレビュー、ファイナンシャルプラン、リバランス、租税損失収穫 |
+| **financial-analysis** | Comps（`/comps`）、DCF（`/dcf`）、LBO（`/lbo`）、3 計算書（`/3-statement-model`）、Excel 監査（`/debug-model`）、デック QC、全データコネクタ |
+| **investment-banking** | CIM、ティーザー、プロセスレター、バイヤーリスト、M&A モデル、ディール追跡 |
+| **equity-research** | 決算分析（`/earnings`）・決算プレビュー、カバレッジ開始（`/initiate`）、モデル更新、朝礼ノート、セクター分析、投資仮説・カタリストの追跡 |
+| **private-equity** | 発掘、スクリーニング、DD チェックリスト、IC メモ、ポートフォリオ監視、リターン分析（IRR / MOIC）、バリュー創出計画 |
 | **fund-admin** | GL 照合、見越計上、差異説明、NAV 照合 |
 | **operations** | KYC パース・ルール実行 |
 
@@ -105,17 +115,19 @@ scripts/deploy-managed-agent.sh gl-reconciler
 /earnings       → 決算分析ノート
 /initiate       → カバレッジ開始レポート
 /ic-memo        → IC メモのドラフト
-/client-review  → クライアント面談準備
-/tlh            → 租税損失収穫の機会抽出
 /dd-checklist   → DD チェックリスト
 /buyer-list     → 戦略・ファイナンシャルバイヤーのユニバース
+/debug-model    → Excel モデルの監査（数式の追跡・ハードコード検出）
+/returns        → IRR / MOIC の感度分析
 ```
+
+> 以前この一覧にあった `/client-review`・`/tlh` は、`wealth-management` 垂直プラグインのコマンドでした。2026-10-09 時点の公式 README のコマンド一覧には含まれていません。
 
 ---
 
 ## データコネクタ（MCP 連携）
 
-11 種のデータプロバイダーを `.mcp.json` で差し替え可能です。
+データプロバイダーを `financial-analysis` の `.mcp.json` で差し替え可能です。公式 README は「11 種」と記載していますが、一覧では Egnyte と Box が別々に載っています。プロバイダーによっては契約や API キーが必要です。
 
 | プロバイダー | 機能 |
 |------------|------|
@@ -129,7 +141,8 @@ scripts/deploy-managed-agent.sh gl-reconciler
 | **LSEG** | リアルタイム市場データ |
 | **PitchBook** | M&A・VC 取引データ |
 | **Chronograph** | PE ポートフォリオプラットフォーム |
-| **Egnyte / Box** | 文書ストレージ |
+| **Egnyte** | 文書ストレージ |
+| **Box** | 文書ストレージ |
 
 ---
 
@@ -140,7 +153,7 @@ scripts/deploy-managed-agent.sh gl-reconciler
 - **月次決算の効率化** — `Month-End Closer` の考え方を参考に、見越計上・差異コメントのドラフトを自動生成
 - **勘定照合（突合）** — `GL Reconciler` のように、台帳と明細のブレークを検出し原因候補を提示
 - **取引先審査（KYC 的チェック）** — オンボーディング書類のパース → 社内ルールに沿った確認
-- **Excel モデルの自動構築・監査** — `financial-analysis` の Excel 監査スキルで計算ミスや循環参照を検出
+- **Excel モデルの自動構築・監査** — `financial-analysis` の Excel 監査スキル（`/debug-model`）で数式の追跡やハードコードの検出を行う
 
 > 日本の会計基準・税制・社内規程に合わせるには、スキルファイルへの**社内用語・プロセスの追記**と、有資格者によるレビューが必須です。
 
@@ -151,6 +164,7 @@ scripts/deploy-managed-agent.sh gl-reconciler
 - **コネクタ交換** — `.mcp.json` を編集して自社データプロバイダーに変更
 - **社内プロセス追加** — スキルファイルに社内用語・承認フローを追記
 - **ブランドテンプレート** — `/ppt-template` で自社の PowerPoint テンプレートを指定
+- **エージェントの範囲の調整** — `agents/<slug>.md` を編集して、自社の実際の業務の進め方に合わせる
 - **新規ワークフロー** — フォークして独自エージェントを追加
 
 ---
