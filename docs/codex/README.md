@@ -1,6 +1,6 @@
 # Codex ガイド（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-10-08
+> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-10-09
 
 [openai/skills](https://github.com/openai/skills) は OpenAI が公開している Codex 用の公式スキルカタログです。指示・スクリプト・リソースをフォルダにまとめた「スキル」を追加することで、デプロイ・ブラウザ自動化・外部サービス連携といったワークフローを Codex に持たせられます。
 
@@ -288,7 +288,7 @@ GitHubのコードを検査する **Codex Security Cloud（Official / Research P
 | 確認すること | 内容 |
 |-------------|------|
 | プランと権限 | イベントトリガーは対象プランとワークスペースでの有効化が前提。管理者が「Allow event-triggered scheduled tasks」で制御する |
-| 対応する面 | **イベントトリガーはデスクトップアプリと CLI では使えない** |
+| 対応する面 | 上記の Gmail / Slack / GitHub の Scheduled tasks のイベントトリガーは、**デスクトップアプリと CLI では使えない**（plugin 経由の MCP Events とは対応する面が別。下の節を参照） |
 | 実行の前提 | デスクトップアプリのタスクは、**マシンとアプリが起動したまま**である必要がある |
 
 役割で整理すると、**Skill = 手順の定義**、**Plugin = 外部接続**、**Scheduled task = 起動条件**、**worktree / サンドボックス = 実行境界**です。保守・共有したい処理は Skill 側に置き、タスク側には起動条件と対象だけを持たせると、後から読み解けます。
@@ -311,7 +311,7 @@ dotsが自分のPCを使うには、別途そのPCを接続し、オンライン
 
 ### 外部の変化をきっかけに動かす — MCP Events
 
-時刻ではなく、**外部で起きた変化（文書へのコメントなど）**をきっかけに ChatGPT の Work chats や dots で作業を始めるには、MCP Events に対応した MCP サーバーが必要です。MCP Events は draft の仕様で、ChatGPT は webhook による配信に対応しています。購読条件・やること・終了条件を最初に決め、依頼した作業が新しいイベントを起こして繰り返さないかを確認します。**→ [MCP Events](../dev-methods/mcp-events.md)**
+時刻ではなく、**外部で起きた変化（文書へのコメントなど）**をきっかけに ChatGPT の Work chats や dots で作業を始めるには、MCP Events に対応した MCP サーバーが必要です。MCP Events は draft の仕様で、ChatGPT は webhook による配信に対応しています。**対応する面は、上の Scheduled tasks のイベントトリガーとは別**で、MCP Events は Web の Work chats、デスクトップアプリで Cloud を選んだ Work chats、dots で使えます。購読条件・やること・終了条件を最初に決め、依頼した作業が新しいイベントを起こして繰り返さないかを確認します。**→ [MCP Events](../dev-methods/mcp-events.md)**
 
 ### 最初の結果を確認してから継続する
 
