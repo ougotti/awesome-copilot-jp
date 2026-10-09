@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-08
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-10
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -92,6 +92,12 @@ Claude Code 2.1.277（2026-09-18）から、プロジェクトに `CLAUDE.md` �
 `CLAUDE.md` や Skill には、古いモデルの癖に合わせて足した強い言葉や細かい手順が残りがちです。Claude Code 2.1.283（2026-09-25）で加わった `/doctor prompt-audit`（別名 `/checkup prompt-audit`）は、`CLAUDE.md`・Skill・agent・command を読み、古いモデル向けの書き方、古いパス、使えなくなった command、矛盾する指示ファイルを報告します。
 
 点検結果は**削除の候補**であって、そのまま適用する結論ではありません。作成者しか知らない文脈は残し、採用した変更は eval で確かめます。**→ 点検の原則、残すべき記述、eval との組み合わせ方は [Skill / エージェントの評価](../dev-methods/evals.md#モデルの更新も変更として扱う--prompt-audit-で点検してから測る) を参照**
+
+### PR のレビューでは、どの版の `CLAUDE.md` が読まれるか
+
+マネージドの **Code Review**（GitHub の PR に Claude がコメントする機能。research preview、Team・Enterprise）は、PR が `CLAUDE.md` を編集するとき、その **base branch（マージ先）の版**を使います（v2.1.292 の修正。それ以前は編集された `CLAUDE.md` の規則が無視されていました）。そのため、**同じ PR で書き換えた規則は、その PR のレビューには効きません**。一方、ローカルの `/code-review` は通常のセッションと同じく作業ツリーの `CLAUDE.md` に従い、Code Review 向けの `REVIEW.md` は読みません。
+
+Copilot code review は `CLAUDE.md` も custom instructions として、こちらは **head（変更後）の版**から読みます。両方のレビューを使うリポジトリでは、指摘が食い違う原因になり得ます。**→ 参照元の比較、基準を変えるときの手順と検証例は [AI コードレビューはどの指示を読むか](../dev-methods/review-instructions.md) を参照**
 
 ---
 

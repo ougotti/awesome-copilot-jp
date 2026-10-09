@@ -1,6 +1,6 @@
 # Skill / エージェントの評価（evals） — 変更時の回帰と本番品質を分けて測る
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・本番エージェント基盤ほか） ｜ **実行環境**: CLI（ターミナル）/ Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-27
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・本番エージェント基盤ほか） ｜ **実行環境**: CLI（ターミナル）/ Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-10
 
 > [Skill / Plugin のセキュリティ](skill-security.md)は「**導入前**に入れてよいものか」を扱います。このページはその先、「**変更した Skill / Plugin が効いているか**」と「**本番エージェントが目的を達成しているか**」を測る話です。両者は対象と実行頻度が異なります。
 
@@ -144,6 +144,15 @@ Claude Code の `prompt` / `agent` フックのように、**自然言語で条�
 
 **→ フックの種類と書き方は [Claude Code のカスタマイズ機能](../claude-code/basics.md#自然言語のフックは書き方で結果が変わる--21294-の修正) を参照**
 
+### レビュー基準を変えたら、新旧の版で同じ差分を比べる
+
+AI コードレビューの指示ファイル（`.github/copilot-instructions.md`・`CLAUDE.md`・`REVIEW.md` など）を変えるのも、Skill の変更と同じ「変更」です。ただし、**どの版の指示が読まれるかは製品によって違います**（Copilot code review は PR の head、Claude Code の Code Review は PR で編集された `CLAUDE.md` の base 版）。評価では、次の 2 点を守ります。
+
+- **コードの差分を固定し、指示の版だけを変える。** 正常例（指摘が出てはいけない）と違反例（新しい規則で検出したい）を用意し、旧・新の基準で同じ差分をレビューさせる。
+- **参照元の確認と品質の評価を分けて記録する。** 指摘がないことだけでは、指示を読まなかったのか、読んでも検出できなかったのかを区別できない。base / head の SHA、指示ファイルの内容、実行場所と設定を残す。
+
+**→ 参照元の表、検証ケース、承認の設計は [AI コードレビューはどの指示を読むか](review-instructions.md) を参照**
+
 ### Claude Code 組み込みの `plugin eval`
 
 `claude plugin eval init` は Plugin の `evals/` に case と grader の草案を作り、`claude plugin eval .` が suite を実行します。各 case は既定で Plugin あり / なしをそれぞれ 3 回実行し、両者の score と差分 `Δ` を出します。「Claude 自体が解けただけ」を Plugin の効果と数えないための baseline です。
@@ -280,6 +289,7 @@ AWS外へこの考え方を持ち込む場合は、製品名ではなく、**tra
 - [skills.sh ガイド](skills-sh.md) — Skill を増やしすぎない選び方
 - [Codex スキルカタログ](../codex/catalog.md) — `description` の書き方の具体例
 - [生成AIを業務で安全に使う](../business/safety.md) — 出力を受け取った後に人が確認する項目
+- [AI コードレビューはどの指示を読むか](review-instructions.md) — レビュー基準の新旧比較と、指示ファイルの参照元（head / base）
 - [長時間タスクの信頼性設計](agent-reliability.md) — 「性能を測る」評価とは別軸の、「実行中の故障にどう耐えるか」という設計
 
 ## 参考リンク

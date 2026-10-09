@@ -4,6 +4,11 @@
 
 ## 2026-10
 
+- **2026-10-10** AI コードレビューが読む指示の参照元とレビュー基準の更新手順を追加（#249）。
+  - [AI コードレビューはどの指示を読むか](docs/dev-methods/review-instructions.md)を新設し、head / base の区別、Copilot code review が custom instructions・agent instructions・agent skills を head から読むこと、Claude Code の Code Review が PR で編集された `CLAUDE.md` の base 版を使うこと（v2.1.292）、Copilot も `CLAUDE.md`・`REVIEW.md` を読むため同じファイルが製品ごとに別の版で読まれ得ること、実行場所（IDE・ローカルの `/code-review`・自前の Actions）による違いを整理した。
+  - 基準を更新するときの手順、正常例・違反例・同時変更の検証例（実測ではない設計例と明記）、記録項目、base 側の CODEOWNERS と code owner の承認の組み合わせを追加した。`REVIEW.md` の参照元は出典で確定できないため断定しなかった。
+  - [GitHub Copilot ガイド](docs/copilot/README.md#カスタマイズが効く場所--レビューとエージェント)・[Claude Code のカスタマイズ機能](docs/claude-code/basics.md#pr-のレビューではどの版の-claudemd-が読まれるか)・[Skill / エージェントの評価](docs/dev-methods/evals.md#レビュー基準を変えたら新旧の版で同じ差分を比べる)から導線を追加した。各一次資料を2026-10-10に確認した。
+
 - **2026-10-09** PR #231 の固有の内容を MCP Events・MCP Apps・Codex ガイドへ移植（#228 の補足）。
   - [MCP Events](docs/dev-methods/mcp-events.md#購読から解除までの流れ)に、発見から解除までのサーバー側の流れ、署名ヘッダーと同一バイト列の送信、secret の更新、callback の宛先検証、大きな記録の扱い、`cursor: null`、自己再発火の防ぎ方を追加した。公式ドキュメントで再確認し、公式にない対策は実装例と明記した。
   - [MCP Apps](docs/dev-methods/mcp-apps.md#chatgpt-固有の拡張--plugin-extensions)に Plugin Extensions の残りの種類（設定・表示モード・ディープリンク・Model-App Context・オンボーディング）と説明用の構成例を、[Codex ガイド](docs/codex/README.md#外部の変化をきっかけに動かす--mcp-events)に Scheduled tasks のイベントトリガーと MCP Events の対応面の違いを追加した。

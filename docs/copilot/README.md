@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-08
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-10
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -573,6 +573,8 @@ credential は、sandbox 内のツールには**プレースホルダー**が渡
 | 対象プラン | Pro / Pro+ / Business / Enterprise |
 
 > **置き場所を間違えやすい点**: ここで使う `.github/skills/` は、`copilot plugin install` や `gh skill install` が Skill を置く先とは**別系統**です。レビューに効かせたい Skill はリポジトリへコミットしてください。
+
+**指示と skills は PR の head branch から読まれます。** Copilot code review は、custom instructions（`.github/copilot-instructions.md`・`AGENTS.md`・`.github/instructions/` に加え、`CLAUDE.md`・`GEMINI.md`・`REVIEW.md`）、agent instructions、agent skills を、マージ先ではなく**変更を含むブランチ**から読みます。PR 内で変えた基準をマージ前に試せる一方、レビュー基準の変更とコードの変更が同じ PR に入ると、どちらが結果に効いたのか分けにくくなります。Claude Code の Code Review は、PR で編集された `CLAUDE.md` の **base 版**を使うため、同じファイルでも読む版が異なります。**→ 参照元の比較、基準を変えるときの手順と検証例、CODEOWNERS での承認は [AI コードレビューはどの指示を読むか](../dev-methods/review-instructions.md) を参照**
 
 レビューの深さ（**effort levels**）も選べます（2026-08-07 一般提供）。`Lite` は単純な変更向け、`Balanced` はより高い推論能力が要る変更向けで、組織管理者が既定値を設定できます（組織設定 → Copilot → Copilot code review）。使用されたレベルはタイムラインと PR の概要コメントに表示されます。
 
