@@ -66,6 +66,8 @@ v1 が標準化する構成要素はこの 2 つで、配置場所は固定で�
 | クライアント固有の**設定値** | `plugin.json` の `extensions` フィールド配下 | `"extensions": { "com.anthropic.claude-code": { … } }` |
 | クライアント固有の**ファイル** | 同名の最上位ディレクトリ | `com.github.copilot/` |
 
+> **名前の似た別物に注意**: ChatGPT の **Plugin Extensions**（サイドバー・会話横のパネル・ファイルビューアなどの UI の入口）は、この `extensions` フィールドとは別の機能です。MCP App の tool の `_meta` で宣言する ChatGPT 固有の拡張で、他のホストへ持ち出せる保証はありません（[MCP Apps](mcp-apps.md#chatgpt-固有の拡張--plugin-extensions)）。
+
 クライアントは、自分が実装していない名前空間の中身を**検証せずに無視**します。つまり Copilot 向けの Hooks を `extensions` に書き足しても、Cursor 側でエラーにはなりません。**可搬な部分だけが各クライアントで読まれる**、というのが標準の設計です。
 
 ## 判定手順
