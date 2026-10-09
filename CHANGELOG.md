@@ -4,6 +4,10 @@
 
 ## 2026-10
 
+- **2026-10-09** PR #231 の固有の内容を MCP Events・MCP Apps・Codex ガイドへ移植（#228 の補足）。
+  - [MCP Events](docs/dev-methods/mcp-events.md#購読から解除までの流れ)に、発見から解除までのサーバー側の流れ、署名ヘッダーと同一バイト列の送信、secret の更新、callback の宛先検証、大きな記録の扱い、`cursor: null`、自己再発火の防ぎ方を追加した。公式ドキュメントで再確認し、公式にない対策は実装例と明記した。
+  - [MCP Apps](docs/dev-methods/mcp-apps.md#chatgpt-固有の拡張--plugin-extensions)に Plugin Extensions の残りの種類（設定・表示モード・ディープリンク・Model-App Context・オンボーディング）と説明用の構成例を、[Codex ガイド](docs/codex/README.md#外部の変化をきっかけに動かす--mcp-events)に Scheduled tasks のイベントトリガーと MCP Events の対応面の違いを追加した。
+
 - **2026-10-09** 金融サービス向けスキルのページを upstream と照合して更新（#225）。
   - [金融サービス向けスキル](docs/business/financial-services.md)を anthropics/financial-services の README と marketplace の定義（2026-10-09 時点）と照合した。垂直プラグインを 6 種＋パートナー 2 種に改め、marketplace から外れた `wealth-management` とそのコマンド（`/client-review`・`/tlh`）を削除し、`/debug-model`・`/returns` を追加した。
   - Managed Agents のサブエージェント委任（`callable_agents`）が Research Preview である点、Microsoft 365 アドインを自社クラウド向けに準備する管理者用の Claude Code plugin、Egnyte と Box を別々に掲載していることを反映した。upstream の README にある `claude-for-financial-advisors` は marketplace とパスを確認できなかったため掲載しなかった。

@@ -1,6 +1,6 @@
 # MCP Apps — 会話内にUIを追加する
 
-> **対象ツール**: ツール横断（Claude・Claude Desktop・VS Code GitHub Copilot ほか対応ホスト） ｜ **実行環境**: CLI / IDE / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-08
+> **対象ツール**: ツール横断（Claude・Claude Desktop・VS Code GitHub Copilot ほか対応ホスト） ｜ **実行環境**: CLI / IDE / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-09
 
 [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview) は、MCP サーバーが tool 呼び出しの結果として**インタラクティブな UI**（HTML/JS）を返せるようにする拡張です。テキストの戻り値だけでは伝えづらい・操作しづらい場面を補う手段として、いつ使うか・どう作るか・対応していないホストでどうなるかを整理します。
 
@@ -136,6 +136,13 @@ ChatGPT は、MCP と MCP Apps の仕様を**拡張**して、plugin を ChatGPT
 | ファイルビューア・エディタ | 対応するファイルを自分の UI で開き、読み取り・更新・保存を扱う |
 | リッチなフォーム | 構造化した入力や画像の選択を求め、その回答を tool へ返す |
 | composer のメンション | ChatGPT の composer から plugin の内容を探して選ぶ（**デスクトップアプリのみ**） |
+| plugin の設定 | plugin 固有の設定を ChatGPT の中から変更する |
+| 表示モード | 会話の中で、アプリをどこにどう表示するかを選ぶ |
+| ディープリンク | サイドバーのアプリ内の特定のページや項目を直接開く |
+| Model-App Context | ChatGPT と MCP App の間で、文脈を双方向に共有する |
+| plugin のオンボーディング | 初回利用時の案内 |
+
+> **構成の例（説明用・未検証）**: 会話の横に案件報告ファイルのビューアを開き、リッチなフォームで地域と期間を選び、選んだ条件で集計を依頼する。実際に使う前に、選んだ条件が tool へ届くこと、表示と保存の先、モデルへ共有される文脈を確認します。
 
 - 拡張は、MCP App の tool を登録するときの `_meta`（`ui.resourceUri`、`"openai/ui"` の `entrypoints` など）で宣言します。
 - Web での Plugin Extensions は、ChatGPT Free / Go 向けに「今後提供」とされています。

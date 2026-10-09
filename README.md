@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-10-09** [MCP Events](docs/dev-methods/mcp-events.md#購読から解除までの流れ)に購読から解除までのサーバー側の流れを、[MCP Apps](docs/dev-methods/mcp-apps.md#chatgpt-固有の拡張--plugin-extensions)に Plugin Extensions の残りの種類を追加（PR #231 から移植）。
 - **2026-10-09** [金融サービス向けスキル](docs/business/financial-services.md)を upstream と照合し、垂直プラグイン（6 種＋パートナー 2 種）・コマンド・Microsoft 365 アドインの準備ツールを現状に合わせて更新。
 - **2026-10-08** [MCP Events](docs/dev-methods/mcp-events.md)を追加し、ChatGPT の draft 仕様への対応範囲と購読から解除までの確認点を整理。[ChatGPT の Plugin Extensions](docs/dev-methods/mcp-apps.md#chatgpt-固有の拡張--plugin-extensions)も追記。
 - **2026-10-08** 9/26〜10/3 の残りを反映: [VS Code 1.140](docs/copilot/README.md#vs-code-1140--copilot-harness複数フォルダの-sessionremote-host-への委任)・[Claude Code 2.1.285〜2.1.288](docs/claude-code/basics.md#21285〜21288-の統制に関わる変更)・Copilot CLI 1.0.89〜1.0.91・[Codex CLI 0.160.0](docs/codex/README.md#codex-cli-01600（2026-10-01）)。
 - **2026-10-08** [mattpocock/skills](docs/dev-methods/mattpocock-skills.md#新規-skill-の使い分け2026-10-05-追加分)に `implement-spec`・`pr`・`retro` を追加し、推奨ワークフローに PR 作成と振り返りを加えた。
-- **2026-10-08** [Claude Code 2.1.292 の共有フォルダ（UNC）・Windows パスの修正](docs/claude-code/basics.md#共有フォルダと-windows-のパスを扱う前に--21292-の修正)と、共有フォルダを読ませる前の確認手順を追加。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
