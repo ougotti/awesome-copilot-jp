@@ -1,12 +1,12 @@
 # 事務・バックオフィス活用ガイド
 
-> **対象ツール**: Claude.ai（Chat UI）中心 ｜ **実行環境**: Chat UI（ターミナル不要） ｜ **対象読者**: 非エンジニア（事務・経理・総務） ｜ **最終更新**: 2026-08-22
+> **対象ツール**: Claude.ai（Chat UI）中心 ｜ **実行環境**: Chat UI（ターミナル不要） ｜ **対象読者**: 非エンジニア（事務・経理・総務） ｜ **最終更新**: 2026-10-10
 
 > コードを書かない**事務・経理・総務・営業事務**の現場で、生成AIを日々の業務効率化に使うための実践ガイドです。Word／Excel／PowerPoint／PDF を扱う [anthropics/skills](https://github.com/anthropics/skills) のドキュメント処理スキルを中心に、「何ができるか」ではなく「**どの業務がどう楽になるか**」の視点でまとめています。
 
 ## このガイドの読み方
 
-- エンジニア向けの設定知識は不要です。Claude.ai の**設定 → Capabilities（機能）で「コード実行とファイル作成」をオン**にすれば、ドキュメント処理（docx / pdf / pptx / xlsx）が使えるようになります（**無料プランを含む全プラン**。Team / Enterprise は組織設定で管理し、Team は既定でオン）。
+- エンジニア向けの設定知識は不要です。ドキュメント処理（docx / pdf / pptx / xlsx）は、Claude.ai の「**コード実行とファイル作成**」で使えます。**無料プランを含む全プラン**で使え、Free・Pro・Max と Team、新しい Enterprise の組織では**既定でオン**です。オフになっていたら**設定 → Capabilities（機能）**でオンにします。Team / Enterprise は組織のオーナーが組織設定で無効にできるため、使えないときは管理者に確認してください。
 - このページは**業務ごとの進め方**を扱います。そのまま使えるプロンプトのテンプレートは [シナリオ別ユースケース集](use-cases.md) にあります。
 - 各スキルの技術的な詳細は [Anthropic 公式スキル解説](../claude-code/official-skills.md) を参照してください。
 - 金融・経理に特化した業務（決算照合・月次決算・KYC 等）は [金融サービス向けスキル](financial-services.md) を参照してください。
@@ -23,7 +23,7 @@
 | **pptx** | PowerPoint（.pptx） | 提案資料、社内報告スライド、研修資料の作成 |
 | **pdf** | PDF | フォーム入力、PDF からのテキスト・表抽出、結合・分割 |
 
-> **Chat UI**: Claude.ai の設定 → Capabilities で「コード実行とファイル作成」をオンにすると使えます（全プラン対象）。作成したファイルはダウンロードのほか、Google Drive への保存も選べます。
+> **Chat UI**: Claude.ai の「コード実行とファイル作成」で使えます（全プラン対象。個人プランと Team は既定でオン、設定 → Capabilities で切り替え）。Web・デスクトップアプリ・モバイルアプリで使え、作成したファイルはダウンロードのほか、Google Drive への保存も選べます。Team / Enterprise では、外部へのネットワーク接続は既定で無効で、オーナーが組織設定で範囲を決めます。
 > **CLI（Claude Code）限定**: ターミナルから使う場合は `/plugin install document-skills@anthropic-agent-skills` で導入します。この手順は非エンジニアには不要です。
 
 ---
@@ -41,7 +41,7 @@
 - **バラバラの表を統合**：複数シート・複数ファイルの表を、共通フォーマットに正規化して 1 つの集計表へ
 - **数式・ピボット入りシート生成**：「月別・部門別の経費集計」など、関数や条件付き書式まで入った Excel を作成
 - **データのクレンジング**：表記ゆれ（全角／半角、会社名の末尾「株式会社」有無など）を統一
-- **シートの監査**：既存 Excel の計算ミス・循環参照・壊れた参照を検出（financial-analysis の Excel 監査スキルが有用）
+- **シートの監査**：既存 Excel の計算ミス・循環参照・壊れた参照を検出（`financial-analysis` の Excel 監査スキル `/debug-model` が有用）
 
 ### 📑 請求書・帳票
 
@@ -92,13 +92,14 @@ Chat UI での始め方は [非エンジニア向けクイックスタート](..
 **ここから先は CLI（ターミナル）を使う内容です。**定型処理を自動で回したくなった段階で検討してください。
 
 - [Claude Code のカスタマイズ機能](../claude-code/basics.md) — ファイルの一括処理、定期実行
-- [Microsoft 365 連携](financial-services.md) — `financial-services` リポジトリに同梱のプロビジョニング
+- [Microsoft 365 アドインの準備](financial-services.md#microsoft-365-アドインの準備管理者向け) — `financial-services` リポジトリに同梱の、管理者向けの準備ツール（Claude Code plugin）
 
 ---
 
 ## 参考リンク
 
 - [anthropics/skills](https://github.com/anthropics/skills) — ドキュメント処理スキルの公式リポジトリ（[日本語解説](../claude-code/official-skills.md)）
+- [Create and edit files with Claude](https://support.claude.com/en/articles/12111783-create-and-edit-files-with-claude) — 「コード実行とファイル作成」の対象プラン・既定値・組織設定（Anthropic 公式）
 - [anthropics/financial-services](https://github.com/anthropics/financial-services) — 金融・経理業務向け（[日本語解説](financial-services.md)）
 
 ## 関連ドキュメント
