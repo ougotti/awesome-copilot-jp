@@ -1,6 +1,6 @@
 # Codex ガイド（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-10-09
+> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-10-10
 
 [openai/skills](https://github.com/openai/skills) は OpenAI が公開している Codex 用の公式スキルカタログです。指示・スクリプト・リソースをフォルダにまとめた「スキル」を追加することで、デプロイ・ブラウザ自動化・外部サービス連携といったワークフローを Codex に持たせられます。
 
@@ -299,15 +299,38 @@ GitHubのコードを検査する **Codex Security Cloud（Official / Research P
 
 同じ依頼を定期的に繰り返すなら **Scheduled tasks**、状況に応じて次の作業を考えて続けてほしいなら **dots**、チーム共通のアカウントで定型業務を回すなら **Team Tasks** が候補です。後者2つはChatGPTの製品機能で、[Agents API / Responses API / Agents SDK](../dev-methods/harness.md#openai-agents-api--codexハーネスをマネージドapiで使う)を組み込む開発とは導入手順が異なります。
 
-| 選択肢 | 仕事の持ち方・実行主体 | 入力コンテキスト・共有範囲 | 提供元・状態（2026-10-01確認） |
+**dots は継続的な仕事の進捗を追い、状況が変わったときの次の作業とフォローを担います。Codex はソフトウェアの実装・デバッグ・テスト・レビューを担います。** 調査・分析・文書作成など、まとまった作業を任せる入口は ChatGPT Work です。dot は Work や Codex に作業を委譲し、その結果を確認して追加指示を出せます。役割は[公式の比較](https://learn.chatgpt.com/docs/dots#how-dots-compare-with-chatgpt-work-and-codex)に基づきます（2026-10-10 確認）。
+
+| 選択肢 | 仕事の持ち方・実行主体 | 入力コンテキスト・共有範囲 | 提供元・状態（dots は2026-10-10、他は2026-10-01確認） |
 |--------|----------------------|--------------------------|-----------------------------|
 | 個人のScheduled task | 時刻・対応イベントで起動する。WebはCloud、ローカル作業は接続した端末で実行する。 | 独立タスクは保存した指示、チャット内タスクはそのチャットの文脈を使う。必要な資料・接続を明示する。 | Official / 対応面・プラン・workspace設定に条件あり。 |
 | dots | 継続する責任を任せ、状況に応じてフォローする。専用のCloud computerで端末がオフでも作業できる。 | 会話、関連するChatGPT memory、dot自身のノートを参照する。メッセージ先の接続だけではアプリやPCのアクセスは増えない。 | Official / 段階的提供。対象プラン・地域・管理者設定に条件あり。 |
 | Team Tasks | 時刻・対応イベントで起動し、チームのservice accountと設定済み接続でCloud実行する。 | 作成者の個人memory・カスタム指示・履歴は引き継がない。加入者は過去の実行結果・生成ファイルも閲覧できる。 | Official / workspaceのチーム作成・タスク管理権限と接続設定が前提。 |
 
-**提供状態を一律にGAとは扱いません。** dotsは対象アカウントへ段階的に届きます。確認日時点でProの対象プランには年齢・地域制限があり、Business Premium / Enterpriseは世界各地へ展開中です。Enterpriseでは管理者による有効化が必要です。最新の条件は[公式Access](https://learn.chatgpt.com/docs/dots#access)、Team Tasksの管理条件は[公式ガイド](https://learn.chatgpt.com/docs/enterprise/teams)で確認してください。
+**提供状態を一律にGAとは扱いません。** 2026-10-10 確認時点で dots は段階的提供中で、対象プランでも直ちに表示されるとは限りません。プラン・年齢・地域・workspace の条件があり、Enterprise では管理者による有効化が必要です。対象条件と利用枠は[公式Access](https://learn.chatgpt.com/docs/dots#access)、Team Tasksの管理条件は[公式ガイド](https://learn.chatgpt.com/docs/enterprise/teams)で確認してください。[DevDay 2026](https://learn.chatgpt.com/docs/whats-new/devday-2026)は2026-09-29の発表まとめで、全アカウントへの提供完了日ではありません。
 
-dotsが自分のPCを使うには、別途そのPCを接続し、オンラインかつChatGPTアプリを起動しておきます。dotのCloud browserとPCのbrowser sessionも別です。Team Tasksでは接続に使う外部アカウントの権限が実行範囲を決めるため、チームメンバー自身のアクセスより広い資料が見える場合があります。
+#### dots の実行場所と接続を分ける
+
+dot のクラウドコンピューターとブラウザーは、利用者の端末を閉じても作業を続けられます。連絡先・アプリ・ローカルPCはそれぞれ別の接続です。[公式の Computers and apps](https://learn.chatgpt.com/docs/dots/computers-and-apps)で、実行場所ごとの条件を確認します（2026-10-10 確認）。
+
+| 場所・接続 | できることと前提 |
+|------------|------------------|
+| dot のクラウドコンピューター／ブラウザー | 調査・ファイル作成・ソフトウェア実行に使う。ローカルのブラウザーのログイン状態は引き継がない。画面を確認し、自分で操作するときは **Take over**、dot に戻すときは **Return control** を使う。 |
+| 許可したローカルPC | デスクトップアプリの dot のプロフィールで **Computers → Your computer → Allow access** を確認して接続する。利用中はPCをオンラインにし、ChatGPTアプリを開いておく。CodexへのPC接続やWork Syncとは別の許可で、アクセスを外すには **Revoke access** を使う。 |
+| 対応アプリ／Plugin | インストール・有効化・アカウント接続が必要。Gmail、Google Drive、GitHubなどの対応Pluginを、接続先の権限と実行環境の範囲で使う。メールを読む権限と送る権限は別で、ローカルSkillにはPC接続が必要。 |
+| メッセージの連絡先 | ChatGPT、Slack、Teamsから同じdotとやり取りする。連絡先を追加するだけでは、他のアプリやPCへのアクセス、イベント監視は設定されない。 |
+
+#### 作業の委譲・進捗・承認を確認する
+
+[Tasks and memory](https://learn.chatgpt.com/docs/dots/tasks-and-memory)では、dot は会話の合間にも進捗を追い、必要に応じて休止・再開すると説明されています。決まった時刻に繰り返す仕事には保存したスケジュールが必要です。対象・タイムゾーン・終了条件・通知先を伝え、**Scheduled** で確認します。
+
+委譲先の新しいクラウドスレッドは各端末から確認でき、ローカルの Codex タスクは接続したPCで確認します。リポジトリとセットアップが必要なクラウドのコーディング作業には、事前に作成した Codex cloud environment を使います。**Activity** で進捗・出力・判断待ちを開き、実行が完了したかだけでなく、依頼した結果が得られたかを確認してください。新しいタスクには必要な指示と文脈が渡されますが、すべての会話が自動で渡るわけではありません。
+
+[2026-10-09 の更新](https://learn.chatgpt.com/docs/whats-new/dots-october-9-2026)では、モバイルアプリからのdot作成に加え、既存Codexスレッドのフォローや、ChatGPT Workの自動化の確認・編集が案内されています。使うPC・接続・タスクの条件は上記の詳細ガイドと合わせて確認します。
+
+アカウントへの変更や情報共有の前には、指示・既存のアプリ権限・組み込みの安全要件などに基づく自動チェックが入り、実行・承認依頼・本人への引き継ぎを判断します。**返信の下書きを頼むことは送信の許可ではありません。** 任意の custom rules で継続的な境界を追加できますが、アプリやPCのアクセス権を付与したり、必須の確認を解除したりするものではありません。詳細は[Control your dot](https://learn.chatgpt.com/docs/dots/controls)を参照してください（2026-10-10 確認）。
+
+Team Tasksでは接続に使う外部アカウントの権限が実行範囲を決めるため、チームメンバー自身のアクセスより広い資料が見える場合があります。
 
 ### 外部の変化をきっかけに動かす — MCP Events
 
@@ -317,7 +340,7 @@ dotsが自分のPCを使うには、別途そのPCを接続し、オンライン
 
 | 選択肢 | 最小手順と、人が確認すること |
 |--------|----------------------------|
-| dots | Desktop appまたはdesktop browserで作成する。対象資料・任せる範囲・判断を求める条件を伝え、最初の出力の出典と抜けを確認する。 |
+| dots | 最新のChatGPTモバイルアプリ、デスクトップアプリ、デスクトップのブラウザーで作成する（**mobile webは非対応**）。対象資料・任せる範囲・判断を求める条件を伝え、最初の出力の出典と抜けを確認する。 |
 | Team Tasks | ChatGPTの **Scheduled → + New Task → Team** で所有チームを選ぶ。起動条件・タイムゾーン・指示・接続・モデルを確認して作成し、**Run now → Previous runs** で出典・出力先・閲覧者を点検する。 |
 
 業務に使う指示の例は[継続作業のテンプレート](../business/use-cases.md#継続する案件確認とチームの週次報告)を参照してください。dotsの会話自体と、そこから始めるWork / Codexタスクは使用量の扱いが異なり、Team Tasksはworkspace creditsを使います。予算・上限は[公式dotsガイド](https://learn.chatgpt.com/docs/dots#access)と[Team Tasks FAQ](https://learn.chatgpt.com/docs/enterprise/teams#teams-and-team-tasks-faq)で確認します。

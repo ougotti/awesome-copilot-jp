@@ -4,6 +4,11 @@
 
 ## 2026-10
 
+- **2026-10-10** [dots と定期作業の選び方](docs/codex/README.md#個人の定期作業dotsteam-tasksを選ぶ)を公式資料に基づき更新（#255）。
+  - dots の継続的な進捗確認・フォローと Codex の実装・デバッグ・テスト・レビューの役割、Work / Codex への委譲を整理した。クラウドコンピューター／ブラウザー、対応アプリ、許可したローカルPC、自動承認チェックの境界を追加した。
+  - 10-09 の公式更新に合わせてモバイルアプリからの作成を反映し、mobile web 非対応を明記した。提供条件は確認日と公式 Access へのリンクで案内し、既存の停止操作の区別を維持した。
+  - README の「30 秒で選ぶ」、[コーディングエージェントの選び方](docs/dev-methods/coding-agents.md)、[事務・ビジネス活用ガイド](docs/business/README.md)から導線を追加した。一次資料は2026-10-10に確認した。
+
 - **2026-10-10** 「最終更新」が 45 日を超えた 2 ページを点検（#251）。
   - [Claude Code コマンド一覧](docs/claude-code/commands.md)を公式の Commands・Interactive mode と照合した。「作業の進め方・並行作業」（`/plan`・`/goal`・`/btw`・`/subtask`・`/background`）を新設し、`/import`・`/ultrareview`・`/skill-doctor`・`/reload-skills`・`/batch`・`/deep-research` を追加した。`/code-review` の努力度と `ultra`、`/doctor prompt-audit`、`/simplify` がバグを探さないこと、`/stats` の別名、`/ultraplan` の削除と `/fork` の意味の変化を反映し、キーボードショートカット（`Esc`・`Esc` 2 回・`Shift+Tab`・`Ctrl+B`・`Ctrl+O`）を公式の説明に合わせた。
   - [事務・バックオフィス活用ガイド](docs/business/office-work.md)で、「コード実行とファイル作成」が Free・Pro・Max・Team と新しい Enterprise の組織で既定でオンになった点、Team / Enterprise のネットワーク接続が既定で無効な点を反映し、Excel 監査スキル（`/debug-model`）と Microsoft 365 アドインの準備ツールへの記述を #225 の更新に合わせた。同じ記述のある README と[業務活用ガイド](docs/business/README.md)も直した。
