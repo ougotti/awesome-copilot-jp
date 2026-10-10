@@ -17,7 +17,7 @@
 | **コードを社外へ出せない**（ローカル推論が必須） | Bionic ／ OpenCode + ローカルモデル |
 | ターミナルではなく GUI で使いたい | Bionic |
 
-**継続する仕事の進捗確認・フォローまで任せたい場合は、dots も選択肢です。** dots は状況の変化に応じて次の作業を考え、Codex は実装・デバッグ・テスト・レビューを進めます。dot から Codex に作業を委譲し、結果を確認して追加指示を出す組み合わせもあります。これは[公式の役割比較](https://learn.chatgpt.com/docs/dots#how-dots-compare-with-chatgpt-work-and-codex)に基づく整理です（2026-10-10 確認）。段階的提供・接続・承認・停止の条件は、[dots と定期作業の選び方](../codex/README.md#個人の定期作業・dots・team-tasksを選ぶ)を参照してください。
+**継続する仕事の進捗確認・フォローまで任せたい場合は、dots も選択肢です。** dots は状況の変化に応じて次の作業を考え、Codex は実装・デバッグ・テスト・レビューを進めます。dot から Codex に作業を委譲し、結果を確認して追加指示を出す組み合わせもあります。これは[公式の役割比較](https://learn.chatgpt.com/docs/dots#how-dots-compare-with-chatgpt-work-and-codex)に基づく整理です（2026-10-10 確認）。段階的提供・接続・承認・停止の条件は、[dots と定期作業の選び方](../codex/README.md#個人の定期作業dotsteam-tasksを選ぶ)を参照してください。
 
 ---
 
