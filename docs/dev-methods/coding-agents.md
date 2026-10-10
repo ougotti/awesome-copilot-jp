@@ -1,6 +1,6 @@
 # コーディングエージェントの選び方
 
-> **対象ツール**: ツール横断（Claude Code・Codex・Qwen Code・OpenCode・Bionic・Jules・Antigravity） ｜ **実行環境**: CLI / デスクトップ / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-02
+> **対象ツール**: ツール横断（Claude Code・Codex・Qwen Code・OpenCode・Bionic・Jules・Antigravity） ｜ **実行環境**: CLI / デスクトップ / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-10
 
 > ターミナルやデスクトップで動く「コーディングエージェント」は、2026 年時点で選択肢が増えました。よく「Claude Code は Claude 中心、Codex は OpenAI 中心」のようにモデル系列で語られますが、**その分類は実態を半分しか説明していません**。本ページでは、何が本当に違うのかを整理します。
 
@@ -16,6 +16,8 @@
 | **モデルを頻繁に乗り換えたい**、プロバイダーを自分で選びたい | OpenCode |
 | **コードを社外へ出せない**（ローカル推論が必須） | Bionic ／ OpenCode + ローカルモデル |
 | ターミナルではなく GUI で使いたい | Bionic |
+
+**継続する仕事の進捗確認・フォローまで任せたい場合は、dots も選択肢です。** dots は状況の変化に応じて次の作業を考え、Codex は実装・デバッグ・テスト・レビューを進めます。dot から Codex に作業を委譲し、結果を確認して追加指示を出す組み合わせもあります。これは[公式の役割比較](https://learn.chatgpt.com/docs/dots#how-dots-compare-with-chatgpt-work-and-codex)に基づく整理です（2026-10-10 確認）。段階的提供・接続・承認・停止の条件は、[dots と定期作業の選び方](../codex/README.md#個人の定期作業・dots・team-tasksを選ぶ)を参照してください。
 
 ---
 

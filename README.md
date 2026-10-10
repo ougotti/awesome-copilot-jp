@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-10-10** [dots と定期作業の選び方](docs/codex/README.md#個人の定期作業・dots・team-tasksを選ぶ)を公式資料で更新。Codexとの役割分担、クラウド／ローカルの接続・権限、モバイル作成を整理し、入口からの導線を追加。
 - **2026-10-10** [Claude Code コマンド一覧](docs/claude-code/commands.md)を公式と照合し、`/plan`・`/goal`・`/subtask`・`/background`・`/ultrareview` などを追加。[事務・バックオフィス活用ガイド](docs/business/office-work.md)のファイル作成の既定値を更新。
 - **2026-10-10** [AI コードレビューはどの指示を読むか](docs/dev-methods/review-instructions.md)を追加し、Copilot code review（head）と Claude Code Code Review（`CLAUDE.md` は base）の参照元の違いと、レビュー基準を変えるときの検証・承認の手順を整理。
 - **2026-10-09** [MCP Events](docs/dev-methods/mcp-events.md#購読から解除までの流れ)に購読から解除までのサーバー側の流れを、[MCP Apps](docs/dev-methods/mcp-apps.md#chatgpt-固有の拡張--plugin-extensions)に Plugin Extensions の残りの種類を追加（PR #231 から移植）。
 - **2026-10-09** [金融サービス向けスキル](docs/business/financial-services.md)を upstream と照合し、垂直プラグイン（6 種＋パートナー 2 種）・コマンド・Microsoft 365 アドインの準備ツールを現状に合わせて更新。
-- **2026-10-08** [MCP Events](docs/dev-methods/mcp-events.md)を追加し、ChatGPT の draft 仕様への対応範囲と購読から解除までの確認点を整理。[ChatGPT の Plugin Extensions](docs/dev-methods/mcp-apps.md#chatgpt-固有の拡張--plugin-extensions)も追記。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -50,6 +50,7 @@
 |------------|---------|----------------|
 | コードを書かずに文書・表・スライドを作る | Chat UI | [事務・ビジネス活用ガイド](docs/business/README.md) |
 | 業務シーン別に「使える例」を眺める | Chat UI | [シナリオ別ユースケース集](docs/business/use-cases.md) |
+| 継続する仕事の進捗確認・フォローを任せる | Chat UI / Cloud | [dots・個人の定期作業・Team Tasksの選び方](docs/codex/README.md#個人の定期作業・dots・team-tasksを選ぶ) |
 | 業務で使ってよい情報の線引きを知る | Chat UI / IDE / CLI | [生成AIを業務で安全に使う](docs/business/safety.md) |
 | 決算・経理・金融業務を効率化する | Chat UI | [金融サービス向けスキル](docs/business/financial-services.md) |
 | IDE でのコーディングを支援する | IDE | [GitHub Copilot ガイド](docs/copilot/README.md) |
