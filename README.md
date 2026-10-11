@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-10-11** [Skill の公開・共有ガイド](docs/dev-methods/skill-publishing.md)を追加。配布方法の選び方、複数 Skill / Plugin の構成、Codex 向け GitHub カタログの登録・導入・更新と公開条件を整理。
 - **2026-10-10** [dots と定期作業の選び方](docs/codex/README.md#個人の定期作業dotsteam-tasksを選ぶ)を公式資料で更新。Codexとの役割分担、クラウド／ローカルの接続・権限、モバイル作成を整理し、入口からの導線を追加。
 - **2026-10-10** [Claude Code コマンド一覧](docs/claude-code/commands.md)を公式と照合し、`/plan`・`/goal`・`/subtask`・`/background`・`/ultrareview` などを追加。[事務・バックオフィス活用ガイド](docs/business/office-work.md)のファイル作成の既定値を更新。
 - **2026-10-10** [AI コードレビューはどの指示を読むか](docs/dev-methods/review-instructions.md)を追加し、Copilot code review（head）と Claude Code Code Review（`CLAUDE.md` は base）の参照元の違いと、レビュー基準を変えるときの検証・承認の手順を整理。
 - **2026-10-09** [MCP Events](docs/dev-methods/mcp-events.md#購読から解除までの流れ)に購読から解除までのサーバー側の流れを、[MCP Apps](docs/dev-methods/mcp-apps.md#chatgpt-固有の拡張--plugin-extensions)に Plugin Extensions の残りの種類を追加（PR #231 から移植）。
-- **2026-10-09** [金融サービス向けスキル](docs/business/financial-services.md)を upstream と照合し、垂直プラグイン（6 種＋パートナー 2 種）・コマンド・Microsoft 365 アドインの準備ツールを現状に合わせて更新。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -57,6 +57,7 @@
 | ターミナルから開発作業を任せる | CLI | [Claude Code ガイド](docs/claude-code/README.md) ／ [Codex ガイド](docs/codex/README.md) |
 | **どのコーディングエージェントを使うか決める** | CLI / デスクトップ | [コーディングエージェントの選び方](docs/dev-methods/coding-agents.md) |
 | Skill を探して導入・更新する | CLI | [skills.sh ガイド](docs/dev-methods/skills-sh.md) ／ [Skills 最新動向](docs/trends.md) |
+| 自作 Skill を公開・共有する | CLI / Chat UI | [Skill の公開・共有](docs/dev-methods/skill-publishing.md) |
 | 開発プロセス（要件整理〜TDD〜レビュー）を改善する | CLI | [ツール横断の開発手法](#ツール横断の開発手法) |
 | チーム・組織の標準を作る | Repository / Enterprise | [Instructions 一覧](docs/copilot/instructions.md) ／ [Plugins](docs/copilot/plugins.md) |
 | 導入してよい Skill かを見極める | IDE / CLI | [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md) |
@@ -162,6 +163,7 @@
 | **[AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md)** | 本ガイド | — | CLI / IDE / Cloud | エージェント固有ID・OAuth scope/token audience・委任権限・control planeの設計 |
 | **[マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md)** | 本ガイド | — | CLI / IDE / Cloud | agent-as-tool・supervisor・peer/teamの使い分け、向く仕事・向かない仕事、導入判断フローチャート |
 | **[長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md)** | 本ガイド | — | CLI / Cloud | time horizonと実行時間の違い、checkpoint・retry・冪等性・reliability budgetの設計、最小テストシナリオ |
+| **[Skill の公開・共有](docs/dev-methods/skill-publishing.md)** | 本ガイド | — | CLI / Chat UI | 共有方法の選び方、Codex 向け Plugin の作成・GitHub 配布・導入・更新。 |
 | **[プラグインの可搬性](docs/dev-methods/plugin-portability.md)** | 本ガイド | — | IDE / CLI | `plugin.json` を見て、他のエージェントへ持ち出せる Plugin かを判定する手順 |
 | **[AI コードレビューはどの指示を読むか](docs/dev-methods/review-instructions.md)** | 本ガイド | — | Cloud | Copilot code review（head）と Claude Code Code Review（`CLAUDE.md` は base）の参照元、レビュー基準の更新・検証・CODEOWNERS での承認 |
 | **[Skill / エージェントの評価（evals）](docs/dev-methods/evals.md)** | 本ガイド | — | CLI / Cloud | Skill / Plugin変更時の回帰評価と、本番エージェントの継続的な品質評価を分けて設計する |

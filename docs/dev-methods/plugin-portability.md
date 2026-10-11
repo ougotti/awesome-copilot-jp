@@ -1,8 +1,10 @@
 # プラグインの可搬性 — インストール前に `plugin.json` を見る
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・Cursor・Kiro ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-08
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・Cursor・Kiro ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-11
 
 > 「マルチエージェント対応」と書かれた Plugin が、実際に他のエージェントへ持っていけるとは限りません。ベンダー中立のオープン標準 **Agent Plugins 1.0.0** に乗っているかどうかは、`plugin.json` を 1 つ開けば判定できます。このページは、その判定手順と、判定した結果で何が変わるかを 1 か所にまとめた解説です。標準そのものの成り立ちと各ツールの対応状況は [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準)、Copilot での操作手順は [GitHub Copilot Plugins](../copilot/plugins.md) を参照してください。
+
+自作 Skill を配布するための構成例と Codex の登録・導入・更新手順は [Skill の公開・共有](skill-publishing.md)を参照してください。
 
 ---
 
