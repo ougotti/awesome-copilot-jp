@@ -1,6 +1,6 @@
 # Codex ガイド（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-10-10
+> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-10-11
 
 [openai/skills](https://github.com/openai/skills) は OpenAI が公開している Codex 用の公式スキルカタログです。指示・スクリプト・リソースをフォルダにまとめた「スキル」を追加することで、デプロイ・ブラウザ自動化・外部サービス連携といったワークフローを Codex に持たせられます。
 
@@ -19,7 +19,7 @@ codex
 
 ### スキルの置き場所
 
-Codex は次の順序でスキルを探します。**リポジトリで共有したいなら `.agents/skills/`、自分専用なら `~/.codex/skills/`** です。
+現行の[公式ガイド](https://developers.openai.com/codex/skills/)では、**リポジトリで共有したいなら `.agents/skills/`、手動配置の個人用なら `~/.agents/skills/`** です。既存のインストーラーが使用する保存先とは区別してください。
 
 ```
 カレントディレクトリ
@@ -27,20 +27,21 @@ Codex は次の順序でスキルを探します。**リポジトリで共有し
 親ディレクトリ（リポジトリルートまで）
   └── .agents/skills/
 ユーザーレベル
-  └── ~/.codex/skills/          # 個人用（全プロジェクト共通）
+  └── ~/.agents/skills/         # 個人用（全プロジェクト共通）
 システムレベル（自動インストール済み）
   └── ~/.codex/skills/.system/
 ```
 
 ### インストール後の確認
 
-```bash
-# curated スキルをスキル名で導入
+Codex のチャットに入力します（PowerShell のコマンドではありません）。
+
+```text
 $skill-installer linear
 ```
 
 > [!IMPORTANT]
-> **インストール後は Codex を完全に終了して再起動してください。**再起動しないとスキルが認識されません。再起動後、`$<スキル名>` で呼び出せれば導入成功です。
+> ローカル Skill の変更は自動検出されます。表示されない場合は Codex を再起動し、Skill 選択欄から呼び出せることを確認してください。Plugin 同梱 Skill は、インストール後に新しいチャット／CLI セッションで確認します。
 
 ---
 
@@ -101,6 +102,8 @@ Experimental は OpenAI による品質保証がありません。検証環境�
 ---
 
 ## 5. Plugin でまとめて配る（2026-08 の追加）
+
+自作 Skill の配布方法、複数 Skill をまとめる構成、GitHub カタログの登録・導入・更新は **[Skill の公開・共有](../dev-methods/skill-publishing.md)** を参照してください。
 
 スキルを 1 つずつ入れるほかに、スキル・コネクタ・MCP サーバー・フックなどを束ねた **Plugin** を導入できます。Codex CLI 0.147.0（2026-08-07）で、可搬形式の Agent Plugin のインストールと、**ローカル / 個人 / ワークスペース / リモート**のカタログを横断した検索に対応しました。
 
