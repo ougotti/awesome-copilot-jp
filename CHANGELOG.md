@@ -4,6 +4,11 @@
 
 ## 2026-10
 
+- **2026-10-13** 2026-10-03〜10-10 の最新動向を反映（#253）。
+  - [Claude Managed Agents Dynamic Workflows](docs/dev-methods/harness.md#claude-managed-agents-の-dynamic-workflows)を Copilot / Claude Code と比較し、event stream、停止・予算・参照版の固定、再開時の検証を整理した。
+  - Claude Code 2.1.295〜2.1.296、Copilot CLI 1.0.92〜1.0.95、Codex 0.160.1〜0.162.1 の hook・権限・MCP・sandbox の変更を製品ページへ追加した。ChatGPT Plugin RBAC と追加指示の更新も反映した。
+  - 一次資料の確認日と公開日を分け、機能の前提・対象外・実機未検証の範囲を明記した。
+
 - **2026-10-11** [Skill の公開・共有](docs/dev-methods/skill-publishing.md)を追加（#257）。
   - フォルダ共有・Git 管理・Plugin 配布・組織内公開・公式掲載の選び方と、リポジトリ／Marketplace／Plugin／Skill の関係を整理した。
   - Portable 形式の最小例、PowerShell での登録・導入・更新、公開条件、README 記載項目を追加した。Windows の Codex CLI 0.153.4 でローカル登録・導入・更新ファイルの反映を確認し、GitHub 取得・アプリ操作・チャット実行の未検証範囲を明記した。

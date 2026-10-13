@@ -1,6 +1,6 @@
 # Codex ガイド（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-10-11
+> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-10-13
 
 [openai/skills](https://github.com/openai/skills) は OpenAI が公開している Codex 用の公式スキルカタログです。指示・スクリプト・リソースをフォルダにまとめた「スキル」を追加することで、デプロイ・ブラウザ自動化・外部サービス連携といったワークフローを Codex に持たせられます。
 
@@ -247,6 +247,24 @@ session 側の変更は、会話と下書きを別の面へ持ち越す仕組み
 | サブエージェントが、起動中の環境を保持し、設定や準備の失敗を受け取るようになった | サブエージェントの起動失敗が、黙って失われないか |
 | 再接続時、**送信状態が不明だった未送信のキュー済みメッセージ**を、状態が確定してから再開し、二重送信を避ける | 長時間のセッションで、接続が切れた後に同じ指示が二重に処理されていないか（[信頼性設計](../dev-methods/agent-reliability.md#5-冪等性重複実行外部副作用の扱い)） |
 | 明示した provider のモデルカタログに、未対応の同梱モデルや、更新失敗時の古い項目が含まれなくなった | モデルの選択肢が実際に使えるものだけになっているか |
+
+### Codex CLI 0.160.1〜0.162.1 — 権限を維持して再開する
+
+**提供元: Official / 状態: GA（Stable release。worktree / tool search の機能条件は下記）**。2026-10-05〜09 公開分を 2026-10-13 に再確認しました。バージョンだけで各実行環境の隔離が同じとは判断せず、起動した CLI と接続先 server の設定を確認します。
+
+| 版 | 変更 | 運用上の確認 |
+|---|---|---|
+| 0.160.1（10-05） | remote stdio MCP の環境を明示設定しても `SYSTEMROOT` / `TEMP` / `TMP` を維持 | Unix host から Windows executor を使う起動経路も確認する |
+| 0.161.0（10-07） | 承認した filesystem escalation は denied read と network restriction を保ちながら write 範囲を広げる。background task は開始 turn の権限を保持 | 書き込みの承認を読み取り拒否・通信制限の解除とみなさない |
+| 0.161.0 | 明示した起動権限を terminal reconnect / 新 session でも保持。暗黙の client 設定で server / 保存済み thread の web-search 設定を上書きしない | 再接続前後の有効な設定を比べる |
+| 0.161.0 | 実行中の terminal session から `/mcp login <name>`。enterprise MCP auth の制約と config refresh の fail-closed 修正 | server 名・認証先と managed policy を確認し、設定取得の失敗を権限解除として扱わない |
+| 0.162.0（10-08） | Linux の複数 denied file、sandbox 構築用の書き込み可能な executable、deny glob を弱める ripgrep config の扱いを修正 | Linux の修正を Windows でも同じ保証だと説明しない |
+| 0.162.0 | Windows 10 の drive-letter 読み取りと、child process の環境に合わせた sandbox temp permission を修正 | 実際の Windows 版・一時パスで検証する |
+| 0.162.1（10-09） | background server と CLI の既定 feature 設定の差で起動が失敗する問題を修正 | 明示的な CLI feature override の互換性チェックは維持される |
+
+0.162.0 には、**worktrees feature が有効な trusted local project** から managed Git worktree を作成・一覧する tool と、Code Mode の **opt-in ranked tool search** が入りました。後者は必要な tool を検索して見つける仕組みで、すべての tool の常時 preload ではありません。worktree は [作業場所の分離](../dev-methods/harness.md#codex-の-managed-worktree-で作業場所を分ける)、tool 発見と追加指示は [指示の出し分け](../dev-methods/agent-commands.md#background-agent-への追加指示と-tool-の発見)を参照してください。
+
+出典: [0.160.1](https://github.com/openai/codex/releases/tag/rust-v0.160.1)、[0.161.0](https://github.com/openai/codex/releases/tag/rust-v0.161.0)、[0.162.0](https://github.com/openai/codex/releases/tag/rust-v0.162.0)、[0.162.1](https://github.com/openai/codex/releases/tag/rust-v0.162.1)。ここでは release 記載を照合し、各 OS の sandbox・MCP 認証の実機試験は行っていません。
 
 ### Codexを製品へ組み込む入口を分ける
 

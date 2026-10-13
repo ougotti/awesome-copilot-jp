@@ -1,6 +1,6 @@
 # AI エージェントの実行基盤（ハーネス）
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-10-08
+> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-10-13
 
 > エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew / OpenAI Agents API）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
 
@@ -398,6 +398,37 @@ Console などファイルの外側でリソースが編集・アーカイブ・
 適用範囲にも境界があります。ポリシーが扱うのは Managed Agents が提供するツールと MCP ツールです。API 利用者が定義した **custom tools には適用されない**ため、認可、確認画面、監査ログをアプリ側で用意します。また、これはサーバー上の Managed Agents の機能で、Claude Code のローカル権限モードではありません。
 
 **→ GitHub Copilot の組織ポリシーとの比較と、導入前から実行後までの統制は [Skill / Plugin のセキュリティ](skill-security.md#managed-agents-はツール呼び出しごとに判定する) を参照**
+
+## Claude Managed Agents の Dynamic Workflows
+
+**提供元: Official / 状態: Preview（Beta） / 実行場所: Cloud**。2026-10-09 公開の Dynamic Workflows は、agent が仕事に合わせた program を書き、server が複数 agent の実行と結果の受け渡しを background で進める仕組みです。会話だけに手順と中間値を保持する方式から、program / runtime が管理する方式へ移ります。通常の subagent 呼び出し、Copilot の同名機能、Claude Code のローカル workflow と区別します。
+
+| 仕組み | 実行場所・状態の持ち方 | 権限・再開の確認先 |
+|---|---|---|
+| Claude Managed Agents Dynamic Workflows | server の workflow run。phase と agent thread を program が制御 | Managed Agents の permission policy、session の event stream・budget・interrupt / archive |
+| GitHub Copilot Dynamic workflows | Copilot の workflow 実行環境で、コードが agent の呼び出しや分岐を定義 | Copilot の tool と workflow code の権限境界。[製品ガイド](../copilot/README.md#dynamic-workflows--手順をコードで決めて判断だけエージェントに任せる)で前提を確認 |
+| Claude Code workflow / subagent | Claude Code session 内の workflow・subagent。local 実行ならそのマシンに依存 | Claude Code の permission / sandbox、background task の状態・resume。Managed Agents の server run ではない |
+
+有効化には Managed Agents の Beta header `managed-agents-2026-04-01` と agent 定義の `multiagent` を使います。次は **agent 定義に組み込む部分 JSON** です。API を呼ぶには別途アカウント、認証、model・environment 等の準備が必要です。
+
+```json
+{
+  "multiagent": {
+    "type": "multiagent_20261001",
+    "workflows": { "type": "enabled" }
+  }
+}
+```
+
+workflow は program 内で定義する inline agent と、`predefined_agents` に列挙した agent を利用できます。参照先の agent version は作成時、または参照リストを送った更新時に固定されます。**参照先だけを更新しても、参照元 agent のリストは更新されません**。新しい版を使うには参照元の定義も更新し、新しい実行で確認します。
+
+run の終了・予算・上限は [ループエンジニアリング](loop-engineering.md#background-workflow-run-の終了を追う)、成果物の検証は [信頼性](agent-reliability.md#workflow-と-mcp-の再開を検証する)へ。出典: [公式 release notes](https://platform.claude.com/docs/en/release-notes/overview)、[Workflow runs](https://platform.claude.com/docs/en/managed-agents/workflow-runs)、[Agent setup](https://platform.claude.com/docs/en/managed-agents/agent-setup)（2026-10-13 確認。API 実行は未検証）。
+
+### Codex の managed worktree で作業場所を分ける
+
+Codex CLI 0.162.0（Official / Stable、2026-10-08）は worktrees feature が有効で attachment storage を利用できる trusted local project で、managed Git worktree の作成・一覧 tool を提供します。作業場所の分離であり、sandbox の代替ではありません。利用前に feature の有効性と project の trust を確認し、作成後は base commit、branch、変更先の path を確認してください。`ref` を指定しなければ remote default branch が基点になり、元の task の作業ディレクトリは変わりません。
+
+運用上は branch の担当を 1 つに決め、未コミット変更・未 push commit を保全してから cleanup します。別 worktree にある変更が自動でコピーされると想定せず、統合する diff をレビューします。これらは本ガイドの運用提案です。作成条件は [公式実装 PR](https://github.com/openai/codex/pull/50148)も参照してください。出典: [Codex 0.162.0](https://github.com/openai/codex/releases/tag/rust-v0.162.0)（2026-10-13 確認）。
 
 ## ループとの関係
 

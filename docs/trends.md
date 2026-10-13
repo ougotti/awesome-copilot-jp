@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-08
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-13
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-13 | 10-03〜10-10 の workflow・権限・MCP・Plugin 更新を再確認し、製品別の詳細と運用検証へリンクした |
 | 2026-10-08 | 13 節に ChatGPT の MCP Events（draft 仕様への部分対応）と Plugin Extensions を追加し、独立ページ [MCP Events](dev-methods/mcp-events.md) へ誘導した |
 | 2026-10-08 | 9-2 節・12 節に 2026-09-26〜10-03 の残りの更新を追加した。VS Code 1.140（Copilot harness、Agents window の複数フォルダの session と remote host への委任＝Experimental、MCP の保存先、OTel の identity capture）、Claude Code 2.1.285〜2.1.288（remote MCP の二重実行、`bash -c` 内の危険な `rm`、フックのスキップ、`allowedProviders`、`prompt_text`）、Copilot CLI 1.0.89〜1.0.91（`.claude/rules` 互換、`--mcp-github-auth`、`copilot sandbox ca`）、Codex CLI 0.160.0。詳細は各製品ページへ集約した |
 | 2026-10-08 | 12 節に Claude Code 2.1.292 の UNC パス・Windows の別表記・リンク差し替え・sandbox 読み取り拒否パスの修正を追加し、共有フォルダを扱う前の確認を 4 つの層に分けた。詳細は Claude Code のカスタマイズ機能へ集約した |
@@ -66,6 +67,20 @@
 | 2026-08-01 | 「Skill の発見・配布・更新」を追加（`gh skill` / Agent Finder・ARD / Copilot Plugins） |
 | 2026-07-29 | 常設ページ化（旧タイトル「2026年7月版」）。ガイド全体の更新は [更新履歴（CHANGELOG）](../CHANGELOG.md) を参照 |
 | 2026-07-22 | 初版公開（Matt Pocock's Skills / Context7 / Firecrawl / Vercel / Record & Replay / Computer Use の6テーマ） |
+
+## 2026-10-03〜10-10 の更新 — workflow と権限の引き継ぎ
+
+対象期間の一次情報を 2026-10-13 に再確認しました。詳しい設定・前提・制限はリンク先へ集約しています。一般的なモデル性能・価格と、期間後の更新はこの一覧の対象外です。
+
+| 公開日（公式掲載日 / release の UTC 日付） | 更新 | 提供元・状態 | 詳細 |
+|---|---|---|---|
+| 10-09 | Claude Managed Agents Dynamic Workflows。server が program と複数 agent の background run を管理 | Official / Preview（Beta） | [実行方式の比較](dev-methods/harness.md#claude-managed-agents-の-dynamic-workflows)、[event と停止条件](dev-methods/loop-engineering.md#background-workflow-run-の終了を追う) |
+| 10-08〜09 | Claude Code 2.1.295〜2.1.296。hook failure の block、managed policy、MCP・workflow の修正 | Official / GA | [フックの失敗と統制](claude-code/basics.md#フックの実行失敗も止める--2129521296) |
+| 10-05〜09 | Copilot CLI 1.0.92〜1.0.95。token・domain 上限・承認・credential 注入先を分離 | Official / GA | [CLI の境界と設定移行](copilot/README.md#cli-10921095--token通信先承認を別々に制御する) |
+| 10-05〜09 | Codex 0.160.1〜0.162.1。権限の維持、MCP auth、OS ごとの sandbox 修正、worktree / tool search | Official / Stable（機能条件あり） | [Codex CLI](codex/README.md#codex-cli-0160101621--権限を維持して再開する) |
+| 10-08 | ChatGPT Plugin RBAC と Codex desktop の faster steering | Official / GA（steering は展開中） | [Plugin access](dev-methods/plugin-portability.md#chatgpt-の-plugin-access-を-role-ごとに決める)、[追加指示](dev-methods/agent-commands.md#background-agent-への追加指示と-tool-の発見) |
+
+導入時は「機能が増えたか」に加え、[拒否が維持されるか](dev-methods/skill-security.md#2026-10-0310-10-の権限境界の更新)と [再開しても副作用を重複させないか](dev-methods/agent-reliability.md#workflow-と-mcp-の再開を検証する)を確認してください。
 
 ## 動画チャプター対応表
 

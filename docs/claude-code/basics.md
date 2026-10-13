@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-10
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-13
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -420,7 +420,7 @@ fi
 - 継続が止まらない事故に備えて、Claude Code は**連続 8 回**で `Stop` フックによる継続を打ち切ります（`CLAUDE_CODE_STOP_HOOK_BLOCK_CAP` で変更可）。
 - `Stop` の入力の `stop_hook_active` が `true` のときは、すでにフックによって継続中です。満たせない条件で回り続けないよう、条件に含めるか、`prompt` フックでは `impossible: true` を返せるようにします。
 
-#### 公式に記載がなく、確認できていないこと
+#### 自然言語フックについて、確認できていないこと
 
 - `prompt` / `agent` フックの**出力が JSON として壊れていた場合、タイムアウトした場合、モデルがエラーを返した場合**に、許可側・拒否側のどちらに倒れるか（fail open / fail closed）は、公式リファレンスで確認できませんでした。**ブロックしたい操作は、この挙動に依存させない**のが安全です。
 - （参考）2.1.288 では、`PreToolUse` / `PermissionRequest` のフックが、マッチングの失敗やツール入力の JSON 化の失敗で**スキップされていた**問題が修正され、その場合は呼び出しがブロックされるようになりました。これは「フックが起動したか」の問題で、2.1.294 の「自然言語の判定」の問題とは別です。
@@ -438,6 +438,25 @@ fi
 **「必ず止めたいもの」は permission ルールや `command` フック、sandbox で止め、`prompt` / `agent` フックは「文脈を読まないと判断できない補助的なチェック」に使う**、という分担が安全です。フックの変更時の評価の組み方は [Skill / エージェントの評価](../dev-methods/evals.md#フックを変更したら許可拒否継続終了を測る) を参照してください。
 
 ---
+
+### フックの実行失敗も止める — 2.1.295〜2.1.296
+
+**提供元: Official / 状態: GA（CLI の正式リリース）**。2.1.295（2026-10-08）で `command` / `http` フックに `onFailure: "block"` が追加されました。従来の既定値 `continue` では、フックが壊れると対象操作が進む場合があります。拒否すべき条件の判定と、判定プログラム自体の失敗を分けて設定します（2026-10-13 再確認、公開日は公式 release の UTC 日付）。
+
+| 失敗・イベント | `onFailure: "block"` の範囲 |
+|---|---|
+| 起動できない、タイムアウト、終了コードが 0 / 2 以外 | 対象イベントの exit 2 相当の制御。`PreToolUse` ならツール呼び出しを止める |
+| HTTP 接続失敗・非 2xx 応答、不正な JSON / schema 違反 | 失敗として扱う。command の単なるテキスト出力は不正 JSON と同じ扱いではない |
+| `PermissionRequest` | リクエストを拒否する |
+| `Stop` / `SubagentStop` / `TaskCompleted` / `TeammateIdle` | この設定は効かない |
+| `async` / `asyncRewake` の background command hook | この設定は効かない |
+| `prompt` / `agent` フック | このフィールドの対象外。上の自然言語フックの未確認範囲を引き続き区別する |
+
+検証用プロジェクトの `.claude/settings.json` で、同期の `PreToolUse` command hook に `"onFailure": "block"` を付け、スクリプトの正常終了・起動失敗・タイムアウト・不正出力をそれぞれ試してください。実行対象は `echo` など副作用のないコマンドとし、正常系は進み、失敗系は実行されないことを確認します。これは検証手順で、本ガイドでの実測結果ではありません。
+
+2.1.296（2026-10-09）は **managed `PreToolUse` の拒否と turn 終了**、managed `PostToolUse` の `updatedMCPToolOutput` 適用、`UserPromptSubmit` / mod の `prompt.submit` 中断時に未検査の prompt が通る問題を修正しました。拒否・turn 終了・出力の置き換えは別々に確認してください。2.1.295 の深い mod hook 入力の切り詰め・managed plugin 判定、2.1.296 の `BASH_ARGV0` を使う shell の承認と secret redaction の修正も、組織で導入版を決める材料です。**これらを使う環境では 2.1.296 以上を検証する下限候補**とします。公式 LTS や、以後の版が不要という意味ではありません。
+
+出典: [Hooks reference](https://code.claude.com/docs/en/hooks#block-the-action-when-a-hook-fails)、[2.1.295](https://github.com/anthropics/claude-code/releases/tag/v2.1.295)、[2.1.296](https://github.com/anthropics/claude-code/releases/tag/v2.1.296)。
 
 ## 組織での統制 — 導入前・推論前・実行後
 
@@ -552,7 +571,7 @@ Claude Enterprise では、claude.ai の管理画面でモデルを個別に無�
 | path を限定した `.claude/rules` とネストした `CLAUDE.md` が、Write / Edit でファイルを作成・変更したときに読み込まれていなかった（Read のときだけ読まれていた） | ルールを path 単位で分けている場合に影響 |
 | （変更）バックグラウンドのコマンドの時間制限は、無人のセッション（`-p`・Agent SDK・CI・cloud）だけに適用される。端末・デスクトップ・VS Code では制限なし | 対話で使う場合、長時間のコマンドが打ち切られなくなる |
 
-remote MCP・危険な shell・権限フックを使う組織では、**2.1.288 以上を推奨下限の候補**として扱えます。ただし公式の LTS 宣言ではなく、その後の版（2.1.292・2.1.294 など）にも統制の修正が続いています。導入時はその時点の最新版を選んでください。
+remote MCP・危険な shell・権限フックを使う組織では、**2.1.288 以上を推奨下限の候補**として扱えます。ただし公式の LTS 宣言ではなく、その後の版にも統制の修正が続いています。本ページの [2.1.295〜2.1.296 の変更](#フックの実行失敗も止める--2129521296)も合わせて確認してください。導入時はその時点の最新版を選んでください。
 
 **2.1.285〜2.1.287 — plugin・managed settings・MCP**
 
@@ -696,6 +715,20 @@ MCP connector の `mcp-client-2026-09-15` beta header と組み合わせると�
 動的な発見は、そのままでは同じ tool 一覧で再実行できることを意味しません。一覧を固定せずに再実行すると、server 側の変更で使える tool が変わる可能性があります。**→ 可搬性との関係は [プラグインの可搬性](../dev-methods/plugin-portability.md#tool-一覧の固定と構成の検証はクライアントごとに違う) を参照**
 
 ---
+
+### 2.1.295〜2.1.296 の MCP・workflow の変更
+
+| 項目 | 変更と確認点 |
+|---|---|
+| remote MCP | 2.1.295 で headless / SDK の長い切断からの再接続、直後に切れる接続への backoff、同じ pagination cursor の反復を修正 |
+| protocol negotiation | 2.1.295 で、feature flag を取得しないインストールの claude.ai connector は MCP `2026-07-28` を既定にする。すべての MCP 接続に一律適用される変更ではない |
+| 無効化した server | 2.1.296 で、ディレクトリ変更・plugin reload 後に headless session がフォルダで無効化済みの `.mcp.json` / plugin MCP server を起動する問題を修正 |
+| tool description / server instruction | 2.1.296 で先行送信する説明の既定上限が 2,048 → 4,096 文字。全 tool を無制限に preload する保証ではない |
+| subagent の文脈 | 2.1.296 の `autoCompactWindow` を frontmatter / `--agents` 定義に指定すると、親より早い compaction を設定できる |
+| workflow のモデル | 2.1.296 の `CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL` は workflow agent に共通モデルを指定し、他の subagent のモデルは維持する |
+| Skill と再開 | 2.1.295 は `skills` から最大 32 Skill を各 1 回 preload（Skill tool があれば残りも呼べる）。forked Skill の結果を呼び出した workflow subagent に返す修正も含む。2.1.296 は完了済み MCP result で終了した turn の再実行を修正 |
+
+出典: [2.1.295](https://github.com/anthropics/claude-code/releases/tag/v2.1.295)、[2.1.296](https://github.com/anthropics/claude-code/releases/tag/v2.1.296)（2026-10-13 確認）。再接続・再開の検証は [エージェントの信頼性](../dev-methods/agent-reliability.md#workflow-と-mcp-の再開を検証する)へ。
 
 ## セットアップ
 
