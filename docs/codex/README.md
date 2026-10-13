@@ -1,6 +1,6 @@
 # Codex ガイド（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-10-13
+> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-10-14
 
 [openai/skills](https://github.com/openai/skills) は OpenAI が公開している Codex 用の公式スキルカタログです。指示・スクリプト・リソースをフォルダにまとめた「スキル」を追加することで、デプロイ・ブラウザ自動化・外部サービス連携といったワークフローを Codex に持たせられます。
 
@@ -389,6 +389,18 @@ Codex は、Claude Code・Cursor などから設定と直近の作業を取り�
 > **取り込んだ後に点検すること**: 公式ドキュメントは、ツール制限・MCP の認証設定・Hooks・Plugins・プロンプトテンプレートが**手動のフォローを要する場合がある**と明記しています。特に Hooks は設定された時点で自動実行されるため、[中身を確認してから](../dev-methods/skill-security.md)有効にしてください。
 
 > 以前の `/import` は、実行中のタスク・リモートセッション・ローカルの app-server デーモンに接続中は使えませんでした。Codex CLI 0.157.0（2026-09-25）からは、**remote session と local background-server session でも使えます**。実行中タスクとの併用可否は、利用中の版の公式ドキュメントで確認してください。
+
+### VS Code 1.141 で Codex chat を引き継ぐ
+
+逆方向の引き継ぎとして、VS Code 1.141（2026-10-07、Stable）では、**同じマシン**の ChatGPT アプリまたは Codex CLI で始めた Codex chat を、履歴ごと VS Code の Agents window で続けられるようになりました。後から元のアプリへ戻すこともできます。
+
+| 条件・制約 | 内容 |
+|-----------|------|
+| 前提 | VS Code で Codex を有効にし、Created Externally の session を表示しておく |
+| 同時送信 | **送信できるのは 1 つのアプリだけ**。「This chat is open in another app」が出たら、ChatGPT アプリを完全に終了するか Codex CLI の session を抜けてから Retry する（下書きと添付は残る） |
+| 利用上限 | ChatGPT の利用上限に達した後は、モデル選択で Copilot のモデルに切り替えて続けられる |
+
+会話が同じでも、VS Code 側では built-in・extension・MCP の tool が加わり、承認と sandbox の設定も VS Code（Agent Host）側のものになります。**引き継いだ後に、使える tool・承認・接続先を確認**してください（1.138 の継続と同じ注意。[GitHub Copilot ガイド](../copilot/README.md#vs-code-1138-の-agent-host-と-codex-継続)）。出典: [VS Code 1.141 release notes](https://code.visualstudio.com/updates/v1_141)（2026-10-14 確認。実機での引き継ぎは未検証）。
 
 ---
 

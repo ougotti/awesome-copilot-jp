@@ -1,6 +1,6 @@
 # AI エージェントの実行基盤（ハーネス）
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-10-13
+> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-10-14
 
 > エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew / OpenAI Agents API）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
 
@@ -297,6 +297,8 @@ GitHub Copilot の local sandbox は、Copilot CLI・Copilot app・Agent Host �
 GitHub は 2026-09-22 に [Copilot app の OTel 対応](https://github.blog/changelog/2026-09-22-opentelemetry-in-the-github-copilot-app/)を発表しました。Enterprise 管理者が `managed-settings.json` の `telemetry` で export を有効にして OTLP endpoint を指定します。[GitHub の OTel 概念文書](https://docs.github.com/en/copilot/concepts/enterprise/opentelemetry)では、session のモデル・tool 呼び出しをつなぐ trace、token 等の metric、個別 action の event を区別しています。prompt・response・tool 引数の本文は既定で除外されます。`captureContent` を有効にする場合は、コードやファイル内容が監視基盤へ送られるため、送信先と保存範囲を確認します。
 
 **文書の対象表記に差があります（2026-09-23 確認）。** 9 月 22 日の発表は Copilot app 対応を明記しますが、[enterprise-managed settings の `telemetry` リファレンス](https://docs.github.com/en/copilot/reference/enterprise-administrators/enterprise-managed-settings#telemetry)は対応先をまだ Copilot CLI / VS Code と記載しています。app へ展開する前に対象バージョンと有効な設定を確認し、collector に実際の trace が届くことを試してください。
+
+**本文は 1 つのスイッチではなく、種類ごとに取るようになりました（2026-10-12）。** [GitHub の変更ログ](https://github.blog/changelog/2026-10-12-client-telemetry-user-attribution-and-configurable-capture)で、Copilot CLI・Copilot app・VS Code の Agent Host session の `telemetry` に、`prompts`・`responses`・`toolArguments`・`toolOutput`・`policyDetail` の 5 種類の capture class と、利用者・OS アカウント・ホスト名を付ける `telemetry.capture.identity` が加わりました。すべて既定はオフで、managed で明示した値はローカル設定・SDK・環境変数より優先されます。`captureContent` は 5 種類をまとめて有効にする省略形で、identity は含みません。「誰が何をしたか」だけを追いたい監査では、本文を取らずに identity だけを有効にできます。設定の詳細は [GitHub Copilot ガイド](../copilot/README.md#誰の操作かを付ける本文を種類ごとに取る2026-10-12) を参照してください。
 
 Claude Code 2.1.274 では `claude_code.managed_settings_resolved` OTel event が追加されました。managed-settings の source と policy helper の状態を確認でき、`OTEL_LOG_MANAGED_SETTINGS=1` を設定すると**値を redaction した設定と digest**も記録します。設定値そのものを露出させず、「どの管理設定が解決されたか」を監査するための event です。
 

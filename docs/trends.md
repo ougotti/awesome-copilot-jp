@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-13
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-14
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-14 | 10-10〜10-14 の Copilot の managed settings・telemetry・VS Code 1.141・Copilot CLI 1.0.96〜1.0.97・JetBrains の更新を追加し、製品別の詳細へリンクした |
 | 2026-10-13 | 10-03〜10-10 の workflow・権限・MCP・Plugin 更新を再確認し、製品別の詳細と運用検証へリンクした |
 | 2026-10-08 | 13 節に ChatGPT の MCP Events（draft 仕様への部分対応）と Plugin Extensions を追加し、独立ページ [MCP Events](dev-methods/mcp-events.md) へ誘導した |
 | 2026-10-08 | 9-2 節・12 節に 2026-09-26〜10-03 の残りの更新を追加した。VS Code 1.140（Copilot harness、Agents window の複数フォルダの session と remote host への委任＝Experimental、MCP の保存先、OTel の identity capture）、Claude Code 2.1.285〜2.1.288（remote MCP の二重実行、`bash -c` 内の危険な `rm`、フックのスキップ、`allowedProviders`、`prompt_text`）、Copilot CLI 1.0.89〜1.0.91（`.claude/rules` 互換、`--mcp-github-auth`、`copilot sandbox ca`）、Codex CLI 0.160.0。詳細は各製品ページへ集約した |
@@ -67,6 +68,20 @@
 | 2026-08-01 | 「Skill の発見・配布・更新」を追加（`gh skill` / Agent Finder・ARD / Copilot Plugins） |
 | 2026-07-29 | 常設ページ化（旧タイトル「2026年7月版」）。ガイド全体の更新は [更新履歴（CHANGELOG）](../CHANGELOG.md) を参照 |
 | 2026-07-22 | 初版公開（Matt Pocock's Skills / Context7 / Firecrawl / Vercel / Record & Replay / Computer Use の6テーマ） |
+
+## 2026-10-10〜10-14 の更新 — policy を確実に届け、無人実行の承認を見直す
+
+対象期間の一次情報を 2026-10-14 に確認しました。期間中の更新は GitHub Copilot が中心で、Claude Code（最新は 2.1.296）・Claude Platform・Codex（Stable は 0.162.1、以降は alpha のみ）・MCP・Agent Skills には新しい正式 release がありません。VS Code 1.141 は 10-07 公開ですが、前回の一覧に含めていなかったためここで扱います。モデルの追加・価格・課金表示、UI だけの更新は対象外です。
+
+| 公開日（公式掲載日 / release の UTC 日付） | 更新 | 提供元・状態 | 詳細 |
+|---|---|---|---|
+| 10-13 | Copilot managed settings の `forceRemoteSettingsRefresh`（policy を確認できなければ fail-closed）と、`sandbox` キーの最小 client version | Official / Improvement | [強制更新と最小 version](copilot/README.md#managed-settings-の強制更新と最小-client-version2026-10-13) |
+| 10-12 | Copilot telemetry の `telemetry.capture.identity` と、本文の 5 種類の capture class（既定はすべてオフ） | Official / Improvement | [OTel の設定](copilot/README.md#誰の操作かを付ける本文を種類ごとに取る2026-10-12)、[観測データの比較](dev-methods/harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions) |
+| 10-12〜13 | Copilot CLI 1.0.96〜1.0.97。agent 単位の hook、Autopilot での `ask` → deny、permission の判定主体の表示、再開時の plugin hook の修正 | Official / GA | [CLI の hook と承認](copilot/README.md#cli-10961097--hook-の適用範囲と無人実行での承認)、[Plugin の読み込み](dev-methods/plugin-portability.md#copilot-cli-10961097--plugin-の読み込みと再開時の-hook) |
+| 10-10 | Copilot for JetBrains。MCP server の自動起動の無効化、managed default model、IDE 2025.1 のサポート終了 | Official / GA | [JetBrains](copilot/README.md#jetbrains2026-10-10-mcp-を自動で起動しない既定モデルを管理する) |
+| 10-07 | VS Code 1.141。Agent の sandbox と必須化（Preview）、旧 policy の移行、`send_message`、Worktree cleanup、Codex の引き継ぎ | Official / Stable（一部 Preview） | [VS Code 1.141](copilot/README.md#vs-code-1141--sandbox-の必須化旧-policy-の移行session-間の指示)、[send_message](dev-methods/agent-commands.md#session-間でメッセージを送る--vs-code-1141-の-send_message)、[Codex の引き継ぎ](codex/README.md#vs-code-1141-で-codex-chat-を引き継ぐ) |
+
+導入時は、[policy の配布と client の更新の順番](dev-methods/skill-security.md#2026-10-1010-14-の権限境界の更新)と、無人実行で `ask` が deny になる前提で hook を書き直す必要がないかを確認してください。
 
 ## 2026-10-03〜10-10 の更新 — workflow と権限の引き継ぎ
 

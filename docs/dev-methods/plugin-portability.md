@@ -1,6 +1,6 @@
 # プラグインの可搬性 — インストール前に `plugin.json` を見る
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・Cursor・Kiro ほか） ｜ **実行環境**: IDE / CLI / Chat UI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-13
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・Cursor・Kiro ほか） ｜ **実行環境**: IDE / CLI / Chat UI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-14
 
 > 「マルチエージェント対応」と書かれた Plugin が、実際に他のエージェントへ持っていけるとは限りません。ベンダー中立のオープン標準 **Agent Plugins 1.0.0** に乗っているかどうかは、`plugin.json` を 1 つ開けば判定できます。このページは、その判定手順と、判定した結果で何が変わるかを 1 か所にまとめた解説です。標準そのものの成り立ちと各ツールの対応状況は [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準)、Copilot での操作手順は [GitHub Copilot Plugins](../copilot/plugins.md) を参照してください。
 
@@ -160,6 +160,21 @@ Agent Plugins 1.0.0 が標準化しているのは、Plugin に**何を同梱す
 Admin console で ChatGPT workspace → Plugins → 対象 Plugin を開き、Plugin access と対応する required-app permission を一緒に確認・保存します。ただし、**app action setting・操作の承認・provider authorization は引き続き別に適用**されます。Plugin を導入できることと、その Plugin が外部データを変更できることは同じではありません。
 
 Copilot CLI でも、1.0.94 の discovery 前の MCP enable / disable、1.0.95 の managed plugin setup 再試行の変更があります。配布形式だけで動作を判断せず、client の policy 適用・有効な server・認証を確認してください。出典: [OpenAI release notes（Manage plugin access by role）](https://openai.com/products/release-notes/)、[Copilot CLI changelog](https://github.com/github/copilot-cli/blob/main/changelog.md)（2026-10-13 確認。管理画面の実操作は未検証）。
+
+### Copilot CLI 1.0.96〜1.0.97 — Plugin の読み込みと再開時の hook
+
+2026-10-12〜13 の Copilot CLI の更新には、「Plugin を入れたのに、中身の一部が効いていない」ことにつながる不具合の修正が含まれます。古い版で Plugin の動作を確かめた結果を、新しい版にそのまま当てはめないでください。
+
+| 版 | 修正・変更 | 確認すること |
+|---|---|---|
+| 1.0.97 | `--plugin-dir` で読み込んだ Plugin の Skill と custom agent が、autocomplete と呼び出しに出てこなかった問題を修正 | 開発中の Plugin を `--plugin-dir` で試す場合は 1.0.97 以降で確認する |
+| 1.0.97 | `--resume` で plugin の hook を誤った一覧から組み立てていた問題を修正。repository-local marketplace の hook は再開後も動き、無効にした plugin の hook は戻らない | 再開の前後で、動く hook が変わらないか |
+| 1.0.97 | remote の marketplace と plugin の取得は、HTTPS 認証に失敗すると、sign-in 済みの GitHub token で 1 回だけ再試行する | private な marketplace に、どの token で接続しているか |
+| 1.0.97 | custom agent が 100 件を超える、または深い階層にある場合も、すべて見つけるよう修正 | agent の数が多い repository で一覧を確認する |
+| 1.0.97 | MCP の tool 一覧が並行して更新され catalog が変わった場合、cache した tool 呼び出しが定義を確認し直す | tool の定義が変わる MCP server では、呼び出し時の定義を記録する |
+| 1.0.97 | custom agent の frontmatter に hook を書ける（agent-scoped hooks、CLI 限定） | Plugin で配る custom agent に hook を書いても、**他のクライアントでは動かない**。可搬な部分（Skills と MCP）とは分けて扱う |
+
+出典: [Copilot CLI v1.0.97](https://github.com/github/copilot-cli/releases/tag/v1.0.97)、[Hooks reference](https://docs.github.com/en/copilot/reference/hooks-reference)（2026-10-14 確認。実機での再現は未検証）。
 
 ## 関連ドキュメント
 

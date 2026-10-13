@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-13
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-14
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -227,6 +227,20 @@ Claude Code の `prompt` / `agent` フックは、モデルが自然言語の条
 | 権限の引き継ぎ | Codex 0.161〜0.162 は escalation 後の denied read / network と、background task 開始時の権限を維持。Linux sandbox 構築・Windows temp の修正は分けて確認する | [Codex CLI](../codex/README.md#codex-cli-0160101621--権限を維持して再開する)、[0.161.0](https://github.com/openai/codex/releases/tag/rust-v0.161.0)・[0.162.0](https://github.com/openai/codex/releases/tag/rust-v0.162.0) |
 
 managed policy を利用者の設定や起動 flag で弱められると想定せず、許可ケースと拒否ケースの両方を試してください。
+
+### 2026-10-10〜10-14 の権限境界の更新
+
+2026-10-14 に公式資料を確認しました。GitHub Copilot の更新が中心で、**policy が確実に届くこと**と**無人実行で承認がどう扱われるか**が変わりました。
+
+| 層 | 変更と運用上の意味 | 詳細・一次情報 |
+|---|---|---|
+| policy の到達 | `forceRemoteSettingsRefresh: true` で、Copilot CLI・VS Code・Copilot app は起動時に policy の再取得が必須になり、確認できなければ fail-closed になる。可用性と引き換えなので、対象を絞って使う | [GitHub Copilot ガイド](../copilot/README.md#managed-settings-の強制更新と最小-client-version2026-10-13)、[変更ログ](https://github.blog/changelog/2026-10-13-enterprise-managed-settings-enforcement-updates) |
+| client の版 | managed settings に `sandbox` キーを含めると最小 client version が強制される。古い版に固定した端末は更新まで使えない | 同上 |
+| sandbox の回避 | VS Code 1.141 の Agent Host は、unified managed settings の `sandbox.enabled: true` / `allowBypass: false` で回避を禁止できる（Preview）。旧 policy の `ChatAgentSandboxEnabled` は Agent Host では上書きできる既定値に変わった | [VS Code 1.141](../copilot/README.md#vs-code-1141--sandbox-の必須化旧-policy-の移行session-間の指示) |
+| 無人実行の承認 | Copilot CLI 1.0.97 の Autopilot では、`preToolUse` hook の `ask` が **deny** になる。custom agent 単位の hook は、組織や repository の hook に**追加して**動く | [Copilot CLI](../copilot/README.md#cli-10961097--hook-の適用範囲と無人実行での承認) |
+| 監査ログ | Copilot CLI 1.0.96 は permission の判定主体を timeline に表示。telemetry は identity と 5 種類の本文を個別に有効化でき、既定はすべてオフ | [OTel の設定](../copilot/README.md#誰の操作かを付ける本文を種類ごとに取る2026-10-12) |
+
+「`ask` にしておけば人が確認する」は、**人が見ている対話の session でだけ成り立つ前提**です。無人実行では、確認を求める操作は止まる（deny）と考え、通したい操作は条件を絞った `allow` として書き分けてください。また、policy の配布と client の更新の順番を誤ると、統制を強めたつもりで利用者全員を止めることがあります。
 
 ### ローカルモデル・offline・telemetry は別の境界
 

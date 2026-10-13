@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-13
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-14
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -454,7 +454,36 @@ toolchain / dependencies を remote project 側で揃えたまま agent に buil
 | **Agents window の複数フォルダの session** | **Experimental**（既定は無効） | session ごとに別のリポジトリ・フォルダ・worktree を開ける。`chat.agentHost.copilotAgent.multiRootEnabled`（Claude / Codex は同名の `claudeAgent` / `codexAgent`）をユーザーの `settings.json` で `true` にする | 設定画面には出ない。エディタウィンドウの multi-root とは別機能（[複数ルート運用](multi-root.md#agents-window-の複数フォルダの-session-は別機能vs-code-1140)） |
 | **remote host への委任** | **Experimental**（既定は無効） | `chat.remoteAgentHostsEnabled` と `chat.remoteSessions.tools.enabled`（Agents window のみ）で、`list_agent_hosts`・`create_remote_session`・`get_remote_session`・`send_remote_message` の tool が使える | **元の workspace は clone もコピーもされない**。remote 側でも通常の承認が適用される。remote の**最終回答は自動では転送されない**ので明示的に取得する。調整役の Agents window を開いたまま接続しておく必要がある |
 | MCP の設定の保存先 | 記載なし | global は `$COPILOT_HOME/mcp-config.json`（未設定なら `~/.copilot/mcp-config.json`）、workspace は `.mcp.json` | `.vscode/mcp.json` は workspace の保存先として **deprecated** |
-| OpenTelemetry の identity capture | 記載なし | `github.copilot.chat.otel.captureIdentity` で、`user.name` などを span に加える | **既定はオフ**で、本文の capture とは独立。現時点では **Local harness のみ**に適用（agent host 側は未対応） |
+| OpenTelemetry の identity capture | 記載なし | `github.copilot.chat.otel.captureIdentity` で、`user.name` などを span に加える | **既定はオフ**で、本文の capture とは独立。1.140 時点は **Local harness のみ**に適用（Agent Host 側は [1.141](#vs-code-1141--sandbox-の必須化旧-policy-の移行session-間の指示) で managed setting に対応） |
+
+### VS Code 1.141 — sandbox の必須化・旧 policy の移行・session 間の指示
+
+> **確認日: 2026-10-14**。[VS Code 1.141 release notes](https://code.visualstudio.com/updates/v1_141)（2026-10-07、Stable）に基づきます。1.141.1 は security update ですが、修正内容は個別に列挙されていません。
+
+**統制に関わる変更**から先に確認します。多くは **Agent Host の Copilot harness** が対象で、Local harness の挙動は変わらないものがあります。
+
+| 機能 | 状態 | 内容 | 注意点 |
+|------|------|------|-------|
+| **Agent の sandbox** | 記載なし | `chat.agent.sandbox.enabled`、または session ごとに Permissions メニューの **Sandboxing for terminal** で有効化。Windows・macOS・Linux 対応で、filesystem と network を別々に設定できる。有効時はローカルで起動する MCP server / language server も既定で sandbox に入る | remote session では **remote host 側**で制限され、filesystem のパスは agent が動くマシンのもの。公式は「endpoint security の代わりではない」とし、単独の security boundary とは位置づけていない |
+| **sandbox の必須化** | **Preview** | unified managed settings で `sandbox.enabled: true` と `allowBypass: false` を設定すると、Agent Host で利用者が sandbox を回避できなくなる | CLI / app の `sandbox.failIfUnavailable`（[local sandbox](#組織で必須にする)）とは別のキー。両方を使う場合は面ごとに挙動を確認する |
+| **旧 policy の移行** | 記載なし | 対応する旧 policy は、同じマシンの Agent Host session で実行時に unified managed settings へ変換される。policy の設定自体は書き換わらない | 旧 VS Code の sandbox 設定と device policy は **deprecated**。**`ChatAgentSandboxEnabled` は Agent Host では必須要件ではなく、上書きできる既定値**になった（Local の挙動は変わらない） |
+| **policy の再確認中の挙動** | 記載なし | `forceRemoteSettingsRefresh` で再確認を求められても、選択中の agent が Ask / Edit に切り替わらない。定期の background refresh 中は、最後に受理した policy が有効なまま | 起動時・アカウント変更時・refresh 失敗時は、policy の確認が通るまで送信できない（[強制更新](#managed-settings-の強制更新と最小-client-version2026-10-13)） |
+| **identity の telemetry** | 記載なし | managed の `telemetry.capture.identity: true`（`telemetry.enabled: true` が前提）で、Agent Host の telemetry に OS のユーザー名・ホスト名を付ける | 既定はオフで、個人設定より managed 値が優先。本文の capture とは独立。runtime が直接 export するデータは VS Code 側の設定では制御されない |
+| **複数の GHE への sign-in** | 記載なし | `github-enterprise.uris` に GHE.com / GHES を複数指定できる | `github-enterprise.uri` は deprecated。新しい設定が未設定のときだけ読まれる |
+
+Copilot harness は、VS Code の experiments を有効にした enterprise 利用者から**段階的に既定**になります。旧 policy で sandbox を「必須」にしていた組織は、Agent Host では既定値の扱いに変わるため、`allowBypass: false` を含む unified managed settings へ移してから、実際の session で回避できないことを確認してください。
+
+**session 運用の変更**は次のとおりです。
+
+| 機能 | 内容 | 注意点 |
+|------|------|-------|
+| `send_message` tool | 同じ agent host の session（入れ子の session を含む）の間で、実行中の会話へ修正を差し込む（steer）、別の turn として queue する、queue 済みのメッセージを位置を保って置き換える・取り消す | queue は順番に処理され、**処理が始まったメッセージは置き換えも取り消しもできない**。CLI・Codex の追加指示との比較は [エージェントのコマンド](../dev-methods/agent-commands.md#session-間でメッセージを送る--vs-code-1141-の-send_message) |
+| Worktree cleanup | **Chat: Open Worktree Cleanup** で、使われていない session の worktree の容量を確認・削除する。merge 済み PR の session を自動で片付ける設定もある | active・running・needs-input・pinned の session は対象外。片付けた session は done 扱いになり、後で復元すると worktree が作り直される |
+| Background Shells | Copilot harness の session で、実行中の shell を一覧し出力を見られる | 長時間動くプロセスが残っていないかの確認に使う |
+| 外部の Copilot session | Copilot CLI と Copilot app の新しい会話が、最初の request の後に Agents window へ自動で表示され、続きを VS Code で操作できる | 一覧に出すものは Created In / Created Externally のフィルタで絞る |
+| Codex の引き継ぎ | 同じマシンの ChatGPT app / Codex CLI で始めた Codex chat を、履歴ごと Agents window で続けられる | **同時に送信できるのは 1 つの app だけ**。もう一方の app を終了してから Retry する（[Codex ガイド](../codex/README.md#vs-code-1141-で-codex-chat-を引き継ぐ)） |
+
+session grid、表示密度、session のフィルタ、welcome message などの UI だけの変更は、このページでは扱いません。
 
 ### Copilot CLI 1.0.89〜1.0.91 — instruction の互換・MCP 認証・sandbox
 
@@ -554,6 +583,22 @@ MCP の設定変更は 1.0.93 から turn 間に反映され、1.0.94 では dis
 
 以上は公式変更ログの確認であり、実機での拒否・認証試験は未実施です。OS ごとの通信隔離の限界は上の local sandbox 節を参照してください。出典: [Copilot CLI changelog](https://github.com/github/copilot-cli/blob/main/changelog.md)。
 
+### CLI 1.0.96〜1.0.97 — hook の適用範囲と、無人実行での承認
+
+**提供元: Official / 状態: GA（CLI の正式リリース）**。2026-10-12〜13 の更新から、hook・承認・再開・Plugin に関わるものを抜き出します（2026-10-14 確認）。
+
+| 版・公開日 | 変更 | 導入時に確かめること |
+|---|---|---|
+| 1.0.97・10-13 | custom agent の frontmatter に hook を書ける（**agent-scoped declarative hooks**）。その agent を選んでいる間だけ動き、session・user・repository・plugin・policy の hook に**追加して**実行される | agent 単位の hook で組織の hook を外せるわけではない。CLI 限定の機能で、frontmatter の書式は [hooks reference](https://docs.github.com/en/copilot/reference/hooks-reference) で確認する |
+| 1.0.97 | Autopilot 中に `preToolUse` hook が `ask` を返すと、誰も見ていない承認 dialog で止まらず **deny** になる | 「`ask` なら人に確認してもらえる」と想定した hook は、無人実行ではその操作が実行されない。無人で通したい操作は `allow` の条件として書き分ける |
+| 1.0.97 | `--resume` で plugin の hook を誤った plugin 一覧から組み立てていた問題を修正。repository-local marketplace の plugin の hook は再開後も動き、設定で無効にした plugin の hook は戻らない | 再開前後で、動いている hook の一覧が変わらないか |
+| 1.0.97 | 中断した session を再開すると、中断された tool call を報告し、取り消した書き込みを再実行しない | 再開後の差分を確認してから続ける |
+| 1.0.97 | `/config` の managed permission rule は読み取り専用になり、組織が設定していなければ表示されない | 利用者が `/config` で組織の rule を書き換えられると想定しない |
+| 1.0.96・10-12 | timeline に、各 permission の判定を**誰がしたか**（本人・Assisted Permissions・policy・unattended fallback）を表示 | 自動承認を許した後、どの判定が自動だったかを監査で追える |
+| 1.0.96 | 対話式の sandbox 設定で、環境内の secret の候補を示し、保存前に masking host を追加できる。`/add-dir` で加えたディレクトリは**現在の session に限り** sandbox からアクセスできる | `/add-dir` の許可は保存されない。常に必要なパスは sandbox の設定に書く |
+
+Plugin と MCP の信頼性の修正（`--plugin-dir` の Skill / custom agent の解決、remote marketplace の認証の再試行、tool 一覧の更新時の MCP tool 定義の再確認）は [プラグインの可搬性](../dev-methods/plugin-portability.md#copilot-cli-10961097--plugin-の読み込みと再開時の-hook) にまとめています。以上は公式 release note と docs の確認で、Autopilot での `ask` の扱いなどの実機検証は未実施です。出典: [Copilot CLI v1.0.96](https://github.com/github/copilot-cli/releases/tag/v1.0.96)、[v1.0.97](https://github.com/github/copilot-cli/releases/tag/v1.0.97)。
+
 ### Agentic CLI の customization 利用指標
 
 2026-09-17、Copilot usage metrics API に CLI の Skill / custom agent / MCP / slash command / Plugin 指標が加わりました。
@@ -573,7 +618,27 @@ MCP の設定変更は 1.0.93 から turn 間に反映され、1.0.94 では dis
 
 2026-09-22、GitHub は Copilot app のエージェント session を OpenTelemetry で観測できるようになったと発表しました。Enterprise 管理者が `managed-settings.json` の `telemetry` で export と OTLP endpoint を設定します。session 内の model / tool 呼び出しを追う trace、token 等の metric、個別 action の event が対象です。**prompt・response・tool 引数の本文は既定で除外**され、`captureContent` を有効にすると機密情報を含み得るため、監視基盤への送信前に確認が必要です。
 
-上の usage metrics API は 1 日・28 日の**利用集計**、この OTel は個々の session の**実行経路**です。[管理設定リファレンス](https://docs.github.com/en/copilot/reference/enterprise-administrators/enterprise-managed-settings#telemetry)にはまだ対応クライアントとして CLI / VS Code だけが列記されています（2026-09-23 確認）。app 向けの新しい発表と記述が揃うまで、対象バージョン・設定値・collector への到着を確認してください。製品横断の観測データ比較は[ハーネス解説](../dev-methods/harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions)にまとめています。
+上の usage metrics API は 1 日・28 日の**利用集計**、この OTel は個々の session の**実行経路**です。2026-09-23 の確認時点では、[管理設定リファレンス](https://docs.github.com/en/copilot/reference/enterprise-administrators/enterprise-managed-settings#telemetry)に対応クライアントとして CLI / VS Code だけが列記されていました。2026-10-12 の変更ログ（下記）は app を対象に含めていますが、導入時は対象バージョン・設定値・collector への到着を確認してください。製品横断の観測データ比較は[ハーネス解説](../dev-methods/harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions)にまとめています。
+
+#### 誰の操作かを付ける・本文を種類ごとに取る（2026-10-12）
+
+2026-10-12 の [GitHub 公式変更ログ](https://github.blog/changelog/2026-10-12-client-telemetry-user-attribution-and-configurable-capture)で、managed settings の `telemetry` に、**prompt や応答を集めずに利用者を特定する設定**と、本文を種類ごとに取る設定が加わりました。対象は **Copilot CLI、Copilot app、Agent Host を使う VS Code の session**です。
+
+| 設定・capture class | 付く・取られる内容 | 既定 |
+|------|------------------|------|
+| `telemetry.capture.identity` | `user.name`（Copilot の認証アカウント。現在は GitHub login）、`process.user.name`（OS のアカウント）、`host.name`（マシン名） | オフ |
+| `prompts` | user / system / developer の prompt と、対応する入力 context | オフ |
+| `responses` | 応答と、対応する reasoning の内容 | オフ |
+| `toolArguments` | tool の生の引数・コマンド・schema、tool・MCP server・plugin・hook の識別子 | オフ |
+| `toolOutput` | tool の結果と実行エラーの詳細 | オフ |
+| `policyDetail` | sandbox の filesystem のパスなど、policy の生の詳細 | オフ |
+
+- identity は既存の仮名の利用者 ID とは別の属性です。
+- **managed で明示した値は、ローカルの設定・SDK の設定・環境変数より優先**されます。
+- 従来の `captureContent` は 5 種類の本文をまとめて有効にする省略形として残りますが、**identity は有効にしません**。上の段落の `captureContent` の説明は、この 5 種類のことです。
+- prompt・tool・policy の内容には、ソースコード、ファイルの内容、コマンド、workspace や利用者のプロファイルのパスが入り得ます。**監査に必要な種類だけ**を有効にし、承認済みの collector にだけ送ります。identity を付けると個人と操作が結び付くため、社内の個人情報の扱いの規程も確認してください。
+
+VS Code の Agent Host では、1.141 の managed setting として同じ `telemetry.capture.identity` が使えます（[VS Code 1.141](#vs-code-1141--sandbox-の必須化旧-policy-の移行session-間の指示)）。1.140 の `github.copilot.chat.otel.captureIdentity` は Local harness 向けの VS Code の設定で、managed settings のキーとは別のものです。
 
 ---
 
@@ -676,6 +741,28 @@ GitHub Copilot for JetBrains では、2026-09-08 に **enterprise managed sandbo
 
 修正は `.github-private` repository の **default branch へ commit** し、Agents ページを再読み込みしてから validator の結果を再確認します。「file を置いた」ことではなく「validator がエラーを出さない」ことを適用確認の最低ラインにしてください。
 
+### managed settings の強制更新と最小 client version（2026-10-13）
+
+2026-10-13 の [GitHub 公式変更ログ](https://github.blog/changelog/2026-10-13-enterprise-managed-settings-enforcement-updates)で、managed settings の**適用を確実にする**ための変更が 2 つ発表されました（状態の表記は Improvement で、Preview の記載はありません）。
+
+**1. 起動時に policy の再取得を必須にする — `forceRemoteSettingsRefresh: true`**
+
+| 項目 | 内容 |
+|------|------|
+| 対象 client | **Copilot CLI、VS Code、Copilot app**（JetBrains と cloud agent は記載なし） |
+| 配布方法 | server-managed・MDM・ファイルのいずれでも設定できる |
+| 効き始め | MDM / ファイルで配った場合は、client の**初回 sign-in の前から**再取得を求められる。server-managed の場合は、client が一度その値を受け取った**後の起動から**有効になる |
+| 有効時 | cache の応答では要件を満たせない。現在の policy を確認できない client は、古い・未確認の policy で動かず **fail-closed** になる |
+| 未設定時 | 従来どおり cache を使い、起動を速くし、一時的な障害でも使い続けられる |
+
+これは**可用性とのトレードオフ**です。GitHub に接続できない環境（障害時、閉じたネットワーク）では Copilot が使えなくなるため、厳格さが必要な組織・端末に絞って設定し、障害時の連絡手順を決めてから有効にします。VS Code 1.141 では、確認中も選択中の agent が保たれ、定期の再取得中は最後に受理した policy が有効なままになります（[VS Code 1.141](#vs-code-1141--sandbox-の必須化旧-policy-の移行session-間の指示)）。
+
+**2. `sandbox` キーを使うと最小 client version が強制される**
+
+managed settings に `sandbox` キー（[local sandbox](#組織で必須にする) の設定）を含めると、それに対応する最小の client version が求められ、**古い版に固定している利用者は更新するまで Copilot を使えません**。具体的な版の番号は変更ログに書かれていないため、[managed settings の docs](https://docs.github.com/en/enterprise-cloud@latest/copilot/reference/enterprise-administrators/enterprise-managed-settings) で確認してください。GitHub は、統制に関わる他のキーにも順次最小 version を加えるとしています（対象のキーと時期は未公表）。
+
+`sandbox` キーを配る前に、端末の client の版を棚卸しし、更新の配布と同時か後に policy を配る順序にします。版を固定する運用（社内で検証済みの版だけを配るなど）をしている組織は、新しいキーを使い始める前にその版が要件を満たすかを確かめてください。
+
 ### Copilot CLI の別経路にも managed settings が効く — 1.0.87 / 1.0.88
 
 Copilot CLI は、ターミナルで対話する使い方のほかに、エディタや別のアプリから**プロトコル経由で起動される**ことがあります。1.0.88（2026-09-22）の changelog は、次の経路で起動したセッションにも enterprise managed settings が適用されるようになったと記載しています。**それより前の版では、これらのセッションは managed の MCP・permission・plugin の policy なしで動いていました**。
@@ -712,6 +799,18 @@ Copilot CLI は、ターミナルで対話する使い方のほかに、エデ�
 | 以前のメッセージの再編集 | Copilot agent session で過去のユーザーメッセージを再編集できる。置き換えを送信する前に、会話とファイル変更がその地点まで巻き戻されるため、残したい変更は事前に確認する |
 
 JetBrains Gateway / リモート開発環境では、inline chat とその入口が非表示になりました。通常の JetBrains IDE の説明をリモート環境にそのまま当てはめないでください。
+
+### JetBrains（2026-10-10）— MCP を自動で起動しない・既定モデルを管理する
+
+2026-10-10 の [GitHub 公式発表](https://github.blog/changelog/2026-10-10-new-controls-and-chat-improvements-in-copilot-for-jetbrains)で、Copilot for JetBrains に次の制御が加わりました（発表には plugin の版の番号がなく、JetBrains Marketplace の最新版が対象です）。
+
+| 変更 | 内容 | 利用時の注意 |
+|------|------|--------------|
+| **MCP server の自動起動を止める設定** | Copilot と Claude の agent について、設定済みの MCP server を自動で起動しないようにできる。tool が有効になるタイミングを利用者が決められる | 起動しないことと、組織の MCP allowlist で許可しないことは別。使わせたくない server は allowlist 側で止める |
+| **managed default model** | enterprise 管理者が、新しい会話の既定モデルを設定できる | 利用者が明示的に別のモデルを選ぶことはできる。モデルの利用可否の制限ではない |
+| 診断からの Fix | intention menu の Fix から inline chat を開き、修正を依頼できる（使えれば agent mode、なければ ask mode） | agent mode では編集が伴うため、通常の承認の設定が適用されることを確認する |
+
+**JetBrains IDE 2025.1 のサポートは終了**し、2025.2 以降が必要になりました。古い IDE を固定している環境では、plugin の更新が止まる点に注意してください。
 
 ---
 
@@ -1157,6 +1256,11 @@ Copilot では、モデルピッカーのモデルが短い間隔で入れ替わ
 - [Enterprise managed settings reference](https://docs.github.com/en/enterprise-cloud@latest/copilot/reference/enterprise-administrators/enterprise-managed-settings) — 規則の優先順位、対象面、サンドボックス設定（公式）
 - [Enterprise managed sandbox in Copilot for JetBrains](https://github.blog/changelog/2026-09-08-enterprise-managed-sandbox-in-copilot-for-jetbrains/) — JetBrains の managed sandbox Public Preview（公式・2026-09-08）
 - [New features and improvements in Copilot for JetBrains](https://github.blog/changelog/2026-09-22-new-features-and-improvements-in-copilot-for-jetbrains/) — JetBrains 1.18.0 の assisted approvals・共有 Skill・MCP 制御（公式・2026-09-22）
+- [New controls and chat improvements in Copilot for JetBrains](https://github.blog/changelog/2026-10-10-new-controls-and-chat-improvements-in-copilot-for-jetbrains) — MCP の自動起動の無効化、managed default model、IDE 2025.1 のサポート終了（GitHub 公式・2026-10-10）
+- [Client telemetry user attribution and configurable capture](https://github.blog/changelog/2026-10-12-client-telemetry-user-attribution-and-configurable-capture) — `telemetry.capture.identity` と 5 種類の capture class（GitHub 公式・2026-10-12）
+- [Enterprise managed settings enforcement updates](https://github.blog/changelog/2026-10-13-enterprise-managed-settings-enforcement-updates) — `forceRemoteSettingsRefresh` と `sandbox` キーの最小 client version（GitHub 公式・2026-10-13）
+- [VS Code 1.141 release notes](https://code.visualstudio.com/updates/v1_141) — Agent の sandbox と必須化（Preview）、旧 policy の移行、`send_message`、Worktree cleanup、外部 session と Codex の引き継ぎ（Microsoft 公式・2026-10-07）
+- [Copilot CLI v1.0.96](https://github.com/github/copilot-cli/releases/tag/v1.0.96) ／ [v1.0.97](https://github.com/github/copilot-cli/releases/tag/v1.0.97) ／ [Hooks reference](https://docs.github.com/en/copilot/reference/hooks-reference) — permission の判定主体の表示、agent-scoped hooks、Autopilot での `ask` の扱い、再開時の plugin hook（GitHub 公式・2026-10-12〜13）
 - [Content exclusions generally available in Copilot app and CLI](https://github.blog/changelog/2026-09-02-content-exclusions-generally-available-in-copilot-app-and-cli/) — app / CLI での GA（公式・2026-09-02）
 - [Content exclusion for GitHub Copilot](https://docs.github.com/en/copilot/concepts/context/content-exclusion) — 対応面・非対応面と制限の一次情報（公式）
 

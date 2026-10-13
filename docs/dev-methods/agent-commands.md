@@ -1,6 +1,6 @@
 # 作業中のエージェントへの指示の出し分け
 
-> **対象ツール**: ツール横断（Claude Code・Codex CLI・GitHub Copilot CLI） ｜ **実行環境**: CLI（ターミナル） / Chat UI（Codex desktop） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-13
+> **対象ツール**: ツール横断（Claude Code・Codex CLI・GitHub Copilot CLI） ｜ **実行環境**: CLI（ターミナル） / Chat UI（Codex desktop） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-14
 
 > コーディングエージェントに長い作業を任せると、途中で「条件を足したい」「次にこれも頼みたい」「今の変更の理由だけ聞きたい」という場面が必ず出てきます。3 つとも同じ入力欄に打ち込めますが、**どこへ届くか**はキー操作とコマンドで変わります。このページでは、実行中の追加指示（steer / queue）、作業を汚さない質問（サイドチャット / `/btw`）、完了条件を固定する `/goal` を、3 ツール共通の考え方と各ツールの差分に分けて整理します。
 >
@@ -71,6 +71,21 @@
 | Codex CLI 0.162.0 Code Mode（10-08） | ranked tool search は opt-in。必要な tool を発見して使う仕組みで、常時すべての tool が見えている前提で指示を書かない | Official / Stable release 内の opt-in 機能 |
 
 条件を追加した後は、対象 agent が受け取ったかと、生成物・差分へ反映されたかを別々に確かめます。tool が見つからない場合も、未導入・policy 拒否・認証不足・未発見を区別してください。出典: [Copilot CLI changelog](https://github.com/github/copilot-cli/blob/main/changelog.md)、[OpenAI release notes（Faster steering）](https://openai.com/products/release-notes/)、[Codex 0.162.0](https://github.com/openai/codex/releases/tag/rust-v0.162.0)。
+
+### session 間でメッセージを送る — VS Code 1.141 の send_message
+
+VS Code 1.141（2026-10-07、Stable）では、**エージェント自身が**同じ agent host 上の別の session（入れ子の session を含む）へメッセージを送れる `send_message` tool が加わりました。上の表は人が送る追加指示ですが、こちらは調整役のエージェントが他の session を操作する経路です。
+
+| 操作 | 意味 | 注意 |
+|------|------|------|
+| steer | 実行中の会話へ修正を差し込む | 上の Copilot CLI と同じく、即時中断の保証ではない |
+| queue | 別の turn として後ろに並べる | queue は順番に処理される |
+| replace | queue 済みのメッセージを、位置を保って置き換える | **処理が始まったメッセージは置き換えられない** |
+| cancel | queue 済みのメッセージを取り消す | 処理が始まった後は取り消せない |
+
+Codex desktop の Follow-up behavior（steer / queue の選択）は**人が送る追加メッセージ**の扱いを決める設定で、`send_message` はエージェント間の tool です。同じ steer / queue という言葉でも、送り手と設定の場所が違います。エージェントが他の session を操作できるようにする場合は、どの session に送ったかを後で追えるよう、送信先と内容を記録として残してください。出典: [VS Code 1.141 release notes](https://code.visualstudio.com/updates/v1_141)（2026-10-14 確認）。
+
+Copilot CLI 1.0.96（2026-10-12）では、timeline に各 permission を**誰が判定したか**（本人・Assisted Permissions・policy・unattended fallback）が表示されます。追加指示の後に操作が自動で承認されたかどうかも、ここで確認できます。
 
 ## サイドチャットで「説明を聞く場所」を分ける
 
