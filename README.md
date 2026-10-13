@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-10-13** [10-03〜10-10 の最新動向](docs/trends.md#2026-10-0310-10-の更新--workflow-と権限の引き継ぎ)を反映。Dynamic Workflows、各 CLI の権限・MCP・フック、Plugin RBAC と追加指示を整理。
 - **2026-10-11** [Skill の公開・共有ガイド](docs/dev-methods/skill-publishing.md)を追加。配布方法の選び方、複数 Skill / Plugin の構成、Codex 向け GitHub カタログの登録・導入・更新と公開条件を整理。
 - **2026-10-10** [dots と定期作業の選び方](docs/codex/README.md#個人の定期作業dotsteam-tasksを選ぶ)を公式資料で更新。Codexとの役割分担、クラウド／ローカルの接続・権限、モバイル作成を整理し、入口からの導線を追加。
 - **2026-10-10** [Claude Code コマンド一覧](docs/claude-code/commands.md)を公式と照合し、`/plan`・`/goal`・`/subtask`・`/background`・`/ultrareview` などを追加。[事務・バックオフィス活用ガイド](docs/business/office-work.md)のファイル作成の既定値を更新。
 - **2026-10-10** [AI コードレビューはどの指示を読むか](docs/dev-methods/review-instructions.md)を追加し、Copilot code review（head）と Claude Code Code Review（`CLAUDE.md` は base）の参照元の違いと、レビュー基準を変えるときの検証・承認の手順を整理。
-- **2026-10-09** [MCP Events](docs/dev-methods/mcp-events.md#購読から解除までの流れ)に購読から解除までのサーバー側の流れを、[MCP Apps](docs/dev-methods/mcp-apps.md#chatgpt-固有の拡張--plugin-extensions)に Plugin Extensions の残りの種類を追加（PR #231 から移植）。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 

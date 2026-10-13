@@ -1,6 +1,6 @@
 # プラグインの可搬性 — インストール前に `plugin.json` を見る
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・Cursor・Kiro ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-11
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・Cursor・Kiro ほか） ｜ **実行環境**: IDE / CLI / Chat UI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-13
 
 > 「マルチエージェント対応」と書かれた Plugin が、実際に他のエージェントへ持っていけるとは限りません。ベンダー中立のオープン標準 **Agent Plugins 1.0.0** に乗っているかどうかは、`plugin.json` を 1 つ開けば判定できます。このページは、その判定手順と、判定した結果で何が変わるかを 1 か所にまとめた解説です。標準そのものの成り立ちと各ツールの対応状況は [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準)、Copilot での操作手順は [GitHub Copilot Plugins](../copilot/plugins.md) を参照してください。
 
@@ -152,6 +152,14 @@ Agent Plugins 1.0.0 が標準化しているのは、Plugin に**何を同梱す
 **→ 導入前に何を確認するか、組織でどう絞り込むかは [Skill / Plugin のセキュリティ](skill-security.md) を参照**
 
 ---
+
+### ChatGPT の Plugin access を role ごとに決める
+
+**提供元: Official / 状態: GA（2026-10-08）**。RBAC を有効にした ChatGPT Enterprise / Edu では、workspace owner / admin が Plugin access の既定を `Available` / `Install` / `Disabled` に設定できます。custom role では個別の値、または workspace の既定を継承する `Default` を選びます。
+
+Admin console で ChatGPT workspace → Plugins → 対象 Plugin を開き、Plugin access と対応する required-app permission を一緒に確認・保存します。ただし、**app action setting・操作の承認・provider authorization は引き続き別に適用**されます。Plugin を導入できることと、その Plugin が外部データを変更できることは同じではありません。
+
+Copilot CLI でも、1.0.94 の discovery 前の MCP enable / disable、1.0.95 の managed plugin setup 再試行の変更があります。配布形式だけで動作を判断せず、client の policy 適用・有効な server・認証を確認してください。出典: [OpenAI release notes（Manage plugin access by role）](https://openai.com/products/release-notes/)、[Copilot CLI changelog](https://github.com/github/copilot-cli/blob/main/changelog.md)（2026-10-13 確認。管理画面の実操作は未検証）。
 
 ## 関連ドキュメント
 

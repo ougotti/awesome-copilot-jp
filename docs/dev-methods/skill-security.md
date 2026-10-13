@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-08
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-13
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -214,7 +214,19 @@ Claude Code 2.1.292（2026-10-06）では、ネットワーク（UNC）パスの
 
 ### 自然言語の判断と、強制する制御を分ける
 
-Claude Code の `prompt` / `agent` フックは、モデルが自然言語の条件を解釈して許可・拒否を決めます。2.1.294（2026-10-08）では、「〜をブロックせよ」のような**命令文で書いたフックが、本来ブロックすべき操作を通していた**問題が修正されました。モデルの判断は言い回し・版・入力で変わり得るうえ、出力が壊れた場合やタイムアウト時にどちらへ倒れるかも公式には記載がありません。**必ず止めたい操作は、permission ルール・`command` フック・managed settings・sandbox で止め**、自然言語のフックは補助的なチェックに使います。**→ [Claude Code のカスタマイズ機能](../claude-code/basics.md#自然言語のフックは書き方で結果が変わる--21294-の修正)**
+Claude Code の `prompt` / `agent` フックは、モデルが自然言語の条件を解釈して許可・拒否を決めます。2.1.294（2026-10-08）では、「〜をブロックせよ」のような**命令文で書いたフックが、本来ブロックすべき操作を通していた**問題が修正されました。モデルの判断は言い回し・版・入力で変わり得ます。`prompt` / `agent` の不正出力・タイムアウト・モデルエラーの未確認範囲と、2.1.295 から `command` / `http` で明示できる `onFailure: "block"` を区別してください。**必ず止めたい操作は、permission ルール・`command` フック・managed settings・sandbox で止め**、自然言語のフックは補助的なチェックに使います。**→ [Claude Code のカスタマイズ機能](../claude-code/basics.md#自然言語のフックは書き方で結果が変わる--21294-の修正)**
+
+### 2026-10-03〜10-10 の権限境界の更新
+
+2026-10-13 に公式資料を再確認しました。各 CLI は Official / GA（正式 release）ですが、OS・実行場所ごとの保証まで共通ではありません。
+
+| 層 | 変更と運用上の意味 | 詳細・一次情報 |
+|---|---|---|
+| hook の実行失敗 | Claude Code 2.1.295 の `onFailure: "block"` は同期 command / HTTP hook の失敗を止める。Stop 系・background hook は対象外。2.1.296 は managed denial / turn 終了 / MCP 出力更新を修正 | [Claude Code](../claude-code/basics.md#フックの実行失敗も止める--2129521296)、[Hooks reference](https://code.claude.com/docs/en/hooks#block-the-action-when-a-hook-fails) |
+| token と network | Copilot CLI 1.0.92〜1.0.95 は ambient token、managed domain 上限、Assisted Permissions、credential 注入先を別々に制御する | [Copilot CLI](../copilot/README.md#cli-10921095--token通信先承認を別々に制御する)、[changelog](https://github.com/github/copilot-cli/blob/main/changelog.md) |
+| 権限の引き継ぎ | Codex 0.161〜0.162 は escalation 後の denied read / network と、background task 開始時の権限を維持。Linux sandbox 構築・Windows temp の修正は分けて確認する | [Codex CLI](../codex/README.md#codex-cli-0160101621--権限を維持して再開する)、[0.161.0](https://github.com/openai/codex/releases/tag/rust-v0.161.0)・[0.162.0](https://github.com/openai/codex/releases/tag/rust-v0.162.0) |
+
+managed policy を利用者の設定や起動 flag で弱められると想定せず、許可ケースと拒否ケースの両方を試してください。
 
 ### ローカルモデル・offline・telemetry は別の境界
 

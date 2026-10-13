@@ -1,6 +1,6 @@
 # 長時間タスクの信頼性設計
 
-> **対象ツール**: ツール横断（Claude Code・Codex・MCP・LangGraph ほか） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-08
+> **対象ツール**: ツール横断（Claude Code・Codex・MCP・LangGraph ほか） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-13
 
 > [ループエンジニアリング](loop-engineering.md)はエージェントを反復実行する方法と停止条件を、[AI エージェントの実行基盤（ハーネス）](harness.md)は実行環境を扱います。このページはその間にある、**長時間・多段階の仕事で小さな失敗が累積する問題**と、それを抑える信頼性設計を扱います。評価ツールや telemetry の網羅ではなく、**実行中の故障を前提にした** checkpoint・再開・冪等性・検証・reliability budget が対象です。
 
@@ -150,6 +150,20 @@ Anthropic の実利用データは、経験を積んだ利用者ほど「操作�
 memory は**更新・削除できる repository 固有の文脈**として扱い、組織の正式な規約の代わりにしません。誤った修正 pattern が保存されていないかを定期的に確認し、見つけたら削除・訂正します。「以前うまくいった修正」を根拠に後続のタスクを無確認で進めないことが、[8 節](#8-reliability-budget-と段階的な人間承認)の reliability budget の考え方と一致します。
 
 **→ 統制と監査の観点は [Skill / Plugin のセキュリティ](skill-security.md#学習した-memory-を-policy-とみなさない) を参照**
+
+### Workflow と MCP の再開を検証する
+
+2026-10-03〜10-10 の更新を運用へ入れる際は、次の観測を分けます（2026-10-13 確認）。これは検証計画で、実測済みの成績ではありません。
+
+| 対象 | 更新内容と検証する失敗条件 |
+|---|---|
+| Claude Managed Agents Dynamic Workflows（Official / Preview） | run の `completed` は業務結果の成功を意味しない。thread の失敗・不足成果物を検出し、再開前に外部書き込みの処理 ID と checkpoint を照合する |
+| Claude Code 2.1.295（Official / GA） | headless / SDK の remote MCP を一時切断し、再接続と backoff を確認。同じ pagination cursor の反復で進捗が止まらないか確認する |
+| Claude Code 2.1.296（Official / GA） | `CLAUDE_CODE_RESUME_INTERRUPTED_TURN` 使用時、MCP result で完了済みの turn を再開しても、同じ副作用が再実行されないことを確認する |
+| Claude Code の subagent | `autoCompactWindow` で早く圧縮しても、完了条件・参照 artifact・未処理項目が残るか確認。forked Skill の結果が呼び出した workflow subagent に戻るか確認する |
+| Copilot CLI 1.0.93〜1.0.95（Official / GA） | turn 間の MCP 設定更新・認証の再取得後に利用可能 tool を確認。managed plugin setup の再試行待ちと恒久的な policy 拒否を分ける |
+
+出典: [Workflow runs](https://platform.claude.com/docs/en/managed-agents/workflow-runs)、[Claude Code 2.1.295](https://github.com/anthropics/claude-code/releases/tag/v2.1.295)・[2.1.296](https://github.com/anthropics/claude-code/releases/tag/v2.1.296)、[Copilot CLI changelog](https://github.com/github/copilot-cli/blob/main/changelog.md)。run の追跡・停止条件は [ループエンジニアリング](loop-engineering.md#background-workflow-run-の終了を追う)へ。
 
 ## 10. 最小テストシナリオ
 

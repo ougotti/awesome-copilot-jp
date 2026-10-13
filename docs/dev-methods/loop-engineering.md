@@ -1,6 +1,6 @@
 # ループエンジニアリング
 
-> **対象ツール**: ツール横断（Claude Code・Codex 等） ｜ **実行環境**: CLI / IDE（デスクトップ） / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-20
+> **対象ツール**: ツール横断（Claude Code・Codex 等） ｜ **実行環境**: CLI / IDE（デスクトップ） / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-13
 
 > エージェントに毎ターン指示を出す代わりに、**エージェントに指示を出し続ける「ループ」の側を設計する**実践を **ループエンジニアリング（loop engineering）** と呼びます。2026-06-07 に Addy Osmani（Google Chrome）が [Loop Engineering](https://addyosmani.com/blog/loop-engineering/) で命名しました。このページは概念、ループの構成要素、停止条件の作り方、そして落とし穴をまとめた解説です。ループが動く土台については [AI エージェントの実行基盤（ハーネス）](harness.md) を参照してください。
 
@@ -162,6 +162,23 @@ Claude Messages API の `compact-2026-09-04` beta は、アプリが選んだ時
 これは **Claude API を使うアプリが compaction の timing と message 構成を管理する beta** です。OpenAI Agents API が managed Codex harness の機能として提供する context compaction とは責任主体が違います。またこの on-demand 方式は、公式文書上 Amazon Bedrock / Google Cloud では利用できません。
 
 ---
+
+### Background workflow run の終了を追う
+
+Claude Managed Agents の [Dynamic Workflows](harness.md#claude-managed-agents-の-dynamic-workflows)（Official / Preview、2026-10-09 公開）は、session 内で複数の run を同時に保持できます。追跡には polling ではなく session の **event stream** を使い、`workflow_run_id` で区別します。
+
+| 観測するもの | 判断 |
+|---|---|
+| `workflow_run.created` | run が開いた。宣言した phase と ID を記録する |
+| `workflow_run.phase_started` / `phase_ended` | phase の進捗。phase の終了だけでは作業成功と判定しない |
+| `workflow_run.status_idle` | 一時停止。予算などの理由を別途確認する |
+| `workflow_run.status_ended` | run の終了。`result` を読む。`completed` でも各 thread の失敗や成果物を確認する |
+
+ユーザーが event を送るだけでは run は終了しません。session の archive は終了手段になり得ます。interrupt・budget による pause・archive を同じ停止として扱わず、再開する run と廃止する run を明示します。
+
+2026-10-13 の公式記載では、1 run の同時稼働 thread は 64（API の保証値ではなく変更され得る）、起動する agent は生涯 1,000、寿命は既定 24 時間です。pause 中も寿命は進みます。session budget 到達時は open run が一時停止しますが、各 thread の進行中 model request 分は超過し得ます。Managed Agents endpoint と Messages API の rate limit は別に効くため、他の通信も含めて余裕を確保します。運用前に [Budgets and limits](https://platform.claude.com/docs/en/managed-agents/workflow-runs#budgets-and-limits) の最新値を確認してください。
+
+本ガイドでは、外部への書き込み前に checkpoint と一意な処理 ID を保存し、再開時に処理済みか確認する運用を推奨します。server の background 実行は外部サービスの exactly-once を保証しません。出典: [Workflow runs](https://platform.claude.com/docs/en/managed-agents/workflow-runs)（API 実行は未検証）。
 
 ## 停止条件の作り方
 

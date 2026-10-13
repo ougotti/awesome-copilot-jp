@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-10
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-13
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -536,6 +536,23 @@ credential は、sandbox 内のツールには**プレースホルダー**が渡
 - リモートの MCP サーバーや、sandbox の外で実行する例外を承認したコマンドは、sandbox の対象外として別に管理する。
 
 > **別の sandbox 設定と混同しないでください。** local sandbox は利用者のマシン上で動くツールを制限するものです。GitHub がホストする **cloud sandbox**（Public Preview、組織の「Cloud Sandbox access」ポリシーで有効化、既定は無効、利用量に応じて課金）とは別物です。公式の概念ページは、local sandbox が cloud agent・remote host・Dev Container に適用されるかを記載していません。JetBrains の managed sandbox（Public Preview）も別機能で、今回の GA の対象ではありません。実行場所ごとの比較は [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#実行場所ごとの隔離境界を分ける) を参照してください。
+
+### CLI 1.0.92〜1.0.95 — token・通信先・承認を別々に制御する
+
+**提供元: Official / 状態: GA（CLI の正式リリース）**。local sandbox の GA に加え、2026-10-05〜09 の CLI 更新では次の境界が変わりました（2026-10-13 確認）。
+
+| 版・公開日 | 変更 | 導入時に確かめること |
+|---|---|---|
+| 1.0.92・10-05 | sandbox の shell に ambient `GITHUB_TOKEN` を明示設定なしでは渡さない | 親プロセスに token があるだけで shell が認証できると想定しない |
+| 1.0.93・10-07 | enterprise の `permissions.limitTo` で managed network domain 境界を設定 | 利用者側の許可と組織の上限を分け、上限外の通信が拒否されることを確認 |
+| 1.0.94・10-08 | managed policy で Assisted Permissions を無効化し Manual Approval を維持できる。起動時の bypass flag が抑止されたら警告する | CLI flag が managed policy を上書きすると想定しない |
+| 1.0.95・10-09 | `copilot config` が sandbox credential の `injectHosts` を扱う | credential を注入する host と、通信自体を許す domain は別の設定 |
+
+1.0.92 から `copilot config` で設定の一覧・読み取り・設定・削除を扱えます。**1.0.93 以降の user settings は `~/.copilot/settings.json`** に置きます。`~/.copilot/config.json` の user-setting key は無視されるため、既存設定の移行ではファイルに残っていることと実際に適用されることを分けて確認してください。
+
+MCP の設定変更は 1.0.93 から turn 間に反映され、1.0.94 では discovery 前にも server を起動せず enable / disable できます。1.0.95 の managed plugin setup の再試行は毎回のメッセージ失敗時ではなく、1 時間ごと、または policy 変更後です。設定後は次の turn の server 一覧と実際の呼び出し可否を確認します。
+
+以上は公式変更ログの確認であり、実機での拒否・認証試験は未実施です。OS ごとの通信隔離の限界は上の local sandbox 節を参照してください。出典: [Copilot CLI changelog](https://github.com/github/copilot-cli/blob/main/changelog.md)。
 
 ### Agentic CLI の customization 利用指標
 

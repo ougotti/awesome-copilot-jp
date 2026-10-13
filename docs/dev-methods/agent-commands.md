@@ -1,6 +1,6 @@
 # 作業中のエージェントへの指示の出し分け
 
-> **対象ツール**: ツール横断（Claude Code・Codex CLI・GitHub Copilot CLI） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-28
+> **対象ツール**: ツール横断（Claude Code・Codex CLI・GitHub Copilot CLI） ｜ **実行環境**: CLI（ターミナル） / Chat UI（Codex desktop） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-13
 
 > コーディングエージェントに長い作業を任せると、途中で「条件を足したい」「次にこれも頼みたい」「今の変更の理由だけ聞きたい」という場面が必ず出てきます。3 つとも同じ入力欄に打ち込めますが、**どこへ届くか**はキー操作とコマンドで変わります。このページでは、実行中の追加指示（steer / queue）、作業を汚さない質問（サイドチャット / `/btw`）、完了条件を固定する `/goal` を、3 ツール共通の考え方と各ツールの差分に分けて整理します。
 >
@@ -59,6 +59,18 @@
 | **方針自体が間違っているなら止める** | 途中の steer で大きく方向転換すると、前半の変更が残ったまま進む | `Esc` で止め、巻き戻し（上表）で前の時点へ戻してから指示し直す |
 
 ---
+
+### Background agent への追加指示と tool の発見
+
+この節は 2026-10-13 に確認した 10-05〜10-08 の更新です。上の CLI キー対応表の確認日とは分けて読んでください。
+
+| 対象 | 変更・選び方 | 提供元・状態 |
+|---|---|---|
+| Copilot CLI 1.0.92（10-05） | 稼働中の background agent への message は、次の処理可能なタイミングで active turn を steer する。即時中断や未実行の保証ではない | Official / GA |
+| Codex desktop（10-08） | faster steering の展開。Settings → General → Follow-up behavior で、追加メッセージを現在の実行へ送るか次へ待たせるかを選ぶ。CLI のキー表とは別の設定 | Official / GA（展開中） |
+| Codex CLI 0.162.0 Code Mode（10-08） | ranked tool search は opt-in。必要な tool を発見して使う仕組みで、常時すべての tool が見えている前提で指示を書かない | Official / Stable release 内の opt-in 機能 |
+
+条件を追加した後は、対象 agent が受け取ったかと、生成物・差分へ反映されたかを別々に確かめます。tool が見つからない場合も、未導入・policy 拒否・認証不足・未発見を区別してください。出典: [Copilot CLI changelog](https://github.com/github/copilot-cli/blob/main/changelog.md)、[OpenAI release notes（Faster steering）](https://openai.com/products/release-notes/)、[Codex 0.162.0](https://github.com/openai/codex/releases/tag/rust-v0.162.0)。
 
 ## サイドチャットで「説明を聞く場所」を分ける
 
