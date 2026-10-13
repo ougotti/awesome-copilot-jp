@@ -23,6 +23,7 @@
 - **2026-10-11** [Skill の公開・共有ガイド](docs/dev-methods/skill-publishing.md)を追加。配布方法の選び方、複数 Skill / Plugin の構成、Codex 向け GitHub カタログの登録・導入・更新と公開条件を整理。
 - **2026-10-10** [dots と定期作業の選び方](docs/codex/README.md#個人の定期作業dotsteam-tasksを選ぶ)を公式資料で更新。Codexとの役割分担、クラウド／ローカルの接続・権限、モバイル作成を整理し、入口からの導線を追加。
 - **2026-10-10** [Claude Code コマンド一覧](docs/claude-code/commands.md)を公式と照合し、`/plan`・`/goal`・`/subtask`・`/background`・`/ultrareview` などを追加。[事務・バックオフィス活用ガイド](docs/business/office-work.md)のファイル作成の既定値を更新。
+
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
 ---
