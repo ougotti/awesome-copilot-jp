@@ -4,6 +4,11 @@
 
 ## 2026-10
 
+- **2026-10-14** 2026-10-10〜10-14 の最新動向を反映（#260）。
+  - [GitHub Copilot ガイド](docs/copilot/README.md#managed-settings-の強制更新と最小-client-version2026-10-13)に、managed settings の `forceRemoteSettingsRefresh`（fail-closed）と `sandbox` キーの最小 client version、telemetry の identity と 5 種類の capture class を追加した。
+  - VS Code 1.141 の sandbox 必須化（Preview）・旧 policy の移行・`send_message`・Worktree cleanup・Codex の引き継ぎ、Copilot CLI 1.0.96〜1.0.97 の agent 単位の hook と Autopilot での `ask` の扱い、JetBrains の MCP 自動起動の無効化を製品ページと横断ページへ追加した。
+  - Claude Code・Claude Platform・Codex・MCP は期間中に新しい正式 release がないことを確認した。release note と docs の照合のみで、実機での拒否・引き継ぎの検証は未実施と明記した。
+
 - **2026-10-13** 2026-10-03〜10-10 の最新動向を反映（#253）。
   - [Claude Managed Agents Dynamic Workflows](docs/dev-methods/harness.md#claude-managed-agents-の-dynamic-workflows)を Copilot / Claude Code と比較し、event stream、停止・予算・参照版の固定、再開時の検証を整理した。
   - Claude Code 2.1.295〜2.1.296、Copilot CLI 1.0.92〜1.0.95、Codex 0.160.1〜0.162.1 の hook・権限・MCP・sandbox の変更を製品ページへ追加した。ChatGPT Plugin RBAC と追加指示の更新も反映した。
