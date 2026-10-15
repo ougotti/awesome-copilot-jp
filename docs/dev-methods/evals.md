@@ -1,6 +1,6 @@
 # Skill / エージェントの評価（evals） — 変更時の回帰と本番品質を分けて測る
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・本番エージェント基盤ほか） ｜ **実行環境**: CLI（ターミナル）/ Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-10
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・本番エージェント基盤ほか） ｜ **実行環境**: CLI（ターミナル）/ Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-15
 
 > [Skill / Plugin のセキュリティ](skill-security.md)は「**導入前**に入れてよいものか」を扱います。このページはその先、「**変更した Skill / Plugin が効いているか**」と「**本番エージェントが目的を達成しているか**」を測る話です。両者は対象と実行頻度が異なります。
 
@@ -153,6 +153,12 @@ AI コードレビューの指示ファイル（`.github/copilot-instructions.md
 
 **→ 参照元の表、検証ケース、承認の設計は [AI コードレビューはどの指示を読むか](review-instructions.md) を参照**
 
+### AI レビュアー自体の誤検知と見逃しを測る
+
+AI レビュアーを導入・変更するときは、指摘の **precision**（誤検知の少なさ）と **recall**（見逃しの少なさ）を、重大度ごとに分けて測ります。GitHub の ReviewBench（2026-10-05、research preview）は、golden set だけを基準にする grounded と、golden にない指摘も LLM で判定する augmented の指標を出します。augmented recall は分母がレビュアーごとに変わるため、単独で順位付けに使いません。また、AI が実装した変更では、**テストの削除・弱化で検証が減っていないか**をレビューで確認します。
+
+**→ 指標の定義、ReviewBench の限界、小さく試す手順、テスト変更のチェックリストは [AI 時代のコードレビュー](ai-code-review.md) を参照**
+
 ### Claude Code 組み込みの `plugin eval`
 
 `claude plugin eval init` は Plugin の `evals/` に case と grader の草案を作り、`claude plugin eval .` が suite を実行します。各 case は既定で Plugin あり / なしをそれぞれ 3 回実行し、両者の score と差分 `Δ` を出します。「Claude 自体が解けただけ」を Plugin の効果と数えないための baseline です。
@@ -290,6 +296,7 @@ AWS外へこの考え方を持ち込む場合は、製品名ではなく、**tra
 - [Codex スキルカタログ](../codex/catalog.md) — `description` の書き方の具体例
 - [生成AIを業務で安全に使う](../business/safety.md) — 出力を受け取った後に人が確認する項目
 - [AI コードレビューはどの指示を読むか](review-instructions.md) — レビュー基準の新旧比較と、指示ファイルの参照元（head / base）
+- [AI 時代のコードレビュー](ai-code-review.md) — テストの判定基準を実装の変更から守る方法と、AI レビュアーの precision・recall の測り方
 - [長時間タスクの信頼性設計](agent-reliability.md) — 「性能を測る」評価とは別軸の、「実行中の故障にどう耐えるか」という設計
 
 ## 参考リンク
