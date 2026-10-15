@@ -726,6 +726,34 @@ CI・社内ツール・bot から review を起動する場合は、次の点を
 
 ---
 
+## セキュリティ alert を直すエージェントと、PR の脆弱性検出 — agentic autofix と AI Scan
+
+2026-10-15、GitHub のセキュリティ機能で、**alert を修正する PR を Copilot が作る機能**と、**AI が PR の脆弱性を探す機能**が一般提供（GA）になりました。どちらも Copilot code review とは別の機能で、Code Security / Advanced Security の側で有効化・課金します（2026-10-16 確認。本ガイドでは有効化しての動作確認はしていません）。
+
+| | Agentic autofix for code scanning alerts | AI Scan for pull requests |
+|--|------------------------------------------|---------------------------|
+| 何をするか | 既存の code scanning alert について、Copilot が関連ファイルを読み、修正を作り、**CodeQL を再実行して alert が閉じることを確かめ**、必要なら繰り返して **draft PR** を開く | PR の変更から脆弱性を探し、CodeQL がまだ対応していない言語・形式（PHP、Shell / Bash、Terraform（HCL）、Dockerfile、JSP、Blazor など）を補う |
+| 入口 | alert を Copilot に assign／security list や campaign で**最大 25 件**を選んで 1 つの PR にまとめる／REST API で `assignees` に `copilot-swe-agent[bot]` を指定 | code scanning と、repository で有効な AI Scan の設定がオンなら自動で動く |
+| 結果の出方 | 修正内容・理由・検証手順を書いた draft PR。追加の指示は PR へのコメントか、repository の **Agents** タブの session で出す | PR の Conversation / Files changed に「AI」表示付きで出る（CodeQL の alert と区別できる）。リスクの説明と修正案が付くことがある |
+| merge を止めるか | 人が review して merge する（draft PR） | **止めない**。結果は advisory で、code scanning の check を失敗させず、ruleset で merge を止めることもない |
+| 対象外 | **default branch の alert のみ**。PR や他の branch だけで見つかった alert は assign できない | fork からの PR と Dependabot の PR では動かない |
+| 有効化 | enterprise 管理者が Advanced Security policy の「Agentic autofix」を有効化 → organization / repository 管理者が Code Security settings で有効化。有効になると、無料の「Generate Fix」は「Assign to Copilot」に置き換わる | 公開 repository は利用可。private / internal の organization 所有 repository は Code Security か Advanced Security が必要 |
+| 課金 | Code Security の AI Credits と GitHub Actions の minutes。**Copilot の billing method の定義が必要** | Code Security の AI Credits。**Copilot のライセンスは不要** |
+| 対象 | GitHub Enterprise Cloud（data residency を含む）で Code Security / Advanced Security を持つ顧客 | 上記のとおり |
+
+どちらも、enterprise の billing の「AI usage」に **Advanced Security** 製品として表示され、SKU 単位で Code Security の AI Credits に budget を設定できます。Copilot の利用量とは別に予算を見ておく必要があります。
+
+運用で注意する点:
+
+- **「CodeQL を再実行して alert が閉じた」は、修正が正しいことの証明ではありません。** alert を出した検出 rule に当たらなくなったことを示すだけで、機能を壊していないか、検出を回避しただけではないかは別に確かめます。修正 PR にテストの削除・skip・assertion の弱化が含まれていないかも review してください（評価の考え方は [Skill / エージェントの評価](../dev-methods/evals.md)）。
+- 25 件をまとめた PR は差分が大きくなります。alert ごとに理由を読めるか、review できる単位かで件数を決めます。
+- AI Scan は merge を止めないため、**見落としの防止を AI Scan に任せる運用にしない**でください。止めたい条件は CodeQL の required check や ruleset で設定します。
+- 2026-09-25 から agentic autofix は Copilot Memory を読み書きします（Copilot Memory は Public Preview。GA の変更ログはこの点に触れていません）。誤った修正 pattern が memory に残ると、Copilot code review や cloud agent にも広がり得ます（[memory を policy とみなさない](../dev-methods/skill-security.md#学習した-memory-を-policy-とみなさない)）。
+
+出典: [Agentic autofix for code scanning alerts general availability](https://github.blog/changelog/2026-10-15-agentic-autofix-for-code-scanning-alerts-general-availability)、[AI Scan for pull requests generally available](https://github.blog/changelog/2026-10-15-ai-scan-for-pull-requests-generally-available)（GitHub 公式・2026-10-15）。
+
+---
+
 ## プルリクエストの承認をどこまで AI に任せるか
 
 Copilot code review が **approving review を提出できる**ようになりました（2026-09-01、**Public Preview**。Pro / Pro+ / Max / Business / Enterprise）。ここは用語を混同しやすいので、3 つを分けて理解してください。

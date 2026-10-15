@@ -284,7 +284,7 @@ managed policy を利用者の設定や起動 flag で弱められると想定�
 
 ### 学習した memory を policy とみなさない
 
-承認と同様に、**エージェントが書き込んだ memory がどこまで波及するか**も確認対象です。2026-09-25、GitHub の agentic autofix が Copilot Memory を使うようになりました（両機能とも Public Preview、Copilot Memory を有効にしている場合）。autofix は既存の memory を security alert 修正の文脈として読み、作成した修正の pattern を新しい memory として保存します。GitHub は、この memory が他の security alert の修正や、Copilot code review・Copilot cloud agent にも repository 固有の安全な開発 pattern として使われると説明しています。
+承認と同様に、**エージェントが書き込んだ memory がどこまで波及するか**も確認対象です。2026-09-25、GitHub の agentic autofix が Copilot Memory を使うようになりました（当時は両機能とも Public Preview、Copilot Memory を有効にしている場合。agentic autofix 自体は 2026-10-15 に [GA](../copilot/README.md#セキュリティ-alert-を直すエージェントとpr-の脆弱性検出--agentic-autofix-と-ai-scan)）。autofix は既存の memory を security alert 修正の文脈として読み、作成した修正の pattern を新しい memory として保存します。GitHub は、この memory が他の security alert の修正や、Copilot code review・Copilot cloud agent にも repository 固有の安全な開発 pattern として使われると説明しています。
 
 memory は、組織が承認した規約ではなく**更新も削除もできる repository 固有の文脈**です。誤った修正 pattern が保存されると、後続の review や cloud agent の作業にも影響し得ます。
 
