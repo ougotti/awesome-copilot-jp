@@ -1,6 +1,6 @@
 # Codex ガイド（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-10-14
+> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-10-16
 
 [openai/skills](https://github.com/openai/skills) は OpenAI が公開している Codex 用の公式スキルカタログです。指示・スクリプト・リソースをフォルダにまとめた「スキル」を追加することで、デプロイ・ブラウザ自動化・外部サービス連携といったワークフローを Codex に持たせられます。
 
@@ -265,6 +265,29 @@ session 側の変更は、会話と下書きを別の面へ持ち越す仕組み
 0.162.0 には、**worktrees feature が有効な trusted local project** から managed Git worktree を作成・一覧する tool と、Code Mode の **opt-in ranked tool search** が入りました。後者は必要な tool を検索して見つける仕組みで、すべての tool の常時 preload ではありません。worktree は [作業場所の分離](../dev-methods/harness.md#codex-の-managed-worktree-で作業場所を分ける)、tool 発見と追加指示は [指示の出し分け](../dev-methods/agent-commands.md#background-agent-への追加指示と-tool-の発見)を参照してください。
 
 出典: [0.160.1](https://github.com/openai/codex/releases/tag/rust-v0.160.1)、[0.161.0](https://github.com/openai/codex/releases/tag/rust-v0.161.0)、[0.162.0](https://github.com/openai/codex/releases/tag/rust-v0.162.0)、[0.162.1](https://github.com/openai/codex/releases/tag/rust-v0.162.1)。ここでは release 記載を照合し、各 OS の sandbox・MCP 認証の実機試験は行っていません。
+
+### Codex CLI 0.163.0 — 再開時の権限復元・network proxy の強化・応答中の steer
+
+**提供元: Official / 状態: GA（Stable release）**。[0.163.0](https://github.com/openai/codex/releases/tag/rust-v0.163.0)（2026-10-15）を 2026-10-16 に確認しました。本ガイドでは実機で確認していません。
+
+**権限と通信**
+
+| 変更 | 運用上の確認 |
+|------|-------------|
+| 保存した thread を再開すると、**その thread の permission と network の承認を復元**する。ただし起動時に明示した override と、**現在の managed policy が優先**される | 0.161 の「起動権限を再接続後も保持」に続く変更。再開した thread で、以前に承認した通信先が再び使えることを前提に、承認の記録を残す。組織の policy を強めた場合は、再開後もその policy が効くかを確かめる |
+| network proxy が、**DNS 解決の前に hostname の許可を確認**する。重複した `Host` header を拒否し、credential の別名を使って inspection hook を回避する経路を塞いだ | proxy の hook で通信を検査している場合、回避されていた可能性のある経路が修正された |
+| proxy 経由の sandbox session に、opt-in の **credential masking** を追加 | 既定はオフ。使う場合は対象の credential と送信先を確認する |
+| standalone の MCP command と daemon の更新にも application の network policy を適用。local の MCP server に、検証済みの sandbox launcher を渡す | MCP server の通信を、Codex 本体と同じ policy で絞れるか確認する |
+| Linux sandbox の説明を、filesystem の隔離（bubblewrap）と syscall の制限（seccomp）に整理。Windows の MXC sandbox は managed の要件を強制し、opt-out も追加 | Windows で MXC を外す設定は、組織の要件と合っているかを確認する |
+
+**エージェントの操作**
+
+- **応答中に送った follow-up が、すぐに steer として届く**（instant interrupt が既定で有効）。turn を中断すると、実行中の Code Mode の cell と、その中の tool call も止まります。Codex CLI の `Enter` は以前から steer でしたが、応答の完了を待たずに割り込むようになりました。キー操作の比較は [エージェントのコマンド](../dev-methods/agent-commands.md#ツールごとのキーとコマンド)。
+- 独立した**読み取り専用の tool**（Skill・memory・会話履歴の参照を含む）を並列に実行する。
+- `/config` で設定を検索し、すぐ反映されるものと再起動が必要なものを確認できる。`/daemon` で managed background server を再起動できる（中断される作業を警告してから再接続）。
+- **Daybreak**（OpenAI の防御目的のサイバーセキュリティ向けアクセスプログラム）の CLI 対応が、対象アカウントで既定有効になった。`codex exec` でも、サーバーが許可すれば API key で選べる。利用資格や組織での有効化の条件は変わらないため、[公式の案内](https://openai.com/daybreak/)で確認する。
+
+**モデル設定の棚卸し**: 2026-10-14、ChatGPT でサインインした Codex では GPT-5.5 が廃止されました（API key の session は対象外）。[公式の changelog](https://learn.chatgpt.com/docs/changelog) は、**保存した設定・managed config・custom agent・scheduled task** に GPT-5.5 を書いている場合は更新するよう案内しています。モデル名を固定している場所を一覧にしておくと、次の廃止にも対応しやすくなります。
 
 ### Codexを製品へ組み込む入口を分ける
 

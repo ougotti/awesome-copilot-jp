@@ -265,6 +265,7 @@ managed policy を利用者の設定や起動 flag で弱められると想定�
 | hook の書き換え | 2.1.300 で `updatedInput` を tool の入力として検証し、未知のキーを捨てる。Cowork の cloud session では hook の `setMode` を無視し、auto mode の hook は shell / subagent を承認できない | [2.1.300](https://github.com/anthropics/claude-code/releases/tag/v2.1.300) |
 | 判定の監査 | 2.1.301 の `tool_decision` event に `classifier_verdict`・`permission_mode` が加わり、classifier と rule の判定を区別できる | [ハーネスの OTel](harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions) |
 | 統制と harness | VS Code 1.142 は、managed の `permissions` か `sandbox.enabled: true` があると Copilot harness を必須にし、Claude・Codex・terminal chat を使えなくする。回避用の `temporaryDefaultToLocalHarness` は統制も外す。Assisted Permissions は `permissions.allow` / `ask` / `deny` と併用できない | [VS Code 1.142](../copilot/README.md#vs-code-1142--統制を入れると-copilot-harness-へ移るpermission-mode-を絞る) |
+| 再開時の権限 | Codex CLI 0.163.0 は、再開した thread の permission と network の承認を復元する。明示した override と現在の managed policy が優先。network proxy は DNS 解決前に hostname を確認し、credential の別名による inspection hook の回避を塞いだ | [Codex CLI](../codex/README.md#codex-cli-01630--再開時の権限復元network-proxy-の強化応答中の-steer) |
 | 外部への取得 | Claude Managed Agents の `web_fetch` は session に既出の URL だけを取得し、`limited` networking の `allowed_hosts` が web ツールにも効く（2026-10-07） | [Web ツールの URL 制限](#web-ツールが取得できる-url-を絞る2026-10-07) |
 | 外部の監視基盤 | Claude Managed Agents の OpenTelemetry export（beta、2026-10-14）。Full content は prompt と tool の結果を Anthropic の外へ送る。配送は best effort で、監査ログの代わりにならない | [ハーネス](harness.md#claude-apimanaged-agents-の-trace-を自分の監視基盤へ送る2026-10-14beta) |
 
