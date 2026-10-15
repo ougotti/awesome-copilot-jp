@@ -745,7 +745,7 @@ CI・社内ツール・bot から review を起動する場合は、次の点を
 
 運用で注意する点:
 
-- **「CodeQL を再実行して alert が閉じた」は、修正が正しいことの証明ではありません。** alert を出した検出 rule に当たらなくなったことを示すだけで、機能を壊していないか、検出を回避しただけではないかは別に確かめます。修正 PR にテストの削除・skip・assertion の弱化が含まれていないかも review してください（評価の考え方は [Skill / エージェントの評価](../dev-methods/evals.md)）。
+- **「CodeQL を再実行して alert が閉じた」は、修正が正しいことの証明ではありません。** alert を出した検出 rule に当たらなくなったことを示すだけで、機能を壊していないか、検出を回避しただけではないかは別に確かめます。修正 PR にテストの削除・skip・assertion の弱化が含まれていないかも review してください（点検の手順は [AI 時代のコードレビュー](../dev-methods/ai-code-review.md)）。
 - 25 件をまとめた PR は差分が大きくなります。alert ごとに理由を読めるか、review できる単位かで件数を決めます。
 - AI Scan は merge を止めないため、**見落としの防止を AI Scan に任せる運用にしない**でください。止めたい条件は CodeQL の required check や ruleset で設定します。
 - 2026-09-25 から agentic autofix は Copilot Memory を読み書きします（Copilot Memory は Public Preview。GA の変更ログはこの点に触れていません）。誤った修正 pattern が memory に残ると、Copilot code review や cloud agent にも広がり得ます（[memory を policy とみなさない](../dev-methods/skill-security.md#学習した-memory-を-policy-とみなさない)）。

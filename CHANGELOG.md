@@ -12,6 +12,11 @@
   - [Codex CLI 0.163.0](docs/codex/README.md#codex-cli-01630--再開時の権限復元network-proxy-の強化応答中の-steer) の再開時の権限復元、network proxy の強化、応答中の steer と、GPT-5.5 廃止に伴うモデル設定の棚卸しを追加した（#267）。
   - 一次資料は 2026-10-16 に確認した。release note と公式 docs の照合のみで、実機での拒否・移行・送信の検証は未実施と各節に明記した。
 
+- **2026-10-15** [AI 時代のコードレビュー](docs/dev-methods/ai-code-review.md)を追加（#254）。
+  - GitHub の Copilot ランタイム Rust 移行事例（SDK コールバックの移植漏れと E2E テストの削除）を基に、実装の差分とテストの差分を分けて見る手順、テスト変更のチェックリスト、不当な更新と妥当な更新の対の例を整理した。
+  - ReviewBench（research preview）の golden set・LLM による照合・重大度別の層別、grounded / augmented の分母の違いと、augmented recall を単独で順位付けに使わない理由、golden set の不完全さなどの限界をまとめた。
+  - 前提から人の照合までの小さな検証計画と記録の様式を追加した。本ガイドでは実行しておらず、成績は載せていない。[evals](docs/dev-methods/evals.md#ai-レビュアー自体の誤検知と見逃しを測る)・[レビュー指示の参照元](docs/dev-methods/review-instructions.md)・README から案内した。
+
 - **2026-10-14** 2026-10-10〜10-14 の最新動向を反映（#260）。
   - [GitHub Copilot ガイド](docs/copilot/README.md#managed-settings-の強制更新と最小-client-version2026-10-13)に、managed settings の `forceRemoteSettingsRefresh`（fail-closed）と `sandbox` キーの最小 client version、telemetry の identity と 5 種類の capture class を追加した。
   - VS Code 1.141 の sandbox 必須化（Preview）・旧 policy の移行・`send_message`・Worktree cleanup・Codex の引き継ぎ、Copilot CLI 1.0.96〜1.0.97 の agent 単位の hook と Autopilot での `ask` の扱い、JetBrains の MCP 自動起動の無効化を製品ページと横断ページへ追加した。

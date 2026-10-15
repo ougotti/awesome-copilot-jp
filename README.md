@@ -19,10 +19,10 @@
 -->
 
 - **2026-10-16** [10-14〜10-16 の最新動向](docs/trends.md#2026-10-1410-16-の更新--許可の一致範囲と統制を入れたときの切り替わり)を反映。Claude Code の MCP 許可ルールの完全一致化、VS Code 1.142 の Copilot harness への自動移行、Managed Agents の OTel と web ツール制限、agentic autofix の GA、Codex 0.163.0 を整理。
+- **2026-10-15** [AI 時代のコードレビュー](docs/dev-methods/ai-code-review.md)を追加。テストの削除・弱化で検証が減っていないかの点検と、ReviewBench を使った AI レビュアーの誤検知・見逃しの測り方（検証計画）を整理。
 - **2026-10-14** [10-10〜10-14 の最新動向](docs/trends.md#2026-10-1010-14-の更新--policy-を確実に届け無人実行の承認を見直す)を反映。Copilot の managed settings 強制更新・telemetry の identity、VS Code 1.141 の sandbox 必須化、Copilot CLI 1.0.97 の hook と無人実行の承認を整理。
 - **2026-10-13** [10-03〜10-10 の最新動向](docs/trends.md#2026-10-0310-10-の更新--workflow-と権限の引き継ぎ)を反映。Dynamic Workflows、各 CLI の権限・MCP・フック、Plugin RBAC と追加指示を整理。
 - **2026-10-11** [Skill の公開・共有ガイド](docs/dev-methods/skill-publishing.md)を追加。配布方法の選び方、複数 Skill / Plugin の構成、Codex 向け GitHub カタログの登録・導入・更新と公開条件を整理。
-- **2026-10-10** [Claude Code コマンド一覧](docs/claude-code/commands.md)を公式と照合し、`/plan`・`/goal`・`/subtask`・`/background`・`/ultrareview` などを追加。[事務・バックオフィス活用ガイド](docs/business/office-work.md)のファイル作成の既定値を更新。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -166,6 +166,7 @@
 | **[Skill の公開・共有](docs/dev-methods/skill-publishing.md)** | 本ガイド | — | CLI / Chat UI | 共有方法の選び方、Codex 向け Plugin の作成・GitHub 配布・導入・更新。 |
 | **[プラグインの可搬性](docs/dev-methods/plugin-portability.md)** | 本ガイド | — | IDE / CLI | `plugin.json` を見て、他のエージェントへ持ち出せる Plugin かを判定する手順 |
 | **[AI コードレビューはどの指示を読むか](docs/dev-methods/review-instructions.md)** | 本ガイド | — | Cloud | Copilot code review（head）と Claude Code Code Review（`CLAUDE.md` は base）の参照元、レビュー基準の更新・検証・CODEOWNERS での承認 |
+| **[AI 時代のコードレビュー](docs/dev-methods/ai-code-review.md)** | 本ガイド | — | Cloud / CLI | テストの削除・弱化で検証が減っていないかの点検、ReviewBench の grounded / augmented と AI レビュアーの誤検知・見逃しの測り方 |
 | **[Skill / エージェントの評価（evals）](docs/dev-methods/evals.md)** | 本ガイド | — | CLI / Cloud | Skill / Plugin変更時の回帰評価と、本番エージェントの継続的な品質評価を分けて設計する |
 
 ### 共通・事務活用
