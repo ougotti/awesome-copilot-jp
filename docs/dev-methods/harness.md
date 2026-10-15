@@ -291,6 +291,7 @@ GitHub Copilot の local sandbox は、Copilot CLI・Copilot app・Agent Host �
 | Codex CLI | メトリクス・ログ（イベント）。`config.toml` の `[otel]` で設定 | 公式ドキュメントに明記なし |
 | VS Code Copilot Chat | トレース・メトリクス・イベント | 明記あり（`gen_ai.*` に加え `github.copilot.*` の拡張名前空間） |
 | GitHub Copilot app | エージェント session のトレース、モデル・tool 呼び出し、メトリクス・イベント。Enterprise managed settings の `telemetry` で有効化 | app 向け発表は属性名まで明記していない。導入時に実際の span を確認 |
+| Claude API・Managed Agents（beta、2026-10-14） | トレース。Console の destination（API 側）と SDK（client 側）の 2 経路 | 明記あり（GenAI semantic conventions の属性を使用）。[下記](#claude-apimanaged-agents-の-trace-を自分の監視基盤へ送る2026-10-14beta) |
 
 > **対応の深さはツールごとに違い、変化も速い領域です。** 上表は各公式ドキュメントの確認日（既存3ツール: 2026-09-12、Copilot app: 2026-09-23）時点のもので、導入時は必ず最新の記述を確認してください。
 
@@ -313,6 +314,27 @@ API 側では、Claude の **cache diagnostics** が 2026-09-23 に GA になり
 これらは**実行基盤の観測値**であり、エージェントの出力品質を採点するものではありません。cache hit 率や hook の出力量が良くても、成果物が正しいとは限りません。品質の評価は [Skill / エージェントの評価](evals.md) で別に行います。
 
 この「動かした後に何が見えるか」は、[Skill / Plugin のセキュリティ 5 節「統制が効く 3 つの段階」](skill-security.md#5-統制が効く-3-つの段階)の**実行後（監査）**と直結します。あちらが「セッションのトランスクリプトを取得する」という組織向け機能（Compliance API）を扱うのに対し、ここでの OpenTelemetry は**ベンダー中立の計測データ**（メトリクス・ログ・トレース）を自分たちの監視基盤（OTLP 対応バックエンド）へ流す仕組みです。両者は排他ではなく、組織で使える統制の手段が違う層として併存します。
+
+### Claude API・Managed Agents の trace を自分の監視基盤へ送る（2026-10-14、beta）
+
+**提供元: Official / 状態: Beta / 実行場所: Cloud**。2026-10-14、Claude Platform で **OpenTelemetry export** が beta になりました（[release notes](https://platform.claude.com/docs/en/release-notes/overview)、[OpenTelemetry for the Claude API](https://platform.claude.com/docs/en/manage-claude/opentelemetry)、2026-10-16 確認）。Claude Code の telemetry（`claude_code.*`）とは別物で、**Messages API の request と Claude Managed Agents の session** を対象にします。本ガイドでは destination を作成しての送信は試していません。
+
+| 項目 | 内容 |
+|------|------|
+| 2 つの取り方 | **API tracing**: Claude Console（または Admin API）で OTLP の送信先（destination）を追加すると、コードを変えずに API が span を送る。**SDK tracing**: Python・TypeScript・C#・Go・Java・PHP・Ruby の SDK が client 側の span を出す。両方を使うと 1 つの trace につながる |
+| 設定できる人 | API tracing は組織の **admin** role（developer は閲覧のみ）。Claude Platform on AWS では IAM policy で決まる |
+| 送信先の条件 | port 443 の HTTPS で protobuf を受ける OTLP/HTTP endpoint（hostname 必須、IP 不可）。workspace 単位で「全部」「選択」「除外」を選ぶ。1 組織 10 destination まで |
+| session の span | Sessions API の request ごとの span と、agent の turn ごとの `anthropic.session.turn`。turn の下に model request・tool 実行・outcome evaluation の span が並ぶ。1 つの thread は `gen_ai.conversation.id`、multiagent の session 全体は `anthropic.session.id` でまとめる |
+| 本文 | 既定は **Metadata only**（ID・時間・状態・token 数と、agent / tool / MCP server の名前・説明）。**Full content** にすると prompt・response・tool の引数と結果が入る（span ごとに既定 0.75 MB、超過分は切り詰めて `anthropic.content.truncated`）。HIPAA・FERPA・K-12 の取り扱い制限がある組織は、設定に関係なく metadata だけになる |
+| 自アプリの trace との接続 | 既定では API の span は独立した trace。自アプリの span の下に入れるには、SDK tracing を使うか W3C の `traceparent` header を付ける。**sampled flag がオフの request は span を出さない**。MCP connector 経由の MCP server にも `params._meta` で `traceparent` が渡る |
+| 配送 | **at least once・best effort**。重複は trace ID + span ID で除き、失われた span は再送されない。endpoint が redirect を返す、hostname が非公開の IP に解決される、24 時間すべて失敗する、のいずれかで destination は無効化される |
+
+導入時に確認すること:
+
+- **Full content は、プロンプトと tool の結果を Anthropic の外の監視基盤に置くことを意味します。** 公式も、送った後は選んだサービスの保持期間・アクセス制御に従うと明記しています。Copilot の [capture class](../copilot/README.md#誰の操作かを付ける本文を種類ごとに取る2026-10-12) と同じく、監査に必要な範囲だけを有効にします。
+- **Managed Agents は zero data retention（ZDR）の対象外**で、OTel を使っても Managed Agents 側の保持は変わりません。Messages API は ZDR でも Full content を使えます（送信まではメモリだけで保持）。
+- **span は利用量の完全な記録ではありません。** 配送は best effort で、呼び出し側が `traceparent` の sampled flag をオフにすれば span は出ません。API key ごとの利用量（漏えいの検知など）は Usage API、セッションの監査は [Compliance API](skill-security.md#5-統制が効く-3-つの段階) を使い、OTel を監査ログの代わりにしないでください。
+- token を数えるときは、Managed Agents では `anthropic.model_request` と `anthropic.session.outcome_evaluation` の span だけを合計します（上位の span にも同じ値が重複して載るため）。
 
 ### OTLP とデータの意味を分ける
 

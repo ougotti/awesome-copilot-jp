@@ -191,6 +191,18 @@ GitHub と Anthropic の機能は、どちらも「実行時の権限」を扱�
 | 監査 | 管理設定と各セッションの承認操作 | イベントの `evaluated_permission` |
 | 対象外に注意するもの | 対応面以外のクライアント。JetBrains の発表は managed sandbox | custom tools。Claude Code のローカル権限設定とは別機能 |
 
+#### Web ツールが取得できる URL を絞る（2026-10-07）
+
+ツール呼び出しの判定とは別に、Managed Agents では **web ツールが到達できる先**も絞られました（[release notes](https://platform.claude.com/docs/en/release-notes/overview)、2026-10-16 確認。API での実行は未検証）。prompt injection で「この URL にデータを付けて取得せよ」と誘導される経路を狭める変更です。
+
+| 変更 | 挙動 | 運用上の意味 |
+|------|------|-------------|
+| **`web_fetch` は session に既出の URL だけを取得する** | 利用者のメッセージ、`web_search` の結果、`web_fetch` が以前に返したページに現れた URL は取得できる。**Claude の出力・system prompt・添付文書・`bash` / `read` / MCP などの tool 出力にだけ現れた URL** は `url_not_in_prior_context` エラーになる | モデルが自分で組み立てた URL や、読み込んだ文書に埋め込まれた URL へは取りに行かない。取得させたい URL は `user.message` event で渡す |
+| `limited` networking の `allowed_hosts` が web ツールにも効く | `web_fetch` は対象外の host で `url_not_allowed`、`web_search` は対象外の host の結果を省く。`allowed_hosts` が空なら、どちらも何も返さない | `allow_package_managers` / `allow_mcp_servers` は web ツールの host を増やさない。web ツールに必要な host は `allowed_hosts` に明示する |
+| `allowed_domains` の検査 | 有効な web ツールの `allowed_domains` に `allowed_hosts` 外の entry があると、session の作成・更新が 400 になる | `allowed_hosts` の entry は `*.` で始まらない限り**完全一致**。`["example.com"]` は `docs.example.com` を含まない |
+
+unrestricted networking と self-hosted 環境はこの制限の対象外です。社内の文書や MCP の結果に含まれる URL を agent に取得させる設計にしていた場合は、その URL を利用者のメッセージとして渡す流れに変える必要があります。
+
 **→ Managed Agents をハーネスとして運用するときの介入方法は [AI エージェントの実行基盤](harness.md#実行中の権限判定と介入--claude-managed-agents) を参照**
 
 ### コンテキストの除外は、Skill / MCP の統制と別に効く
@@ -253,8 +265,10 @@ managed policy を利用者の設定や起動 flag で弱められると想定�
 | hook の書き換え | 2.1.300 で `updatedInput` を tool の入力として検証し、未知のキーを捨てる。Cowork の cloud session では hook の `setMode` を無視し、auto mode の hook は shell / subagent を承認できない | [2.1.300](https://github.com/anthropics/claude-code/releases/tag/v2.1.300) |
 | 判定の監査 | 2.1.301 の `tool_decision` event に `classifier_verdict`・`permission_mode` が加わり、classifier と rule の判定を区別できる | [ハーネスの OTel](harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions) |
 | 統制と harness | VS Code 1.142 は、managed の `permissions` か `sandbox.enabled: true` があると Copilot harness を必須にし、Claude・Codex・terminal chat を使えなくする。回避用の `temporaryDefaultToLocalHarness` は統制も外す。Assisted Permissions は `permissions.allow` / `ask` / `deny` と併用できない | [VS Code 1.142](../copilot/README.md#vs-code-1142--統制を入れると-copilot-harness-へ移るpermission-mode-を絞る) |
+| 外部への取得 | Claude Managed Agents の `web_fetch` は session に既出の URL だけを取得し、`limited` networking の `allowed_hosts` が web ツールにも効く（2026-10-07） | [Web ツールの URL 制限](#web-ツールが取得できる-url-を絞る2026-10-07) |
+| 外部の監視基盤 | Claude Managed Agents の OpenTelemetry export（beta、2026-10-14）。Full content は prompt と tool の結果を Anthropic の外へ送る。配送は best effort で、監査ログの代わりにならない | [ハーネス](harness.md#claude-apimanaged-agents-の-trace-を自分の監視基盤へ送る2026-10-14beta) |
 
-前方一致で広く許可していた rule は、更新で**狭まる**方向に変わります。更新前に `mcp__` の rule を棚卸しし、許可したいサーバーを `mcp__<server>__*` で明示してください。
+前方一致で広く許可していた rule は、更新で**狭まる**方向に変わります。更新前に `mcp__` の rule を棚卸しし、許可したいサーバーを `mcp__<server>__*` で明示してください。逆に VS Code 1.142 では、統制を**強める**設定を入れた時点で、利用者が使える harness が変わります。どちらも、配布前に検証用の端末で挙動を確かめてください。
 
 ### ローカルモデル・offline・telemetry は別の境界
 
