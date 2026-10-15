@@ -252,6 +252,7 @@ managed policy を利用者の設定や起動 flag で弱められると想定�
 | hook の失敗 | plugin hook が受け取れない・答えを返せない操作は拒否。Windows で Git for Windows がないときの PreToolUse / PermissionRequest hook の fail-open を修正 | 同上 |
 | hook の書き換え | 2.1.300 で `updatedInput` を tool の入力として検証し、未知のキーを捨てる。Cowork の cloud session では hook の `setMode` を無視し、auto mode の hook は shell / subagent を承認できない | [2.1.300](https://github.com/anthropics/claude-code/releases/tag/v2.1.300) |
 | 判定の監査 | 2.1.301 の `tool_decision` event に `classifier_verdict`・`permission_mode` が加わり、classifier と rule の判定を区別できる | [ハーネスの OTel](harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions) |
+| 統制と harness | VS Code 1.142 は、managed の `permissions` か `sandbox.enabled: true` があると Copilot harness を必須にし、Claude・Codex・terminal chat を使えなくする。回避用の `temporaryDefaultToLocalHarness` は統制も外す。Assisted Permissions は `permissions.allow` / `ask` / `deny` と併用できない | [VS Code 1.142](../copilot/README.md#vs-code-1142--統制を入れると-copilot-harness-へ移るpermission-mode-を絞る) |
 
 前方一致で広く許可していた rule は、更新で**狭まる**方向に変わります。更新前に `mcp__` の rule を棚卸しし、許可したいサーバーを `mcp__<server>__*` で明示してください。
 
