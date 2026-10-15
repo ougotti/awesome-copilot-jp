@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-14
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-16
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -241,6 +241,19 @@ managed policy を利用者の設定や起動 flag で弱められると想定�
 | 監査ログ | Copilot CLI 1.0.96 は permission の判定主体を timeline に表示。telemetry は identity と 5 種類の本文を個別に有効化でき、既定はすべてオフ | [OTel の設定](../copilot/README.md#誰の操作かを付ける本文を種類ごとに取る2026-10-12) |
 
 「`ask` にしておけば人が確認する」は、**人が見ている対話の session でだけ成り立つ前提**です。無人実行では、確認を求める操作は止まる（deny）と考え、通したい操作は条件を絞った `allow` として書き分けてください。また、policy の配布と client の更新の順番を誤ると、統制を強めたつもりで利用者全員を止めることがあります。
+
+### 2026-10-14〜10-16 の権限境界の更新
+
+2026-10-16 に公式資料を確認しました。**既存の rule の一致範囲**と、**hook が受け取れない・答えられないときの扱い**が変わっています。release note と公式 docs の照合のみで、実機での拒否は確認していません。
+
+| 層 | 変更と運用上の意味 | 詳細・一次情報 |
+|---|---|---|
+| rule の一致範囲 | Claude Code 2.1.299 で、MCP の allow rule と agent の `tools:` が**書いたサーバー名にだけ一致**する。`mcp__a` は `a__b` を許可しない。名前に `__` を含むサーバーへの deny / ask が効いていなかった問題も修正 | [Claude Code](../claude-code/basics.md#2129921301--mcp-の許可ルールの完全一致化と-hook-の-fail-closed-化)、[2.1.299](https://github.com/anthropics/claude-code/releases/tag/v2.1.299) |
+| hook の失敗 | plugin hook が受け取れない・答えを返せない操作は拒否。Windows で Git for Windows がないときの PreToolUse / PermissionRequest hook の fail-open を修正 | 同上 |
+| hook の書き換え | 2.1.300 で `updatedInput` を tool の入力として検証し、未知のキーを捨てる。Cowork の cloud session では hook の `setMode` を無視し、auto mode の hook は shell / subagent を承認できない | [2.1.300](https://github.com/anthropics/claude-code/releases/tag/v2.1.300) |
+| 判定の監査 | 2.1.301 の `tool_decision` event に `classifier_verdict`・`permission_mode` が加わり、classifier と rule の判定を区別できる | [ハーネスの OTel](harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions) |
+
+前方一致で広く許可していた rule は、更新で**狭まる**方向に変わります。更新前に `mcp__` の rule を棚卸しし、許可したいサーバーを `mcp__<server>__*` で明示してください。
 
 ### ローカルモデル・offline・telemetry は別の境界
 

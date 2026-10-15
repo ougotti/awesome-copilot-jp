@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-13
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -657,7 +657,7 @@ remote MCP・危険な shell・権限フックを使う組織では、**2.1.288 
 | `"Bash(npm run *)"` | `npm run` で始まるコマンドのみ許可 |
 | `"Edit"` | ファイル編集を許可 |
 | `"Read"` | ファイル読み取りを許可 |
-| `"mcp__github__*"` | GitHub MCP ツールをすべて許可 |
+| `"mcp__github__*"` | GitHub MCP ツールをすべて許可。2.1.299 から、書いたサーバー名にだけ一致する（[変更点](#2129921301--mcp-の許可ルールの完全一致化と-hook-の-fail-closed-化)） |
 
 ---
 
@@ -729,6 +729,51 @@ MCP connector の `mcp-client-2026-09-15` beta header と組み合わせると�
 | Skill と再開 | 2.1.295 は `skills` から最大 32 Skill を各 1 回 preload（Skill tool があれば残りも呼べる）。forked Skill の結果を呼び出した workflow subagent に返す修正も含む。2.1.296 は完了済み MCP result で終了した turn の再実行を修正 |
 
 出典: [2.1.295](https://github.com/anthropics/claude-code/releases/tag/v2.1.295)、[2.1.296](https://github.com/anthropics/claude-code/releases/tag/v2.1.296)（2026-10-13 確認）。再接続・再開の検証は [エージェントの信頼性](../dev-methods/agent-reliability.md#workflow-と-mcp-の再開を検証する)へ。
+
+### 2.1.299〜2.1.301 — MCP の許可ルールの完全一致化と hook の fail-closed 化
+
+> **確認日: 2026-10-16**。**提供元: Official / 状態: GA（CLI の正式リリース）**。[2.1.299](https://github.com/anthropics/claude-code/releases/tag/v2.1.299)（2026-10-14）、[2.1.300](https://github.com/anthropics/claude-code/releases/tag/v2.1.300)（2026-10-14）、[2.1.301](https://github.com/anthropics/claude-code/releases/tag/v2.1.301)（2026-10-15）の release に基づきます（日付は公式 release の UTC 日付。2.1.297〜2.1.298 の release はありません）。本ガイドでは実機で再現していません。
+
+この 3 版は、**既存の設定の効き方が変わる変更**を含みます。更新前に、次の表の「見直すこと」を確認してください。
+
+**既存の設定の効き方が変わるもの**
+
+| 版 | 変更 | 見直すこと |
+|----|------|-----------|
+| 2.1.299 | **MCP の allow rule が、書いたサーバー名にだけ一致する**。`mcp__a` は `a__b` や `a_` という別のサーバーを許可しなくなった | サーバー全体を許可するときは `mcp__<正規化したサーバー名>__*` と書く。前方一致で別サーバーまで許可していなかったかも確認する |
+| 2.1.299 | **agent の `tools:` も、指定したサーバーの tool だけを取る**。名前に `__` を含むサーバーは `mcp__<名前全体>__*` と書く | custom agent・subagent の定義で MCP tool を列挙している場合 |
+| 2.1.299 | 名前に `__` を含むサーバーへの `mcp__<server>` 形式の **deny / ask rule が効いていなかった**問題を修正 | deny で止めたつもりのサーバーが、更新前に動いていなかったか |
+| 2.1.299 | **`UserPromptSubmit` hook が、Skill・カスタムスラッシュコマンドの展開より前に動く**。hook が prompt を止めると、埋め込みの shell 行も実行されない。Skill の frontmatter に書いた `UserPromptSubmit` は、その Skill を呼び出した次の prompt から動く | prompt の検査 hook で、展開後の内容を前提に判定していた場合 |
+| 2.1.300 | PreToolUse / PermissionRequest hook が返す **`updatedInput` を、Claude 自身の入力と同じく検証する**。未知のキーは捨て、tool が受け付けない入力は deny になる | 入力を書き換える hook。独自のキーを足していた場合は効かなくなる |
+| 2.1.300 | `claude remote-control` の `--sandbox` / `--no-sandbox` を削除。**この flag は以前から効果がなく**、指定するとエラー終了する | flag で sandbox 化していたつもりの起動スクリプトは、実際には sandbox なしだった。settings の `sandbox.enabled` へ移す |
+
+**hook と sandbox が止める側に寄ったもの（2.1.299）**
+
+| 変更 | 運用上の意味 |
+|------|-------------|
+| plugin hook が止められる操作は、hook が受け取れない・答えを返せないとき**拒否**する | 以前は通していた。hook の起動失敗で作業が止まり得るため、配布前に動作を確かめる |
+| Windows で shell を指定していない PreToolUse / PermissionRequest hook が、Git for Windows がないと **fail-open** していた問題を修正（失敗時は block） | Windows 端末で bash 前提の hook を配っている組織は影響を受けていた可能性がある |
+| plan mode で、PreToolUse hook や mod の `tool.check` が allow した**書き込み（MCP・ファイル・shell）が実行されていた**問題を修正 | plan mode を「書き込まない」前提で使う場合 |
+| sandbox: macOS で symlink 経由の denied path へのアクセス、`--plugin-dir` への書き込み（sandbox の外で再読み込みされる）、glob の解釈の差を修正 | sandbox を書き込み境界として使う場合 |
+| claude.ai の connector proxy と Anthropic がホストする MCP server、cloud / self-hosted runner の MCP proxy は **HTTP redirect を追わない** | redirect 先へ接続していた構成は動かなくなる。connector 自身のサーバーによる redirect は対象外 |
+| 実行中の headless / SDK session に追加した MCP server を、**接続前に policy で確認**する。`claude mcp list` / `get` と subagent の MCP server も、policy で拒否されたものを起動しない | managed の MCP 制限が、動的な追加や subagent にも効く |
+| ファイル名・フォルダ名に不可視文字・方向制御文字・空白に似た文字・`<` `>` を含む Skill / コマンドは、名前を変えるまで読み込まない | 見た目が同じ別の Skill を紛れ込ませる手口への対策 |
+
+**cloud session と監査（2.1.299〜2.1.301）**
+
+- Cowork の cloud session の auto mode では、PermissionRequest hook が **shell コマンドと subagent を承認できない**（2.1.299）。hook の allow に含めた `setMode` も無視される（2.1.300）。hook で権限モードを切り替える運用は使えません。
+- agent hook が自分の `model` 指定に従うようになった（2.1.300）。subagent のモデルで上書きされず、使えないモデルは呼び出し元のモデルに戻ります。
+- OpenTelemetry の `tool_decision` event に `classifier_verdict`・`permission_mode`・`classifier_category` が追加された（2.1.301）。auto mode の classifier による判定と permission rule による判定を区別できます。→ [ハーネスの OTel](../dev-methods/harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions)
+- workflow agent が「task text には利用者の権限がない」という注記を読んで手順を飛ばし、run は成功と報告される問題が修正された（2.1.301）。workflow の成功表示だけで、全手順の実行を確認したとみなさないでください。
+
+**更新時の確認手順（検証用プロジェクトで行う設計例。本ガイドでの実測ではありません）**
+
+1. `settings.json` と managed settings の `mcp__` で始まる rule を一覧にし、サーバー全体を対象にする rule を `mcp__<server>__*` に揃える。
+2. 名前に `__` を含む MCP server があれば、deny / ask が更新後に効くことを、副作用のない tool で確かめる。
+3. 入力を書き換える hook は、`updatedInput` に tool の schema にないキーを入れていないかを確認する。
+4. Windows 端末では、hook を起動できない状態（shell がない）で対象の操作が止まることを確かめる。
+
+**→ 組織での見直しの観点は [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#2026-10-1410-16-の権限境界の更新) を参照**
 
 ## セットアップ
 
