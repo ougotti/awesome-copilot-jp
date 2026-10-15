@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-14
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -485,6 +485,42 @@ Copilot harness は、VS Code の experiments を有効にした enterprise 利�
 
 session grid、表示密度、session のフィルタ、welcome message などの UI だけの変更は、このページでは扱いません。
 
+### VS Code 1.142 — 統制を入れると Copilot harness へ移る・permission mode を絞る
+
+> **確認日: 2026-10-16**。[VS Code 1.142 release notes](https://code.visualstudio.com/updates/v1_142)（2026-10-14、Stable）に基づきます。以下の項目に Preview / Experimental の表記はありません。本ガイドでは実機で確認していません。
+
+1.141 では、旧 policy の sandbox 設定が Agent Host で「上書きできる既定値」に変わりました。1.142 では逆向きに、**組織が権限や sandbox を管理すると、VS Code が Copilot harness を必須にする**ようになりました。managed settings を配る前に、利用者が使っている chat の種類を確認してください。
+
+| 条件・設定 | 挙動 | 注意点 |
+|-----------|------|-------|
+| unified managed settings に**空でない `permissions` object**、または `sandbox.enabled: true` | Copilot harness が必須になる。**既存の未アーカイブの Local chat は、開くと Copilot へ移る**（transcript と未送信の下書きは残り、自動では送信しない。新しい chat が開けてから元の chat をアーカイブする） | この policy の間は **Claude・Codex・terminal chat が使えない**。editor の inline chat は残る。権限の制御だけを入れたつもりでも、Claude / Codex の harness を使う利用者の作業が止まる |
+| `vscode.temporaryDefaultToLocalHarness: true`（managed） | Local harness を残し、Copilot への自動切り替えを止める。`false` にするか削除すると通常の routing に戻る | **managed の sandbox・permission 設定が要求する routing も上書きする**。Local harness はそれらを強制しないため、統制も外れる。移行期間の一時的な回避に限る |
+| `permissions.disableBypassPermissionsMode: "disable"` | Allow All を選べなくする | 公式の例では、Allow All を止めて Assisted は残す構成を示している |
+| `permissions.disableAssistedPermissionsMode` | Assisted Permissions を個別に止める | **Assisted Permissions は、現時点で `permissions.allow` / `ask` / `deny` と併用できない**。これらを使う場合は `true` にする（公式は次の版で併用対応を予定と説明） |
+| `permissions.defaultMode` | 開始時の既定のモードを決める | **利用者が選べるモードは制限しない**。旧 `ChatToolsAutoApprove: false` は Allow All と Assisted の両方を止め続け、`defaultMode` だけではその代わりにならない |
+| Windows の policy | 数値を受け付ける policy が DWORD / QWORD の両方に対応 | — |
+
+**Local harness の Windows sandbox は廃止**されました。Windows で terminal コマンドを sandbox 内で実行したい場合は、Agent Host の session を使います。旧来の Local の agent session で sandbox が効いている前提の手順は見直してください。
+
+配布前の確認手順（設計例。本ガイドでの実測ではありません）:
+
+1. 利用者が Claude / Codex の harness や terminal chat を使っているかを確認する。使っている場合は、`permissions` / `sandbox` を配る時期を利用者に伝える。
+2. `permissions.allow` / `ask` / `deny` を配るなら、`disableAssistedPermissionsMode: true` を同時に入れる。
+3. 検証用の端末で、既存の Local chat を開いて Copilot へ移ること、Allow All が選べないこと、sandbox を回避できないこと（[1.141](#vs-code-1141--sandbox-の必須化旧-policy-の移行session-間の指示)）を確かめる。
+4. `temporaryDefaultToLocalHarness` を使う場合は、解除の期限を決める。
+
+**session 運用の変更**は次のとおりです。
+
+| 機能 | 内容 | 注意点 |
+|------|------|-------|
+| Copilot harness の既定化 | 新しい session の既定の harness として段階的に展開 | 1.140 から続く移行。従来の Local harness は選択肢として残る（上の policy がない場合） |
+| Ask agent | 読み取り専用の組み込み agent として、Copilot harness に戻った。agent picker で選ぶ | 調査や質問だけをしたいときに、編集する agent と分けて使う |
+| chat の移動 | Codex harness（または Interactive mode の Codex）の chat を、履歴を保ったまま別のフォルダや**新しい Git worktree** へ移すよう agent に頼める | chat が 1 つ・ローカルのフォルダが 1 つの session に限る |
+| background shell の停止 | Copilot harness の session で、attached の shell を止められる | detached の shell は止められない |
+| chat title の harness 名 | Copilot・Codex など、動いている harness 名を title に表示 | 統制の対象の harness かを見分ける手がかりになる |
+
+Canvases（**Preview**、`chat.canvases.enabled`）、model picker の再設計、BYOK の stateful responses、Agents window の layout など UI 中心の変更は、このページでは扱いません。
+
 ### Copilot CLI 1.0.89〜1.0.91 — instruction の互換・MCP 認証・sandbox
 
 [Copilot CLI changelog](https://github.com/github/copilot-cli/blob/main/changelog.md) から、可搬性と安全な運用に関わる変更を抜き出します。
@@ -599,6 +635,8 @@ MCP の設定変更は 1.0.93 から turn 間に反映され、1.0.94 では dis
 
 Plugin と MCP の信頼性の修正（`--plugin-dir` の Skill / custom agent の解決、remote marketplace の認証の再試行、tool 一覧の更新時の MCP tool 定義の再確認）は [プラグインの可搬性](../dev-methods/plugin-portability.md#copilot-cli-10961097--plugin-の読み込みと再開時の-hook) にまとめています。以上は公式 release note と docs の確認で、Autopilot での `ask` の扱いなどの実機検証は未実施です。出典: [Copilot CLI v1.0.96](https://github.com/github/copilot-cli/releases/tag/v1.0.96)、[v1.0.97](https://github.com/github/copilot-cli/releases/tag/v1.0.97)。
 
+**1.0.98（2026-10-14）**では、session を再開したときに**放棄された承認待ちの作業を再開せず、まだ有効な承認要求だけを続ける**ようになりました。また、Node の環境で子プロセスの終了 signal が失われても、command hook が確実に完了します。1.0.97 の「取り消した書き込みを再実行しない」と合わせ、再開後に承認待ちの一覧と差分を確認する手順は変わりません。出典: [Copilot CLI v1.0.98](https://github.com/github/copilot-cli/releases/tag/v1.0.98)（2026-10-16 確認）。
+
 ### Agentic CLI の customization 利用指標
 
 2026-09-17、Copilot usage metrics API に CLI の Skill / custom agent / MCP / slash command / Plugin 指標が加わりました。
@@ -685,6 +723,34 @@ CI・社内ツール・bot から review を起動する場合は、次の点を
 > **確認できていない点**: 具体的なエンドポイント名・リクエストのフィールド名・レート制限は、公式の変更ログ本文からは確認できていません。実装前に[公式ドキュメント](https://docs.github.com/en/copilot/how-tos/copilot-on-github/set-up-copilot/configure-code-review)で確認してください。
 
 **→ 経緯と他ツールの対応状況は [Skills 最新動向 9 節](../trends.md#9-skill-が動く場所の広がり) を参照**
+
+---
+
+## セキュリティ alert を直すエージェントと、PR の脆弱性検出 — agentic autofix と AI Scan
+
+2026-10-15、GitHub のセキュリティ機能で、**alert を修正する PR を Copilot が作る機能**と、**AI が PR の脆弱性を探す機能**が一般提供（GA）になりました。どちらも Copilot code review とは別の機能で、Code Security / Advanced Security の側で有効化・課金します（2026-10-16 確認。本ガイドでは有効化しての動作確認はしていません）。
+
+| | Agentic autofix for code scanning alerts | AI Scan for pull requests |
+|--|------------------------------------------|---------------------------|
+| 何をするか | 既存の code scanning alert について、Copilot が関連ファイルを読み、修正を作り、**CodeQL を再実行して alert が閉じることを確かめ**、必要なら繰り返して **draft PR** を開く | PR の変更から脆弱性を探し、CodeQL がまだ対応していない言語・形式（PHP、Shell / Bash、Terraform（HCL）、Dockerfile、JSP、Blazor など）を補う |
+| 入口 | alert を Copilot に assign／security list や campaign で**最大 25 件**を選んで 1 つの PR にまとめる／REST API で `assignees` に `copilot-swe-agent[bot]` を指定 | code scanning と、repository で有効な AI Scan の設定がオンなら自動で動く |
+| 結果の出方 | 修正内容・理由・検証手順を書いた draft PR。追加の指示は PR へのコメントか、repository の **Agents** タブの session で出す | PR の Conversation / Files changed に「AI」表示付きで出る（CodeQL の alert と区別できる）。リスクの説明と修正案が付くことがある |
+| merge を止めるか | 人が review して merge する（draft PR） | **止めない**。結果は advisory で、code scanning の check を失敗させず、ruleset で merge を止めることもない |
+| 対象外 | **default branch の alert のみ**。PR や他の branch だけで見つかった alert は assign できない | fork からの PR と Dependabot の PR では動かない |
+| 有効化 | enterprise 管理者が Advanced Security policy の「Agentic autofix」を有効化 → organization / repository 管理者が Code Security settings で有効化。有効になると、無料の「Generate Fix」は「Assign to Copilot」に置き換わる | 公開 repository は利用可。private / internal の organization 所有 repository は Code Security か Advanced Security が必要 |
+| 課金 | Code Security の AI Credits と GitHub Actions の minutes。**Copilot の billing method の定義が必要** | Code Security の AI Credits。**Copilot のライセンスは不要** |
+| 対象 | GitHub Enterprise Cloud（data residency を含む）で Code Security / Advanced Security を持つ顧客 | 上記のとおり |
+
+どちらも、enterprise の billing の「AI usage」に **Advanced Security** 製品として表示され、SKU 単位で Code Security の AI Credits に budget を設定できます。Copilot の利用量とは別に予算を見ておく必要があります。
+
+運用で注意する点:
+
+- **「CodeQL を再実行して alert が閉じた」は、修正が正しいことの証明ではありません。** alert を出した検出 rule に当たらなくなったことを示すだけで、機能を壊していないか、検出を回避しただけではないかは別に確かめます。修正 PR にテストの削除・skip・assertion の弱化が含まれていないかも review してください（点検の手順は [AI 時代のコードレビュー](../dev-methods/ai-code-review.md)）。
+- 25 件をまとめた PR は差分が大きくなります。alert ごとに理由を読めるか、review できる単位かで件数を決めます。
+- AI Scan は merge を止めないため、**見落としの防止を AI Scan に任せる運用にしない**でください。止めたい条件は CodeQL の required check や ruleset で設定します。
+- 2026-09-25 から agentic autofix は Copilot Memory を読み書きします（Copilot Memory は Public Preview。GA の変更ログはこの点に触れていません）。誤った修正 pattern が memory に残ると、Copilot code review や cloud agent にも広がり得ます（[memory を policy とみなさない](../dev-methods/skill-security.md#学習した-memory-を-policy-とみなさない)）。
+
+出典: [Agentic autofix for code scanning alerts general availability](https://github.blog/changelog/2026-10-15-agentic-autofix-for-code-scanning-alerts-general-availability)、[AI Scan for pull requests generally available](https://github.blog/changelog/2026-10-15-ai-scan-for-pull-requests-generally-available)（GitHub 公式・2026-10-15）。
 
 ---
 
@@ -1055,6 +1121,17 @@ Copilot CLI 1.0.94-0 から、`/model` が**起動中のローカル Ollama か�
 | どのパターンが動いたか | CLI: 進捗表示と会話の要約／VS Code: 完了した応答のフッターにホバー／app: 応答にホバー／詳細: `/collect-debug-logs` |
 
 **Auto との違い**: Auto はリクエストごとに**1 つのモデルを選びます**。HydraFusion は**実行パターンを選び、1 ターンの中で複数のモデルを協調させます**。
+
+**2026-10-14 の更新**（[変更ログ](https://github.blog/changelog/2026-10-14-hydrafusion-updates-and-new-max-option)、引き続き **Research preview**）:
+
+| 変更 | 内容 |
+|------|------|
+| 工程ごとの reasoning effort | 下書きは medium、レビューは high のように、工程ごとに effort を変える |
+| Cascade | 判定（judge）の工程を加え、必要なときだけ修正を依頼する |
+| Critique | 実際の workspace を確かめるために tool をより多く使い、**批評役のモデルを並列に**動かす |
+| **HydraFusion Max** | 最も深い推論が必要な作業向けに、より高い reasoning effort を使う選択肢 |
+
+変更ログは、モデルの候補として Claude Opus 5.5・GPT-6 Astra・GPT-6.1 Sol・GPT-6 Luna を挙げていますが、どのモデルを使うかは引き続き HydraFusion が決めます。Critique が tool を使うようになったため、「読み取り専用の批評」でも workspace の読み取りは増えます。Max は effort が高いぶん、AI credits の消費が増える可能性があります（変更ログに単価の記載はありません）。
 
 運用上の注意（公式ドキュメントより）:
 

@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-14
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-16 | 10-14〜10-16 の Claude Code 2.1.299〜2.1.301・VS Code 1.142・Copilot CLI 1.0.98・HydraFusion・Claude Managed Agents（OTel export と web ツールの制限）・agentic autofix / AI Scan の GA・Codex 0.163.0 を追加し、製品別の詳細へリンクした |
 | 2026-10-14 | 10-10〜10-14 の Copilot の managed settings・telemetry・VS Code 1.141・Copilot CLI 1.0.96〜1.0.97・JetBrains の更新を追加し、製品別の詳細へリンクした |
 | 2026-10-13 | 10-03〜10-10 の workflow・権限・MCP・Plugin 更新を再確認し、製品別の詳細と運用検証へリンクした |
 | 2026-10-08 | 13 節に ChatGPT の MCP Events（draft 仕様への部分対応）と Plugin Extensions を追加し、独立ページ [MCP Events](dev-methods/mcp-events.md) へ誘導した |
@@ -68,6 +69,22 @@
 | 2026-08-01 | 「Skill の発見・配布・更新」を追加（`gh skill` / Agent Finder・ARD / Copilot Plugins） |
 | 2026-07-29 | 常設ページ化（旧タイトル「2026年7月版」）。ガイド全体の更新は [更新履歴（CHANGELOG）](../CHANGELOG.md) を参照 |
 | 2026-07-22 | 初版公開（Matt Pocock's Skills / Context7 / Firecrawl / Vercel / Record & Replay / Computer Use の6テーマ） |
+
+## 2026-10-14〜10-16 の更新 — 許可の一致範囲と、統制を入れたときの切り替わり
+
+対象期間の一次情報を 2026-10-16 に確認しました。前回の一覧の確認後に Claude Code 2.1.299〜2.1.301 と Codex 0.163.0（Stable）が出たため、ここで扱います。Claude Managed Agents の web ツールの制限（10-07）は前々回の期間ですが、一覧に含めていなかったため追加します。モデルの追加・廃止・価格（Gemini 4 Argon、Opus 5.5 の Fast mode、Copilot の 11 月のモデル廃止など）と UI だけの更新は対象外です。release note と公式 docs の照合のみで、実機での検証は行っていません。
+
+| 公開日（公式掲載日 / release の UTC 日付） | 更新 | 提供元・状態 | 詳細 |
+|---|---|---|---|
+| 10-14〜15 | Claude Code 2.1.299〜2.1.301。MCP の allow rule と agent の `tools:` が完全一致に、`UserPromptSubmit` が Skill の展開前に、hook の `updatedInput` を検証、plugin hook の失敗は拒否、`tool_decision` に classifier の判定 | Official / GA | [Claude Code](claude-code/basics.md#2129921301--mcp-の許可ルールの完全一致化と-hook-の-fail-closed-化) |
+| 10-14 | VS Code 1.142。managed の `permissions` / `sandbox` で Copilot harness が必須になり Claude・Codex・terminal chat が使えなくなる、permission mode の個別制御、Local harness の Windows sandbox の廃止 | Official / Stable | [VS Code 1.142](copilot/README.md#vs-code-1142--統制を入れると-copilot-harness-へ移るpermission-mode-を絞る) |
+| 10-14 | Copilot CLI 1.0.98（再開時に放棄された承認待ちを再開しない）、HydraFusion の更新と HydraFusion Max | Official / GA（HydraFusion は Research preview） | [CLI](copilot/README.md#cli-10961097--hook-の適用範囲と無人実行での承認)、[HydraFusion](copilot/README.md#hydrafusion--モデルピッカーに出る調整役) |
+| 10-14 | Claude API・Managed Agents の OpenTelemetry export。session の turn と tool 実行を自分の監視基盤へ送る | Official / Beta | [ハーネス](dev-methods/harness.md#claude-apimanaged-agents-の-trace-を自分の監視基盤へ送る2026-10-14beta) |
+| 10-07 | Claude Managed Agents の `web_fetch` が session に既出の URL だけを取得、`allowed_hosts` が web ツールにも適用 | Official / Beta（Managed Agents） | [Web ツールの URL 制限](dev-methods/skill-security.md#web-ツールが取得できる-url-を絞る2026-10-07) |
+| 10-15 | GitHub の agentic autofix for code scanning alerts と AI Scan for pull requests | Official / GA | [agentic autofix と AI Scan](copilot/README.md#セキュリティ-alert-を直すエージェントとpr-の脆弱性検出--agentic-autofix-と-ai-scan)、[検査の通過と正しさ](dev-methods/evals.md#検査ツールが通ったことを修正の正しさと混同しない) |
+| 10-15 | Codex CLI 0.163.0。再開時の permission / network 承認の復元、network proxy の強化、応答中の follow-up が即座に steer | Official / GA | [Codex CLI](codex/README.md#codex-cli-01630--再開時の権限復元network-proxy-の強化応答中の-steer)、[追加指示](dev-methods/agent-commands.md#background-agent-への追加指示と-tool-の発見) |
+
+この期間は、**既存の許可が狭まる変更**（Claude Code の MCP rule）と、**統制を強めると使える harness が変わる変更**（VS Code 1.142）が同時に入りました。どちらも更新や policy の配布の前に、検証用の端末で[許可・拒否の両方を確かめる](dev-methods/skill-security.md#2026-10-1410-16-の権限境界の更新)必要があります。
 
 ## 2026-10-10〜10-14 の更新 — policy を確実に届け、無人実行の承認を見直す
 

@@ -4,6 +4,14 @@
 
 ## 2026-10
 
+- **2026-10-16** 2026-10-14〜10-16 のエージェント関連の更新を反映（#263〜#267）。
+  - [Claude Code 2.1.299〜2.1.301](docs/claude-code/basics.md#2129921301--mcp-の許可ルールの完全一致化と-hook-の-fail-closed-化)の、MCP の allow rule と agent の `tools:` の完全一致化、`UserPromptSubmit` の実行順、`updatedInput` の検証、plugin hook の fail-closed 化、sandbox の修正、`tool_decision` の classifier 属性を追加し、更新前の棚卸し手順を示した（#263）。
+  - [VS Code 1.142](docs/copilot/README.md#vs-code-1142--統制を入れると-copilot-harness-へ移るpermission-mode-を絞る)で managed の `permissions` / `sandbox` が Copilot harness を必須にし Claude・Codex・terminal chat が使えなくなる点、`temporaryDefaultToLocalHarness` が統制も外す点、permission mode の個別制御と Assisted Permissions の非互換を追加した。Copilot CLI 1.0.98 と HydraFusion の更新（Max を含む）も反映した（#264）。
+  - [Claude Managed Agents の OpenTelemetry export](docs/dev-methods/harness.md#claude-apimanaged-agents-の-trace-を自分の監視基盤へ送る2026-10-14beta)（beta）の設定・span・本文・配送の限界と、[`web_fetch` の既出 URL 制限と `allowed_hosts`](docs/dev-methods/skill-security.md#web-ツールが取得できる-url-を絞る2026-10-07)を追加した（#265）。
+  - [agentic autofix と AI Scan for pull requests](docs/copilot/README.md#セキュリティ-alert-を直すエージェントとpr-の脆弱性検出--agentic-autofix-と-ai-scan) の GA を、入口・有効化・課金・merge を止めない点で比較し、[検査の通過と修正の正しさ](docs/dev-methods/evals.md#検査ツールが通ったことを修正の正しさと混同しない)を区別した（#266）。
+  - [Codex CLI 0.163.0](docs/codex/README.md#codex-cli-01630--再開時の権限復元network-proxy-の強化応答中の-steer) の再開時の権限復元、network proxy の強化、応答中の steer と、GPT-5.5 廃止に伴うモデル設定の棚卸しを追加した（#267）。
+  - 一次資料は 2026-10-16 に確認した。release note と公式 docs の照合のみで、実機での拒否・移行・送信の検証は未実施と各節に明記した。
+
 - **2026-10-15** [AI 時代のコードレビュー](docs/dev-methods/ai-code-review.md)を追加（#254）。
   - GitHub の Copilot ランタイム Rust 移行事例（SDK コールバックの移植漏れと E2E テストの削除）を基に、実装の差分とテストの差分を分けて見る手順、テスト変更のチェックリスト、不当な更新と妥当な更新の対の例を整理した。
   - ReviewBench（research preview）の golden set・LLM による照合・重大度別の層別、grounded / augmented の分母の違いと、augmented recall を単独で順位付けに使わない理由、golden set の不完全さなどの限界をまとめた。

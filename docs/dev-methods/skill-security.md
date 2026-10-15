@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-14
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-16
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -191,6 +191,18 @@ GitHub と Anthropic の機能は、どちらも「実行時の権限」を扱�
 | 監査 | 管理設定と各セッションの承認操作 | イベントの `evaluated_permission` |
 | 対象外に注意するもの | 対応面以外のクライアント。JetBrains の発表は managed sandbox | custom tools。Claude Code のローカル権限設定とは別機能 |
 
+#### Web ツールが取得できる URL を絞る（2026-10-07）
+
+ツール呼び出しの判定とは別に、Managed Agents では **web ツールが到達できる先**も絞られました（[release notes](https://platform.claude.com/docs/en/release-notes/overview)、2026-10-16 確認。API での実行は未検証）。prompt injection で「この URL にデータを付けて取得せよ」と誘導される経路を狭める変更です。
+
+| 変更 | 挙動 | 運用上の意味 |
+|------|------|-------------|
+| **`web_fetch` は session に既出の URL だけを取得する** | 利用者のメッセージ、`web_search` の結果、`web_fetch` が以前に返したページに現れた URL は取得できる。**Claude の出力・system prompt・添付文書・`bash` / `read` / MCP などの tool 出力にだけ現れた URL** は `url_not_in_prior_context` エラーになる | モデルが自分で組み立てた URL や、読み込んだ文書に埋め込まれた URL へは取りに行かない。取得させたい URL は `user.message` event で渡す |
+| `limited` networking の `allowed_hosts` が web ツールにも効く | `web_fetch` は対象外の host で `url_not_allowed`、`web_search` は対象外の host の結果を省く。`allowed_hosts` が空なら、どちらも何も返さない | `allow_package_managers` / `allow_mcp_servers` は web ツールの host を増やさない。web ツールに必要な host は `allowed_hosts` に明示する |
+| `allowed_domains` の検査 | 有効な web ツールの `allowed_domains` に `allowed_hosts` 外の entry があると、session の作成・更新が 400 になる | `allowed_hosts` の entry は `*.` で始まらない限り**完全一致**。`["example.com"]` は `docs.example.com` を含まない |
+
+unrestricted networking と self-hosted 環境はこの制限の対象外です。社内の文書や MCP の結果に含まれる URL を agent に取得させる設計にしていた場合は、その URL を利用者のメッセージとして渡す流れに変える必要があります。
+
 **→ Managed Agents をハーネスとして運用するときの介入方法は [AI エージェントの実行基盤](harness.md#実行中の権限判定と介入--claude-managed-agents) を参照**
 
 ### コンテキストの除外は、Skill / MCP の統制と別に効く
@@ -242,6 +254,23 @@ managed policy を利用者の設定や起動 flag で弱められると想定�
 
 「`ask` にしておけば人が確認する」は、**人が見ている対話の session でだけ成り立つ前提**です。無人実行では、確認を求める操作は止まる（deny）と考え、通したい操作は条件を絞った `allow` として書き分けてください。また、policy の配布と client の更新の順番を誤ると、統制を強めたつもりで利用者全員を止めることがあります。
 
+### 2026-10-14〜10-16 の権限境界の更新
+
+2026-10-16 に公式資料を確認しました。Claude Code では**既存の rule の一致範囲**と**hook が受け取れない・答えられないときの扱い**が、VS Code では**統制を入れたときに使える harness**が、Claude Managed Agents と Codex では**外部への取得と再開時の権限**が変わっています。release note と公式 docs の照合のみで、実機での拒否は確認していません。
+
+| 層 | 変更と運用上の意味 | 詳細・一次情報 |
+|---|---|---|
+| rule の一致範囲 | Claude Code 2.1.299 で、MCP の allow rule と agent の `tools:` が**書いたサーバー名にだけ一致**する。`mcp__a` は `a__b` を許可しない。名前に `__` を含むサーバーへの deny / ask が効いていなかった問題も修正 | [Claude Code](../claude-code/basics.md#2129921301--mcp-の許可ルールの完全一致化と-hook-の-fail-closed-化)、[2.1.299](https://github.com/anthropics/claude-code/releases/tag/v2.1.299) |
+| hook の失敗 | plugin hook が受け取れない・答えを返せない操作は拒否。Windows で Git for Windows がないときの PreToolUse / PermissionRequest hook の fail-open を修正 | 同上 |
+| hook の書き換え | 2.1.300 で `updatedInput` を tool の入力として検証し、未知のキーを捨てる。Cowork の cloud session では hook の `setMode` を無視し、auto mode の hook は shell / subagent を承認できない | [2.1.300](https://github.com/anthropics/claude-code/releases/tag/v2.1.300) |
+| 判定の監査 | 2.1.301 の `tool_decision` event に `classifier_verdict`・`permission_mode` が加わり、classifier と rule の判定を区別できる | [ハーネスの OTel](harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions) |
+| 統制と harness | VS Code 1.142 は、managed の `permissions` か `sandbox.enabled: true` があると Copilot harness を必須にし、Claude・Codex・terminal chat を使えなくする。回避用の `temporaryDefaultToLocalHarness` は統制も外す。Assisted Permissions は `permissions.allow` / `ask` / `deny` と併用できない | [VS Code 1.142](../copilot/README.md#vs-code-1142--統制を入れると-copilot-harness-へ移るpermission-mode-を絞る) |
+| 再開時の権限 | Codex CLI 0.163.0 は、再開した thread の permission と network の承認を復元する。明示した override と現在の managed policy が優先。network proxy は DNS 解決前に hostname を確認し、credential の別名による inspection hook の回避を塞いだ | [Codex CLI](../codex/README.md#codex-cli-01630--再開時の権限復元network-proxy-の強化応答中の-steer) |
+| 外部への取得 | Claude Managed Agents の `web_fetch` は session に既出の URL だけを取得し、`limited` networking の `allowed_hosts` が web ツールにも効く（2026-10-07） | [Web ツールの URL 制限](#web-ツールが取得できる-url-を絞る2026-10-07) |
+| 外部の監視基盤 | Claude Managed Agents の OpenTelemetry export（beta、2026-10-14）。Full content は prompt と tool の結果を Anthropic の外へ送る。配送は best effort で、監査ログの代わりにならない | [ハーネス](harness.md#claude-apimanaged-agents-の-trace-を自分の監視基盤へ送る2026-10-14beta) |
+
+前方一致で広く許可していた rule は、更新で**狭まる**方向に変わります。更新前に `mcp__` の rule を棚卸しし、許可したいサーバーを `mcp__<server>__*` で明示してください。逆に VS Code 1.142 では、統制を**強める**設定を入れた時点で、利用者が使える harness が変わります。どちらも、配布前に検証用の端末で挙動を確かめてください。
+
 ### ローカルモデル・offline・telemetry は別の境界
 
 「ローカルモデルを使う」ことと、「外部へ何も送らない」ことは同じではありません。GitHub Copilot CLI 1.0.94-0（2026-10-07）は `/model` で起動中の Ollama のモデルを追加できるようになりましたが、公式は**ローカルモデルの選択では offline mode にならず、GitHub の telemetry も止まらない**と明記しています。offline mode（`COPILOT_OFFLINE=true`）を有効にしても、provider がリモートならプロンプトとコード文脈はその provider へ送られます。**モデル・送信先・offline・telemetry を別々に確認**してください。**→ [GitHub Copilot ガイド](../copilot/README.md#ローカルモデルを使う--ollama-の発見と-offline-modecli-1094-0)**
@@ -256,7 +285,7 @@ managed policy を利用者の設定や起動 flag で弱められると想定�
 
 ### 学習した memory を policy とみなさない
 
-承認と同様に、**エージェントが書き込んだ memory がどこまで波及するか**も確認対象です。2026-09-25、GitHub の agentic autofix が Copilot Memory を使うようになりました（両機能とも Public Preview、Copilot Memory を有効にしている場合）。autofix は既存の memory を security alert 修正の文脈として読み、作成した修正の pattern を新しい memory として保存します。GitHub は、この memory が他の security alert の修正や、Copilot code review・Copilot cloud agent にも repository 固有の安全な開発 pattern として使われると説明しています。
+承認と同様に、**エージェントが書き込んだ memory がどこまで波及するか**も確認対象です。2026-09-25、GitHub の agentic autofix が Copilot Memory を使うようになりました（当時は両機能とも Public Preview、Copilot Memory を有効にしている場合。agentic autofix 自体は 2026-10-15 に [GA](../copilot/README.md#セキュリティ-alert-を直すエージェントとpr-の脆弱性検出--agentic-autofix-と-ai-scan)）。autofix は既存の memory を security alert 修正の文脈として読み、作成した修正の pattern を新しい memory として保存します。GitHub は、この memory が他の security alert の修正や、Copilot code review・Copilot cloud agent にも repository 固有の安全な開発 pattern として使われると説明しています。
 
 memory は、組織が承認した規約ではなく**更新も削除もできる repository 固有の文脈**です。誤った修正 pattern が保存されると、後続の review や cloud agent の作業にも影響し得ます。
 

@@ -1,6 +1,6 @@
 # Skill / エージェントの評価（evals） — 変更時の回帰と本番品質を分けて測る
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・本番エージェント基盤ほか） ｜ **実行環境**: CLI（ターミナル）/ Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-15
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・本番エージェント基盤ほか） ｜ **実行環境**: CLI（ターミナル）/ Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
 
 > [Skill / Plugin のセキュリティ](skill-security.md)は「**導入前**に入れてよいものか」を扱います。このページはその先、「**変更した Skill / Plugin が効いているか**」と「**本番エージェントが目的を達成しているか**」を測る話です。両者は対象と実行頻度が異なります。
 
@@ -232,6 +232,18 @@ PR のテスト通過・マージ率だけでは、後から必要になる保�
 - **権限**: enterprise owner / billing manager、organization owner、`View Copilot Metrics` 権限を持つ custom role。Copilot usage metrics policy の有効化が必要
 
 この指標は**レビュー工程の流れ**を示すもので、エージェントの出力品質を採点するものではありません。この release では**エージェントが開いた PR は対象外**なので、エージェント PR のレビュー負荷を直接測る指標でもありません。待ち時間が短くなっても、merge 後の revert や手直しが増えていれば品質は下がっています。前の小節の merge 後の指標と並べて読みます。
+
+### 検査ツールが通ったことを、修正の正しさと混同しない
+
+2026-10-15 に GA になった GitHub の [agentic autofix](../copilot/README.md#セキュリティ-alert-を直すエージェントとpr-の脆弱性検出--agentic-autofix-と-ai-scan) は、修正後に **CodeQL を再実行して alert が閉じることを確かめてから** draft PR を開きます。これはエージェント自身による検証ですが、確かめているのは「その検出 rule に当たらなくなった」ことだけです。
+
+| エージェントの報告 | それが示すこと | 別に確かめること |
+|------------------|--------------|----------------|
+| CodeQL を再実行し alert が閉じた | 同じ query がその箇所を検出しなくなった | 機能を壊していないか（既存テスト）、入力検証を足したのか検出を回避しただけか、同じ種類の弱点が別の経路に残っていないか |
+| テストが通った | 実行したテストが失敗しなかった | テストの削除・skip・assertion の弱化・期待値の書き換えが修正に含まれていないか |
+| AI Scan の指摘がない | AI Scan が指摘を出さなかった | AI Scan は advisory で網羅を保証しない。merge 条件は required check で決める |
+
+autofix の導入効果を測るときは、PR が開かれた数や alert が閉じた数ではなく、**review で差し戻した割合、merge 後の revert・手直し、同じ alert の再発**を記録します。上の「マージ後も測る」と同じ考え方です。
 
 ### AWS 固有の実装例 — Amazon Bedrock AgentCore Evaluations
 

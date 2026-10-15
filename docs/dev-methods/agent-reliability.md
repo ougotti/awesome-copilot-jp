@@ -1,6 +1,6 @@
 # 長時間タスクの信頼性設計
 
-> **対象ツール**: ツール横断（Claude Code・Codex・MCP・LangGraph ほか） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-13
+> **対象ツール**: ツール横断（Claude Code・Codex・MCP・LangGraph ほか） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
 
 > [ループエンジニアリング](loop-engineering.md)はエージェントを反復実行する方法と停止条件を、[AI エージェントの実行基盤（ハーネス）](harness.md)は実行環境を扱います。このページはその間にある、**長時間・多段階の仕事で小さな失敗が累積する問題**と、それを抑える信頼性設計を扱います。評価ツールや telemetry の網羅ではなく、**実行中の故障を前提にした** checkpoint・再開・冪等性・検証・reliability budget が対象です。
 
@@ -137,7 +137,7 @@ Anthropic の実利用データは、経験を積んだ利用者ほど「操作�
 
 ### 学習する memory を checkpoint と混同しない
 
-2026-09-25、GitHub の agentic autofix が Copilot Memory を読み書きするようになりました（両機能とも Public Preview）。既存の memory を修正の文脈として読み、作成した修正の pattern を memory として保存します。保存された memory は、後の security alert の修正や Copilot code review・cloud agent にも使われます。
+2026-09-25、GitHub の agentic autofix が Copilot Memory を読み書きするようになりました（当時は両機能とも Public Preview。agentic autofix は 2026-10-15 に [GA](../copilot/README.md#セキュリティ-alert-を直すエージェントとpr-の脆弱性検出--agentic-autofix-と-ai-scan) になったが、GA の変更ログは memory に触れていない）。既存の memory を修正の文脈として読み、作成した修正の pattern を memory として保存します。保存された memory は、後の security alert の修正や Copilot code review・cloud agent にも使われます。
 
 これは checkpoint とは性質が違います。
 
