@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-10-16** [Agents 一覧](docs/copilot/agents.md)・[Skills 一覧](docs/copilot/prompts.md)を upstream と照合し、削除済みの Agents 22 件を外して件数を 222 件・128 件に直し、[AI-DLC Workflows](docs/dev-methods/aidlc-workflows.md)を 2.11.0 に更新（6 ページを点検）。
 - **2026-10-16** [Codex ガイド](docs/codex/README.md)の入口を Plugin 中心に組み替え、upstream の追跡を `openai/skills` から後継の `openai/plugins` へ移した。
 - **2026-10-16** [Codex カタログ](docs/codex/catalog.md)と [Copilot Plugins](docs/copilot/plugins.md)を点検。`openai/skills` の deprecation と後継の `openai/plugins`、Copilot の可搬形式と既定 Marketplace の変化を反映。
 - **2026-10-16** [10-14〜10-16 の最新動向](docs/trends.md#2026-10-1410-16-の更新--許可の一致範囲と統制を入れたときの切り替わり)を反映。Claude Code の MCP 許可ルールの完全一致化、VS Code 1.142 の Copilot harness への自動移行、Managed Agents の OTel と web ツール制限、agentic autofix の GA、Codex 0.163.0 を整理。
 - **2026-10-15** [AI 時代のコードレビュー](docs/dev-methods/ai-code-review.md)を追加。テストの削除・弱化で検証が減っていないかの点検と、ReviewBench を使った AI レビュアーの誤検知・見逃しの測り方（検証計画）を整理。
-- **2026-10-14** [10-10〜10-14 の最新動向](docs/trends.md#2026-10-1010-14-の更新--policy-を確実に届け無人実行の承認を見直す)を反映。Copilot の managed settings 強制更新・telemetry の identity、VS Code 1.141 の sandbox 必須化、Copilot CLI 1.0.97 の hook と無人実行の承認を整理。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -115,8 +115,8 @@
 | ドキュメント | 提供元 | 状態 | 環境 | 内容 | 件数 |
 |-------------|-------|------|------|------|------|
 | **[Instructions 一覧](docs/copilot/instructions.md)** | Official | GA | IDE | ファイルパターン別に規約を自動適用するルール | 202 件 |
-| **[Agents 一覧](docs/copilot/agents.md)** | Official | GA | IDE | 特定ドメインの専門家ペルソナ定義 | 244 件 |
-| **[Prompts / Skills 一覧](docs/copilot/prompts.md)** | Official | GA | IDE / CLI | `/` から呼ぶタスクテンプレートと Skills | 137 件 |
+| **[Agents 一覧](docs/copilot/agents.md)** | Official | GA | IDE | 特定ドメインの専門家ペルソナ定義 | 222 件 |
+| **[Prompts / Skills 一覧](docs/copilot/prompts.md)** | Official | GA | IDE / CLI | `/` から呼ぶタスクテンプレートと Skills | 128 件 |
 | **[Plugins](docs/copilot/plugins.md)** | Official | GA | CLI / IDE | 拡張一式をまとめて配布する単位と Marketplace | — |
 | **[VS Code エディタウィンドウでの複数ルート運用](docs/copilot/multi-root.md)** | 本ガイド | Experimental | IDE | 複数フォルダ（multi-root workspace）を横断するエージェントセッションの設定・hooks の読み込み元 | — |
 

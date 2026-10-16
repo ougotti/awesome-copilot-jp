@@ -1,6 +1,6 @@
 # MCP と A2A — 役割の違いと併用方法
 
-> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-09
+> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
 
 > [Skills 最新動向 13 節](../trends.md#エージェント間プロトコルの統治の集約--a2a-が-aaif-に合流)は、MCP と A2A が同じ Agentic AI Foundation（AAIF）の下に並んだという**統治の変化**を扱っています。このページはその前提となる**両プロトコルの責務の違いと、併用する際の構成**を独立して整理します。
 

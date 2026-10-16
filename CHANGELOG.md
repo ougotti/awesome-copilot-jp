@@ -4,6 +4,12 @@
 
 ## 2026-10
 
+- **2026-10-16** 10-20〜10-26 に「最終更新」から 45 日を超える 6 ページを先に点検（#273）。
+  - [Agents 一覧](docs/copilot/agents.md)から、upstream で 2026-03〜08 に削除された 22 件（`polyglot-test-*`・Beast モード系・`semantic-kernel-*`・`microsoft-agent-framework-*`・`winui3-expert` など）を外し、244 件 → 222 件にした。[Skills（旧 Prompts）一覧](docs/copilot/prompts.md)は、deprecated になった `csharp-mcp-server-generator` の行を外して後継の `dotnet-mcp-builder` を注記し、137 件 → 128 件にした。`scripts/known-files.json` と README の件数も合わせた。
+  - [AI-DLC Workflows](docs/dev-methods/aidlc-workflows.md)を 2.11.0 に合わせ、公式 README のハーネスごとの最小版（Kiro CLI の v3 / V2 の設定値の違いを含む）、preview channel、2.9.0〜2.11.0 の運用に関わる変更、更新手順を追加した。
+  - [MCP と A2A](docs/dev-methods/agent-protocols.md)・[AI-DLC・AI-PDLC・AI BPR の違い](docs/dev-methods/ai-driven-lifecycle-terms.md)は差分なし、[Power Apps Plans との比較](docs/dev-methods/ai-dlc-power-platform.md)は Plans が既定で有効な点を補足した。
+  - upstream の更新チェックは追加だけを検知するため、削除が反映されていなかった。Instructions にも同じずれ（削除 11・追加 1）があり、別途扱う。一次資料は 2026-10-16 に確認した。
+
 - **2026-10-16** `openai/skills` の追跡と Codex の入口を `openai/plugins` へ移した（#271）。
   - 手動追従 upstream の週次チェック（`scripts/check_dev_methods_updates.py`）の監視対象を、2026-06-22 に deprecated になった `openai/skills` から後継の `openai/plugins` の `plugins/` へ替え、`scripts/known-files.json` に現在の 62 件を登録した。CONTRIBUTING の upstream 一覧・追跡表と README のカタログ紹介も更新した。
   - [Codex ガイド](docs/codex/README.md)の 1〜4 節を、Skill と Plugin の関係・Plugin から試す流れに組み替え、Skill の置き場所を現行の公式ガイドに合わせた（管理者レベルの `/etc/codex/skills` を追加）。`$skill-installer` と 3 層の説明は「従来の方法」として残した。

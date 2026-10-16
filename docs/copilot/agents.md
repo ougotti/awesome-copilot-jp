@@ -1,8 +1,10 @@
 # Agents 一覧と活用ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-07
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **244 個の Agents** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **222 個の Agents** を日本語で解説します。
+>
+> **2026-10-16 の点検**: upstream で 2026-03〜08 に削除された 22 件（`polyglot-test-*` の 8 件、Beast モード系 4 件、`semantic-kernel-*`・`microsoft-agent-framework-*` の 4 件、`winui3-expert`・`modernize-java`・`gem-critic`・`gem-*-mobile` など）を一覧から外しました。外部 Plugin への置き換えや重複整理によるもので、同じ用途は [Copilot Plugins](plugins.md) や Skills で探せる場合があります。
 
 ## Agents とは
 
@@ -49,7 +51,6 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`sast-sca-security-analyzer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/sast-sca-security-analyzer.agent.md) | SAST/SCA セキュリティアナライザー | 静的解析・依存関係脆弱性監査 |
 | [`doublecheck.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/doublecheck.agent.md) | AI 生成物検証エージェント | ファクトチェック・ソース検証 |
 | [`gem-reviewer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-reviewer.agent.md) | GEM レビュアー（セキュリティゲートキーパー） | OWASP・シークレット検出・PRD 準拠検証 |
-| [`gem-critic.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-critic.agent.md) | GEM クリティック（仮定・設計・アプローチへの批判的挑戦） | 仮定の検証・エッジケース発見・過剰設計の指摘 |
 | [`gem-designer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-designer.agent.md) | GEM デザイナー（UI/UX スペシャリスト） | レイアウト・テーマ・カラースキーム・デザインシステム・アクセシビリティ検証 |
 | [`trojan-skill-hunter.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/trojan-skill-hunter.agent.md) | トロイの木馬スキルハンター（サプライチェーン監査） | Skill・Agent・Hooks・MCP 設定を導入前に監査、隠し指示・難読化ペイロードの検出 |
 
@@ -86,7 +87,6 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`research-technical-spike.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/research-technical-spike.agent.md) | 技術スパイク検証エージェント | 技術検証、POC 調査 |
 | [`tech-debt-remediation-plan.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/tech-debt-remediation-plan.agent.md) | 技術的負債解消計画 | 負債の可視化と解消計画 |
 | [`blueprint-mode.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/blueprint-mode.agent.md) | ブループリントモード | 設計図作成 |
-| [`blueprint-mode-codex.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/blueprint-mode-codex.agent.md) | ブループリントモード（Codex 版） | 設計図 + コード生成 |
 | [`context-architect.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/context-architect.agent.md) | コンテキストアーキテクト | マルチファイル変更計画・依存関係マッピング |
 | [`one-shot-feature-issue-planner.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/one-shot-feature-issue-planner.agent.md) | ワンショット機能計画エージェント | 機能要件を即座に GitHub Issue 化 |
 | [`rug-orchestrator.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/rug-orchestrator.agent.md) | RUG オーケストレーター（Repeat Until Good） | サブエージェント委任・繰り返し検証 |
@@ -94,8 +94,6 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`gem-planner.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-planner.agent.md) | GEM プランナー（DAG 設計） | タスク分解・計画 YAML 生成 |
 | [`gem-researcher.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-researcher.agent.md) | GEM リサーチャー | コードベース調査・パターン発見 |
 | [`gem-implementer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-implementer.agent.md) | GEM 実装エージェント（TDD） | テスト駆動でコード実装 |
-| [`gem-designer-mobile.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-designer-mobile.agent.md) | GEM モバイルデザイナー（HIG/Material Design 3 専門） | モバイル UI/UX 設計・プラットフォーム規約準拠 |
-| [`gem-implementer-mobile.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-implementer-mobile.agent.md) | GEM モバイル実装エージェント（TDD） | React Native/Expo/Flutter コード実装 |
 | [`project-architecture-planner.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/project-architecture-planner.agent.md) | プロジェクトアーキテクチャプランナー | テックスタック評価・スケーラビリティロードマップ設計・クラウド非依存コスト分析・Mermaid 図生成 |
 | [`workshop-ta.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/workshop-ta.agent.md) | ワークショップ TA（マルチエージェントルームコーディネーター） | デスク管理・作業ルーティング・ジャーナル管理・調整シグナル送出 |
 
@@ -193,10 +191,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`dotnet-upgrade.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/dotnet-upgrade.agent.md) | .NET アップグレード専門家 | フレームワーク移行 |
 | [`dotnet-maui.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/dotnet-maui.agent.md) | .NET MAUI 専門家 | クロスプラットフォームアプリ |
 | [`WinFormsExpert.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/WinFormsExpert.agent.md) | WinForms エキスパート | Windows フォームアプリ |
-| [`semantic-kernel-dotnet.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/semantic-kernel-dotnet.agent.md) | Semantic Kernel（.NET）専門家 | AI/ML .NET 開発 |
-| [`microsoft-agent-framework-dotnet.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/microsoft-agent-framework-dotnet.agent.md) | Microsoft Agent Framework（.NET） | エージェント開発 |
 | [`dotnet-fullstack-mentor.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/dotnet-fullstack-mentor.agent.md) | .NET フルスタックメンター | クリーンアーキテクチャとキャリア成長支援 |
-| [`winui3-expert.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/winui3-expert.agent.md) | WinUI 3 専門家 | Windows App SDK デスクトップアプリ開発 |
 | [`dotnet-self-learning-architect.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/dotnet-self-learning-architect.agent.md) | .NET 自己学習アーキテクト（並行/オーケストレーション型サブエージェント対応） | エンタープライズ .NET システム設計・実装 |
 
 **[expert-dotnet-software-engineer.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/expert-dotnet-software-engineer.agent.md)** の特徴:
@@ -489,8 +484,6 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 
 | ファイル名 | ペルソナ | 活用場面 |
 |-----------|---------|---------|
-| [`semantic-kernel-python.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/semantic-kernel-python.agent.md) | Semantic Kernel（Python）専門家 | Python AI/ML 開発 |
-| [`microsoft-agent-framework-python.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/microsoft-agent-framework-python.agent.md) | Microsoft Agent Framework（Python） | Python エージェント開発 |
 | [`comet-opik.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/comet-opik.agent.md) | Comet Opik | ML 実験管理 |
 | [`python-notebook-sample-builder.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/python-notebook-sample-builder.agent.md) | Python Notebook サンプルビルダー | Azure・AI 機能の Jupyter Notebook 作成 |
 | [`spark-performance.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/spark-performance.agent.md) | PySpark パフォーマンスエキスパート | PySpark ボトルネック診断・分散実行アンチパターン修正 |
@@ -515,14 +508,6 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`tdd-refactor.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/tdd-refactor.agent.md) | TDD Refactor フェーズ | テスト維持リファクタリング |
 | [`diffblue-cover.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/diffblue-cover.agent.md) | Diffblue Cover | Java テスト自動生成 |
 | [`gem-browser-tester.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-browser-tester.agent.md) | GEM ブラウザテスター | E2E ブラウザテスト（Playwright/Chrome DevTools） |
-| [`polyglot-test-generator.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/polyglot-test-generator.agent.md) | ポリグロットテスト生成オーケストレーター | 多言語テスト生成（RPI パイプライン） |
-| [`polyglot-test-researcher.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/polyglot-test-researcher.agent.md) | ポリグロットテストリサーチャー | コードベース構造・テストフレームワーク調査 |
-| [`polyglot-test-planner.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/polyglot-test-planner.agent.md) | ポリグロットテストプランナー | テスト実装計画策定（フェーズ分割） |
-| [`polyglot-test-implementer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/polyglot-test-implementer.agent.md) | ポリグロットテスト実装エージェント | テストファイル作成・ビルド・実行検証 |
-| [`polyglot-test-builder.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/polyglot-test-builder.agent.md) | ポリグロットテストビルダー | ビルド・コンパイル実行・エラー報告 |
-| [`polyglot-test-tester.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/polyglot-test-tester.agent.md) | ポリグロットテストランナー | テスト実行・合否レポート |
-| [`polyglot-test-fixer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/polyglot-test-fixer.agent.md) | ポリグロットテストフィクサー | コンパイルエラー修正 |
-| [`polyglot-test-linter.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/polyglot-test-linter.agent.md) | ポリグロットテストリンター | コードフォーマット・スタイル修正 |
 | [`qa-subagent.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/qa-subagent.agent.md) | QA サブエージェント | テスト計画・バグハント・品質検証 |
 | [`ai-team-qa.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/ai-team-qa.agent.md) | AI QA エンジニア（Ivy） | E2E 検証、バグ報告、QA サインオフ |
 | [`accessibility-runtime-tester.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/accessibility-runtime-tester.agent.md) | アクセシビリティランタイムテスター | キーボードフロー・フォーカス管理・WCAG ランタイム検証 |
@@ -535,7 +520,6 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | ファイル名 | ペルソナ | 活用場面 |
 |-----------|---------|---------|
 | [`modernization.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/modernization.agent.md) | モダナイゼーション専門家 | レガシーシステム刷新 |
-| [`modernize-java.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/modernize-java.agent.md) | Java モダナイズエージェント | Java / Spring Boot の段階的アップグレード |
 | [`arm-migration.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/arm-migration.agent.md) | ARM 移行専門家 | ARM テンプレート移行 |
 | [`oracle-to-postgres-migration-expert.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/oracle-to-postgres-migration-expert.agent.md) | Oracle → PostgreSQL 移行エキスパート | Oracle から PostgreSQL へのアプリ移行 |
 | [`react18-commander.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/react18-commander.agent.md) | React 18 移行オーケストレーター | React 16/17 → 18.3.1 移行パイプライン統括 |
@@ -578,12 +562,8 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 
 | ファイル名 | ペルソナ | 活用場面 |
 |-----------|---------|---------|
-| [`4.1-Beast.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/4.1-Beast.agent.md) | Beast モード（GPT-4.1 風） | 高性能推論 |
 | [`Thinking-Beast-Mode.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/Thinking-Beast-Mode.agent.md) | Thinking Beast モード | 段階的思考 |
 | [`Ultimate-Transparent-Thinking-Beast-Mode.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/Ultimate-Transparent-Thinking-Beast-Mode.agent.md) | 究極透明思考 Beast モード | 思考プロセス可視化 |
-| [`gpt-5-beast-mode.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gpt-5-beast-mode.agent.md) | GPT-5 Beast モード | 最高性能モード |
-| [`rust-gpt-4.1-beast-mode.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/rust-gpt-4.1-beast-mode.agent.md) | Rust GPT-4.1 Beast モード | Rust 高性能開発 |
-| [`voidbeast-gpt41enhanced.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/voidbeast-gpt41enhanced.agent.md) | VoidBeast GPT-4.1 Enhanced | 拡張推論 |
 | [`hlbpa.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/hlbpa.agent.md) | HLBPA | 高レベル計画 |
 | [`droid.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/droid.agent.md) | Droid | 汎用エージェント |
 | [`caveman-mode.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/caveman-mode.agent.md) | Caveman モード | 低トークン・最小表現での応答 |
@@ -626,26 +606,26 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 
 ## まとめ
 
-Agents は **244 ファイル** あり、以下のカテゴリに分類されます：
+Agents は **222 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な用途 |
 |---------|----------|---------|
-| コード品質・レビュー | 約 18 | セキュリティ、アーキテクチャレビュー、ガバナンス |
-| 計画・設計 | 約 26 | PRD、仕様書、実装計画、マルチエージェント調整、ワークショップ |
+| コード品質・レビュー | 約 17 | セキュリティ、アーキテクチャレビュー、ガバナンス |
+| 計画・設計 | 約 23 | PRD、仕様書、実装計画、マルチエージェント調整、ワークショップ |
 | メンタリング・教育 | 約 7 | 新人指導、学習支援、ドキュメント作成 |
 | デバッグ・保守 | 約 8 | バグ調査、コードクリーンアップ、パフォーマンス診断 |
-| 言語・フレームワーク専門家 | 約 29 | .NET, React, Vue, Nuxt, Salesforce, WinUI 3 等 |
+| 言語・フレームワーク専門家 | 約 26 | .NET, React, Vue, Nuxt, Salesforce 等 |
 | MCP サーバー開発 | 約 10 | 各言語の MCP SDK |
 | インフラ・DevOps | 約 19 | CI/CD, Kubernetes, Terraform, Terratest |
 | Azure・クラウド | 約 13 | Azure アーキテクチャ、IaC、ポリシー分析、セキュリティ |
 | データベース | 約 10 | PostgreSQL, SQL Server, MongoDB |
 | Power Platform・BI | 約 10 | Power BI, Power Platform |
 | Microsoft 365 | 約 5 | M365 Copilot エージェント |
-| テスト | 約 18 | TDD, Playwright, Polyglot テスト自動化、モバイル E2E |
-| AI・機械学習 | 約 7 | Python AI/ML, Notebook サンプル, PySpark, 評価ハーネス |
-| 移行・モダナイゼーション | 約 14 | レガシー刷新、React 18/19 移行、Oracle→PostgreSQL |
+| テスト | 約 10 | TDD, Playwright, QA、モバイル E2E |
+| AI・機械学習 | 約 5 | Notebook サンプル, PySpark, 評価ハーネス |
+| 移行・モダナイゼーション | 約 13 | レガシー刷新、React 18/19 移行、Oracle→PostgreSQL |
 | 外部サービス連携 | 約 14 | 各種 SaaS 連携、科学論文検索 |
-| 高度なモード | 約 8 | Beast モード、高性能推論 |
+| 高度なモード | 約 5 | Beast モード、高性能推論 |
 | その他 | 約 15 | 専門エージェント、a11y、LinkedIn、TaxCore |
 
 プロジェクトの課題に応じて、最適な専門家エージェントを選んで相談しましょう。
