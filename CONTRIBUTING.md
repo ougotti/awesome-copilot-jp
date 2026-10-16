@@ -10,7 +10,7 @@
 
 - [github/awesome-copilot](https://github.com/github/awesome-copilot)
 - [anthropics/skills](https://github.com/anthropics/skills)
-- [openai/skills](https://github.com/openai/skills)
+- [openai/plugins](https://github.com/openai/plugins)（2026-06-22 に deprecated になった [openai/skills](https://github.com/openai/skills) の後継）
 - [mattpocock/skills](https://github.com/mattpocock/skills)
 - [obra/superpowers](https://github.com/obra/superpowers)
 - [anthropics/financial-services](https://github.com/anthropics/financial-services)
@@ -103,7 +103,7 @@ docs/
 | [github/awesome-copilot](https://github.com/github/awesome-copilot) | `.github/workflows/check-upstream-updates.yml` | `scripts/check_upstream_updates.py` | `instructions` / `agents` / `prompts` | `docs/copilot/instructions.md` / `docs/copilot/agents.md` / `docs/copilot/prompts.md` |
 | [anthropics/skills](https://github.com/anthropics/skills) | `.github/workflows/check-anthropics-skills-updates.yml` | `scripts/check_anthropics_skills_updates.py` | `anthropics_skills` | `docs/claude-code/official-skills.md` |
 | [anthropics/financial-services](https://github.com/anthropics/financial-services) | `.github/workflows/check-financial-services-updates.yml` | `scripts/check_financial_services_updates.py` | `financial_services_agents` / `financial_services_vertical` / `financial_services_partner` | `docs/business/financial-services.md` |
-| [openai/skills](https://github.com/openai/skills) | `.github/workflows/check-dev-methods-updates.yml` | `scripts/check_dev_methods_updates.py` | `openai_skills` | `docs/codex/catalog.md` |
+| [openai/plugins](https://github.com/openai/plugins) | `.github/workflows/check-dev-methods-updates.yml` | `scripts/check_dev_methods_updates.py` | `openai_plugins` | `docs/codex/catalog.md` |
 | [mattpocock/skills](https://github.com/mattpocock/skills) | 同上 | 同上 | `mattpocock_skills` | `docs/dev-methods/mattpocock-skills.md` |
 | [obra/superpowers](https://github.com/obra/superpowers) | 同上 | 同上 | `superpowers_skills` | `docs/dev-methods/superpowers.md` |
 | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | 同上 | 同上 | `vercel_agent_skills` | `docs/dev-methods/skills-sh.md` |
@@ -111,6 +111,8 @@ docs/
 
 監視対象を増やすときは、`scripts/check_dev_methods_updates.py` の `TARGETS` に 1 エントリ（リポジトリ・監視パス・対応 docs・`known-files.json` のキー）を追加し、`scripts/known-files.json` に現在の一覧を登録してください。新しいスクリプトやワークフローを作る必要はありません。
 
+> 補足: [openai/skills](https://github.com/openai/skills) は 2026-06-22 に deprecated になり、以降は更新されていないため監視対象から外しました（2026-10-16）。`docs/codex/catalog.md` の Skill 一覧は 2026-06 時点の記録として残しています。
+>
 > 補足: [vercel-labs/skills](https://github.com/vercel-labs/skills)（`skills.sh` の CLI 本体）は「新規ファイルの追加」で変化を捉えられないため、監視対象は Vercel 公式 Skill 集の [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) にしています。CLI 側の変更は下記の鮮度チェックを起点に、リリースノートを確認して追従してください。
 
 ### ページ鮮度の月次チェック

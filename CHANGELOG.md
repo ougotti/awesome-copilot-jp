@@ -4,6 +4,11 @@
 
 ## 2026-10
 
+- **2026-10-16** `openai/skills` の追跡と Codex の入口を `openai/plugins` へ移した（#271）。
+  - 手動追従 upstream の週次チェック（`scripts/check_dev_methods_updates.py`）の監視対象を、2026-06-22 に deprecated になった `openai/skills` から後継の `openai/plugins` の `plugins/` へ替え、`scripts/known-files.json` に現在の 62 件を登録した。CONTRIBUTING の upstream 一覧・追跡表と README のカタログ紹介も更新した。
+  - [Codex ガイド](docs/codex/README.md)の 1〜4 節を、Skill と Plugin の関係・Plugin から試す流れに組み替え、Skill の置き場所を現行の公式ガイドに合わせた（管理者レベルの `/etc/codex/skills` を追加）。`$skill-installer` と 3 層の説明は「従来の方法」として残した。
+  - 一次資料は 2026-10-16 に確認した。スクリプトは対象を絞ってローカルで実行し、新規 0 件を確認した。Codex での Plugin の導入は試していない。
+
 - **2026-10-16** 「最終更新」が 10-18 に 45 日を超える 2 ページを先に点検（#269）。
   - [Codex Agent Skills カタログ](docs/codex/catalog.md)で、`openai/skills` が 2026-06-22 に deprecated になったこと、`skills/.experimental/` が存在しないことを反映し、一覧を 2026-06 時点で更新が止まったカタログとして位置づけ直した。現行の入口として [openai/plugins](https://github.com/openai/plugins)（62 件）と Plugins Directory を追加し、[Codex ガイド](docs/codex/README.md)の冒頭と 3 層の説明にも注記した。System 5 件・Curated 40 件の一覧は upstream と一致した。
   - [GitHub Copilot Plugins](docs/copilot/plugins.md)を CLI plugin reference と changelog に合わせ、可搬形式でも `com.github.copilot/` に Agents・Hooks などを置けること、`$schema` 1.0.0 / 1.1.0 の認識と非対応版の拒否、マニフェストの探索順、`copilot-plugins` が既定かどうか公式文書で記載が分かれる点、install の指定形式、managed settings のエントリ単位の優先、repository の `autoUpdate` が無視される点を反映した。Claude Code との比較表の既定 Marketplace の誤りも直し、Copilot ガイドと trends の記述を揃えた。

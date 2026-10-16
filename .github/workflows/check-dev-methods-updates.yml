@@ -14,7 +14,7 @@ on:
 
 jobs:
   check-updates:
-    name: openai/skills ほか 5 リポジトリの新規追加をチェック
+    name: openai/plugins ほか 5 リポジトリの新規追加をチェック
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -77,7 +77,7 @@ jobs:
               ``,
               `### 対応方法`,
               ``,
-              `1. 上記の \`SKILL.md\`（または拡張のルールファイル）を確認する`,
+              `1. 上記の \`SKILL.md\`・\`plugin.json\`（または拡張のルールファイル）を確認する`,
               `2. 対応 docs ページに解説を追加する`,
               `3. \`scripts/known-files.json\` の該当キーを更新する`,
               `4. \`CHANGELOG.md\` と README の「🆕 最近の更新」に1行追記する`,
