@@ -456,7 +456,7 @@ copilot plugin list
 copilot plugin update database-data-management
 ```
 
-Copilot CLI には `copilot-plugins`（GitHub 公式コレクション）と `awesome-copilot` が既定で登録されています。リポジトリの `.github/copilot/settings.json` に `enabledPlugins` を書けば、そのリポジトリの開発者全員へ同じ構成を適用できます。
+Copilot CLI には `awesome-copilot` が既定の Marketplace として組み込まれています（`copilot-plugins` は公式文書の間で既定かどうかの記載が分かれています。[詳細](copilot/plugins.md#marketplace)）。リポジトリの `.github/copilot/settings.json` に `enabledPlugins` を書けば、そのリポジトリの開発者全員へ同じ構成を適用できます。
 
 **→ 構成・`enabledPlugins`・Claude Code Plugin との比較は [GitHub Copilot Plugins](copilot/plugins.md) を参照**
 

@@ -306,7 +306,7 @@ copilot plugin install database-data-management@awesome-copilot
 copilot plugin update database-data-management
 ```
 
-Copilot CLI には `copilot-plugins`（GitHub 公式コレクション）と `awesome-copilot` の 2 つの Marketplace が既定で登録されています。VS Code の **Agent plugins** は 2026-08-12 に一般提供となり、Copilot CLI・Copilot SDK・Copilot アプリと合わせて全 Copilot プランで使えます。
+Copilot CLI には `awesome-copilot` が既定の Marketplace として組み込まれています。`copilot-plugins`（GitHub 公式コレクション）は、CLI のリファレンスでは既定ではなくなったと記載されており、公式文書の間で扱いが分かれています（[詳細](plugins.md#marketplace)）。VS Code の **Agent plugins** は 2026-08-12 に一般提供となり、Copilot CLI・Copilot SDK・Copilot アプリと合わせて全 Copilot プランで使えます。
 
 同じ発表で、マルチベンダー共通の **Agent Plugins 1.0.0** への対応も一般提供となりました。ただし Copilot Plugin を書けば自動的に他エージェントへ持ち出せるわけではなく、`plugin.json` に `$schema` を書いて可搬形式へオプトインしたものだけが対象です。
 

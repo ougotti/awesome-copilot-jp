@@ -6,6 +6,9 @@
 
 このページは**導入して最初の 1 個を動かすまで**の入口です。全スキルの一覧は [Agent Skills カタログ](catalog.md) にあります。
 
+> [!NOTE]
+> **`openai/skills` は 2026-06-22 に deprecated になりました**（2026-10-16 確認）。`$skill-installer` で入れる手順は公式ドキュメントに残っていますが、カタログは 2026-06 以降更新されていません。OpenAI は現行の例として [openai/plugins](https://github.com/openai/plugins) を、自作の配布方法として [Plugin](#5-plugin-でまとめて配る2026-08-の追加) を案内しています。詳しくは [カタログの「現行の入口」](catalog.md#現行の入口--openaiplugins-と-plugins-directory) を参照してください。
+
 ---
 
 ## 1. 準備する
@@ -95,9 +98,9 @@ $skill-installer linear
 |-----|------------|-------|------|------------|---------|
 | **System** | `skills/.system/` | Official | GA | 不要（自動） | そのまま使える |
 | **Curated** | `skills/.curated/` | Official | GA | スキル名で指定 | 外部アカウントの要否を確認 |
-| **Experimental** | `skills/.experimental/` | Community | Experimental | パス / URL で指定 | **中身とスクリプトを必ず確認** |
+| **Experimental** | `skills/.experimental/` | Community | Experimental | パス / URL で指定 | **2026-10-16 時点でディレクトリが存在しない** |
 
-Experimental は OpenAI による品質保証がありません。検証環境で試してから使ってください。
+Experimental はもともと OpenAI による品質保証のない層でしたが、現在はリポジトリから削除されています。また、リポジトリ全体が deprecated になっているため、3 層の区別は過去のカタログを読むための説明として扱ってください。
 
 ---
 
