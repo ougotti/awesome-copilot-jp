@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-anthropics/skills リポジトリに新しいスキルが追加されていないかチェックするスクリプト。
+anthropics/skills リポジトリで、スキルの追加・削除がないかチェックするスクリプト。
 
 GitHub Actions ワークフロー (.github/workflows/check-anthropics-skills-updates.yml) から呼び出されます。
-新規スキルが見つかった場合は:
-  - GitHub Actions output に has_new_skills=true を設定
+追加または削除が見つかった場合は:
+  - GitHub Actions output に has_new_skills / has_removed_skills を設定
   - anthropics_skills_report.json に詳細を書き出す
 """
 
@@ -73,22 +73,26 @@ def main():
     known_skills = set(load_known_skills())
 
     new_skills = [s for s in upstream_skills if s not in known_skills]
+    removed_skills = sorted(s for s in known_skills if s not in set(upstream_skills))
 
     print(f"\nUpstream: {len(upstream_skills)} skills")
     print(f"Known:    {len(known_skills)} skills")
     print(f"New:      {len(new_skills)} skills")
     for s in new_skills:
         print(f"  + {s}")
+    print(f"Removed:  {len(removed_skills)} skills")
+    for s in removed_skills:
+        print(f"  - {s}")
 
     with open("anthropics_skills_report.json", "w") as f:
-        json.dump({"new_skills": new_skills}, f, ensure_ascii=False, indent=2)
+        json.dump({"new_skills": new_skills, "removed_skills": removed_skills}, f, ensure_ascii=False, indent=2)
 
-    if new_skills:
-        set_output("has_new_skills", "true")
-        print("\nNew skills found! Issue will be created.")
+    set_output("has_new_skills", "true" if new_skills else "false")
+    set_output("has_removed_skills", "true" if removed_skills else "false")
+    if new_skills or removed_skills:
+        print("\nChanges found! Issue will be created.")
     else:
-        set_output("has_new_skills", "false")
-        print("\nNo new skills found.")
+        print("\nNo changes found.")
 
 
 if __name__ == "__main__":

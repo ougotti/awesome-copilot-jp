@@ -36,35 +36,35 @@ jobs:
           TRACKED_FILE: scripts/known-files.json
         run: python scripts/check_anthropics_skills_updates.py
 
-      - name: 新規スキルがある場合 Issue を作成
-        if: steps.check.outputs.has_new_skills == 'true' && inputs.dry_run != 'true'
+      - name: 追加・削除がある場合 Issue を作成
+        if: (steps.check.outputs.has_new_skills == 'true' || steps.check.outputs.has_removed_skills == 'true') && inputs.dry_run != 'true'
         uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
             const report = JSON.parse(fs.readFileSync('anthropics_skills_report.json', 'utf8'));
-            const newSkills = report.new_skills;
+            const newSkills = report.new_skills || [];
+            const removedSkills = report.removed_skills || [];
 
-            const skillList = newSkills.map(s =>
+            const newList = newSkills.map(s =>
               `- [\`${s}\`](https://github.com/anthropics/skills/tree/main/skills/${s})`
             ).join('\n');
+            const removedList = removedSkills.map(s => `- \`${s}\``).join('\n');
 
             const body = [
-              `## anthropics/skills に新しいスキルが追加されました`,
+              `## anthropics/skills のスキルに追加・削除がありました`,
               ``,
-              `[anthropics/skills](https://github.com/anthropics/skills) に **${newSkills.length} 個**の新しいスキルが追加されました。`,
-              `[docs/claude-code/official-skills.md](docs/claude-code/official-skills.md) への解説追加を検討してください。`,
+              `[anthropics/skills](https://github.com/anthropics/skills) で、追加 **${newSkills.length} 件**・削除 **${removedSkills.length} 件**を検出しました。`,
+              `[docs/claude-code/official-skills.md](docs/claude-code/official-skills.md) への反映を検討してください。`,
               ``,
-              `### 新しいスキル (${newSkills.length} 件)`,
-              ``,
-              skillList,
-              ``,
+              ...(newSkills.length ? [`### 新しいスキル (${newSkills.length} 件)`, ``, newList, ``] : []),
+              ...(removedSkills.length ? [`### upstream から消えたスキル (${removedSkills.length} 件)`, ``, `統合・改名の可能性もあるため、upstream の commit 履歴で経緯を確認してください。`, ``, removedList, ``] : []),
               `---`,
               ``,
               `### 対応方法`,
               ``,
-              `1. 上記スキルの \`SKILL.md\` を確認する`,
-              `2. \`docs/claude-code/official-skills.md\` に解説を追加する`,
+              `1. 追加は \`SKILL.md\` を確認し、\`docs/claude-code/official-skills.md\` に解説を追加する`,
+              `2. 削除は経緯を確認し、該当する解説を外すか後継へ差し替える`,
               `3. \`scripts/known-files.json\` の \`anthropics_skills\` リストを更新する`,
               `4. \`CHANGELOG.md\` に更新内容を1行追記する`,
               ``,
@@ -74,13 +74,13 @@ jobs:
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `[更新通知] anthropics/skills に ${newSkills.length} 個の新規スキル追加 (${new Date().toISOString().split('T')[0]})`,
+              title: `[更新通知] anthropics/skills に追加 ${newSkills.length} 件・削除 ${removedSkills.length} 件 (${new Date().toISOString().split('T')[0]})`,
               body,
               labels: ['upstream-update', 'documentation'],
             });
 
-            console.log(`Issue created: ${newSkills.length} new skills found`);
+            console.log(`Issue created: ${newSkills.length} new / ${removedSkills.length} removed`);
 
-      - name: 新規スキルなし（スキップ）
-        if: steps.check.outputs.has_new_skills != 'true'
-        run: echo "新規スキルはありませんでした。"
+      - name: 追加・削除なし（スキップ）
+        if: steps.check.outputs.has_new_skills != 'true' && steps.check.outputs.has_removed_skills != 'true'
+        run: echo "追加・削除はありませんでした。"

@@ -36,8 +36,8 @@ jobs:
           TRACKED_FILE: scripts/known-files.json
         run: python scripts/check_financial_services_updates.py
 
-      - name: 新規アイテムがある場合 Issue を作成
-        if: steps.check.outputs.has_new_items == 'true' && inputs.dry_run != 'true'
+      - name: 追加・削除がある場合 Issue を作成
+        if: (steps.check.outputs.has_new_items == 'true' || steps.check.outputs.has_removed_items == 'true') && inputs.dry_run != 'true'
         uses: actions/github-script@v8
         with:
           script: |
@@ -46,21 +46,24 @@ jobs:
 
             const sections = [];
             let total = 0;
+            let totalRemoved = 0;
             for (const key of Object.keys(report)) {
-              const { dir, label, new: items } = report[key];
-              if (!items || items.length === 0) continue;
-              total += items.length;
-              const list = items.map(s =>
-                `- [\`${s}\`](https://github.com/anthropics/financial-services/tree/main/${dir}/${s})`
-              ).join('\n');
-              sections.push(`### ${label} (${items.length} 件)\n\n${list}`);
+              const { dir, label, new: added = [], removed = [] } = report[key];
+              if (added.length === 0 && removed.length === 0) continue;
+              total += added.length;
+              totalRemoved += removed.length;
+              const list = [
+                ...added.map(s => `- 追加: [\`${s}\`](https://github.com/anthropics/financial-services/tree/main/${dir}/${s})`),
+                ...removed.map(s => `- 削除: \`${s}\`（upstream に存在しない）`),
+              ].join('\n');
+              sections.push(`### ${label}（追加 ${added.length} 件・削除 ${removed.length} 件）\n\n${list}`);
             }
 
             const body = [
-              `## anthropics/financial-services に新しいアイテムが追加されました`,
+              `## anthropics/financial-services に追加・削除がありました`,
               ``,
-              `[anthropics/financial-services](https://github.com/anthropics/financial-services) に **${total} 件**の新しいエージェント／プラグインが追加されました。`,
-              `[docs/business/financial-services.md](docs/business/financial-services.md) への解説追加を検討してください。`,
+              `[anthropics/financial-services](https://github.com/anthropics/financial-services) で、追加 **${total} 件**・削除 **${totalRemoved} 件**のエージェント／プラグインを検出しました。`,
+              `[docs/business/financial-services.md](docs/business/financial-services.md) への反映を検討してください。`,
               ``,
               sections.join('\n\n'),
               ``,
@@ -68,8 +71,8 @@ jobs:
               ``,
               `### 対応方法`,
               ``,
-              `1. 上記アイテムの内容（README / SKILL.md / agent 定義）を確認する`,
-              `2. \`docs/business/financial-services.md\` に解説を追加する`,
+              `1. 追加は内容（README / SKILL.md / agent 定義）を確認し、\`docs/business/financial-services.md\` に解説を追加する`,
+              `2. 削除は経緯（統合・改名・削除）を upstream の commit 履歴で確認し、該当する解説を外すか後継へ差し替える`,
               `3. \`scripts/known-files.json\` の該当リスト（\`financial_services_*\`）を更新する`,
               `4. \`CHANGELOG.md\` に更新内容を1行追記する`,
               ``,
@@ -79,13 +82,13 @@ jobs:
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `[更新通知] anthropics/financial-services に ${total} 件の新規追加 (${new Date().toISOString().split('T')[0]})`,
+              title: `[更新通知] anthropics/financial-services に追加 ${total} 件・削除 ${totalRemoved} 件 (${new Date().toISOString().split('T')[0]})`,
               body,
               labels: ['upstream-update', 'documentation'],
             });
 
-            console.log(`Issue created: ${total} new items found`);
+            console.log(`Issue created: ${total} new / ${totalRemoved} removed`);
 
-      - name: 新規アイテムなし（スキップ）
-        if: steps.check.outputs.has_new_items != 'true'
-        run: echo "新規アイテムはありませんでした。"
+      - name: 追加・削除なし（スキップ）
+        if: steps.check.outputs.has_new_items != 'true' && steps.check.outputs.has_removed_items != 'true'
+        run: echo "追加・削除はありませんでした。"
