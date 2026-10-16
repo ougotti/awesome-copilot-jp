@@ -208,7 +208,7 @@ VS Code では **Agent plugins** として一般提供され、「Agent Plugins 
 | 登録コマンド | `copilot plugin marketplace add OWNER/REPO` | `/plugin marketplace add OWNER/REPO` |
 | インストール | `copilot plugin install NAME@MARKETPLACE` | `/plugin install NAME@MARKETPLACE` |
 | 含められる要素 | Agents / Skills / Commands / Hooks / MCP / LSP | Skills / Commands / Subagents / Hooks / MCP（2.1.287 以降は Mods も。[Mods](../claude-code/mods.md)） |
-| 既定の Marketplace | `awesome-copilot`（`copilot-plugins` は公式文書で記載が分かれる。[上記](#marketplace)） `claude-plugins-official`（初回の対話起動時に自動で追加。[公式ディレクトリ](../claude-code/basics.md#公式ディレクトリ-claude-plugins-official)） |
+| 既定の Marketplace | `awesome-copilot`（`copilot-plugins` は公式文書で記載が分かれる。[上記](#marketplace)） | `claude-plugins-official`（初回の対話起動時に自動で追加。[公式ディレクトリ](../claude-code/basics.md#公式ディレクトリ-claude-plugins-official)） |
 | Marketplace のホスト | Git リポジトリ全般（GitHub 以外・ローカルも可） | GitHub のほか **GitLab**（2026-08 に対応。nested subgroup も可） |
 | 組織での強制 | Enterprise managed settings | 設定ファイルの共有が中心 |
 
