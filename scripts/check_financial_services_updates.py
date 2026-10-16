@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-anthropics/financial-services リポジトリに新しいエージェント／プラグインが
-追加されていないかチェックするスクリプト。
+anthropics/financial-services リポジトリで、エージェント／プラグインの
+追加・削除がないかチェックするスクリプト。
 
 GitHub Actions ワークフロー (.github/workflows/check-financial-services-updates.yml) から呼び出されます。
-新規アイテムが見つかった場合は:
-  - GitHub Actions output に has_new_items=true を設定
+追加または削除が見つかった場合は:
+  - GitHub Actions output に has_new_items / has_removed_items を設定
   - financial_services_report.json に詳細を書き出す
 """
 
@@ -76,29 +76,36 @@ def main():
 
     report = {}
     total_new = 0
+    total_removed = 0
 
     for key, dir_path, label in WATCHED_DIRS:
         upstream = fetch_dir_names(dir_path)
         known = set(load_known(key))
         new_items = [s for s in upstream if s not in known]
+        removed_items = sorted(s for s in known if s not in set(upstream))
 
         print(f"\n[{label}] {dir_path}/")
-        print(f"  Upstream: {len(upstream)} / Known: {len(known)} / New: {len(new_items)}")
+        print(
+            f"  Upstream: {len(upstream)} / Known: {len(known)} / New: {len(new_items)} / Removed: {len(removed_items)}"
+        )
         for s in new_items:
             print(f"  + {s}")
+        for s in removed_items:
+            print(f"  - {s}")
 
-        report[key] = {"dir": dir_path, "label": label, "new": new_items}
+        report[key] = {"dir": dir_path, "label": label, "new": new_items, "removed": removed_items}
         total_new += len(new_items)
+        total_removed += len(removed_items)
 
     with open("financial_services_report.json", "w") as f:
         json.dump(report, f, ensure_ascii=False, indent=2)
 
-    if total_new:
-        set_output("has_new_items", "true")
-        print(f"\n{total_new} new item(s) found! Issue will be created.")
+    set_output("has_new_items", "true" if total_new else "false")
+    set_output("has_removed_items", "true" if total_removed else "false")
+    if total_new or total_removed:
+        print(f"\n{total_new} new / {total_removed} removed item(s) found! Issue will be created.")
     else:
-        set_output("has_new_items", "false")
-        print("\nNo new items found.")
+        print("\nNo changes found.")
 
 
 if __name__ == "__main__":

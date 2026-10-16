@@ -1,6 +1,6 @@
 # mattpocock/skills - 実務エンジニア向け Agent Skills
 
-> **対象ツール**: ツール横断（Claude Code ほか Agent Skills 対応ツール） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-08
+> **対象ツール**: ツール横断（Claude Code ほか Agent Skills 対応ツール） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
 
 > [mattpocock/skills](https://github.com/mattpocock/skills) は、TypeScript教育者として知られる **Matt Pocock** 氏が実務で使うAgent Skills集です。「vibe coding」ではなく、要件の認識合わせ、仕様化、TDD、デバッグ、設計、レビューといったソフトウェア開発の基本を、小さく組み合わせ可能なSkillとしてエージェントへ与えます。
 
@@ -94,7 +94,7 @@ claude plugins install mattpocock-skills
 | **codebase-design** | 小さなインターフェースの背後に多くの振る舞いを持つ深いモジュールを設計する |
 | **code-review** | StandardsとSpecの2軸を別々にレビューする |
 | **pr** | PR本文の型。変更を伝える最小の図（疑似コード・呼び出しツリー・ファイルツリー・Mermaid・diff）による Summary、Before / After の Evidence、Merge Danger（一方通行か引き返せるか、影響範囲）の3節で書く |
-| **resolving-merge-conflicts** | merge / rebaseの競合を、両側の意図と一次情報からhunk単位で解決する |
+| ~~**resolving-merge-conflicts**~~ | **2026-09-24 に削除**（v1.3.0 でアーカイブ、後継なし）。以前は merge / rebase の競合を、両側の意図と一次情報から hunk 単位で解決していた。説明は [docs/engineering](https://github.com/mattpocock/skills/blob/main/docs/engineering/resolving-merge-conflicts.md) に参考として残っている |
 | **wizard** | 人手でしかできない手順（インフラ準備、資格情報やCIシークレットの設定、1回限りの移行）を対話型のbashウィザードとして生成する |
 
 ---

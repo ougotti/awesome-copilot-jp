@@ -96,7 +96,7 @@ docs/
 
 ## 新規ファイルの追跡
 
-自動検知の対象 upstream で新規追加があった場合は、該当ワークフローの通知 Issue を起点に、`scripts/known-files.json` と対応する `docs/` を更新してください。更新したら [CHANGELOG.md](CHANGELOG.md) にも1行追記してください。
+自動検知の対象 upstream で**追加または削除**があった場合は、該当ワークフローの通知 Issue を起点に、`scripts/known-files.json` と対応する `docs/` を更新してください。削除は統合・改名の場合もあるため、upstream の commit 履歴で経緯を確認し、ページの行を外すか後継へ差し替えます。監視パスの取得が 404 になった対象は削除を判定しないため、ワークフローのログに 404 の警告が出ていたら監視パスを見直してください。更新したら [CHANGELOG.md](CHANGELOG.md) にも1行追記してください。
 
 | 対象 upstream | 更新チェック workflow | スクリプト | `scripts/known-files.json` の更新キー | 主な更新先ドキュメント |
 |---|---|---|---|---|
@@ -107,7 +107,7 @@ docs/
 | [mattpocock/skills](https://github.com/mattpocock/skills) | 同上 | 同上 | `mattpocock_skills` | `docs/dev-methods/mattpocock-skills.md` |
 | [obra/superpowers](https://github.com/obra/superpowers) | 同上 | 同上 | `superpowers_skills` | `docs/dev-methods/superpowers.md` |
 | [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills) | 同上 | 同上 | `vercel_agent_skills` | `docs/dev-methods/skills-sh.md` |
-| [awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows) | 同上 | 同上 | `aidlc_extensions` | `docs/dev-methods/aidlc-workflows.md` |
+| [awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows) | 同上 | 同上 | `aidlc_skills`（v2 の `core/skills`） | `docs/dev-methods/aidlc-workflows.md` |
 
 監視対象を増やすときは、`scripts/check_dev_methods_updates.py` の `TARGETS` に 1 エントリ（リポジトリ・監視パス・対応 docs・`known-files.json` のキー）を追加し、`scripts/known-files.json` に現在の一覧を登録してください。新しいスクリプトやワークフローを作る必要はありません。
 

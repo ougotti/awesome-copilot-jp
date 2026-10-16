@@ -4,6 +4,12 @@
 
 ## 2026-10
 
+- **2026-10-16** upstream の削除も検知するようにし、Instructions を同期した（#275）。
+  - 週次の更新チェック 4 本（awesome-copilot・手動追従 upstream・anthropics/skills・financial-services）が、`scripts/known-files.json` にあって upstream から消えたものも「削除」として通知 Issue に載せるようにした。取得が 404 になったパスは削除と判定しない。旧 Prompts は `skills/<名前>/` の有無で照合する。
+  - [Instructions 一覧](docs/copilot/instructions.md)を upstream に合わせ、`powershell-pester-5`（→ `-6`）と Java の移行 3 件（→ `java-upgrade`）を差し替え、漏れていた `ansible` を追加して 202 件 → 192 件にした。
+  - 削除検知を試したところ、mattpocock/skills の `resolving-merge-conflicts`（2026-09-24 削除）と、AI-DLC の v2 で旧 `extensions` が廃止され追跡が止まっていたことが分かった。[mattpocock/skills の解説](docs/dev-methods/mattpocock-skills.md)に削除を明記し、AI-DLC の監視先を `core/skills` に替えた。
+  - 4 本のスクリプトをローカルで実行し、修正後に追加 0・削除 0 になることを確認した。通知 Issue の本文は模擬データで生成を確認した。
+
 - **2026-10-16** 10-20〜10-26 に「最終更新」から 45 日を超える 6 ページを先に点検（#273）。
   - [Agents 一覧](docs/copilot/agents.md)から、upstream で 2026-03〜08 に削除された 22 件（`polyglot-test-*`・Beast モード系・`semantic-kernel-*`・`microsoft-agent-framework-*`・`winui3-expert` など）を外し、244 件 → 222 件にした。[Skills（旧 Prompts）一覧](docs/copilot/prompts.md)は、deprecated になった `csharp-mcp-server-generator` の行を外して後継の `dotnet-mcp-builder` を注記し、137 件 → 128 件にした。`scripts/known-files.json` と README の件数も合わせた。
   - [AI-DLC Workflows](docs/dev-methods/aidlc-workflows.md)を 2.11.0 に合わせ、公式 README のハーネスごとの最小版（Kiro CLI の v3 / V2 の設定値の違いを含む）、preview channel、2.9.0〜2.11.0 の運用に関わる変更、更新手順を追加した。

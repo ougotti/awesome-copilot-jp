@@ -1,8 +1,10 @@
 # Instructions 一覧と活用ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-22
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **202 個の Instructions** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **192 個の Instructions** を日本語で解説します。
+>
+> **2026-10-16 の点検**: upstream で統合・削除された `powershell-pester-5`（→ `powershell-pester-6`）と Java の移行 3 件（→ `java-upgrade`）を差し替え、掲載が漏れていた `ansible` を追加しました。
 
 ## Instructions とは
 
@@ -78,9 +80,7 @@ applyTo: "**/*.py"
 |-----------|------|---------|
 | [`java-mcp-server.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/java-mcp-server.instructions.md) | Java での MCP サーバー開発（Project Reactor） | MCP サーバー構築 |
 | [`copilot-sdk-java.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/copilot-sdk-java.instructions.md) | GitHub Copilot SDK（Java）の開発ガイド | Copilot 組み込み Java アプリ開発 |
-| [`java-11-to-java-17-upgrade.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/java-11-to-java-17-upgrade.instructions.md) | Java 11 → 17 移行ガイド | Java バージョンアップ |
-| [`java-17-to-java-21-upgrade.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/java-17-to-java-21-upgrade.instructions.md) | Java 17 → 21 移行（Virtual Threads） | Java バージョンアップ |
-| [`java-21-to-java-25-upgrade.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/java-21-to-java-25-upgrade.instructions.md) | Java 21 → 25 移行（Class-File API） | Java バージョンアップ |
+| [`java-upgrade.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/java-upgrade.instructions.md) | Maven / Gradle の Java バージョンを変えるときに、[`java-upgrade`](https://github.com/github/awesome-copilot/tree/main/skills/java-upgrade) Skill を使うよう案内する。Skill が現在の版を判定し、11 → 17・17 → 21・21 → 25 の該当する手順だけを読み込む | Java バージョンアップ |
 | [`springboot.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/springboot.instructions.md) | Spring Boot 開発規約 | Spring Boot アプリ |
 | [`springboot-4-migration.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/springboot-4-migration.instructions.md) | Spring Boot 4 への移行 | Spring Boot アップグレード |
 | [`quarkus.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/quarkus.instructions.md) | Quarkus クラウドネイティブ Java | 軽量 Java マイクロサービス |
@@ -88,12 +88,7 @@ applyTo: "**/*.py"
 | [`java-junit5-assertions.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/java-junit5-assertions.instructions.md) | JUnit 5 アサーションのベストプラクティス | Java テスト記述 |
 | [`intellij-java-kotlin.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/intellij-java-kotlin.instructions.md) | IntelliJ IDEA での Java / Kotlin 開発規約（Gradle・Maven をビルドの正とし、IDE 設定に依存しない検証を求める） | IntelliJ IDEA で Java / Kotlin を開発 |
 
-**[java-17-to-java-21-upgrade.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/java-17-to-java-21-upgrade.instructions.md)** の主なルール:
-- **Virtual Threads（JEP 444）**: `Thread.ofVirtual()` で高スループット並行処理
-- **Pattern Matching for switch（JEP 441）**: `when` 句でガード付きパターン
-- **Sequenced Collections（JEP 431）**: `getFirst()`, `getLast()`, `reversed()`
-- **Record Patterns（JEP 440）**: ネストした分解操作
-- `finalize()` を Cleaner API または try-with-resources に移行
+> **2026-10-14 の変更**: 以前の `java-11-to-java-17-upgrade`・`java-17-to-java-21-upgrade`・`java-21-to-java-25-upgrade` の 3 つの Instructions は、upstream で `java-upgrade` Skill にまとめられました。版ごとの移行手順は Skill 側にあります。
 
 **[intellij-java-kotlin.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/intellij-java-kotlin.instructions.md)** の主なルール:
 - **ビルド設定が正**: 依存・ソースセット・コンパイラオプションは Gradle / Maven 側で定義し、IntelliJ の Project Structure だけで設定しない
@@ -169,7 +164,6 @@ applyTo: "**/*.py"
 | [`coldfusion-cfc.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/coldfusion-cfc.instructions.md) | ColdFusion CFC 規約 | ColdFusion 開発 |
 | [`coldfusion-cfm.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/coldfusion-cfm.instructions.md) | ColdFusion CFM 規約 | ColdFusion 開発 |
 | [`powershell.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/powershell.instructions.md) | PowerShell スクリプト規約 | 自動化スクリプト |
-| [`powershell-pester-5.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/powershell-pester-5.instructions.md) | Pester 5 テスト規約 | PowerShell テスト |
 | [`shell.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/shell.instructions.md) | シェルスクリプト規約 | Bash/Sh スクリプト |
 | [`makefile.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/makefile.instructions.md) | Makefile 規約 | ビルド自動化 |
 
@@ -233,6 +227,7 @@ applyTo: "**/*.py"
 | [`terraform-sap-btp.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/terraform-sap-btp.instructions.md) | Terraform for SAP BTP | SAP クラウド |
 | [`generate-modern-terraform-code-for-azure.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/generate-modern-terraform-code-for-azure.instructions.md) | Azure 向け最新 Terraform コード生成 | Azure IaC |
 | [`azure-verified-modules-terraform.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/azure-verified-modules-terraform.instructions.md) | Azure Verified Modules（Terraform） | 検証済みモジュール |
+| [`ansible.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/ansible.instructions.md) | Ansible の規約とベストプラクティス（`*.yaml` / `*.yml` に適用） | Ansible の playbook・role |
 
 **[terraform.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/terraform.instructions.md)** の主なルール:
 - 最新の安定版 Terraform とプロバイダーを使用
@@ -577,13 +572,13 @@ applyTo: "**/*.py"
 
 ## まとめ
 
-Instructions は **202 ファイル** あり、以下のカテゴリに分類されます：
+Instructions は **192 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な内容 |
 |---------|----------|---------|
-| プログラミング言語 | 約 43 | Python, C#, Java, Go, TypeScript, Rust 等 |
+| プログラミング言語 | 約 40 | Python, C#, Java, Go, TypeScript, Rust 等 |
 | Web フレームワーク | 約 15 | React, Next.js, Vue, Angular, Svelte 等 |
-| インフラ・DevOps | 約 21 | Terraform, Kubernetes, Docker, CI/CD, AWS |
+| インフラ・DevOps | 約 22 | Terraform, Ansible, Kubernetes, Docker, CI/CD, AWS |
 | テスト | 約 5 | Playwright (各言語版) |
 | セキュリティ・品質 | 約 14 | OWASP, アクセシビリティ, パフォーマンス, OOP 設計, ドキュメントデータ安全管理, パッケージ検証 |
 | データベース | 約 5 | MongoDB, SQL Server |

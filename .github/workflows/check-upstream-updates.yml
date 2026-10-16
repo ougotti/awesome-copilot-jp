@@ -14,7 +14,7 @@ on:
 
 jobs:
   check-updates:
-    name: upstream の新規ファイルをチェック
+    name: upstream のファイルの追加・削除をチェック
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -38,43 +38,51 @@ jobs:
           TRACKED_FILE: scripts/known-files.json
         run: python scripts/check_upstream_updates.py
 
-      - name: 新規ファイルがある場合 Issue を作成
-        if: steps.check.outputs.has_new_files == 'true' && inputs.dry_run != 'true'
+      - name: 追加・削除がある場合 Issue を作成
+        if: (steps.check.outputs.has_new_files == 'true' || steps.check.outputs.has_removed_files == 'true') && inputs.dry_run != 'true'
         uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
-            const newFilesJson = fs.readFileSync('new_files_report.json', 'utf8');
-            const report = JSON.parse(newFilesJson);
+            const report = JSON.parse(fs.readFileSync('new_files_report.json', 'utf8'));
 
-            const sections = [];
-            for (const [dir, files] of Object.entries(report)) {
-              if (files.length > 0) {
-                const fileList = files.map(f =>
-                  `- [\`${f}\`](https://github.com/github/awesome-copilot/blob/main/${dir}/${f})`
-                ).join('\n');
-                const dirLabel = dir === 'instructions' ? 'Instructions' :
-                                 dir === 'agents' ? 'Agents' : 'Prompts';
-                sections.push(`### ${dirLabel} (${files.length} 件)\n\n${fileList}`);
+            const labelOf = dir => dir === 'instructions' ? 'Instructions' :
+                                   dir === 'agents' ? 'Agents' : 'Prompts（Skills）';
+            const urlOf = (dir, f) => dir === 'prompts'
+              ? `https://github.com/github/awesome-copilot/tree/main/skills/${f.replace(/\.prompt\.md$/, '')}`
+              : `https://github.com/github/awesome-copilot/blob/main/${dir}/${f}`;
+
+            const newSections = [];
+            const removedSections = [];
+            let totalNew = 0;
+            let totalRemoved = 0;
+            for (const [dir, { new: added = [], removed = [] }] of Object.entries(report)) {
+              if (added.length > 0) {
+                totalNew += added.length;
+                const list = added.map(f => `- [\`${f}\`](${urlOf(dir, f)})`).join('\n');
+                newSections.push(`### ${labelOf(dir)}（${added.length} 件）\n\n${list}`);
+              }
+              if (removed.length > 0) {
+                totalRemoved += removed.length;
+                const list = removed.map(f => `- \`${f}\``).join('\n');
+                removedSections.push(`### ${labelOf(dir)}（${removed.length} 件）\n\n${list}`);
               }
             }
 
-            const totalCount = Object.values(report).flat().length;
             const body = [
-              `## awesome-copilot に新しいファイルが追加されました`,
+              `## awesome-copilot のファイルに追加・削除がありました`,
               ``,
-              `[github/awesome-copilot](https://github.com/github/awesome-copilot) に **${totalCount} 個**の新しいカスタマイズファイルが追加されました。`,
-              `日本語ドキュメント（\`docs/\`）への解説追加を検討してください。`,
+              `[github/awesome-copilot](https://github.com/github/awesome-copilot) で、追加 **${totalNew} 件**・削除 **${totalRemoved} 件**を検出しました。`,
               ``,
-              ...sections,
-              ``,
+              ...(newSections.length ? [`## 追加`, ``, newSections.join('\n\n'), ``] : []),
+              ...(removedSections.length ? [`## 削除（upstream に存在しない）`, ``, `\`scripts/known-files.json\` にあり、upstream から消えたファイルです。統合・改名の可能性もあるため、upstream の commit 履歴で経緯を確認してください。`, ``, removedSections.join('\n\n'), ``] : []),
               `---`,
               ``,
               `### 対応方法`,
               ``,
-              `1. 上記ファイルの内容を確認する`,
-              `2. 該当カテゴリの \`docs/copilot/instructions.md\` / \`docs/copilot/agents.md\` / \`docs/copilot/prompts.md\` に解説を追加する`,
-              `3. \`scripts/known-files.json\` を更新して追跡リストに加える`,
+              `1. 追加は内容を確認し、\`docs/copilot/instructions.md\` / \`docs/copilot/agents.md\` / \`docs/copilot/prompts.md\` に解説を追加する`,
+              `2. 削除は経緯（統合・改名・削除）を確認し、該当ページの行を外すか後継へ差し替える`,
+              `3. \`scripts/known-files.json\` と README・各ページの件数を更新する（\`python scripts/check_catalog_counts.py\` で確認）`,
               `4. \`CHANGELOG.md\` に更新内容を1行追記する`,
               ``,
               `> このIssueは [check-upstream-updates](../../actions/workflows/check-upstream-updates.yml) ワークフローにより自動生成されました。`,
@@ -83,13 +91,13 @@ jobs:
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `[更新通知] awesome-copilot に ${totalCount} 個の新規ファイル追加 (${new Date().toISOString().split('T')[0]})`,
-              body: body,
+              title: `[更新通知] awesome-copilot に追加 ${totalNew} 件・削除 ${totalRemoved} 件 (${new Date().toISOString().split('T')[0]})`,
+              body,
               labels: ['upstream-update', 'documentation'],
             });
 
-            console.log(`Issue created: ${totalCount} new files found`);
+            console.log(`Issue created: ${totalNew} new / ${totalRemoved} removed`);
 
-      - name: 新規ファイルなし（スキップ）
-        if: steps.check.outputs.has_new_files != 'true'
-        run: echo "新規ファイルはありませんでした。"
+      - name: 追加・削除なし（スキップ）
+        if: steps.check.outputs.has_new_files != 'true' && steps.check.outputs.has_removed_files != 'true'
+        run: echo "追加・削除はありませんでした。"
