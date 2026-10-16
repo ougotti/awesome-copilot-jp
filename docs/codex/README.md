@@ -2,12 +2,12 @@
 
 > **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-10-16
 
-[openai/skills](https://github.com/openai/skills) は OpenAI が公開している Codex 用の公式スキルカタログです。指示・スクリプト・リソースをフォルダにまとめた「スキル」を追加することで、デプロイ・ブラウザ自動化・外部サービス連携といったワークフローを Codex に持たせられます。
+Codex に作業手順や外部サービスとの連携を持たせる方法は 2 つあります。**Skill**（指示・スクリプト・リソースをまとめたフォルダ）と、Skill に MCP サーバー・コネクタ・フックなどを束ねて配る **Plugin** です。OpenAI は現在、再利用・配布の単位として Plugin を勧めています。
 
-このページは**導入して最初の 1 個を動かすまで**の入口です。全スキルの一覧は [Agent Skills カタログ](catalog.md) にあります。
+このページは**導入して最初の 1 つを動かすまで**の入口です。カタログと Skill の作り方は [Agent Skills カタログ](catalog.md) にあります。
 
 > [!NOTE]
-> **`openai/skills` は 2026-06-22 に deprecated になりました**（2026-10-16 確認）。`$skill-installer` で入れる手順は公式ドキュメントに残っていますが、カタログは 2026-06 以降更新されていません。OpenAI は現行の例として [openai/plugins](https://github.com/openai/plugins) を、自作の配布方法として [Plugin](#5-plugin-でまとめて配る2026-08-の追加) を案内しています。詳しくは [カタログの「現行の入口」](catalog.md#現行の入口--openaiplugins-と-plugins-directory) を参照してください。
+> 以前の公式 Skill カタログ [openai/skills](https://github.com/openai/skills) は **2026-06-22 に deprecated** になり、以降は更新されていません（2026-10-16 確認）。現行の例は [openai/plugins](https://github.com/openai/plugins) にあります。`$skill-installer` で `openai/skills` から入れる方法は公式ドキュメントに残っているため、[4 節](#4-従来の方法--skill-installer-と-openaiskills)に「従来の方法」としてまとめています。
 
 ---
 
@@ -20,9 +20,20 @@ npm install -g @openai/codex
 codex
 ```
 
-### スキルの置き場所
+### Plugin と Skill の関係
 
-現行の[公式ガイド](https://developers.openai.com/codex/skills/)では、**リポジトリで共有したいなら `.agents/skills/`、手動配置の個人用なら `~/.agents/skills/`** です。既存のインストーラーが使用する保存先とは区別してください。
+| | Skill | Plugin |
+|--|-------|--------|
+| 中身 | `SKILL.md` と付随するスクリプト・リソース | Skill に加え、MCP サーバー・コネクタ（app）・フック・custom agent・コマンドなど |
+| 主な入手先 | Codex に同梱の System Skill、自分で置いたフォルダ | [openai/plugins](https://github.com/openai/plugins)、ChatGPT / Codex の Plugins Directory、組織の marketplace |
+| 導入 | フォルダを置く（下記） | CLI の `/plugins`、または desktop app の Plugins Directory（[5 節](#5-plugin-でまとめて配る2026-08-の追加)） |
+| 向いている場面 | 自分やリポジトリだけで使う手順 | 外部サービスとの連携や、チームへの配布 |
+
+`openai/plugins` の Plugin の多くは、Skill だけでなく MCP サーバーやコネクタも同梱しています。**有効にすると外部サービスへ接続し、フックは自動で動く**ため、導入前に同梱物と接続先を確認してください（[Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#2-導入前に何を確認するか)）。
+
+### Skill の置き場所
+
+現行の[公式ガイド（Build skills）](https://learn.chatgpt.com/docs/build-skills)では、Codex は次の場所から Skill を読みます。**リポジトリで共有したいなら `.agents/skills/`、個人用なら `~/.agents/skills/`** です。
 
 ```
 カレントディレクトリ
@@ -31,76 +42,79 @@ codex
   └── .agents/skills/
 ユーザーレベル
   └── ~/.agents/skills/         # 個人用（全プロジェクト共通）
-システムレベル（自動インストール済み）
-  └── ~/.codex/skills/.system/
+管理者レベル
+  └── /etc/codex/skills/        # 端末の管理者が置く
+システムレベル
+  └── OpenAI が Codex に同梱する System Skill
 ```
 
-### インストール後の確認
-
-Codex のチャットに入力します（PowerShell のコマンドではありません）。
-
-```text
-$skill-installer linear
-```
+### 導入後の確認
 
 > [!IMPORTANT]
-> ローカル Skill の変更は自動検出されます。表示されない場合は Codex を再起動し、Skill 選択欄から呼び出せることを確認してください。Plugin 同梱 Skill は、インストール後に新しいチャット／CLI セッションで確認します。
+> ローカル Skill の変更は自動検出されます。表示されない場合は Codex を再起動し、Skill 選択欄から呼び出せることを確認してください。Plugin に同梱された Skill は、インストール後に新しいチャット／CLI セッションで確認します。
 
 ---
 
 ## 2. 最初に試す 3 〜 5 個
 
-用途別の入口です。まず 1 つ入れて、呼び出せることを確認してから増やしてください。
+用途別の入口です。まず 1 つ入れて、呼び出せることを確認してから増やしてください。Plugin は CLI で `/plugins` を開き、名前で探してインストールします。
 
-| 目的 | 最初に試すスキル | 導入コマンド | 追加で必要なもの |
-|------|----------------|------------|----------------|
-| スキルの仕組みを理解する | `skill-creator` | 不要（System・自動） | — |
-| CI の失敗を直させる | `gh-fix-ci` | `$skill-installer gh-fix-ci` | GitHub リポジトリ |
-| E2E テストを書かせる | `playwright` | `$skill-installer playwright` | 対象アプリの起動 |
-| フロントエンドを公開する | `vercel-deploy` | `$skill-installer vercel-deploy` | Vercel アカウント |
-| 仕様や調査を残す | `notion-research-documentation` | `$skill-installer notion-research-documentation` | Notion アカウント・コネクタ |
+| 目的 | 最初に試すもの | 種類 | 追加で必要なもの |
+|------|--------------|------|----------------|
+| Skill の仕組みを理解する | `skill-creator` | System Skill（同梱・導入不要） | — |
+| Issue・PR・CI を扱わせる | `github` | Plugin（コネクタ + CLI） | GitHub アカウントとリポジトリ |
+| Web アプリを作って公開する | `build-web-apps` / `vercel` | Plugin | 公開するなら Vercel アカウント |
+| 仕様や調査を残す | `notion` | Plugin（Skill + MCP） | Notion アカウント |
+| デザインから実装する | `figma` | Plugin（Skill + MCP + フック） | Figma アカウントと対象ファイルの権限 |
 
-**→ 全スキルの一覧は [Agent Skills カタログ](catalog.md) を参照**
+Plugin の名前・中身・提供状況は変わることがあります。導入前に `/plugins` の詳細画面か [openai/plugins](https://github.com/openai/plugins) の各フォルダで、同梱物（`skills/`・`.mcp.json`・`.app.json`・`hooks.json`）を確認してください。
+
+**→ 現行の入口と旧カタログの一覧は [Agent Skills カタログ](catalog.md) を参照**
 
 ---
 
-## 3. スキルを呼び出す
+## 3. Skill を呼び出す
 
-呼び出し方は 2 通りだけです。以下はすべてのスキルに共通します。
+呼び出し方は 2 通りだけです。単体の Skill でも、Plugin に同梱された Skill でも同じです。
 
 ### 明示的に指定する
 
-スキル名を `$` プレフィックスで指定します。
+Skill 名を `$` プレフィックスで指定します。
 
 ```
-「$linear を使って、バグレポートの Issue を作成してください」
-「$playwright で、フォームの送信テストを実行してください」
+「$skill-creator で、リリースノートを作る手順を Skill にしてください」
 ```
 
 ### Codex に選ばせる
 
-タスク内容とスキルの `description` を照合し、Codex が自動的に選択します。
+タスク内容と Skill の `description` を照合し、Codex が自動的に選択します。
 
 ```
-「Vercel にデプロイしてください」
-→ Codex が自動的に $vercel-deploy を選択
+「この Figma のフレームを React で実装してください」
+→ Codex が figma Plugin の Skill を選ぶ
 ```
 
-> 意図しないスキルが選ばれる場合は、`$` で明示するのが確実です。自作スキルで自動選択が効かないときは、`description` に「いつ使うか」が書けているかを見直してください（[書き方の例](catalog.md#description-の書き方)）。
+> 意図しない Skill が選ばれる場合は、`$` で明示するのが確実です。自作 Skill で自動選択が効かないときは、`description` に「いつ使うか」が書けているかを見直してください（[書き方の例](catalog.md#description-の書き方)）。Plugin を入れすぎると、Codex は Skill の一覧を切り詰めることがあります（[5 節](#5-plugin-でまとめて配る2026-08-の追加)）。
 
 ---
 
-## 4. 3 つの階層の違い
+## 4. 従来の方法 — `$skill-installer` と openai/skills
 
-`openai/skills` はスキルを 3 層に分けています。**信頼度と導入方法が違う**ので、この表だけ押さえておけば十分です。
+deprecated になった `openai/skills` の Skill は、Codex のチャットで `$skill-installer` を使って入れられます（公式の [Build skills](https://learn.chatgpt.com/docs/build-skills) に記載。2026-10-16 確認）。Codex のチャットに入力します（PowerShell のコマンドではありません）。
 
-| 階層 | ディレクトリ | 提供元 | 状態 | インストール | 使う前に |
-|-----|------------|-------|------|------------|---------|
-| **System** | `skills/.system/` | Official | GA | 不要（自動） | そのまま使える |
-| **Curated** | `skills/.curated/` | Official | GA | スキル名で指定 | 外部アカウントの要否を確認 |
-| **Experimental** | `skills/.experimental/` | Community | Experimental | パス / URL で指定 | **2026-10-16 時点でディレクトリが存在しない** |
+```text
+$skill-installer gh-fix-ci
+```
 
-Experimental はもともと OpenAI による品質保証のない層でしたが、現在はリポジトリから削除されています。また、リポジトリ全体が deprecated になっているため、3 層の区別は過去のカタログを読むための説明として扱ってください。
+`openai/skills` はスキルを 3 層に分けていました。
+
+| 階層 | ディレクトリ | 提供元 | インストール | 2026-10-16 時点 |
+|-----|------------|-------|------------|----------------|
+| **System** | `skills/.system/` | Official | 不要（自動） | Codex に同梱。引き続き使える |
+| **Curated** | `skills/.curated/` | Official | スキル名で指定 | 2026-06 以降更新なし。同名の Plugin がある場合（Figma・Notion・Linear・Sentry・Vercel など）はそちらを優先する |
+| **Experimental** | `skills/.experimental/` | Community | パス / URL で指定 | **ディレクトリが存在しない** |
+
+更新が止まった Skill は、連携先のサービスや API の変更に追従しません。新しく導入するなら Plugin を選び、既に入れている Curated Skill は、同名の Plugin へ移すかを検討してください。
 
 ---
 
@@ -121,7 +135,7 @@ CLI のプラグインブラウザは Marketplace ごとにタブが分かれ、
 |------|------|
 | 使える場所 | Codex CLI（`/plugins`）と ChatGPT デスクトップアプリの Codex。**IDE 拡張は非対応** |
 | 同梱できる要素 | Skills / コネクタ / MCP サーバー / ブラウザ拡張 / フック / 定期タスクのテンプレート |
-| 導入後 | 0.154.0以降は、新しく導入したPlugin toolsを既存セッションでも再読込できる。単体Skillは上の「インストール後の確認」に従う |
+| 導入後 | 0.154.0以降は、新しく導入したPlugin toolsを既存セッションでも再読込できる。単体Skillは上の「導入後の確認」に従う |
 | Cursor からの移行 | Cursor が管理している Skill をインポートできる（0.147.0） |
 | 注意 | フックは設定した時点で自動実行される。**有効化する前に中身を確認する** |
 

@@ -19,10 +19,10 @@
 -->
 
 - **2026-10-16** [Agents 一覧](docs/copilot/agents.md)・[Skills 一覧](docs/copilot/prompts.md)を upstream と照合し、削除済みの Agents 22 件を外して件数を 222 件・128 件に直し、[AI-DLC Workflows](docs/dev-methods/aidlc-workflows.md)を 2.11.0 に更新（6 ページを点検）。
+- **2026-10-16** [Codex ガイド](docs/codex/README.md)の入口を Plugin 中心に組み替え、upstream の追跡を `openai/skills` から後継の `openai/plugins` へ移した。
 - **2026-10-16** [Codex カタログ](docs/codex/catalog.md)と [Copilot Plugins](docs/copilot/plugins.md)を点検。`openai/skills` の deprecation と後継の `openai/plugins`、Copilot の可搬形式と既定 Marketplace の変化を反映。
 - **2026-10-16** [10-14〜10-16 の最新動向](docs/trends.md#2026-10-1410-16-の更新--許可の一致範囲と統制を入れたときの切り替わり)を反映。Claude Code の MCP 許可ルールの完全一致化、VS Code 1.142 の Copilot harness への自動移行、Managed Agents の OTel と web ツール制限、agentic autofix の GA、Codex 0.163.0 を整理。
 - **2026-10-15** [AI 時代のコードレビュー](docs/dev-methods/ai-code-review.md)を追加。テストの削除・弱化で検証が減っていないかの点検と、ReviewBench を使った AI レビュアーの誤検知・見逃しの測り方（検証計画）を整理。
-- **2026-10-14** [10-10〜10-14 の最新動向](docs/trends.md#2026-10-1010-14-の更新--policy-を確実に届け無人実行の承認を見直す)を反映。Copilot の managed settings 強制更新・telemetry の identity、VS Code 1.141 の sandbox 必須化、Copilot CLI 1.0.97 の hook と無人実行の承認を整理。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -133,8 +133,8 @@
 
 | ドキュメント | 提供元 | 状態 | 環境 | 内容 |
 |-------------|-------|------|------|------|
-| **[Codex ガイド](docs/codex/README.md)** | Official | GA（System / Curated）／Experimental | CLI | 導入手順、最初に試すスキル、3 層の違い |
-| **[Agent Skills カタログ](docs/codex/catalog.md)** | Official / Community | GA / Experimental | CLI | [openai/skills](https://github.com/openai/skills) の全スキル一覧と作り方 |
+| **[Codex ガイド](docs/codex/README.md)** | Official | GA | CLI | Plugin と Skill の導入手順、最初に試すもの、定期実行・委任 |
+| **[Agent Skills カタログ](docs/codex/catalog.md)** | Official | GA | CLI | 現行の [openai/plugins](https://github.com/openai/plugins) への入口と、deprecated になった [openai/skills](https://github.com/openai/skills) の一覧（2026-06 時点）・作り方 |
 | **[Codex Cloudガイド](docs/codex/cloud.md)** | 本ガイド | —（Security Cloud: Research Preview） | Chat UI / Cloud | 環境の公開・更新、secret・共有、コード検査と修正案レビュー。 |
 
 ### ツール横断の開発手法
@@ -188,7 +188,7 @@
 
 | 用語 | GitHub Copilot | Claude Code / Claude | Codex（OpenAI） |
 |------|----------------|----------------------|------------------|
-| **Skills** | `SKILL.md` + 関連リソース同梱の自己完結型ツール（upstream では旧 Prompts の移行先） | Agent Skills。[anthropics/skills](https://github.com/anthropics/skills) の公式スキル（docx / pdf 等）や [mattpocock/skills](https://github.com/mattpocock/skills) 等の手順スキル | Agent Skills。[openai/skills](https://github.com/openai/skills) の system / curated / experimental 3層カタログ |
+| **Skills** | `SKILL.md` + 関連リソース同梱の自己完結型ツール（upstream では旧 Prompts の移行先） | Agent Skills。[anthropics/skills](https://github.com/anthropics/skills) の公式スキル（docx / pdf 等）や [mattpocock/skills](https://github.com/mattpocock/skills) 等の手順スキル | Agent Skills。Codex 同梱の System Skill と、Plugin に入った Skill（[openai/plugins](https://github.com/openai/plugins)）。旧カタログの [openai/skills](https://github.com/openai/skills) は 2026-06 に deprecated |
 | **Agents** | 専門家ペルソナ定義（`.agent.md`） | サブエージェント（メインの会話から分離して動く補助エージェント） | サブエージェント（並列実行・独立した会話コンテキストへの委任）／カスタムエージェント（`.codex/agents/*.toml`）。[解説](docs/codex/README.md#8-サブエージェントへ作業を委任する) |
 | **Instructions** | ファイルパターン別にコーディング規約を自動適用（`.instructions.md`） | `CLAUDE.md` がほぼ同じ役割 | `AGENTS.md` がほぼ同じ役割 |
 | **Prompts** | `/` コマンドのタスクテンプレート（`.prompt.md`） | カスタムコマンド（`.claude/commands/`） | カスタムプロンプト（`~/.codex/prompts/`） |
