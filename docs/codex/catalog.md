@@ -13,7 +13,7 @@
 
 | 入口 | 内容 | 状態 |
 |------|------|------|
-| [openai/plugins](https://github.com/openai/plugins) | OpenAI が管理する Codex Plugin の例の集まり。`plugins/<名前>/` ごとに `.codex-plugin/plugin.json` と、`skills/`・`.mcp.json`・`.app.json`・`agents/`・`commands/`・`hooks.json` などを同梱する。2026-10-16 時点で 62 件（Figma・Notion・Linear・Sentry・Vercel・Cloudflare・GitHub・Slack・`build-web-apps`・`build-ios-apps`・`codex-security`・`superpowers` など） | Official。**一覧は件数ごと変わるため、本ガイドでは全件を転記しない** |
+| [openai/plugins](https://github.com/openai/plugins) | OpenAI が管理する Codex Plugin の例の集まり。`plugins/<名前>/` ごとに `.codex-plugin/plugin.json` と、`skills/`・`.mcp.json`・`.app.json`・`agents/`・`commands/`・`hooks.json` などを同梱する。2026-10-16 時点で 62 件（Figma・Notion・Linear・Sentry・Vercel・Cloudflare・GitHub・Slack・`build-web-apps`・`build-ios-apps`・`codex-security`・`superpowers` など）。リポジトリ内の marketplace 定義（`.agents/plugins/marketplace.json`、名前 `openai-curated`）は 65 件を載せ、API key でサインインする利用者向けには別の定義（`api_marketplace.json`）がある | Official。**一覧は件数ごと変わるため、本ガイドでは全件を転記しない**。本リポジトリは `plugins/` の追加を週次で検知している |
 | ChatGPT / Codex の Plugins Directory | 公開 Plugin は、ChatGPT と Codex で共有されるディレクトリに 1 回登録すれば両方に出る。desktop app の Plugins Directory か [ChatGPT Plugins](https://chatgpt.com/plugins) から入れる | Official |
 | `/plugins`（Codex CLI 0.147.0 以降） | ローカル・個人・ワークスペース・リモートのカタログを横断して探す | Official（[導入手順](README.md#5-plugin-でまとめて配る2026-08-の追加)） |
 

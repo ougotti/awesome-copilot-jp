@@ -25,12 +25,13 @@ from pathlib import Path
 # 監視対象。key は known-files.json のキー、docs は更新先ページ。
 # depth=2 は「カテゴリ/名前」の 2 階層をたどる（AI-DLC の extensions が該当）。
 TARGETS = [
+    # openai/skills は 2026-06-22 に deprecated。後継の openai/plugins を監視する。
     {
-        "key": "openai_skills",
-        "repo": "openai/skills",
-        "paths": ["skills/.system", "skills/.curated", "skills/.experimental"],
+        "key": "openai_plugins",
+        "repo": "openai/plugins",
+        "paths": ["plugins"],
         "docs": "docs/codex/catalog.md",
-        "label": "Codex Agent Skills カタログ",
+        "label": "Codex カタログ（openai/plugins）",
     },
     {
         "key": "mattpocock_skills",
