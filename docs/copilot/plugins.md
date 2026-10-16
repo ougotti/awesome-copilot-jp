@@ -1,6 +1,6 @@
 # GitHub Copilot Plugins
 
-> **対象ツール**: GitHub Copilot（Copilot アプリ / CLI / VS Code） ｜ **実行環境**: Chat UI（Copilot アプリ）／ CLI（ターミナル）／ IDE（VS Code） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-03
+> **対象ツール**: GitHub Copilot（Copilot アプリ / CLI / VS Code） ｜ **実行環境**: Chat UI（Copilot アプリ）／ CLI（ターミナル）／ IDE（VS Code） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
 
 Plugin は、Custom Agents・Skills・Hooks・MCP サーバー設定・LSP サーバー設定を **1 つの配布単位** にまとめる仕組みです。Skill を 1 個ずつ配る代わりに、チームやプロジェクトに必要な拡張一式をまとめて配布・更新できます。
 
@@ -10,16 +10,26 @@ Plugin は、Custom Agents・Skills・Hooks・MCP サーバー設定・LSP サ�
 
 ## 2 つの形式：可搬形式とツール独自形式
 
-2026-08-06 に **Agent Plugins 1.0.0** というベンダー中立のオープン標準が公開され、Plugin には**形式が 2 つある**状態になりました。**プラグインルート直下の `plugin.json` に正式な `$schema` を書けば可搬形式**、書かなければ従来どおりの **Copilot 独自形式**です。
+2026-08-06 に **Agent Plugins 1.0.0** というベンダー中立のオープン標準が公開され、Plugin には**形式が 2 つある**状態になりました。**プラグインルート直下の `plugin.json` に正式な `$schema` を書けば可搬形式（Agent Plugins）**、書かなければ従来の **Copilot 独自形式**（公式の表記は legacy plugins）です。
 
-**場所も条件です。** Copilot はマニフェストを `.plugin/plugin.json` や `.github/plugin/plugin.json` でも認識しますが、標準が見るのは**ルート直下の `plugin.json` だけ**です。そこに置かなければ、`$schema` を書いても可搬にはなりません。
+**場所も条件です。** 標準が見るのは**ルート直下の `plugin.json` だけ**で、Copilot ではこれが他の場所のマニフェストより優先されます。`.plugin/plugin.json` などに置いた場合は、`$schema` を書いても可搬にはなりません。
 
-Copilot 独自形式は可搬形式の**上位互換**にあたります。可搬形式で使える構成要素は Skills と MCP サーバーの 2 種類だけで配置場所も固定されるのに対し、Copilot 独自形式では Agents / Commands / Hooks / LSP まで含められ、配置場所もマニフェストで上書きできます。GitHub の実装では `$schema` は任意なので、**既存 Plugin の移行は不要**です。
+Copilot CLI が認識する `$schema` は 1.0.0 と 1.1.0 の 2 つです（2026-10-16 確認。1.1.0 の仕様はまだ Working Draft）。**対応していない版を書くとエラーになり、従来形式として読み直してはくれません。**
+
+| | 可搬形式（Agent Plugins） | Copilot 独自形式（legacy） |
+|--|-------------------------|---------------------------|
+| Skills | `skills/<名前>/SKILL.md`（固定） | 既定は `skills/`。マニフェストで場所を変えられる |
+| MCP | ルートの `mcp.json`（`plugin.json` と同じ版の `$schema` が必要） | `.mcp.json` など。マニフェストで変えられる |
+| Agents / Commands / Hooks / LSP / rules / extensions | **`com.github.copilot/` の下**に置けば使える（Copilot 以外のツールは無視する） | ルート直下など。マニフェストで変えられる |
+| 配置場所の上書き | できない | できる |
+
+標準として**他のツールへ持ち出せるのは Skills と MCP だけ**です（[プラグインの可搬性](../dev-methods/plugin-portability.md#標準が用意した逃げ道)）。ただし Copilot は、標準が用意した名前空間 `com.github.copilot/` に置いた固有の要素も読むため、可搬形式を選んでも Agents や Hooks を諦める必要はありません。公式は、**配置場所を変える必要がなければ、新しく作る Plugin には Agent Plugins 1.0 を勧めています**。既存の Plugin を移行する必要はありません。
 
 | 判断 | 選ぶ形式 |
 |------|---------|
-| Copilot だけで使い、機能をすべて使いたい | Copilot 独自形式（`$schema` を書かない） |
-| Cursor・ChatGPT・Kiro などへ持ち出したい | 可搬形式（**ルート直下の** `plugin.json` に `$schema` を書き、構成を標準の配置へ整える） |
+| 新しく作る。配置場所を変える必要がない | 可搬形式（**ルート直下の** `plugin.json` に `$schema` を書く。Copilot 固有の要素は `com.github.copilot/` へ） |
+| 既存の Plugin で、配置場所の上書きを使っている | Copilot 独自形式のまま（`$schema` を書かない） |
+| Cursor・ChatGPT・Kiro などへ持ち出したい | 可搬形式。持ち出し先で `com.github.copilot/` の中身は使われない点に注意 |
 
 **→ 可搬形式が課す制約・逃げ道（`extensions` と逆ドメイン名の名前空間）・インストール前に可搬かを判定する手順は [プラグインの可搬性](../dev-methods/plugin-portability.md)、標準の成り立ちとガバナンス・各ツールの対応状況は [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準) を参照**
 
@@ -43,9 +53,9 @@ Copilot 独自形式は可搬形式の**上位互換**にあたります。可�
 
 ## Plugin の構成（Copilot 独自形式）
 
-以下は **`$schema` を書かない場合**の構成です。可搬形式では構成要素が Skills と MCP の 2 種類に限られ、配置場所も固定になります（[2 つの形式](#2-つの形式可搬形式とツール独自形式)を参照）。
+以下は **`$schema` を書かない場合**の構成です。可搬形式では配置場所が固定になり、Copilot 固有の要素は `com.github.copilot/` の下に置きます（[2 つの形式](#2-つの形式可搬形式とツール独自形式)を参照）。
 
-Plugin の必須要素は `plugin.json` マニフェストの `name` フィールドだけです。マニフェスト自体は `plugin.json`（ルート）のほか `.plugin/plugin.json` や `.github/plugin/plugin.json`、`.claude-plugin/plugin.json` でも認識されます。以下の要素は、必要なものだけを含められます。
+Plugin の必須要素は `plugin.json` マニフェストの `name` フィールドだけです。従来形式のマニフェストは `.plugin/plugin.json`、`plugin.json`、`.github/plugin/plugin.json`、`.claude-plugin/plugin.json` の**順に**探されます。以下の要素は、必要なものだけを含められます。
 
 | 要素 | 配置場所 | 役割 |
 |------|---------|------|
@@ -57,9 +67,9 @@ Plugin の必須要素は `plugin.json` マニフェストの `name` フィー�
 | MCP サーバー設定 | ルートの `.mcp.json` または `.github/mcp.json` | 外部サービス連携（Model Context Protocol） |
 | LSP サーバー設定 | ルートまたは `.github/` の `lsp.json` | 言語サーバー連携（Language Server Protocol） |
 
-> 各要素の配置場所は `plugin.json` の `agents` / `skills` / `commands` / `hooks` / `mcpServers` / `lspServers` フィールドで上書きできます。詳細なフィールド定義は [GitHub Copilot CLI plugin reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-plugin-reference) を参照してください。
+> 各要素の配置場所は `plugin.json` の `agents` / `skills` / `commands` / `hooks` / `extensions` / `mcpServers` / `lspServers` フィールドで上書きできます。詳細なフィールド定義は [GitHub Copilot CLI plugin reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-plugin-reference) を参照してください。
 >
-> これらの上書きフィールドと `.mcp.json` / `hooks.json` / `lsp.json` は **Copilot 独自の拡張**です。可搬形式では配置場所を上書きできず、MCP 設定を `plugin.json` へ直接書くこともできません。
+> これらの上書きフィールドは **Copilot 独自形式だけ**のものです。可搬形式では配置場所を上書きできず、MCP 設定を `plugin.json` へ直接書くこともできません（ルートの `mcp.json` に書く）。
 
 ```text
 my-plugin/
@@ -80,12 +90,14 @@ my-plugin/
 
 Marketplace は、Plugin の一覧を持つ **Git リポジトリ** です。リポジトリに `marketplace.json` を置くと、Copilot CLI がそのリポジトリを Marketplace として認識します。GitHub.com のほか、他の Git ホスティングサービスやローカル／共有ファイルシステムにも置けます。
 
-Copilot CLI には、次の 2 つが既定で登録されています。
+既定で登録される Marketplace は、**公式ドキュメントの間で記載が分かれています**（2026-10-16 確認）。
 
-| Marketplace | 内容 |
-|-------------|------|
-| `copilot-plugins` | [github/copilot-plugins](https://github.com/github/copilot-plugins) — GitHub 公式の Plugin コレクション |
-| `awesome-copilot` | [github/awesome-copilot](https://github.com/github/awesome-copilot) — カスタマイズ公式リポジトリの Plugin 群 |
+| Marketplace | 内容 | 既定か |
+|-------------|------|--------|
+| `awesome-copilot` | [github/awesome-copilot](https://github.com/github/awesome-copilot) — カスタマイズ公式リポジトリの Plugin 群 | 既定。runtime に同梱され、削除できない |
+| `copilot-plugins` | [github/copilot-plugins](https://github.com/github/copilot-plugins) — GitHub 公式の Plugin コレクション | [CLI plugin reference](https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-plugin-reference) は「**既定ではない通常の Marketplace になった**」と記載し、`copilot plugin marketplace add github/copilot-plugins` で登録するよう案内。[概念ページ](https://docs.github.com/en/copilot/concepts/agents/about-plugins)は引き続き既定の 1 つとして記載 |
+
+手元の CLI で `copilot plugin marketplace list` を実行し、`copilot-plugins` が登録されているかを確認してください。`enabledPlugins` で `NAME@copilot-plugins` を指定している場合は、`extraKnownMarketplaces` にも `github/copilot-plugins` を書いておくと、登録の有無に左右されません。また、managed settings の `strictKnownMarketplaces` を**空の allowlist** にすると、組み込みの Marketplace も隠され、使えなくなります（CLI 1.0.87）。
 
 ---
 
@@ -105,7 +117,9 @@ copilot plugin install database-data-management@awesome-copilot
 copilot plugin list
 ```
 
-Copilot CLI のセッション中は、スラッシュコマンドでも実行できます。
+`install` には、`NAME@MARKETPLACE` のほか、`OWNER/REPO`、`OWNER/REPO:PATH/TO/PLUGIN`（リポジトリ内のサブフォルダ）、Git URL、ローカルパスも指定できます。`list`・`marketplace list`・`marketplace browse` は `--json` で機械可読な出力にできます。`--config-dir` は deprecated で、設定の場所は環境変数 `COPILOT_HOME` で変えます。
+
+Copilot CLI のセッション中は、スラッシュコマンドでも実行できます。`/plugin` の一覧は、upstream に新しい版がある Plugin と Marketplace に印を付け、Update を選べます（1.0.81）。
 
 ```text
 /plugin install database-data-management@awesome-copilot
@@ -121,7 +135,7 @@ copilot plugin enable database-data-management    # 再度有効化
 copilot plugin uninstall database-data-management
 ```
 
-> **組織で自動更新する**（2026-08-26 提供開始）: Enterprise の `managed-settings.json` で、`extraKnownMarketplaces` の marketplace ごとに `autoUpdate: true` を指定すると、その marketplace 由来の Plugin が自動更新されます。**自動更新の対象でも、実効的な `strictKnownMarketplaces` の allowlist で許可されている必要があります。** Copilot Business / Copilot Enterprise で GA、対応する面は Copilot アプリ・Copilot CLI・VS Code です。
+> **自動更新する**（2026-08-26 提供開始）: Enterprise の `managed-settings.json` で、`extraKnownMarketplaces` の marketplace ごとに `autoUpdate: true` を指定すると、その marketplace 由来の Plugin が自動更新されます。個人の user settings でも同じ指定ができますが、**repository の設定に書いた `autoUpdate` は受け付けられても無視されます**。**自動更新の対象でも、実効的な `strictKnownMarketplaces` の allowlist で許可されている必要があります。** Copilot Business / Copilot Enterprise で GA、対応する面は Copilot アプリ・Copilot CLI・VS Code です。
 >
 > 自動更新と[コミット SHA での固定](#インストール先とバージョン固定)は目的が違います。**組織が管理する marketplace を継続的に最新へ保つなら自動更新**、**再現性を優先して意図しない変更を防ぐなら SHA 固定**です。同じ marketplace に両方を求めることはできないため、どちらを優先するかを先に決めてください。
 
@@ -133,13 +147,17 @@ copilot plugin marketplace update MARKETPLACE-NAME   # カタログを再取得�
 copilot plugin marketplace remove MARKETPLACE-NAME
 ```
 
-> **注意**: 追加時は Marketplace リポジトリの `OWNER/REPO`（ローカルパスや Git URL も可）を、更新・削除時は登録済み一覧に表示される **Marketplace 名**（`marketplace.json` の `name` フィールドの値）を指定します。Plugin がインストール済みの Marketplace は、`--force` を付けない限り削除されません（`--force` を付けると、その Marketplace 由来の Plugin も削除されます）。`copilot-plugins` と `awesome-copilot` は組み込みの既定 Marketplace のため削除できません。
+> **注意**: 追加時は Marketplace リポジトリの `OWNER/REPO`（ローカルパスや Git URL も可）を、更新・削除時は登録済み一覧に表示される **Marketplace 名**（`marketplace.json` の `name` フィールドの値）を指定します。Plugin がインストール済みの Marketplace は、`--force` を付けない限り削除されません（`--force` を付けると、その Marketplace 由来の Plugin も削除されます）。組み込みの `awesome-copilot` は削除できません。
+>
+> Marketplace のマニフェストは `marketplace.json`、`.plugin/marketplace.json`、`.github/plugin/marketplace.json`、`.claude-plugin/marketplace.json` の順に探されます。
 
 ### インストール先とバージョン固定
 
 Copilot CLI は Plugin を `~/.copilot/installed-plugins/<marketplace>/<plugin-name>/` に保存します。Marketplace を経由せず Git URL やローカルパスから直接インストールした Plugin は `~/.copilot/installed-plugins/_direct/<source-id>/` に入ります。インストールは **開発者ごと・マシンごと** です。
 
-Marketplace の `marketplace.json` では、各 Plugin の `source` に GitHub リポジトリを指定でき、`ref`（タグ・ブランチ）に加えて **40 文字のフル commit SHA** を `sha` フィールドで指定すると、force-push やタグ・ブランチの移動に影響されない再現可能なインストールに固定できます。
+Marketplace の `marketplace.json` では、各 Plugin の `source` に GitHub リポジトリ（`github`）や Git URL（`url`）を指定でき、`ref`（タグ・ブランチ）に加えて、または代わりに **40 文字のフル commit SHA** を `sha` フィールドで指定すると、force-push やタグ・ブランチの移動に影響されない再現可能なインストールに固定できます。
+
+Marketplace の情報は `~/.cache/copilot/marketplaces/`（Linux）または `~/Library/Caches/copilot/marketplaces/`（macOS）にキャッシュされ、`COPILOT_CACHE_HOME` で場所を変えられます。可搬形式の Plugin の MCP server が書き込める永続ディレクトリは `${PLUGIN_DATA}` で参照します（別名 `${COPILOT_PLUGIN_DATA}`・`${CLAUDE_PLUGIN_DATA}`）。
 
 ---
 
@@ -162,7 +180,7 @@ Marketplace の `marketplace.json` では、各 Plugin の `source` に GitHub �
 
 リポジトリ側の設定ファイルをコミットしておけば、クローンした開発者が同じ Plugin 構成で作業を始められます。Copilot cloud agent（クラウド上のコーディングエージェント）は、この `enabledPlugins` を使う宣言的な方法のみに対応しています。既定で登録されていない Marketplace から導入したい場合は、同じ設定ファイルの `extraKnownMarketplaces` フィールドにも追加してください。
 
-Enterprise では **managed settings** により、利用してよい Plugin を組織のポリシーとして強制し、自動インストールする Plugin を指定することもできます（VS Code・Copilot CLI・Copilot アプリが対象）。
+Enterprise では **managed settings** により、利用してよい Plugin を組織のポリシーとして強制し、自動インストールする Plugin を指定することもできます（VS Code・Copilot CLI・Copilot アプリが対象）。CLI 1.0.81 から、`enabledPlugins` と `extraKnownMarketplaces` は**エントリごとに managed の値が優先**され、組織が固定した Plugin や Marketplace はローカルで有効・無効を切り替えたり、参照先を変えたりできません。`/plugin` の一覧では `Managed` の印が付きます。repository の `enabledPlugins` で有効・無効が決まっている Plugin に `enable` / `disable` を実行すると、どの設定ファイルが決めているかを示すエラーになります。
 
 ---
 
@@ -189,8 +207,8 @@ VS Code では **Agent plugins** として一般提供され、「Agent Plugins 
 | Marketplace の実体 | Git リポジトリ（`marketplace.json`） | Git リポジトリ（`.claude-plugin/marketplace.json`） |
 | 登録コマンド | `copilot plugin marketplace add OWNER/REPO` | `/plugin marketplace add OWNER/REPO` |
 | インストール | `copilot plugin install NAME@MARKETPLACE` | `/plugin install NAME@MARKETPLACE` |
-| 含められる要素 | Agents / Skills / Commands / Hooks / MCP / LSP | Skills / Commands / Subagents / Hooks / MCP |
-| 既定の Marketplace | `copilot-plugins` / `awesome-copilot` | なし（利用者が追加） |
+| 含められる要素 | Agents / Skills / Commands / Hooks / MCP / LSP | Skills / Commands / Subagents / Hooks / MCP（2.1.287 以降は Mods も。[Mods](../claude-code/mods.md)） |
+| 既定の Marketplace | `awesome-copilot`（`copilot-plugins` は公式文書で記載が分かれる。[上記](#marketplace)） | `claude-plugins-official`（初回の対話起動時に自動で追加。[公式ディレクトリ](../claude-code/basics.md#公式ディレクトリ-claude-plugins-official)） |
 | Marketplace のホスト | Git リポジトリ全般（GitHub 以外・ローカルも可） | GitHub のほか **GitLab**（2026-08 に対応。nested subgroup も可） |
 | 組織での強制 | Enterprise managed settings | 設定ファイルの共有が中心 |
 

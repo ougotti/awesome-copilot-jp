@@ -1,12 +1,25 @@
 # Codex Agent Skills カタログ
 
-> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-03
+> **対象ツール**: Codex（OpenAI） ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
 
 [openai/skills](https://github.com/openai/skills) 収録スキルの全一覧です。導入手順・最初に試すスキル・3 層の違いは [Codex ガイド](README.md) を参照してください。
 
-> **表の読み方**: 「入力」「生成物」「人が確認すべき点」は、各スキルの用途から**本ガイドが整理した目安**です。正確な仕様と最新の収録内容は [openai/skills](https://github.com/openai/skills) の各 `SKILL.md` を確認してください。
+> [!WARNING]
+> **`openai/skills` は 2026-06-22 に deprecated になりました。** リポジトリの README は、現行の Codex の Skill・Plugin の例として [openai/plugins](https://github.com/openai/plugins) を、自作の Skill を Codex に追加する方法として [Build plugins](https://developers.openai.com/codex/plugins/build)（Skill だけの Plugin の作り方を含む）を案内しています。最後の更新は 2026-06-24 で、以降は追加も削除もありません（2026-10-16 確認）。
+>
+> 公式の [Build skills](https://learn.chatgpt.com/docs/build-skills) は、`$skill-installer` で `openai/skills` から入れられると引き続き説明しています。一方で、自分の Skill を再利用・配布するなら Plugin を推奨しています。**この下の一覧は、2026-06 時点で更新が止まったカタログ**として読んでください。新しく探すなら、次の「現行の入口」から始めます。
 
-> **このページ以外の入手経路**: Codex CLI 0.147.0（2026-08-07）以降は、`/plugins` のプラグインブラウザから **ローカル / 個人 / ワークスペース / リモート**のカタログを横断して探せます。ここに載っているのは `openai/skills`（= Curated / Experimental）だけなので、社内 Marketplace で配られているものは CLI 側で確認してください（[導入手順](README.md#5-plugin-でまとめて配る2026-08-の追加)）。
+## 現行の入口 — openai/plugins と Plugins Directory
+
+| 入口 | 内容 | 状態 |
+|------|------|------|
+| [openai/plugins](https://github.com/openai/plugins) | OpenAI が管理する Codex Plugin の例の集まり。`plugins/<名前>/` ごとに `.codex-plugin/plugin.json` と、`skills/`・`.mcp.json`・`.app.json`・`agents/`・`commands/`・`hooks.json` などを同梱する。2026-10-16 時点で 62 件（Figma・Notion・Linear・Sentry・Vercel・Cloudflare・GitHub・Slack・`build-web-apps`・`build-ios-apps`・`codex-security`・`superpowers` など） | Official。**一覧は件数ごと変わるため、本ガイドでは全件を転記しない** |
+| ChatGPT / Codex の Plugins Directory | 公開 Plugin は、ChatGPT と Codex で共有されるディレクトリに 1 回登録すれば両方に出る。desktop app の Plugins Directory か [ChatGPT Plugins](https://chatgpt.com/plugins) から入れる | Official |
+| `/plugins`（Codex CLI 0.147.0 以降） | ローカル・個人・ワークスペース・リモートのカタログを横断して探す | Official（[導入手順](README.md#5-plugin-でまとめて配る2026-08-の追加)） |
+
+`openai/skills` の Curated にあった Figma・Notion・Linear・Sentry・Vercel・Cloudflare などは、`openai/plugins` では **Skill に MCP や app を組み合わせた Plugin** として置かれています。同じ名前でも構成が違うため、Skill 単体の感覚で入れず、同梱する MCP・接続先・必要なアカウントを導入前に確認してください（[Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#2-導入前に何を確認するか)）。
+
+> **表の読み方**: 「入力」「生成物」「人が確認すべき点」は、各スキルの用途から**本ガイドが整理した目安**です。正確な仕様と最新の収録内容は [openai/skills](https://github.com/openai/skills) の各 `SKILL.md` を確認してください。
 
 ---
 
@@ -127,11 +140,9 @@ Codex に同梱され、インストール不要で使えます。
 
 ---
 
-## Experimental（`Community` / `Experimental`）
+## Experimental（現在は存在しない）
 
-`$skill-installer skills/.experimental/<スキル名>` のようにパスで指定してインストールします。
-
-コミュニティ提供であり、**OpenAI による品質保証はありません。**内容・スクリプトを確認したうえで、検証環境で試してから使ってください。収録スキルは変動するため、一覧は [openai/skills の `skills/.experimental/`](https://github.com/openai/skills/tree/main/skills/.experimental) を直接確認してください。
+以前は `skills/.experimental/` にコミュニティ提供の Skill があり、パスや URL で指定して入れる方式でした。**2026-10-16 時点で、このディレクトリはリポジトリにありません**（README の手順には記載が残っています）。Experimental の Skill を入れる手順は使えないものとして扱い、同等の Skill が必要なら `openai/plugins` や配布元のリポジトリを確認してください。
 
 ---
 
@@ -199,5 +210,7 @@ description: デプロイスキル
 
 ## 参考リンク
 
-- [openai/skills リポジトリ](https://github.com/openai/skills) — 公式スキルカタログ（**一次情報**）
-- [Agent Skills – Codex 公式ドキュメント](https://developers.openai.com/codex/skills) — 公式スキル解説
+- [openai/skills リポジトリ](https://github.com/openai/skills) — 公式スキルカタログ（**2026-06-22 に deprecated**）
+- [openai/plugins リポジトリ](https://github.com/openai/plugins) — 現行の Codex Plugin の例（公式）
+- [Build skills](https://learn.chatgpt.com/docs/build-skills) — Skill の置き場所と作り方（公式。旧 developers.openai.com/codex/skills から転送）
+- [Build plugins](https://developers.openai.com/codex/plugins/build) — Skill だけの Plugin の作り方と marketplace（公式）

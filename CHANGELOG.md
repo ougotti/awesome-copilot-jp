@@ -4,6 +4,11 @@
 
 ## 2026-10
 
+- **2026-10-16** 「最終更新」が 10-18 に 45 日を超える 2 ページを先に点検（#269）。
+  - [Codex Agent Skills カタログ](docs/codex/catalog.md)で、`openai/skills` が 2026-06-22 に deprecated になったこと、`skills/.experimental/` が存在しないことを反映し、一覧を 2026-06 時点で更新が止まったカタログとして位置づけ直した。現行の入口として [openai/plugins](https://github.com/openai/plugins)（62 件）と Plugins Directory を追加し、[Codex ガイド](docs/codex/README.md)の冒頭と 3 層の説明にも注記した。System 5 件・Curated 40 件の一覧は upstream と一致した。
+  - [GitHub Copilot Plugins](docs/copilot/plugins.md)を CLI plugin reference と changelog に合わせ、可搬形式でも `com.github.copilot/` に Agents・Hooks などを置けること、`$schema` 1.0.0 / 1.1.0 の認識と非対応版の拒否、マニフェストの探索順、`copilot-plugins` が既定かどうか公式文書で記載が分かれる点、install の指定形式、managed settings のエントリ単位の優先、repository の `autoUpdate` が無視される点を反映した。Claude Code との比較表の既定 Marketplace の誤りも直し、Copilot ガイドと trends の記述を揃えた。
+  - 一次資料は 2026-10-16 に確認した。CLI での実機確認は行っていない。
+
 - **2026-10-16** 2026-10-14〜10-16 のエージェント関連の更新を反映（#263〜#267）。
   - [Claude Code 2.1.299〜2.1.301](docs/claude-code/basics.md#2129921301--mcp-の許可ルールの完全一致化と-hook-の-fail-closed-化)の、MCP の allow rule と agent の `tools:` の完全一致化、`UserPromptSubmit` の実行順、`updatedInput` の検証、plugin hook の fail-closed 化、sandbox の修正、`tool_decision` の classifier 属性を追加し、更新前の棚卸し手順を示した（#263）。
   - [VS Code 1.142](docs/copilot/README.md#vs-code-1142--統制を入れると-copilot-harness-へ移るpermission-mode-を絞る)で managed の `permissions` / `sandbox` が Copilot harness を必須にし Claude・Codex・terminal chat が使えなくなる点、`temporaryDefaultToLocalHarness` が統制も外す点、permission mode の個別制御と Assisted Permissions の非互換を追加した。Copilot CLI 1.0.98 と HydraFusion の更新（Max を含む）も反映した（#264）。
