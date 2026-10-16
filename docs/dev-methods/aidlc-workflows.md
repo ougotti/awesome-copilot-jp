@@ -1,6 +1,6 @@
 # AI-DLC Workflows — 日本語で試すAI駆動開発ライフサイクル
 
-> **対象ツール**: AI-DLC Workflows（Codex・Claude Code・Kiro・Cursor・GitHub Copilotほか） ｜ **実行環境**: CLI / IDE ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-11
+> **対象ツール**: AI-DLC Workflows（Codex・Claude Code・Kiro・Cursor・GitHub Copilotほか） ｜ **実行環境**: CLI / IDE ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
 
 > [awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows) は、AWS Labsが公開するAI駆動開発ライフサイクルのOSS実装です。AWSのマネージドサービスではありません。
 
@@ -42,17 +42,38 @@ AWSの方法論や学習コースでは、開発の中心をInception、Construc
 
 ハーネスは、AI-DLC Workflowsを実際に動かすコーディングエージェントです。現行の公式READMEに掲載されている主な選択肢は次のとおりです。
 
-| ハーネス | `aidlc config`の値 | ワークフローの開始 |
-|----------|----------------------|----------------------|
-| Claude Code | `claude` | `/aidlc` |
-| Kiro CLI | `kiro` | `/aidlc` |
-| Kiro IDE | `kiro-ide` | `/aidlc` |
-| Codex CLI | `codex` | `$aidlc` |
-| Cursor | `cursor` | `/aidlc` |
-| OpenCode | `opencode` | `/aidlc` |
-| GitHub Copilot | `copilot` | `/aidlc` |
+| ハーネス | 公式READMEの最小版 | `aidlc config`の値 | ワークフローの開始 |
+|----------|------------------|----------------------|----------------------|
+| Claude Code | 記載なし | `claude` | `/aidlc` |
+| Kiro IDE / Kiro CLI（v3） | Kiro IDE 1.1.70 以上 / Kiro CLI 2.24.1 以上 | `kiro-ide` | `/aidlc` |
+| Kiro CLI（V2） | 2.6 以上 | `kiro` | `/aidlc` |
+| Codex CLI | 0.145.0 以上 | `codex` | `$aidlc` |
+| Cursor | 記載なし | `cursor` | `/aidlc` |
+| opencode | 1.17 以上 | `opencode` | `/aidlc` |
+| GitHub Copilot | Copilot CLI 1.0.74 以上 / VS Code 1.130 以上 | `copilot` | `/aidlc` |
 
-必要なバージョンや認証方法は変わるため、導入時には[公式Getting Started](https://awslabs.github.io/aidlc-workflows/guide/01-getting-started/)を確認してください。
+最小版は2026-10-16時点の公式READMEの記載です。Kiro CLI は v3 と V2 で設定値が分かれている点に注意してください。必要なバージョンや認証方法は変わるため、導入時には[公式Getting Started](https://awslabs.github.io/aidlc-workflows/guide/01-getting-started/)を確認してください。
+
+### 版と更新（2026-10-16確認）
+
+安定版は **2.11.0**（2026-10-08）です。2.9.0 から **preview channel** が加わり、日付付きの `-preview` 版がほぼ毎日 pre-release として公開されています。下の手順は GitHub の `releases/latest`（pre-release を含まない安定版）を取得するため、preview は入りません。
+
+| 版 | 運用に関わる変更 |
+|----|----------------|
+| 2.9.0（09-15） | preview channel を追加。新しい Classic intent は 18 段階の v1 flow になり、以前の flow（CI Pipeline・Operation の段階を含む）は `workshop` scope で使う |
+| 2.10.0（09-24） | Construction の checkpoint と人の権限を強化。互換性のあるハーネスを**1 つのプロジェクトに共存**できる |
+| 2.11.0（10-08） | Plan Approval をエンジンが尋ねる。利用者の返答を本人の言葉のまま記録する。計画が変わっても完成済みの Unit の作業を残す。`enterprise` scope 以外では、残りの段階を lead agent だけで進める（`/aidlc --collaborators on` で変更） |
+
+既存のプロジェクトを更新するときは、公式 release の手順どおり次を実行します。複数のハーネスを使うプロジェクトでは、ハーネスごとに `aidlc config --harness <名前> --yes` を実行します。
+
+```powershell
+aidlc update
+Set-Location C:\work\todo-sample
+aidlc config --yes
+aidlc doctor
+```
+
+出典: [2.9.0](https://github.com/awslabs/aidlc-workflows/releases/tag/v2.9.0)、[2.10.0](https://github.com/awslabs/aidlc-workflows/releases/tag/v2.10.0)、[2.11.0](https://github.com/awslabs/aidlc-workflows/releases/tag/v2.11.0)。更新の実機確認は行っていません。
 
 ## Windowsで試す最小手順
 

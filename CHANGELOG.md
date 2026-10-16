@@ -4,6 +4,12 @@
 
 ## 2026-10
 
+- **2026-10-16** 10-20〜10-26 に「最終更新」から 45 日を超える 6 ページを先に点検（#273）。
+  - [Agents 一覧](docs/copilot/agents.md)から、upstream で 2026-03〜08 に削除された 22 件（`polyglot-test-*`・Beast モード系・`semantic-kernel-*`・`microsoft-agent-framework-*`・`winui3-expert` など）を外し、244 件 → 222 件にした。[Skills（旧 Prompts）一覧](docs/copilot/prompts.md)は、deprecated になった `csharp-mcp-server-generator` の行を外して後継の `dotnet-mcp-builder` を注記し、137 件 → 128 件にした。`scripts/known-files.json` と README の件数も合わせた。
+  - [AI-DLC Workflows](docs/dev-methods/aidlc-workflows.md)を 2.11.0 に合わせ、公式 README のハーネスごとの最小版（Kiro CLI の v3 / V2 の設定値の違いを含む）、preview channel、2.9.0〜2.11.0 の運用に関わる変更、更新手順を追加した。
+  - [MCP と A2A](docs/dev-methods/agent-protocols.md)・[AI-DLC・AI-PDLC・AI BPR の違い](docs/dev-methods/ai-driven-lifecycle-terms.md)は差分なし、[Power Apps Plans との比較](docs/dev-methods/ai-dlc-power-platform.md)は Plans が既定で有効な点を補足した。
+  - upstream の更新チェックは追加だけを検知するため、削除が反映されていなかった。Instructions にも同じずれ（削除 11・追加 1）があり、別途扱う。一次資料は 2026-10-16 に確認した。
+
 - **2026-10-16** 「最終更新」が 10-18 に 45 日を超える 2 ページを先に点検（#269）。
   - [Codex Agent Skills カタログ](docs/codex/catalog.md)で、`openai/skills` が 2026-06-22 に deprecated になったこと、`skills/.experimental/` が存在しないことを反映し、一覧を 2026-06 時点で更新が止まったカタログとして位置づけ直した。現行の入口として [openai/plugins](https://github.com/openai/plugins)（62 件）と Plugins Directory を追加し、[Codex ガイド](docs/codex/README.md)の冒頭と 3 層の説明にも注記した。System 5 件・Curated 40 件の一覧は upstream と一致した。
   - [GitHub Copilot Plugins](docs/copilot/plugins.md)を CLI plugin reference と changelog に合わせ、可搬形式でも `com.github.copilot/` に Agents・Hooks などを置けること、`$schema` 1.0.0 / 1.1.0 の認識と非対応版の拒否、マニフェストの探索順、`copilot-plugins` が既定かどうか公式文書で記載が分かれる点、install の指定形式、managed settings のエントリ単位の優先、repository の `autoUpdate` が無視される点を反映した。Claude Code との比較表の既定 Marketplace の誤りも直し、Copilot ガイドと trends の記述を揃えた。

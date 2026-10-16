@@ -1,6 +1,6 @@
 # Power Apps PlansがあるのにAI-DLCを使う意味はあるのか
 
-> **対象ツール**: Power Apps Plans・AI-DLC Workflows・Power Platform CLI / Pipelines ｜ **実行環境**: Cloud / CLI / IDE ｜ **対象読者**: Power Platformの業務アプリを作る担当者・開発者 ｜ **最終更新**: 2026-09-11
+> **対象ツール**: Power Apps Plans・AI-DLC Workflows・Power Platform CLI / Pipelines ｜ **実行環境**: Cloud / CLI / IDE ｜ **対象読者**: Power Platformの業務アプリを作る担当者・開発者 ｜ **最終更新**: 2026-10-16
 
 > AWSまたはMicrosoftが、AI-DLC WorkflowsとPower Apps Plansの併用を公式に推奨している事実は確認できていません。本記事の比較とPower Platformへの適用方法は、両者の公開仕様から考えた案です。AI-DLCからPower Platformへの実装・デプロイは実機検証していません。
 
@@ -16,7 +16,7 @@ Power AppsのPlansは、自然言語で記述した業務上の課題や、既�
 
 公式資料では、利用者と要件を整理し、Dataverseテーブル、キャンバスアプリ、モデル駆動型アプリ、Power Pages、Power Automateクラウドフロー、Copilot Studioエージェントなどを含む構成を生成すると説明されています。
 
-Plans自体はGAと案内されています。ただし、Code Appの生成など、関連する一部の機能はPreviewです。Dataverseを備えた対象環境、作成権限、地域と言語の提供条件も必要です。
+Plans自体はGAと案内されており、**既定で有効**です（無効にするにはテナント管理者がMicrosoftのサポートへ依頼する必要があります。2026-10-16確認）。ただし、Code Appの生成など、関連する一部の機能はPreviewです。Dataverseを備えた対象環境、作成権限、地域と言語の提供条件も必要です。
 
 ## AI-DLC Workflowsでできること
 

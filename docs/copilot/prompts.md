@@ -1,8 +1,8 @@
 # Skills (旧 Prompts) 一覧と活用ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-05
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **137 個の Skills（旧 Prompts）** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **128 個の Skills（旧 Prompts）** を日本語で解説します。
 >
 > **注意**: upstream の [github/awesome-copilot](https://github.com/github/awesome-copilot) では、Prompts は **[Skills](https://github.com/github/awesome-copilot/tree/main/skills)** に移行されました。各リンクは現在の Skills ディレクトリを指しています。
 
@@ -108,7 +108,6 @@ Copilot Chat で `/create-readme` のように入力すると呼び出せます�
 |-----------|------|------|
 | [`python-mcp-server-generator.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/python-mcp-server-generator) | Python MCP サーバー生成 | 完全な Python プロジェクト |
 | [`typescript-mcp-server-generator.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/typescript-mcp-server-generator) | TypeScript MCP サーバー生成 | 完全な Node.js/TypeScript プロジェクト |
-| [`csharp-mcp-server-generator.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/csharp-mcp-server-generator) | C# MCP サーバー生成 | 完全な C# コンソールアプリ |
 | [`go-mcp-server-generator.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/go-mcp-server-generator) | Go MCP サーバー生成 | 完全な Go プロジェクト |
 | [`java-mcp-server-generator.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/java-mcp-server-generator) | Java MCP サーバー生成 | Maven/Gradle プロジェクト |
 | [`rust-mcp-server-generator.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/rust-mcp-server-generator) | Rust MCP サーバー生成 | 完全な Rust プロジェクト |
@@ -117,6 +116,8 @@ Copilot Chat で `/create-readme` のように入力すると呼び出せます�
 | [`php-mcp-server-generator.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/php-mcp-server-generator) | PHP MCP サーバー生成 | 完全な PHP プロジェクト |
 | [`swift-mcp-server-generator.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/swift-mcp-server-generator) | Swift MCP サーバー生成 | Swift 6.0+ プロジェクト |
 | [`mcp-copilot-studio-server-generator.prompt.md`](https://github.com/github/awesome-copilot/tree/main/skills/mcp-copilot-studio-server-generator) | Copilot Studio MCP サーバー | Copilot Studio 連携 |
+
+> C# 版の `csharp-mcp-server-generator` は 2026-05-10 に upstream で deprecated になり、削除されました。後継は .NET 向けの [`dotnet-mcp-builder`](https://github.com/github/awesome-copilot/tree/main/skills/dotnet-mcp-builder) です（旧 Prompt ではないため、本ページの件数には含めていません）。
 
 **MCP サーバー生成プロンプトの共通特徴:**
 - 完全なプロジェクト構造（設定ファイル、ディレクトリ構成）
@@ -523,7 +524,7 @@ Copilot Chat で `/create-readme` のように入力すると呼び出せます�
 
 ## まとめ
 
-Prompts は **137 ファイル** あり、以下のカテゴリに分類されます：
+Prompts は **128 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な用途 |
 |---------|----------|---------|
