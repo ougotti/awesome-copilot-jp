@@ -1,6 +1,6 @@
 # AI エージェントの実行基盤（ハーネス）
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-10-16
+> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-10-17
 
 > エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew / OpenAI Agents API）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
 
@@ -256,6 +256,19 @@ VS Code 1.138 の Agent Host は、Agent Host Protocol（AHP）を基盤に agen
 | Claude Code 2.1.281（2026-09-23） | `--setting-sources` / SDK `settingSources` の制限が teammates、`/bg`、`claude agents`、`--worktree --tmux` の session へ引き継がれる | 引き継ぎ対象外の起動経路では、実効設定を別途確認する |
 
 Claude Code の修正は逆方向の例です。以前は親 session で設定の読み込み元を絞っても、起動した別 session には伝わっていませんでした。**「会話や作業を引き継ぐ」経路と「制限を引き継ぐ」経路は別々に実装される**ため、どちらか一方だけが継続する状態を前提に確認します。
+
+### 同じハーネスでも起動経路で既定が違う — Claude Code 2.1.302
+
+同じ Claude Code でも、terminal・`claude -p`・Agent SDK・desktop app・VS Code・`claude mcp serve` は**別の起動経路**で、既定値が揃っているとは限りません。2.1.302（2026-10-16 UTC、Official / GA）は、その差の一部を terminal に揃えました。
+
+| 層 | 2.1.302 の変更 | ハーネスの観点 |
+|---|---|---|
+| 開始モード | `claude -p` / Agent SDK で permission mode を指定しない場合、third-party provider・telemetry off・新規インストール直後でも `default` で始まる。`--permission-mode auto` は auto のまま | 無人実行の開始モードは、版や環境の条件に任せず起動時に明示する |
+| subagent | fork subagent が `-p`・SDK・desktop・VS Code でも既定で有効（`mcp serve` は提供しない）。desktop / VS Code の main conversation の subagent は常に background、subagent 自身の Agent call は foreground | 文脈の引き継ぎ（fork）と実行形態（background / foreground）は別の層。どちらも権限・sandbox を決めるものではない |
+| hook | `prompt` / `agent` hook は同じイベントにつき同時に 12 個まで。残りは待つ | 同一イベントの hook の並列度であり、agent 全体の並列度ではない。並列を前提にしない hook は直列化・lock・冪等性を用意する |
+| 判定するモデル | `CLAUDE_CODE_AUTO_MODE_MODEL` は client 側の auto mode classifier のモデルだけを変える。server 側の auto mode は変わらない | 「どこで判定しているか」を確認してから設定する |
+
+起動経路を増やすときは、定義の可搬性と同じく、**開始モード・subagent の実行形態・hook の並列度を実行先で確かめ直す**必要があります。詳細は [Claude Code のカスタマイズ機能](../claude-code/basics.md#21302--無人実行の開始モードと-subagent-の実行方式)を参照してください。
 
 ### VS Code 1.140 — Copilot harness を Agent Host で動かし、remote host へ委任する
 

@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-17
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -677,6 +677,30 @@ Plugin と MCP の信頼性の修正（`--plugin-dir` の Skill / custom agent �
 - prompt・tool・policy の内容には、ソースコード、ファイルの内容、コマンド、workspace や利用者のプロファイルのパスが入り得ます。**監査に必要な種類だけ**を有効にし、承認済みの collector にだけ送ります。identity を付けると個人と操作が結び付くため、社内の個人情報の扱いの規程も確認してください。
 
 VS Code の Agent Host では、1.141 の managed setting として同じ `telemetry.capture.identity` が使えます（[VS Code 1.141](#vs-code-1141--sandbox-の必須化旧-policy-の移行session-間の指示)）。1.140 の `github.copilot.chat.otel.captureIdentity` は Local harness 向けの VS Code の設定で、managed settings のキーとは別のものです。
+
+---
+
+## Slack / Teams から複数の repository を扱う（2026-10-15）
+
+**提供元: Official / 状態: Improvement（2026-10-15）**。Slack と Microsoft Teams の **@GitHub** が、1 つの会話の中で複数の repository を扱えるようになりました。公式 changelog が挙げる例は次のとおりです。
+
+| できること | 例（公式の依頼文の趣旨） |
+|---|---|
+| 会話から Issue を作る | 「このスレッドの文脈を使って、`github/issues` にこの bug を追跡する Issue を作って」 |
+| コードを直して PR を開く | 「frontend の repository でこの bug を直して PR を開いて」 |
+| PR を横断で確認する | 「repository をまたいで自分の open PR を一覧にし、対応が必要なものを示して」 |
+| 複数の repository で調査する | 「frontend と backend の repository のコードを使ってこの問題を調べて」 |
+
+あわせて、メッセージの途中でも @GitHub を呼べる、会話中の repository の切り替えが容易になる、**共有された Slack のメッセージやスレッドを文脈として使える**、といった改善が入りました。
+
+**会話の見える範囲と、操作できる repository の範囲は別の層です。** スレッドを読める人が多くても、それは GitHub 側の権限ではありません。逆に、1 つの会話で複数の repository を扱えるようになっても、各 repository の branch・依存関係・権限が揃うわけではありません。公式 changelog は権限の扱いの変更には触れていないため、本ガイドでは次の運用を推奨します。
+
+- **書き込み（Issue・PR の作成、コードの変更）を頼むときは、owner / repository 名を省略しない**。同じ名前の repository がある、または会話の途中で repository を切り替えた場合は特に、作業の前に対象を復唱させて確かめる
+- PR を開く依頼では、対象の branch と、変更してよい範囲（frontend だけ、など）を依頼文に書く
+- 文脈に使うスレッドに、別の repository や社外の人向けの情報が混ざっていないかを確認する。共有したメッセージの内容は、作られる Issue や PR の本文に入り得る
+- 作られた Issue・PR は、通常どおり repository 側のレビューと branch protection を通す
+
+出典: [Multi-repository support and other improvements for GitHub in Slack and Teams](https://github.blog/changelog/2026-10-15-copilot-in-slack-and-teams-adds-model-and-repository-updates/)（2026-10-17 確認。Slack / Teams での実操作は未検証）。cross-repository の権限の考え方は [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#2026-10-1510-17-の権限境界の更新)へ。
 
 ---
 

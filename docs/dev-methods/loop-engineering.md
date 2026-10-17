@@ -1,6 +1,6 @@
 # ループエンジニアリング
 
-> **対象ツール**: ツール横断（Claude Code・Codex 等） ｜ **実行環境**: CLI / IDE（デスクトップ） / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-13
+> **対象ツール**: ツール横断（Claude Code・Codex 等） ｜ **実行環境**: CLI / IDE（デスクトップ） / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-17
 
 > エージェントに毎ターン指示を出す代わりに、**エージェントに指示を出し続ける「ループ」の側を設計する**実践を **ループエンジニアリング（loop engineering）** と呼びます。2026-06-07 に Addy Osmani（Google Chrome）が [Loop Engineering](https://addyosmani.com/blog/loop-engineering/) で命名しました。このページは概念、ループの構成要素、停止条件の作り方、そして落とし穴をまとめた解説です。ループが動く土台については [AI エージェントの実行基盤（ハーネス）](harness.md) を参照してください。
 
@@ -179,6 +179,24 @@ Claude Managed Agents の [Dynamic Workflows](harness.md#claude-managed-agents-�
 2026-10-13 の公式記載では、1 run の同時稼働 thread は 64（API の保証値ではなく変更され得る）、起動する agent は生涯 1,000、寿命は既定 24 時間です。pause 中も寿命は進みます。session budget 到達時は open run が一時停止しますが、各 thread の進行中 model request 分は超過し得ます。Managed Agents endpoint と Messages API の rate limit は別に効くため、他の通信も含めて余裕を確保します。運用前に [Budgets and limits](https://platform.claude.com/docs/en/managed-agents/workflow-runs#budgets-and-limits) の最新値を確認してください。
 
 本ガイドでは、外部への書き込み前に checkpoint と一意な処理 ID を保存し、再開時に処理済みか確認する運用を推奨します。server の background 実行は外部サービスの exactly-once を保証しません。出典: [Workflow runs](https://platform.claude.com/docs/en/managed-agents/workflow-runs)（API 実行は未検証）。
+
+### 定期実行の再実行と外部副作用 — Claude Code 2.1.302
+
+Claude Code 2.1.302（2026-10-16 UTC、Official / GA）は、cloud session の **scheduled routine** について次を修正しました。
+
+- 途中で失敗した run が、1 時間以上経ってから**最初から再実行**され、同じ報告の投稿などを繰り返し得た
+- session が異常終了した run が Completed、開始前に archive した run が Cancelled と表示されていた（failed と表示するよう修正）
+- 開始できなかった run の理由（組織の concurrent cloud session の上限など）が routine のページに出ていなかった
+
+この修正で減るのは、**製品側の再実行による重複**です。ループの中で起きる重複は、ほかにも次の種類があります。区別して扱ってください。
+
+| 種類 | 起きる場所 | 備え |
+|---|---|---|
+| retry | 1 つの操作の失敗を、ツールや client がその場でやり直す | 冪等キーを付け、送信状態が不明なら確認してから再送する |
+| rerun | 定期実行や workflow の run を最初から、または途中からやり直す | run ごとの実行 ID と、処理済みの marker / checkpoint を記録し、再実行時に照合する |
+| 外部の再送 | webhook やメッセージ基盤など、外部サービス側が同じイベントを再び届ける | イベント ID で重複を捨てる |
+
+本ガイドでは、定期実行で Issue・PR・メッセージ・レポートを作る場合、**作成前に同じ実行 ID や対象期間のものが既にないか確かめる**手順をプロンプトか hook に入れることを推奨します。この修正の後も、client 側の retry や外部サービスの再送による重複がなくなるわけではありません。出典: [Claude Code 2.1.302](https://github.com/anthropics/claude-code/releases/tag/v2.1.302)（2026-10-17 確認、routine の実機検証は未実施）。冪等性の一般論は [長時間タスクの信頼性設計 5 節](agent-reliability.md#5-冪等性重複実行外部副作用の扱い)へ。
 
 ## 停止条件の作り方
 

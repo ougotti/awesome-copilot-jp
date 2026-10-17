@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-10-17** [10-15〜10-17 の最新動向](docs/trends.md#2026-10-1510-17-の更新--無人実行の既定値と会話から届く範囲)を反映。Claude Code 2.1.302 の無人実行の開始モードと subagent の既定、routine の再実行の修正、Slack / Teams からの複数 repository 操作、保存済み指示の監査 API を整理。
 - **2026-10-16** upstream の削除も検知するようにし、[Instructions 一覧](docs/copilot/instructions.md)を 192 件に同期。AI-DLC v2 で止まっていた追跡も直した。
 - **2026-10-16** [Agents 一覧](docs/copilot/agents.md)・[Skills 一覧](docs/copilot/prompts.md)を upstream と照合し、削除済みの Agents 22 件を外して件数を 222 件・128 件に直し、[AI-DLC Workflows](docs/dev-methods/aidlc-workflows.md)を 2.11.0 に更新（6 ページを点検）。
 - **2026-10-16** [Codex ガイド](docs/codex/README.md)の入口を Plugin 中心に組み替え、upstream の追跡を `openai/skills` から後継の `openai/plugins` へ移した。
 - **2026-10-16** [Codex カタログ](docs/codex/catalog.md)と [Copilot Plugins](docs/copilot/plugins.md)を点検。`openai/skills` の deprecation と後継の `openai/plugins`、Copilot の可搬形式と既定 Marketplace の変化を反映。
-- **2026-10-16** [10-14〜10-16 の最新動向](docs/trends.md#2026-10-1410-16-の更新--許可の一致範囲と統制を入れたときの切り替わり)を反映。Claude Code の MCP 許可ルールの完全一致化、VS Code 1.142 の Copilot harness への自動移行、Managed Agents の OTel と web ツール制限、agentic autofix の GA、Codex 0.163.0 を整理。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
