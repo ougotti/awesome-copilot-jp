@@ -1,6 +1,6 @@
 # プラグインの可搬性 — インストール前に `plugin.json` を見る
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・Cursor・Kiro ほか） ｜ **実行環境**: IDE / CLI / Chat UI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-14
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・Cursor・Kiro ほか） ｜ **実行環境**: IDE / CLI / Chat UI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-17
 
 > 「マルチエージェント対応」と書かれた Plugin が、実際に他のエージェントへ持っていけるとは限りません。ベンダー中立のオープン標準 **Agent Plugins 1.0.0** に乗っているかどうかは、`plugin.json` を 1 つ開けば判定できます。このページは、その判定手順と、判定した結果で何が変わるかを 1 か所にまとめた解説です。標準そのものの成り立ちと各ツールの対応状況は [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準)、Copilot での操作手順は [GitHub Copilot Plugins](../copilot/plugins.md) を参照してください。
 
@@ -175,6 +175,19 @@ Copilot CLI でも、1.0.94 の discovery 前の MCP enable / disable、1.0.95 �
 | 1.0.97 | custom agent の frontmatter に hook を書ける（agent-scoped hooks、CLI 限定） | Plugin で配る custom agent に hook を書いても、**他のクライアントでは動かない**。可搬な部分（Skills と MCP）とは分けて扱う |
 
 出典: [Copilot CLI v1.0.97](https://github.com/github/copilot-cli/releases/tag/v1.0.97)、[Hooks reference](https://docs.github.com/en/copilot/reference/hooks-reference)（2026-10-14 確認。実機での再現は未検証）。
+
+### Claude Code 2.1.302 — MCP の省略可能な field と Plugin の設定書き込み
+
+**提供元: Official / 状態: GA**。Claude Code 2.1.302（2026-10-16 UTC）にも、「同じ Plugin・MCP server なのに、client の版や端末の git 設定で動き方が変わる」不具合の修正が含まれます。
+
+| 修正 | 可搬性の観点 |
+|---|---|
+| MCP protocol `2026-07-28` を negotiate した server が `resultType`・`ttlMs`・`cacheScope` を省略すると、tool が出ない・すべての呼び出しが失敗した | 省略した server を誤りとして直す必要はなく、client 側の修正。同梱する MCP server を 2026-07-28 へ移行した Plugin は、利用者の client の版を確認する |
+| `claude plugin` などの subcommand が、設定の書き込みの完了前に終了し、変更が失われる・`.tmp` が残ることがあった | スクリプトで導入・設定を自動化している場合、導入後の設定が実際に保存されたかを確認する |
+| git の既定の ref format が reftable のとき、marketplace が毎回 clone され、git plugin の version が unknown と表示された | 配布側ではなく利用者の git 設定に依存する差。version で導入状況を棚卸ししている組織は、unknown の行を再確認する |
+| PowerShell tool が Plugin の `bin/` のコマンドを見つけられなかった | Windows の利用者がいる Plugin で、同梱コマンドの呼び出しを確認する |
+
+出典: [Claude Code 2.1.302](https://github.com/anthropics/claude-code/releases/tag/v2.1.302)（2026-10-17 確認、実機での再現は未検証）。ほかの修正は [Claude Code のカスタマイズ機能](../claude-code/basics.md#21302--無人実行の開始モードと-subagent-の実行方式)へ。
 
 ## 関連ドキュメント
 

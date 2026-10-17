@@ -1,6 +1,6 @@
 # 長時間タスクの信頼性設計
 
-> **対象ツール**: ツール横断（Claude Code・Codex・MCP・LangGraph ほか） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
+> **対象ツール**: ツール横断（Claude Code・Codex・MCP・LangGraph ほか） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-17
 
 > [ループエンジニアリング](loop-engineering.md)はエージェントを反復実行する方法と停止条件を、[AI エージェントの実行基盤（ハーネス）](harness.md)は実行環境を扱います。このページはその間にある、**長時間・多段階の仕事で小さな失敗が累積する問題**と、それを抑える信頼性設計を扱います。評価ツールや telemetry の網羅ではなく、**実行中の故障を前提にした** checkpoint・再開・冪等性・検証・reliability budget が対象です。
 
@@ -63,7 +63,7 @@ retry・再開のいずれも、**同じ操作が 2 回実行される可能性*
 - **副作用の位置を分離する** — 「判断・計画」のステップと「実際に外部へ影響を与える」ステップを分け、後者だけを慎重に扱う
 - **再試行してよい操作とダメな操作を分ける** — 読み取りは何度再試行してもよいが、送信・購入・削除は違う（[エージェントに外部操作を与える手段の選び方「承認境界」](tool-selection.md#8-承認境界--読み取り入力送信購入削除で分ける)と同じ分類軸）
 
-実際のツールでも、重複実行は起きています。Claude Code 2.1.288（2026-10-02）では、リモート MCP server の結果が 16 MB を超える・解析できない場合に **MCP の tool 呼び出しが 2 回実行されることがあった**問題が修正されました。Codex CLI 0.160.0（2026-10-01）は、再接続時に送信状態が不明だったメッセージを、状態が確定してから再開して**二重送信を避ける**ようになりました。ツール側の修正に頼らず、外部へ副作用を持つ操作には冪等キーや checkpoint を用意します（[Claude Code](../claude-code/basics.md#21285〜21288-の統制に関わる変更)・[Codex](../codex/README.md#codex-cli-01600（2026-10-01）)）。
+実際のツールでも、重複実行は起きています。Claude Code 2.1.288（2026-10-02）では、リモート MCP server の結果が 16 MB を超える・解析できない場合に **MCP の tool 呼び出しが 2 回実行されることがあった**問題が修正されました。Codex CLI 0.160.0（2026-10-01）は、再接続時に送信状態が不明だったメッセージを、状態が確定してから再開して**二重送信を避ける**ようになりました。Claude Code 2.1.302（2026-10-16 UTC）では、cloud の scheduled routine が途中で失敗した後、**1 時間以上経って最初から再実行**され、同じ報告を 2 回投稿するなどの重複が起き得た問題が修正されました。ツール側の修正に頼らず、外部へ副作用を持つ操作には冪等キーや checkpoint を用意します（[Claude Code](../claude-code/basics.md#21285〜21288-の統制に関わる変更)・[Codex](../codex/README.md#codex-cli-01600（2026-10-01）)・[2.1.302](../claude-code/basics.md#21302--無人実行の開始モードと-subagent-の実行方式)）。
 
 **再開・retry を実装する前に、「このステップは 2 回実行されても安全か」を必ず確認してください。** 安全でない場合は、冪等性を持たせるか、そのステップの前後に人間の確認を挟みます。
 
@@ -162,8 +162,10 @@ memory は**更新・削除できる repository 固有の文脈**として扱い
 | Claude Code 2.1.296（Official / GA） | `CLAUDE_CODE_RESUME_INTERRUPTED_TURN` 使用時、MCP result で完了済みの turn を再開しても、同じ副作用が再実行されないことを確認する |
 | Claude Code の subagent | `autoCompactWindow` で早く圧縮しても、完了条件・参照 artifact・未処理項目が残るか確認。forked Skill の結果が呼び出した workflow subagent に戻るか確認する |
 | Copilot CLI 1.0.93〜1.0.95（Official / GA） | turn 間の MCP 設定更新・認証の再取得後に利用可能 tool を確認。managed plugin setup の再試行待ちと恒久的な policy 拒否を分ける |
+| Claude Code 2.1.302 の routine（Official / GA、2026-10-17 確認） | 途中で失敗した routine が後から最初から再実行されないこと、異常終了した run が Completed ではなく failed になることを確認する。表示が Completed でも、成果物と外部への書き込みの記録を照合する |
+| Claude Code 2.1.302 の MCP・設定・worktree（Official / GA、2026-10-17 確認） | protocol `2026-07-28` で `resultType` などを省略する MCP server の tool が出るか、`claude plugin` の設定書き込みが終了前に完了するか、reftable・git 2.56 以降・exFAT / FAT32 の環境で worktree と書き込みが動くかを確認する |
 
-出典: [Workflow runs](https://platform.claude.com/docs/en/managed-agents/workflow-runs)、[Claude Code 2.1.295](https://github.com/anthropics/claude-code/releases/tag/v2.1.295)・[2.1.296](https://github.com/anthropics/claude-code/releases/tag/v2.1.296)、[Copilot CLI changelog](https://github.com/github/copilot-cli/blob/main/changelog.md)。run の追跡・停止条件は [ループエンジニアリング](loop-engineering.md#background-workflow-run-の終了を追う)へ。
+出典: [Workflow runs](https://platform.claude.com/docs/en/managed-agents/workflow-runs)、[Claude Code 2.1.295](https://github.com/anthropics/claude-code/releases/tag/v2.1.295)・[2.1.296](https://github.com/anthropics/claude-code/releases/tag/v2.1.296)・[2.1.302](https://github.com/anthropics/claude-code/releases/tag/v2.1.302)、[Copilot CLI changelog](https://github.com/github/copilot-cli/blob/main/changelog.md)。run の追跡・停止条件は [ループエンジニアリング](loop-engineering.md#background-workflow-run-の終了を追う)へ。
 
 ## 10. 最小テストシナリオ
 

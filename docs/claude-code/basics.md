@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-17
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -200,6 +200,8 @@ description: 現在のブランチのテストを生成して実行する
 レビュー専用・ドキュメント更新専用のように役割を分けると、大きなタスクを担当ごとの観点で進められます。
 
 > **2026-08 の変更**: 対話セッションでは **fork モードが既定で有効**になりました（2.1.232）。`subagent_type: "fork"` は起動時点の親の会話履歴、system prompt / tools、model、prompt cache を引き継ぎます。定義ファイルから起動する通常のサブエージェントは、引き続き新しいコンテキストで開始します。会話の続きを別観点で走らせるなら fork、役割・tool・modelを個別に定義して文脈を隔離するなら非 fork 型を選びます。詳しい比較は[マルチエージェントを使う境界線](../dev-methods/multi-agent.md#3-agent-as-tool-専門作業を隔離して呼び出す)を参照してください。
+>
+> **2026-10 の変更**: 2.1.302 から、fork モードは `claude -p`・Agent SDK・desktop app・VS Code でも既定で有効です（`CLAUDE_CODE_FORK_SUBAGENT=0` で無効、`claude mcp serve` は対象外）。desktop app と VS Code では main conversation の subagent が常に background で動きます。起動経路ごとの既定は [2.1.302 の変更点](#21302--無人実行の開始モードと-subagent-の実行方式)を参照してください。
 
 2.1.271 以降は、カスタム / Plugin サブエージェントの frontmatter（または `--agents` JSON）に `omitClaudeMd` を指定できます。これは user / project / local の `CLAUDE.md` をサブエージェントへ渡さない隔離であり、**組織が強制する managed policy は引き続き読み込まれます**。プロジェクト指示を隠す設定を、管理ポリシーの回避に使うことはできません。
 
@@ -505,7 +507,7 @@ Claude Enterprise では、Skill や Plugin の「入れる前の確認」に加
 
 Claude Code 2.1.283（2026-09-25）から、**どの設定ファイルも開始モードを指定していなければ、対話型のターミナルと VS Code 拡張のセッションは auto mode で始まります**。2.1.282 までは、Pro / Max / Team プランで feature flag を取得するセッションに限られていました。今回から **Enterprise プラン、Claude API、Amazon Bedrock、Google Cloud、Microsoft Foundry、Claude apps gateway** の対話セッションも対象です。
 
-auto mode は、承認プロンプトの代わりに**別のモデル（classifier）が操作を判定する**モードです。承認なしで何でも実行するモードではありませんが、判定するのは人ではなくなります。sandbox やコンテナは、引き続き別の防御層として必要です。なお、`claude -p` と Agent SDK は従来どおり Manual（`default`）で始まるため、非対話の自動化はこの変更の対象外です。
+auto mode は、承認プロンプトの代わりに**別のモデル（classifier）が操作を判定する**モードです。承認なしで何でも実行するモードではありませんが、判定するのは人ではなくなります。sandbox やコンテナは、引き続き別の防御層として必要です。なお、`claude -p` と Agent SDK は従来どおり Manual（`default`）で始まるため、非対話の自動化はこの変更の対象外です。third-party provider で telemetry が off、または新規インストール直後の条件でも `default` で始まるよう揃えたのは 2.1.302 です（[変更点](#21302--無人実行の開始モードと-subagent-の実行方式)）。無人実行では開始モードを明示してください。
 
 | 決めたいこと | 設定 | 注意点 |
 |------------|------|--------|
@@ -774,6 +776,61 @@ MCP connector の `mcp-client-2026-09-15` beta header と組み合わせると�
 4. Windows 端末では、hook を起動できない状態（shell がない）で対象の操作が止まることを確かめる。
 
 **→ 組織での見直しの観点は [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#2026-10-1410-16-の権限境界の更新) を参照**
+
+### 2.1.302 — 無人実行の開始モードと subagent の実行方式
+
+> **確認日: 2026-10-17**。**提供元: Official / 状態: GA（CLI の正式リリース）**。[2.1.302](https://github.com/anthropics/claude-code/releases/tag/v2.1.302)（2026-10-16 UTC、日本時間 10-17）の release に基づきます。本ガイドでは実機で再現していません。
+
+この版は、**terminal 以外の起動経路（`claude -p`・Agent SDK・desktop app・VS Code）の既定値**を terminal に揃える変更を含みます。無人実行や、subagent をさらに入れ子で起動する構成では、更新前に次を確認してください。
+
+**permission mode を指定しなかったときの開始モード**
+
+| 起動経路 | 2.1.302 の挙動 | 見直すこと |
+|---------|---------------|-----------|
+| `claude -p` / Agent SDK で、third-party provider を使い、telemetry が off、または新規インストール直後 | permission mode を指定しなければ **`default`（Manual）で始まる** | この条件で別のモードで始まっていた環境がないか。release note はこの条件で「`default` で始まるよう変更した」と書いている |
+| 上と同じ条件で `--permission-mode auto` を明示 | **auto のまま** | auto をやめる変更ではない。auto を使う無人実行は flag を明示する |
+| 対話型の terminal / VS Code 拡張 | 変更なし（[2.1.283 の既定](#auto-mode-が既定の開始モードになる範囲--21283)のまま） | — |
+
+無人実行の開始モードを、版や provider・telemetry の条件に任せないでください。起動スクリプト・CI では `--permission-mode` を、SDK では permission mode を**明示**し、組織として止めたいものは managed settings（`permissions.disableAutoMode` など）で決めます。
+
+**fork subagent と background 実行の既定**
+
+| 起動経路 | fork subagent（`subagent_type: "fork"`） | main conversation が起動する subagent | subagent 自身が起動する Agent call |
+|---------|------------------------------------------|---------------------------------------|----------------------------------|
+| terminal | 既定で有効（2.1.232 から） | background | （release note に変更の記載なし） |
+| `claude -p` / Agent SDK | **既定で有効**（2.1.302 から） | （release note に変更の記載なし） | **既定で foreground** |
+| desktop app / VS Code | **既定で有効**（2.1.302 から） | **常に background**（Claude が選ばなくなった） | **既定で foreground** |
+| `claude mcp serve` | **提供しない** | — | — |
+
+- fork subagent は `CLAUDE_CODE_FORK_SUBAGENT=0` で無効にできます。
+- **fork かどうか（会話の文脈を引き継ぐか）と、background / foreground（親が待つか）は別の設定**です。background で動くことは、親の権限・sandbox・provider をそのまま受け継ぐことを意味しません。文脈と実行境界の違いは [マルチエージェントを使う境界線](../dev-methods/multi-agent.md#3-agent-as-tool-専門作業を隔離して呼び出す) を参照してください。
+- 親（main conversation）と、その subagent が起動する子とでは既定が違います。入れ子の構成では、どの階層が background で動き、どの階層の完了を待つのかを確認してください。
+
+**hook・auto mode・cloud の routine**
+
+| 変更 | 運用上の意味 |
+|------|-------------|
+| `prompt` / `agent` hook は、**同じイベントについて同時に 12 個まで**実行し、残りは順番を待つ | session 全体や subagent の同時実行数の上限ではない（subagent の上限は [8 節](../dev-methods/multi-agent.md#8-通信コンテキストコスト権限停止条件)）。並列で動く前提になっていない hook は、順序・timeout・外部への副作用を点検する |
+| `CLAUDE_CODE_AUTO_MODE_MODEL` を追加。**client 側**の auto mode classifier が使うモデルを選ぶ | **server 側**の auto mode のモデルは変わらない。どちらの classifier が判定しているかを分けて確認する |
+| server 側 classifier の auto mode で、会話が長すぎて安全性の確認ができない場合、すべての tool call を拒否する代わりに compaction する | 判定が緩むのではなく、判定できる長さに縮めてから確認する |
+| OpenTelemetry の `tool_decision` で、auto mode classifier の拒否の大半に `classifier_category` が付いていなかった問題、`OTEL_LOGRECORD_ATTRIBUTE_COUNT_LIMIT` が低いと `tool_use_id` などが押し出される問題を修正 | [2.1.301 で追加した属性](#2129921301--mcp-の許可ルールの完全一致化と-hook-の-fail-closed-化)で集計している場合は、2.1.302 以降のデータで見直す |
+| cloud session の scheduled routine が途中で失敗した後、**1 時間以上後に最初から再実行**され、同じ報告の投稿などを繰り返し得た問題を修正 | 修正後も外部への書き込みは冪等にする（[ループエンジニアリング](../dev-methods/loop-engineering.md#定期実行の再実行と外部副作用--claude-code-21302)） |
+| routine の run が、session の異常終了後に Completed、開始前の archive で Cancelled と表示されていた問題を修正（failed と表示する）。開始できなかった理由（組織の concurrent cloud session の上限など）を routine のページに表示 | Completed の表示だけで成功とみなしていなかったか、過去の run を確認する |
+
+**MCP・Plugin・worktree の互換性の修正**
+
+| 変更 | 影響を受けていた構成 |
+|------|-------------------|
+| MCP protocol `2026-07-28` を negotiate した server が `resultType`・`ttlMs`・`cacheScope` を省略すると、tool が出てこない・すべての呼び出しが失敗する問題を修正 | 2026-07-28 仕様へ移行した MCP server。省略は server 側の誤りとしてではなく、client 側の修正として扱われている |
+| `claude plugin` などの subcommand が、設定の書き込みの完了前に終了し、変更が失われる・`.tmp` が残る問題を修正 | スクリプトから plugin の導入・設定を行う環境 |
+| git の既定が reftable のとき、marketplace が毎回 clone され、git plugin の version が unknown になる問題を修正。self-hosted runner の reftable checkout の fetch 失敗も修正 | git の既定の ref format を reftable にしている端末・runner |
+| git 2.56 以降で、存在しないディレクトリを指す `.git` file があると worktree isolation が worktree を作成・再開できない問題を修正 | worktree isolation を使う subagent / session |
+| Windows の exFAT / FAT32 の drive 上の project で、すべてのファイル書き込みが拒否・確認になる問題を修正（`--plugin-dir` の session を含む） | 外付け drive・USB メモリで作業する端末 |
+| Read tool が、画像ファイルをサイズに関係なく、また画像の名前を持つ pipe / device を丸ごとメモリへ読み込んでいた問題を修正。**128 MB を超える画像は拒否** | 巨大ファイルや special file によるメモリ枯渇の境界 |
+
+これらの不具合に対して設定の回避策を入れていた場合は、恒久的な運用にせず、2.1.302 へ更新したうえで副作用のない操作で再検証してから回避策を外してください。**MCP・Plugin・worktree をこの構成で使う環境では 2.1.302 以上を検証する下限候補**とします。公式 LTS や、以後の版が不要という意味ではありません。
+
+**→ 組織での見直しの観点は [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#2026-10-1510-17-の権限境界の更新) を参照**
 
 ## セットアップ
 

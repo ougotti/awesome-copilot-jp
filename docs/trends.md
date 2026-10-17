@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-17
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-17 | 10-15〜10-17 の Claude Code 2.1.302（無人実行の開始モード・subagent の既定・routine の再実行・MCP 互換）・GitHub in Slack / Teams の複数 repository 対応・Compliance API の保存済み指示の取得（Beta）を追加し、製品別の詳細へリンクした |
 | 2026-10-16 | 10-14〜10-16 の Claude Code 2.1.299〜2.1.301・VS Code 1.142・Copilot CLI 1.0.98・HydraFusion・Claude Managed Agents（OTel export と web ツールの制限）・agentic autofix / AI Scan の GA・Codex 0.163.0 を追加し、製品別の詳細へリンクした |
 | 2026-10-14 | 10-10〜10-14 の Copilot の managed settings・telemetry・VS Code 1.141・Copilot CLI 1.0.96〜1.0.97・JetBrains の更新を追加し、製品別の詳細へリンクした |
 | 2026-10-13 | 10-03〜10-10 の workflow・権限・MCP・Plugin 更新を再確認し、製品別の詳細と運用検証へリンクした |
@@ -69,6 +70,19 @@
 | 2026-08-01 | 「Skill の発見・配布・更新」を追加（`gh skill` / Agent Finder・ARD / Copilot Plugins） |
 | 2026-07-29 | 常設ページ化（旧タイトル「2026年7月版」）。ガイド全体の更新は [更新履歴（CHANGELOG）](../CHANGELOG.md) を参照 |
 | 2026-07-22 | 初版公開（Matt Pocock's Skills / Context7 / Firecrawl / Vercel / Record & Replay / Computer Use の6テーマ） |
+
+## 2026-10-15〜10-17 の更新 — 無人実行の既定値と、会話から届く範囲
+
+対象期間の一次情報を 2026-10-17 に確認しました。前回の一覧の確認後に Claude Code 2.1.302 が出たほか、10-15 公開の GitHub in Slack / Teams と Claude Compliance API の更新が前回の一覧に入っていなかったため、ここで扱います。Copilot CLI（最新 1.0.98）・Codex（Stable 0.163.0）・MCP・Agent Skills・Agent Plugins には新しい正式 release がありません。モデルの提供・価格（Opus 5.5 の Fast mode など）、Claude Design の終了案内、UI だけの更新は対象外です。release note と公式 docs の照合のみで、実機での検証は行っていません。
+
+| 公開日（公式掲載日 / release の UTC 日付） | 更新 | 提供元・状態 | 詳細 |
+|---|---|---|---|
+| 10-16 | Claude Code 2.1.302。`-p` / SDK の開始モードを `default` に揃える条件、fork subagent が `-p`・SDK・desktop・VS Code でも既定に、desktop / VS Code の subagent は常に background、`prompt` / `agent` hook は同一イベント 12 並列まで、`CLAUDE_CODE_AUTO_MODE_MODEL` | Official / GA | [Claude Code](claude-code/basics.md#21302--無人実行の開始モードと-subagent-の実行方式)、[マルチエージェント](dev-methods/multi-agent.md#3-agent-as-tool-専門作業を隔離して呼び出す)、[ハーネス](dev-methods/harness.md#同じハーネスでも起動経路で既定が違う--claude-code-21302) |
+| 10-16 | Claude Code 2.1.302。失敗した scheduled routine の最初からの再実行と run の状態表示、MCP `2026-07-28` の省略可能な field、Plugin の設定書き込み、reftable・worktree・exFAT の修正 | Official / GA | [定期実行の再実行](dev-methods/loop-engineering.md#定期実行の再実行と外部副作用--claude-code-21302)、[信頼性の検証](dev-methods/agent-reliability.md#workflow-と-mcp-の再開を検証する)、[Plugin の可搬性](dev-methods/plugin-portability.md#claude-code-21302--mcp-の省略可能な-field-と-plugin-の設定書き込み) |
+| 10-15 | GitHub in Slack / Teams が 1 つの会話で複数の repository を扱う。共有メッセージ・スレッドを文脈に使う | Official / Improvement | [GitHub Copilot ガイド](copilot/README.md#slack--teams-から複数の-repository-を扱う2026-10-15) |
+| 10-15 | Claude Compliance API の `user_preferences`。保存された Instructions for Claude と Cowork の Global instructions を取得（`read:compliance_user_data`） | Official / Beta（Enterprise） | [Skill / Plugin のセキュリティ](dev-methods/skill-security.md#2026-10-1510-17-の権限境界の更新)、[業務で安全に使う](business/safety.md#外部への送信とファイルの保持) |
+
+この期間は、**同じツールでも起動経路によって既定が違う**こと（Claude Code の `-p`・SDK・desktop・VS Code）と、**会話の見える範囲と操作できる範囲が別である**こと（Slack / Teams の複数 repository）が目立ちました。無人実行では開始モードを明示し、定期実行の外部への書き込みは製品側の修正後も[冪等に](dev-methods/loop-engineering.md#定期実行の再実行と外部副作用--claude-code-21302)してください。
 
 ## 2026-10-14〜10-16 の更新 — 許可の一致範囲と、統制を入れたときの切り替わり
 

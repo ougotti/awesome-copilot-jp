@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-16
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-17
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -145,7 +145,7 @@ Claude Code 2.1.287（2026-10-01）の **Mods** は、プラグインが Claude 
 |------|-----------|-----|
 | **導入前** | 入れてよいものかを検査する | Skill / Plugin のセキュリティスキャン（第三者製の Skill・Plugin をアップロード・編集の時点で検査） |
 | **推論前** | 実行される直前に許可・拒否を判定する | Inference hooks（組織の AI セキュリティサーバーが allow / deny を返すまで待つ） |
-| **実行後** | 何が行われたかを後から確認する | Compliance API（セッションのトランスクリプトを取得する） |
+| **実行後** | 何が行われたかを後から確認する | Compliance API（セッションのトランスクリプトを取得する。2026-10-15 から、保存された Instructions も取得できる＝[Beta](#2026-10-1510-17-の権限境界の更新)） |
 
 **導入前だけでは埋まらない穴がある**、というのがこの並びの意味です。中身が安全な Skill でも、渡される入力や実行される文脈まではスキャンできません。推論前の判定と実行後の監査は、そこを埋める層です。
 
@@ -271,6 +271,38 @@ managed policy を利用者の設定や起動 flag で弱められると想定�
 
 前方一致で広く許可していた rule は、更新で**狭まる**方向に変わります。更新前に `mcp__` の rule を棚卸しし、許可したいサーバーを `mcp__<server>__*` で明示してください。逆に VS Code 1.142 では、統制を**強める**設定を入れた時点で、利用者が使える harness が変わります。どちらも、配布前に検証用の端末で挙動を確かめてください。
 
+### 2026-10-15〜10-17 の権限境界の更新
+
+2026-10-17 に公式資料を確認しました。**無人実行の既定値**、**会話から操作できる repository の範囲**、**保存された指示の監査**が変わっています。release note と公式 docs の照合のみで、実機・管理画面での確認はしていません。
+
+| 層 | 変更と運用上の意味 | 詳細・一次情報 |
+|---|---|---|
+| 開始モード | Claude Code 2.1.302 で、permission mode を指定しない `claude -p` / Agent SDK は、third-party provider・telemetry off・新規インストール直後でも `default` で始まる。`--permission-mode auto` は auto のまま。**無人実行では permission mode を明示**し、止めたいものは managed settings で決める | [Claude Code](../claude-code/basics.md#21302--無人実行の開始モードと-subagent-の実行方式)、[2.1.302](https://github.com/anthropics/claude-code/releases/tag/v2.1.302) |
+| subagent の実行形態 | fork subagent が `-p`・SDK・desktop・VS Code でも既定で有効、desktop / VS Code では main conversation の subagent が常に background。**文脈の引き継ぎ・background 実行と、権限・sandbox は別の設定**。background かどうかで権限が決まるわけではないため、subagent に渡す tool と権限は別に確認する | 同上、[マルチエージェント](multi-agent.md#3-agent-as-tool-専門作業を隔離して呼び出す) |
+| hook の並列度 | `prompt` / `agent` hook は同じイベントにつき同時に 12 個まで。順序に依存する判定や、外部へ書き込む hook は並列でも壊れないかを確認する | [Claude Code](../claude-code/basics.md#21302--無人実行の開始モードと-subagent-の実行方式) |
+| 会話から届く repository | GitHub in Slack / Teams（2026-10-15、Improvement）が 1 つの会話で複数の repository を扱えるようになった。**会話が見える範囲と、GitHub で操作できる repository の範囲は別の層**。書き込みの前に対象の owner / repository / branch を明示して確かめる | [GitHub Copilot ガイド](../copilot/README.md#slack--teams-から複数の-repository-を扱う2026-10-15) |
+| 保存された指示の監査 | Claude Compliance API（Beta、Enterprise）の `user_preferences` で、claude.ai の Instructions for Claude と Cowork の Global instructions を取得できる。**監査用の読み取り**であり、指示を配布・上書きする機能ではない | 下記 |
+
+**保存された指示を監査する — Compliance API の `user_preferences`（2026-10-15、Beta）**
+
+`GET /v1/compliance/organizations/{org_uuid}/user_preferences` は、組織の現メンバーが保存した **Instructions for Claude**（`conversation_preferences`）と Cowork の **Global instructions**（`cowork_global_instructions`）を返します。Claude Enterprise 組織向けの Beta です。
+
+| 確認すること | 公式の記載 |
+|---|---|
+| 鍵と scope | 既存の Compliance Access Key に **`read:compliance_user_data`** が必要。`read:compliance_org_data` だけでは 403 になる |
+| 返る範囲 | 既定では、どちらかを設定したメンバーだけ。`include_unset=true` で全員（未設定は `null`）。`user_ids[]` で最大 10 人に絞れる |
+| pagination | `limit`（既定 20、最大 100）と `page`。`next_page` が `null` になるまで続け、各ページで同じ `include_unset` / `user_ids[]` を送る。空のページでも最後とは限らない |
+| 重複 | どちらも**アカウント単位の設定**のため、複数の組織に属するメンバーの同じ本文が、組織ごとに返る |
+
+運用では次を推奨します（本ガイドの設計例）。
+
+- 指示の本文は**利用者のデータ**として扱い、取得する担当者・保存先・保存期間・閲覧のログを、会話の transcript と同じ基準で決める
+- 複数の組織で同じ本文を取得する場合は、ユーザー ID で重複を除き、同じ本文を何か所にも保存しない
+- 指示に機密情報や認証情報が書かれていないかの点検に使い、見つけたら本人に削除を依頼する。この API で指示を書き換えることはできない
+- 組織として強制したい指示は、利用者の Instructions ではなく managed settings など管理者が配る仕組みに置く
+
+出典: [Claude Platform release notes（2026-10-15）](https://platform.claude.com/docs/en/release-notes/overview)、[List user preferences](https://platform.claude.com/docs/en/manage-claude/compliance-org-data#list-user-preferences)（2026-10-17 確認、API 実行は未検証）。
+
 ### ローカルモデル・offline・telemetry は別の境界
 
 「ローカルモデルを使う」ことと、「外部へ何も送らない」ことは同じではありません。GitHub Copilot CLI 1.0.94-0（2026-10-07）は `/model` で起動中の Ollama のモデルを追加できるようになりましたが、公式は**ローカルモデルの選択では offline mode にならず、GitHub の telemetry も止まらない**と明記しています。offline mode（`COPILOT_OFFLINE=true`）を有効にしても、provider がリモートならプロンプトとコード文脈はその provider へ送られます。**モデル・送信先・offline・telemetry を別々に確認**してください。**→ [GitHub Copilot ガイド](../copilot/README.md#ローカルモデルを使う--ollama-の発見と-offline-modecli-1094-0)**
@@ -361,6 +393,7 @@ memory は、組織が承認した規約ではなく**更新も削除もでき�
 - [awesome-agent-skills-security](https://github.com/LLMSecurity/awesome-agent-skills-security) — 攻撃手法と防御策の一覧（コミュニティ）
 - [Inference hooks](https://platform.claude.com/docs/en/manage-claude/inference-hooks) — 推論前の allow / deny 判定（Anthropic 公式）
 - [Compliance API — session transcripts](https://platform.claude.com/docs/en/manage-claude/compliance-sessions) — 実行後のセッション取得（Anthropic 公式）
+- [Compliance API — List user preferences](https://platform.claude.com/docs/en/manage-claude/compliance-org-data#list-user-preferences) — 保存された Instructions / Global instructions の取得（Anthropic 公式、Beta）
 - [Managed Agents permission policies](https://platform.claude.com/docs/en/managed-agents/permission-policies) — ツール呼び出し単位の権限判定（Anthropic 公式・Beta）
 - [Claude Code v2.1.271](https://github.com/anthropics/claude-code/releases/tag/v2.1.271) ／ [v2.1.273](https://github.com/anthropics/claude-code/releases/tag/v2.1.273) — command-scoped domain、Plugin command hash、managed MCP の fail-closed / 適用修正（公式）
 - [Claude Code v2.1.280](https://github.com/anthropics/claude-code/releases/tag/v2.1.280) ／ [v2.1.281](https://github.com/anthropics/claude-code/releases/tag/v2.1.281) ／ [v2.1.282](https://github.com/anthropics/claude-code/releases/tag/v2.1.282) — symlink の着地点判定、setting source の伝播、managed rule の優先（公式・2026-09-22〜24）

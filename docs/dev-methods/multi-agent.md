@@ -1,6 +1,6 @@
 # マルチエージェントを使う境界線
 
-> **対象ツール**: ツール横断（Claude Code・GitHub Copilot・OpenAI Agents API / SDK・LangGraph ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
+> **対象ツール**: ツール横断（Claude Code・GitHub Copilot・OpenAI Agents API / SDK・LangGraph ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-17
 
 > Codex・Claude Code・各種ハーネスでサブエージェントや並列実行が一般化し、「複数体にできるか」はもう問題ではなくなりました。残っているのは「**いつ複数体にすべきか**」という設計判断です。マルチエージェントは分業とコンテキスト分離に有効な一方、通信・重複作業・競合・権限増幅・集約時の誤りという追加コストを持ちます。このページはその判断基準を、機能の存在ではなく設計判断として整理します。
 
@@ -46,6 +46,17 @@
 | **選ぶ場面** | 大量のログや探索結果を親の会話から隔離したい。役割・tool・modelを個別に絞りたい | 親がすでに把握した文脈を使い、別の観点から続きを並行して進めたい |
 
 非 fork 型には、**必要な情報を委任プロンプトで明示的に渡します。** fork 型は既存の文脈を再利用できますが、独立した役割定義や異なる model に切り替える用途には向きません。対話セッションで fork モードが既定で有効でも、定義ファイルから起動する Explore などのサブエージェントまで自動的に fork 型へ変わるわけではありません。
+
+**起動時に何を引き継ぐか（fork / 非 fork）と、親が完了を待つか（foreground / background）は別の軸です。** Claude Code 2.1.302（2026-10-16 UTC、Official / GA）では、起動経路ごとの既定が次のように揃えられました。
+
+| 起動経路 | fork 型の既定 | main conversation の subagent | subagent がさらに起動する Agent call |
+|---|---|---|---|
+| terminal | 有効 | background | release note に変更の記載なし |
+| `claude -p` / Agent SDK | **有効**（2.1.302 から） | release note に変更の記載なし | **foreground** |
+| desktop app / VS Code | **有効**（2.1.302 から） | **常に background** | **foreground** |
+| `claude mcp serve` | 提供しない | — | — |
+
+fork 型は `CLAUDE_CODE_FORK_SUBAGENT=0` で無効にできます。親と子で既定が違うため、入れ子の構成では「どの階層の完了を誰が待つか」を設計に書いておきます。background で動くことは、権限や sandbox の扱いが変わることを意味しません。権限は [8 節](#8-通信コンテキストコスト権限停止条件)の考え方で別に絞ります。出典: [Claude Code 2.1.302](https://github.com/anthropics/claude-code/releases/tag/v2.1.302)（2026-10-17 確認、実機では未検証）。詳細は [Claude Code のカスタマイズ機能](../claude-code/basics.md#21302--無人実行の開始モードと-subagent-の実行方式)へ。
 
 OpenAI Agents SDK も同じ構造を **`Agent.as_tool()`** として提供しています。
 

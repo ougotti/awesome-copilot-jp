@@ -4,6 +4,13 @@
 
 ## 2026-10
 
+- **2026-10-17** 2026-10-15〜10-17 のエージェント関連の更新を反映（#277）。
+  - [Claude Code 2.1.302](docs/claude-code/basics.md#21302--無人実行の開始モードと-subagent-の実行方式)の、`claude -p` / Agent SDK の開始モード、fork subagent と background / foreground の起動経路ごとの既定、`prompt` / `agent` hook の同一イベント 12 並列、`CLAUDE_CODE_AUTO_MODE_MODEL`、scheduled routine の再実行と状態表示、MCP・Plugin・worktree の互換性の修正を追加した。
+  - [マルチエージェント](docs/dev-methods/multi-agent.md#3-agent-as-tool-専門作業を隔離して呼び出す)・[ハーネス](docs/dev-methods/harness.md#同じハーネスでも起動経路で既定が違う--claude-code-21302)に起動経路ごとの既定を、[ループエンジニアリング](docs/dev-methods/loop-engineering.md#定期実行の再実行と外部副作用--claude-code-21302)・[信頼性設計](docs/dev-methods/agent-reliability.md#workflow-と-mcp-の再開を検証する)に retry / rerun / 外部の再送の区別と検証項目を、[Plugin の可搬性](docs/dev-methods/plugin-portability.md#claude-code-21302--mcp-の省略可能な-field-と-plugin-の設定書き込み)に MCP と設定書き込みの修正を追加した。
+  - [GitHub Copilot ガイド](docs/copilot/README.md#slack--teams-から複数の-repository-を扱う2026-10-15)に GitHub in Slack / Teams の複数 repository 対応と、会話の範囲と repository の権限を分ける運用を追加した。
+  - [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#2026-10-1510-17-の権限境界の更新)に Compliance API の `user_preferences`（Beta）を、[業務で安全に使う](docs/business/safety.md#外部への送信とファイルの保持)に保存済みの指示も組織の管理対象になり得る点を追加した。[最新動向](docs/trends.md#2026-10-1510-17-の更新--無人実行の既定値と会話から届く範囲)に一覧を追加した。
+  - 一次資料は 2026-10-17 に確認した。実機・管理画面・API での検証は行っていない。
+
 - **2026-10-16** upstream の削除も検知するようにし、Instructions を同期した（#275）。
   - 週次の更新チェック 4 本（awesome-copilot・手動追従 upstream・anthropics/skills・financial-services）が、`scripts/known-files.json` にあって upstream から消えたものも「削除」として通知 Issue に載せるようにした。取得が 404 になったパスは削除と判定しない。旧 Prompts は `skills/<名前>/` の有無で照合する。
   - [Instructions 一覧](docs/copilot/instructions.md)を upstream に合わせ、`powershell-pester-5`（→ `-6`）と Java の移行 3 件（→ `java-upgrade`）を差し替え、漏れていた `ansible` を追加して 202 件 → 192 件にした。
