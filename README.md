@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-10-19** [MCP Skills 拡張](docs/dev-methods/skills-over-mcp.md)の解説を追加。Skill を MCP server から Resources として配る SEP-2640 の仕組み、対応状況（主要なコーディングエージェントは未対応）、中身が変われば取り消される承認を整理。
 - **2026-10-18** [pnpm の agent skills](docs/trends.md#7-6-pnpm--依存パッケージに同梱された-skill-をつなぐ)を追加。依存パッケージに同梱された Skill を承認制でリンクする pnpm 12.11.0 の機能と、承認が以降のバージョンにも及ぶ点を整理。
 - **2026-10-17** [10-15〜10-17 の最新動向](docs/trends.md#2026-10-1510-17-の更新--無人実行の既定値と会話から届く範囲)を反映。Claude Code 2.1.302 の無人実行の開始モードと subagent の既定、routine の再実行の修正、Slack / Teams からの複数 repository 操作、保存済み指示の監査 API を整理。
 - **2026-10-16** upstream の削除も検知するようにし、[Instructions 一覧](docs/copilot/instructions.md)を 192 件に同期。AI-DLC v2 で止まっていた追跡も直した。
 - **2026-10-16** [Agents 一覧](docs/copilot/agents.md)・[Skills 一覧](docs/copilot/prompts.md)を upstream と照合し、削除済みの Agents 22 件を外して件数を 222 件・128 件に直し、[AI-DLC Workflows](docs/dev-methods/aidlc-workflows.md)を 2.11.0 に更新（6 ページを点検）。
-- **2026-10-16** [Codex ガイド](docs/codex/README.md)の入口を Plugin 中心に組み替え、upstream の追跡を `openai/skills` から後継の `openai/plugins` へ移した。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -160,6 +160,7 @@
 | **[MCP ツールの契約設計](docs/dev-methods/mcp-tool-contracts.md)** | 本ガイド | — | CLI / IDE / Cloud | Tool の入出力スキーマ、副作用、再試行、エラー、承認と認可、検証手順 |
 | **[MCP Events — 外部の変化を受けてエージェントを動かす](docs/dev-methods/mcp-events.md)** | 本ガイド | — | Chat UI / Cloud | ChatGPT の MCP Events（draft）の前提、利用者とサーバー開発者の作業、重複・期限・権限喪失・自己再発火のテスト観点 |
 | **[MCP Apps — 会話内にUIを追加する](docs/dev-methods/mcp-apps.md)** | 本ガイド | — | CLI / IDE / Cloud / Chat UI | tool 結果として UI を返す仕組み、最小例、対応ホストの確認と fallback、データ露出範囲 |
+| **[MCP Skills 拡張 — Skill を MCP server から配る](docs/dev-methods/skills-over-mcp.md)** | 本ガイド | — | CLI / IDE / Cloud / Chat UI | SEP-2640 の `skill://` と `skills/list`、対応状況、出所表示・内容に結びついた承認などホストの要件、Inspector での検証 |
 | **[AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md)** | 本ガイド | — | CLI / IDE / Cloud | エージェント固有ID・OAuth scope/token audience・委任権限・control planeの設計 |
 | **[マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md)** | 本ガイド | — | CLI / IDE / Cloud | agent-as-tool・supervisor・peer/teamの使い分け、向く仕事・向かない仕事、導入判断フローチャート |
 | **[長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md)** | 本ガイド | — | CLI / Cloud | time horizonと実行時間の違い、checkpoint・retry・冪等性・reliability budgetの設計、最小テストシナリオ |

@@ -4,6 +4,11 @@
 
 ## 2026-10
 
+- **2026-10-19** MCP の Skills 拡張（`io.modelcontextprotocol/skills`、SEP-2640）の解説を追加（#280）。
+  - [MCP Skills 拡張 — Skill を MCP server から配る](docs/dev-methods/skills-over-mcp.md)を新設した。ファイルの Skill・Plugin・server instructions との違い、`skill://` URI と `skills/list` / `skills/get` / `resources/directory/read`、digest つきの目録と上限（512 ファイル・16 MiB）、対応状況（ChatGPT の申請時の取り込み・MCP Inspector など。Claude Code・Copilot・Codex は未対応）、ホストに課された要件（出所の表示・暗黙の実行の禁止・`allowed-tools` の無視・内容に結びついた承認・キャッシュの扱い）、Inspector CLI での検証をまとめた。
+  - [Skills 最新動向](docs/trends.md#skill-を-mcp-server-から配る--skills-拡張sep-2640) 13 節に要約を、7 節の冒頭に誘導を追加した。[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#承認の記憶がどこまで及ぶか)に pnpm の承認との対比を、[MCP と A2A](docs/dev-methods/agent-protocols.md)に Resources を Skill の配布に使う例を追加した。
+  - 一次資料は 2026-10-19 に確認した。SDK・ホストでの実機の検証は行っていない。
+
 - **2026-10-18** pnpm 12.11.0（2026-10-09）の agent skills を反映（#279）。
   - [Skills 最新動向](docs/trends.md#7-6-pnpm--依存パッケージに同梱された-skill-をつなぐ) 7 節に「7-6. pnpm — 依存パッケージに同梱された Skill をつなぐ」を新設した。配る側の `skills/<name>/SKILL.md`、`pnpm approve` と `pnpm-workspace.yaml` の `permissions`、リンク先の決まり方（既存ディレクトリ・環境変数による検出・`skills.dirs`）、直接依存だけが対象で global / `dlx` / `deploy` は対象外という制約をまとめた。
   - 比較表を「[5 つの仕組みの比較](docs/trends.md#5-つの仕組みの比較)」へ拡張して pnpm の列を加え、「使い分けの目安」に依存ライブラリの使い方を届ける行を足した。[skills.sh ガイド](docs/dev-methods/skills-sh.md)と過去の履歴の見出しリンクも合わせた。

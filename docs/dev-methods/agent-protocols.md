@@ -1,6 +1,6 @@
 # MCP と A2A — 役割の違いと併用方法
 
-> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
+> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-19
 
 > [Skills 最新動向 13 節](../trends.md#エージェント間プロトコルの統治の集約--a2a-が-aaif-に合流)は、MCP と A2A が同じ Agentic AI Foundation（AAIF）の下に並んだという**統治の変化**を扱っています。このページはその前提となる**両プロトコルの責務の違いと、併用する際の構成**を独立して整理します。
 
@@ -38,6 +38,8 @@
 MCP の認証・認可は「**クライアントとサーバー間**」、つまりエージェントとツールの間の話です。エージェント同士の認証・委任は、次に説明する A2A 側の関心事です。
 
 **tool は常にテキスト/構造化データを返すとは限りません。** [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview) 拡張では、tool 呼び出しの結果として会話内にインタラクティブな UI（HTML/JS、サンドボックス化された iframe）を返せます。対応ホストは一部に限られるため「すべての MCP クライアントで動く」わけではありません。仕組み・最小例・対応ホストの確認と fallback は [MCP Apps — 会話内にUIを追加する](mcp-apps.md) を参照してください。
+
+**Resources は Skill の配布にも使われます。** [Skills 拡張](https://modelcontextprotocol.io/extensions/skills/overview)（SEP-2640）は、`SKILL.md` を含む Skill のファイルを `skill://` の Resources として公開し、`skills/list` / `skills/get` で一覧と digest つきの目録を返します。新しいプリミティブを足さず、既存の Resources に乗せる設計です。仕組みと承認の扱いは [MCP Skills 拡張 — Skill を MCP server から配る](skills-over-mcp.md) を参照してください。
 
 **→ MCP のツール呼び出しをどの局面で選ぶかは [エージェントに外部操作を与える手段の選び方](tool-selection.md) を参照**
 
