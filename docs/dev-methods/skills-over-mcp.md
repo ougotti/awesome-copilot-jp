@@ -124,9 +124,9 @@ skill://<Skill のパス>/<Skill 内のファイルパス>
 |--------|--------|------|------|
 | [ChatGPT（Plugin）](https://developers.openai.com/plugins/build/mcp-server#import-skills-from-the-mcp-server) | Official（OpenAI） | 部分対応 | Plugin の申請時に Skill を**静的なスナップショット**として取り込む（下記） |
 | [MCP Inspector](https://github.com/modelcontextprotocol/inspector) | Official（MCP） | 部分対応 | 2.6.0（2026-09-09）から。CLI で Skill を検証できる（[5 節](#5-server-を作る側の最小の確認)） |
-| [mcpc](https://github.com/apify/mcpc) | Community（Apify） | 対応表では対応 | MCP の CLI クライアント |
+| [mcpc](https://github.com/apify/mcpc) | Official（Apify） | 対応表では対応 | MCP の CLI クライアント |
 | [fast-agent](https://github.com/evalstate/fast-agent) | Community | 部分対応 | 最初に server と端から端まで相互運用したクライアント |
-| MCPJam Inspector | Community | 部分対応 | アプリと CLI で Skill を表示 |
+| [MCPJam Inspector](https://github.com/MCPJam/inspector) | Official（MCPJam） | 部分対応 | アプリと CLI で Skill を表示し、拡張の capability を宣言する |
 | Goose | Official（AAIF） | 計画中 | [aaif-goose/goose#12068](https://github.com/aaif-goose/goose/issues/12068) |
 
 ### SDK・server（Skill を配る側）
