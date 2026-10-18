@@ -23,6 +23,7 @@
 - **2026-10-16** upstream の削除も検知するようにし、[Instructions 一覧](docs/copilot/instructions.md)を 192 件に同期。AI-DLC v2 で止まっていた追跡も直した。
 - **2026-10-16** [Agents 一覧](docs/copilot/agents.md)・[Skills 一覧](docs/copilot/prompts.md)を upstream と照合し、削除済みの Agents 22 件を外して件数を 222 件・128 件に直し、[AI-DLC Workflows](docs/dev-methods/aidlc-workflows.md)を 2.11.0 に更新（6 ページを点検）。
 - **2026-10-16** [Codex ガイド](docs/codex/README.md)の入口を Plugin 中心に組み替え、upstream の追跡を `openai/skills` から後継の `openai/plugins` へ移した。
+
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
 ---
