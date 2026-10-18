@@ -64,7 +64,7 @@ npx skills use vercel-labs/agent-skills --skill web-design-guidelines --agent cl
 > - GitLab や一般の git URL でも、**コミット SHA を ref に指定して導入**できるようになりました（1.5.24）。GitHub では従来から、tree URL（`https://github.com/<owner>/<repo>/tree/<ref>/...`）の ref で指定できます
 > - Azure Repos の `/_git/` URL を git の取得元として解釈する修正が入りました（1.6.0）
 >
-> ただし README には、SHA で導入したスキルを `npx skills update` がどう扱うかが書かれていません。**更新で中身が変わらないことまで保証したい場合は、`gh skill` の `--pin` や APM の lock ファイル**を使います（[Skills 最新動向「4 つの仕組みの比較」](../trends.md#4-つの仕組みの比較)）。
+> ただし README には、SHA で導入したスキルを `npx skills update` がどう扱うかが書かれていません。**更新で中身が変わらないことまで保証したい場合は、`gh skill` の `--pin` や APM の lock ファイル**を使います（[Skills 最新動向「5 つの仕組みの比較」](../trends.md#5-つの仕組みの比較)）。
 
 ### インストール先パス（代表例）
 

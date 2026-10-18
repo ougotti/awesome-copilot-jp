@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-17
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-18
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -313,6 +313,8 @@ managed policy を利用者の設定や起動 flag で弱められると想定�
 
 これは権限分離そのものではなく、**記憶済みの承認の適用範囲**の話です。過大評価せず、marketplace の出自確認（[6 節](#6-同名の別パッケージという入口)）と併せて扱ってください。
 
+導入時の承認にも、同じ確認が要ります。pnpm 12.11.0（2026-10-09）の agent skills は、依存パッケージが同梱した Skill を `pnpm approve` で承認したものだけリンクします。ただし**承認はパッケージ単位で、以降のバージョンにも及びます**。更新で Skill の中身が変わっても、新しい Skill が増えても、改めては聞かれません。pnpm は Skill の中身を読まず、承認画面にも Skill 名しか出ません。承認は「この発行元を信頼する」という判断として扱い、依存を更新するたびに `node_modules/<パッケージ>/skills/` の差分を読んでください。止めたいパッケージは `pnpm-workspace.yaml` の `permissions` で `skills: false` にし、機能ごと止めるなら `skills.dirs` を空リストにします。**→ [Skills 最新動向 7-6 節](../trends.md#7-6-pnpm--依存パッケージに同梱された-skill-をつなぐ)**
+
 **→ Codex の Plugin / MCP 運用は [Codex ガイド](../codex/README.md#5-plugin-でまとめて配る2026-08-の追加) を参照**
 
 ### 学習した memory を policy とみなさない
@@ -361,6 +363,7 @@ memory は、組織が承認した規約ではなく**更新も削除もでき�
 |------|---------------|
 | 個人が 1 つ入れる | `gh skill preview` で中身を読む・`scripts/` と `mcp.json` の接続先を見る |
 | リポジトリへコミットする | コミット SHA で固定する・レビューで差分を読む（`trojan-skill-hunter` を併用） |
+| 依存パッケージから受け取る（pnpm） | 承認を発行元への信頼として扱い、依存を更新するたびに `skills/` の差分を読む（[5 節](#承認の記憶がどこまで及ぶか)） |
 | チーム・組織へ配る | `managed-settings.json` で Marketplace と MCP サーバーを限定し、実行操作を `deny` / `ask` / `allow` に分ける |
 | ハーネスごと持ち込む | 権限・承認・サンドボックスの既定値を確認する（[AI エージェントの実行基盤（ハーネス）](harness.md)） |
 | コマンドを 1 つ入れる | 配布元が公式かを README で確認する・`which` で実体を見る（[6 節](#6-同名の別パッケージという入口)） |
@@ -390,6 +393,7 @@ memory は、組織が承認した規約ではなく**更新も削除もでき�
 - [Enterprise managed sandbox in Copilot for JetBrains](https://github.blog/changelog/2026-09-08-enterprise-managed-sandbox-in-copilot-for-jetbrains/) — JetBrains の managed sandbox Public Preview（公式）
 - [New features and improvements in Copilot for JetBrains](https://github.blog/changelog/2026-09-22-new-features-and-improvements-in-copilot-for-jetbrains/) — assisted approvals と MCP ツール制御（公式・2026-09-22）
 - [gh skill マニュアル](https://cli.github.com/manual/gh_skill) — `gh skill preview` などのサブコマンド（公式）
+- [pnpm — Agent Skills](https://pnpm.io/agent-skills) ／ [設定 `permissions`](https://pnpm.io/settings/build#permissions) — 同梱 Skill の承認がパッケージ単位で以降のバージョンにも及ぶこと（pnpm 公式、2026-10-18 確認）
 - [awesome-agent-skills-security](https://github.com/LLMSecurity/awesome-agent-skills-security) — 攻撃手法と防御策の一覧（コミュニティ）
 - [Inference hooks](https://platform.claude.com/docs/en/manage-claude/inference-hooks) — 推論前の allow / deny 判定（Anthropic 公式）
 - [Compliance API — session transcripts](https://platform.claude.com/docs/en/manage-claude/compliance-sessions) — 実行後のセッション取得（Anthropic 公式）

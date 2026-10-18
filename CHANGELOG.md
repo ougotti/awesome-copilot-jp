@@ -4,6 +4,12 @@
 
 ## 2026-10
 
+- **2026-10-18** pnpm 12.11.0（2026-10-09）の agent skills を反映。
+  - [Skills 最新動向](docs/trends.md#7-6-pnpm--依存パッケージに同梱された-skill-をつなぐ) 7 節に「7-6. pnpm — 依存パッケージに同梱された Skill をつなぐ」を新設した。配る側の `skills/<name>/SKILL.md`、`pnpm approve` と `pnpm-workspace.yaml` の `permissions`、リンク先の決まり方（既存ディレクトリ・環境変数による検出・`skills.dirs`）、直接依存だけが対象で global / `dlx` / `deploy` は対象外という制約をまとめた。
+  - 比較表を「[5 つの仕組みの比較](docs/trends.md#5-つの仕組みの比較)」へ拡張して pnpm の列を加え、「使い分けの目安」に依存ライブラリの使い方を届ける行を足した。[skills.sh ガイド](docs/dev-methods/skills-sh.md)と過去の履歴の見出しリンクも合わせた。
+  - [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#承認の記憶がどこまで及ぶか)に、承認がパッケージ単位で以降のバージョンにも及び、pnpm は Skill の中身を検査しない点と、止め方を追加した。
+  - 一次資料は 2026-10-18 に確認した。pnpm での実機の検証は行っていない。
+
 - **2026-10-17** 2026-10-15〜10-17 のエージェント関連の更新を反映（#277）。
   - [Claude Code 2.1.302](docs/claude-code/basics.md#21302--無人実行の開始モードと-subagent-の実行方式)の、`claude -p` / Agent SDK の開始モード、fork subagent と background / foreground の起動経路ごとの既定、`prompt` / `agent` hook の同一イベント 12 並列、`CLAUDE_CODE_AUTO_MODE_MODEL`、scheduled routine の再実行と状態表示、MCP・Plugin・worktree の互換性の修正を追加した。
   - [マルチエージェント](docs/dev-methods/multi-agent.md#3-agent-as-tool-専門作業を隔離して呼び出す)・[ハーネス](docs/dev-methods/harness.md#同じハーネスでも起動経路で既定が違う--claude-code-21302)に起動経路ごとの既定を、[ループエンジニアリング](docs/dev-methods/loop-engineering.md#定期実行の再実行と外部副作用--claude-code-21302)・[信頼性設計](docs/dev-methods/agent-reliability.md#workflow-と-mcp-の再開を検証する)に retry / rerun / 外部の再送の区別と検証項目を、[Plugin の可搬性](docs/dev-methods/plugin-portability.md#claude-code-21302--mcp-の省略可能な-field-と-plugin-の設定書き込み)に MCP と設定書き込みの修正を追加した。
@@ -174,7 +180,7 @@
   - **Copilot CLI の統制漏れの修正を追加** — 1.0.88 より前は `copilot --acp`・`--ahp-host`・`--server` のセッションに managed の MCP・permission・plugin policy が適用されていなかったことと、1.0.87 の空の `strictKnownMarketplaces`・Auto routing tier の既定を[GitHub Copilot ガイド](docs/copilot/README.md#copilot-cli-の別経路にも-managed-settings-が効く--1087--1088)と[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#実行する操作を-deny--ask--allow-に分ける)へ記載した。
   - **モデル更新時の prompt-audit を追加** — `/claude-api prompt-audit`（2.1.221〜）と `/doctor prompt-audit`（2.1.283〜）の対象を分け、公式手順書の原則（対象モデルを先に決める、提案 diff と同意、何も見つからなければ変えない、削除は仮説）と残すべき記述を[Skill / エージェントの評価](docs/dev-methods/evals.md#モデルの更新も変更として扱う--prompt-audit-で点検してから測る)に整理した。点検は eval の代わりにならないことも明記した。
   - **監査・観測の変更を反映** — Compliance API の Claude for Microsoft 365（ベータ終了）・Claude in Chrome（Beta）のセッション取得と、Activity Feed がファイル名・タイトルを返さなくなった変更（過去分にも適用）を[Claude Code](docs/claude-code/basics.md#導入時に確認すること)へ、`OTEL_LOG_TOOL_CONTENT` の記録範囲に MCP・WebFetch・WebSearch の出力が加わったことを[ハーネス解説](docs/dev-methods/harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions)へ追加した。managed `sandbox` の fail-closed、Skill deny rule の適用範囲、`plugin validate` の厳格化、Windows PowerShell tool の削除範囲の修正も記載した。
-  - **`skills` CLI 1.5.24〜1.7.0 を反映** — TTY なしで確認が必要なときの非ゼロ終了、`add --json`、コミット SHA を ref に指定した導入を[skills.sh ガイド](docs/dev-methods/skills-sh.md)へ追加し、[Skills 最新動向](docs/trends.md#4-つの仕組みの比較)の比較表の「バージョン固定」を、`update` との関係が未文書化であることと併せて更新した。
+  - **`skills` CLI 1.5.24〜1.7.0 を反映** — TTY なしで確認が必要なときの非ゼロ終了、`add --json`、コミット SHA を ref に指定した導入を[skills.sh ガイド](docs/dev-methods/skills-sh.md)へ追加し、[Skills 最新動向](docs/trends.md#5-つの仕組みの比較)の比較表の「バージョン固定」を、`update` との関係が未文書化であることと併せて更新した。
   - Anthropic・GitHub・Vercel の公式 changelog / ドキュメントを2026-09-27に確認し、[Skills 最新動向](docs/trends.md)の12・15節とREADMEの「最近の更新」を同期した。
 
 - **2026-09-27** エージェントの記憶基盤の比較ページを追加（#215）
