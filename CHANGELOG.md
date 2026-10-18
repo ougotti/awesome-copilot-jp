@@ -4,7 +4,7 @@
 
 ## 2026-10
 
-- **2026-10-18** pnpm 12.11.0（2026-10-09）の agent skills を反映。
+- **2026-10-18** pnpm 12.11.0（2026-10-09）の agent skills を反映（#279）。
   - [Skills 最新動向](docs/trends.md#7-6-pnpm--依存パッケージに同梱された-skill-をつなぐ) 7 節に「7-6. pnpm — 依存パッケージに同梱された Skill をつなぐ」を新設した。配る側の `skills/<name>/SKILL.md`、`pnpm approve` と `pnpm-workspace.yaml` の `permissions`、リンク先の決まり方（既存ディレクトリ・環境変数による検出・`skills.dirs`）、直接依存だけが対象で global / `dlx` / `deploy` は対象外という制約をまとめた。
   - 比較表を「[5 つの仕組みの比較](docs/trends.md#5-つの仕組みの比較)」へ拡張して pnpm の列を加え、「使い分けの目安」に依存ライブラリの使い方を届ける行を足した。[skills.sh ガイド](docs/dev-methods/skills-sh.md)と過去の履歴の見出しリンクも合わせた。
   - [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#承認の記憶がどこまで及ぶか)に、承認がパッケージ単位で以降のバージョンにも及び、pnpm は Skill の中身を検査しない点と、止め方を追加した。
