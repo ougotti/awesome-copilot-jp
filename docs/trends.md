@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-18
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-19
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-19 | 13 節に MCP の Skills 拡張（`io.modelcontextprotocol/skills`、SEP-2640 は Final）を追加し、Skill を MCP server から Resources として配る仕組み・対応状況・内容に結びついた承認を [解説ページ](dev-methods/skills-over-mcp.md) にまとめた。7 節の冒頭からも誘導した |
 | 2026-10-18 | 7 節に「7-6. pnpm」を新設し、pnpm 12.11.0（2026-10-09）の agent skills（依存パッケージに同梱された Skill を、承認したものだけエージェントのスキルディレクトリへリンクする）を追加した。比較表を 5 つへ拡張し、承認がパッケージ単位で以降のバージョンにも及ぶ点を [Skill / Plugin のセキュリティ](dev-methods/skill-security.md#承認の記憶がどこまで及ぶか)に追加した |
 | 2026-10-17 | 10-15〜10-17 の Claude Code 2.1.302（無人実行の開始モード・subagent の既定・routine の再実行・MCP 互換）・GitHub in Slack / Teams の複数 repository 対応・Compliance API の保存済み指示の取得（Beta）を追加し、製品別の詳細へリンクした |
 | 2026-10-16 | 10-14〜10-16 の Claude Code 2.1.299〜2.1.301・VS Code 1.142・Copilot CLI 1.0.98・HydraFusion・Claude Managed Agents（OTel export と web ツールの制限）・agentic autofix / AI Scan の GA・Codex 0.163.0 を追加し、製品別の詳細へリンクした |
@@ -367,6 +368,8 @@ GitHub Copilot も 2026-10-01 に、**Copilot CLI と GitHub Copilot app** で m
 | APM（Agent Package Manager） | `apm.yml` に依存を宣言し、`apm install` で各エージェントへ展開する**マニフェスト方式の依存管理** | [下記注記](#7-4-apm--宣言でチームの環境を再現する)を参照 | 0.x 系（本文にバージョンは書きません。[リリース](https://github.com/microsoft/apm/releases)を確認してください） |
 | `ant apply` | **クライアントへの配布ではなく**、Claude API 上の Agent / Environment / Skill / Memory Store / Deployment を宣言ファイルと lockfile で管理する（[7-5 節](#7-5-ant-apply--api-上のリソースを宣言で管理する)） | Official（Anthropic） | `ant` CLI 1.30.0 以降（2026-09-03 のリリースノートで案内） |
 | pnpm の agent skills | 依存パッケージが同梱した `skills/<name>/SKILL.md` を、`pnpm install` 時に**承認したものだけ**エージェントのスキルディレクトリへリンクする（[7-6 節](#7-6-pnpm--依存パッケージに同梱された-skill-をつなぐ)） | Official（pnpm） | GA（pnpm 12.11.0 以降、2026-10-09） |
+
+> 手元へ配るのではなく、**接続した MCP server から必要な時に読ませる**経路もできました。MCP の Skills 拡張（SEP-2640）は、Skill を MCP の Resources として届け、承認を全ファイルの digest に結びつけます。主要なコーディングエージェントはまだ対応していないため、本節の仕組みとは分けて [13 節](#skill-を-mcp-server-から配る--skills-拡張sep-2640)と[解説ページ](dev-methods/skills-over-mcp.md)で扱います。
 
 ---
 
@@ -957,6 +960,12 @@ Codex は 2026-09-05 に `codex mcp-server` command と standalone `codex-mcp-se
 **→ 影響範囲、移行判断、Codex CLI 0.154.0 の worktree と承認境界は [Codex ガイド](codex/README.md) を参照**
 
 **拡張の一つ「Apps」は、tool 呼び出しの結果として会話内にインタラクティブな UI（HTML/JS）を返せるようにするものです。** 対応ホストは Claude・Claude Desktop・VS Code GitHub Copilot など一部に限られ、「すべての MCP クライアントで動く」わけではありません。仕組み・最小例・対応ホストの確認方法・fallback の設計は [MCP Apps — 会話内にUIを追加する](dev-methods/mcp-apps.md) を参照してください。
+
+### Skill を MCP server から配る — Skills 拡張（SEP-2640）
+
+もう一つの公式拡張 **Skills**（`io.modelcontextprotocol/skills`）は、`SKILL.md` を含む Skill のディレクトリを MCP の Resources（`skill://<Skill のパス>/<ファイル>`）として配る取り決めです（`提供元`: Official / MCP ｜ `状態`: Preview。SEP-2640 は 2026-09-13 に Final、2026-10-15 に仕様を `2026-07-28` の schema に合わせて改訂）。server は `skills/list` / `skills/get` で、frontmatter と**全ファイルの SHA-256 digest つきの目録**を返します。ホストは必要になった時点でファイルを読み、目録と照合します。
+
+ファイルの Skill より扱いが厳しいのが特徴です。ホストは出所の server を model に示し、手元でのコード実行には Skill ごとの承認を取り、`allowed-tools` は利用者が認めない限り無視します。記憶した承認は**全ファイルの digest の組に結びつき、中身が変われば取り消されます**（[7-6 節](#7-6-pnpm--依存パッケージに同梱された-skill-をつなぐ)の pnpm の承認が以降のバージョンにも及ぶのと対照的です）。2026-10-19 時点で対応表に載るのは ChatGPT（Plugin の申請時に写しを取り込む部分対応）・MCP Inspector・mcpc・fast-agent などで、**Claude Code・Copilot・Codex は未対応**です。**→ [MCP Skills 拡張 — Skill を MCP server から配る](dev-methods/skills-over-mcp.md)**
 
 ### 次に来るもの — 2026-08-22 のロードマップ
 

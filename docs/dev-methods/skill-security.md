@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-18
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-19
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -315,6 +315,8 @@ managed policy を利用者の設定や起動 flag で弱められると想定�
 
 導入時の承認にも、同じ確認が要ります。pnpm 12.11.0（2026-10-09）の agent skills は、依存パッケージが同梱した Skill を `pnpm approve` で承認したものだけリンクします。ただし**承認はパッケージ単位で、以降のバージョンにも及びます**。更新で Skill の中身が変わっても、新しい Skill が増えても、改めては聞かれません。pnpm は Skill の中身を読まず、承認画面にも Skill 名しか出ません。承認は「この発行元を信頼する」という判断として扱い、依存を更新するたびに `node_modules/<パッケージ>/skills/` の差分を読んでください。止めたいパッケージは `pnpm-workspace.yaml` の `permissions` で `skills: false` にし、機能ごと止めるなら `skills.dirs` を空リストにします。**→ [Skills 最新動向 7-6 節](../trends.md#7-6-pnpm--依存パッケージに同梱された-skill-をつなぐ)**
 
+反対に、承認を**中身に**結びつける設計もあります。MCP の Skills 拡張（SEP-2640）は、MCP server から届く Skill について、記憶した承認を承認時の全ファイルの URI と SHA-256 digest の組に結びつけるようホストに求めています。1 ファイルでも変わる・増える・減ると承認は取り消され、もう一度聞かれます。あわせて、frontmatter の `allowed-tools` は利用者が認めない限り無視し、手元でのコード実行には Skill ごとの承認を取ることも求めています。ただし digest は同じ server が出す署名のない値なので、**承認した時点の中身が安全かどうかは保証しません**。**→ [MCP Skills 拡張 4 節](skills-over-mcp.md#4-ホストに課された承認とセキュリティの要件)**
+
 **→ Codex の Plugin / MCP 運用は [Codex ガイド](../codex/README.md#5-plugin-でまとめて配る2026-08-の追加) を参照**
 
 ### 学習した memory を policy とみなさない
@@ -379,6 +381,7 @@ memory は、組織が承認した規約ではなく**更新も削除もでき�
 - [Skills 最新動向](../trends.md) — 本ページの要約と、その他のテーマの動向
 - [AI エージェントの実行基盤（ハーネス）](harness.md) — 標準が定めていない権限・承認・サンドボックスが実際に決まる層
 - [Claude Code の Mods](../claude-code/mods.md) — 実行コードを持つ拡張の信頼境界、`plugin validate` での事前確認、`allowManagedModsOnly`
+- [MCP Skills 拡張](skills-over-mcp.md) — MCP server から届く Skill の出所表示、内容に結びついた承認、`allowed-tools` の無視
 - [Agents 一覧](../copilot/agents.md) — 導入前監査に使える `trojan-skill-hunter` の解説
 - [GitHub Copilot Plugins](../copilot/plugins.md) — `enabledPlugins` と Marketplace 制限の設定方法
 
