@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-17
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-18
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-18 | 7 節に「7-6. pnpm」を新設し、pnpm 12.11.0（2026-10-09）の agent skills（依存パッケージに同梱された Skill を、承認したものだけエージェントのスキルディレクトリへリンクする）を追加した。比較表を 5 つへ拡張し、承認がパッケージ単位で以降のバージョンにも及ぶ点を [Skill / Plugin のセキュリティ](dev-methods/skill-security.md#承認の記憶がどこまで及ぶか)に追加した |
 | 2026-10-17 | 10-15〜10-17 の Claude Code 2.1.302（無人実行の開始モード・subagent の既定・routine の再実行・MCP 互換）・GitHub in Slack / Teams の複数 repository 対応・Compliance API の保存済み指示の取得（Beta）を追加し、製品別の詳細へリンクした |
 | 2026-10-16 | 10-14〜10-16 の Claude Code 2.1.299〜2.1.301・VS Code 1.142・Copilot CLI 1.0.98・HydraFusion・Claude Managed Agents（OTel export と web ツールの制限）・agentic autofix / AI Scan の GA・Codex 0.163.0 を追加し、製品別の詳細へリンクした |
 | 2026-10-14 | 10-10〜10-14 の Copilot の managed settings・telemetry・VS Code 1.141・Copilot CLI 1.0.96〜1.0.97・JetBrains の更新を追加し、製品別の詳細へリンクした |
@@ -155,7 +156,7 @@
 | Skill配布・実践 | Vercel / skills.sh | Skillの検索・導入、React等の公式知見 | Skill導入とWeb開発 |
 | 操作の記録 | Record & Replay | 実演から生成した再利用可能なSkill | 定型GUI業務 |
 | GUI実行 | Computer Use / Browser Use | 画面認識、クリック、入力、検証 | APIのないアプリやWeb画面 |
-| 発見・配布・更新 | `gh skill` / Agent Finder / Copilot Plugins | Skillを探す・固定する・組織へ配る仕組み | 導入後の運用と組織標準化 |
+| 発見・配布・更新 | `gh skill` / Agent Finder / Copilot Plugins / pnpm | Skillを探す・固定する・組織へ配る・依存ライブラリから受け取る仕組み | 導入後の運用と組織標準化 |
 | 業界標準 | Agent Plugins 1.0.0 | `SKILL.md` / `mcp.json` の共通パッケージ形式 | マルチベンダー間のSkill・MCP設定共有 |
 | 実行基盤（ハーネス） | Microsoft Copilot Studio / QM | エージェントを動かす裏側の仕組みを理解する（[解説](dev-methods/harness.md)） | エージェント設計・運用の全体把握 |
 | 渡す知識 | オントロジー / ナレッジグラフ | 業務の語彙・関係・規則を定義してエージェントへ渡す（[解説](dev-methods/ontology.md)） | 用語のゆれ・根拠の説明が要る業務 |
@@ -354,7 +355,7 @@ GitHub Copilot も 2026-10-01 に、**Copilot CLI と GitHub Copilot app** で m
 
 ## 7. Skill の発見・配布・更新
 
-> `gh skill` / Agent Finder・ARD / Agent Plugins 1.0 / APM / `ant apply`
+> `gh skill` / Agent Finder・ARD / Agent Plugins 1.0 / APM / `ant apply` / pnpm
 
 ここまでの 6 テーマが「どんな Skill があるか」だとすれば、本節は **「Skill をどう探し、安全に導入し、更新・固定・配布するか」** です。この運用面を埋める仕組みが揃ってきました。
 
@@ -365,6 +366,7 @@ GitHub Copilot も 2026-10-01 に、**Copilot CLI と GitHub Copilot app** で m
 | Agent Plugins 1.0 | Agent Skills と MCP サーバーを 1 つの配布単位にまとめる**ベンダー中立のオープン標準** | Official（複数ベンダー共同の標準） | GA（2026-08-06 仕様公開、GitHub 実装は 2026-08-12） |
 | APM（Agent Package Manager） | `apm.yml` に依存を宣言し、`apm install` で各エージェントへ展開する**マニフェスト方式の依存管理** | [下記注記](#7-4-apm--宣言でチームの環境を再現する)を参照 | 0.x 系（本文にバージョンは書きません。[リリース](https://github.com/microsoft/apm/releases)を確認してください） |
 | `ant apply` | **クライアントへの配布ではなく**、Claude API 上の Agent / Environment / Skill / Memory Store / Deployment を宣言ファイルと lockfile で管理する（[7-5 節](#7-5-ant-apply--api-上のリソースを宣言で管理する)） | Official（Anthropic） | `ant` CLI 1.30.0 以降（2026-09-03 のリリースノートで案内） |
+| pnpm の agent skills | 依存パッケージが同梱した `skills/<name>/SKILL.md` を、`pnpm install` 時に**承認したものだけ**エージェントのスキルディレクトリへリンクする（[7-6 節](#7-6-pnpm--依存パッケージに同梱された-skill-をつなぐ)） | Official（pnpm） | GA（pnpm 12.11.0 以降、2026-10-09） |
 
 ---
 
@@ -497,22 +499,22 @@ apm install microsoft/azure-skills   # 個別に追加する（apm.yml に永続
 
 ---
 
-### 4 つの仕組みの比較
+### 5 つの仕組みの比較
 
-**最初に見る軸は「命令的か宣言的か」です。** 手元にいま入れたいのか、リポジトリに構成を残して再現したいのかで、選ぶものが変わります。
+**最初に見る軸は「命令的か宣言的か」です。** 手元にいま入れたいのか、リポジトリに構成を残して再現したいのかで、選ぶものが変わります。pnpm（[7-6 節](#7-6-pnpm--依存パッケージに同梱された-skill-をつなぐ)）は Skill 専用の経路ではなく、**依存するライブラリに Skill が付いてくる経路**として並べています。
 
-| 観点 | `npx skills` | `gh skill` | Copilot Plugin | APM |
-|------|-------------|-----------|----------------|-----|
-| **方式** | **命令的**（いま入れる） | **命令的**（いま入れる） | **命令的**（`enabledPlugins` を書けば宣言的） | **宣言的**（マニフェストが正） |
-| **マニフェスト** | なし | なし | `enabledPlugins`（有効化のみ） | `apm.yml` + `apm.lock` |
-| 主用途 | Skill の検索・導入 | Skill のライフサイクル管理 | 複数拡張の一括配布 | チームの環境の再現 |
-| 配布単位 | Skill | Skill | Plugin | 依存ツリー（Skill / Plugin / MCP ほか） |
-| 更新追跡 | CLI 依存 | provenance（git tree SHA） | Marketplace のバージョン | ロックファイル |
-| バージョン固定 | 導入時の ref 指定（コミット SHA 可）。`update` との関係は未文書化 | `--pin` / コミット SHA 指定 | Marketplace のバージョン / `source.sha`（commit SHA） | `apm.lock`（解決結果を固定） |
-| 対応 Host | 複数エージェント | 複数エージェント | 主に Copilot CLI / VS Code | 複数エージェント |
-| 含められる要素 | Skills | Skills | Skills / Agents / Hooks / MCP / LSP | 上記に instructions / prompts を加えた範囲 |
-| サプライチェーン対策 | 配布元の確認 | `preview` / pin / immutable releases | Marketplace と Enterprise ポリシー | ロックファイルの整合性・ポリシーファイル |
-| 提供元 | Vercel（[下記の注記](#提供元の表記について)） | GitHub（公式） | GitHub（公式） | [7-4 節の注記](#7-4-apm--宣言でチームの環境を再現する)を参照 |
+| 観点 | `npx skills` | `gh skill` | Copilot Plugin | APM | pnpm |
+|------|-------------|-----------|----------------|-----|------|
+| **方式** | **命令的**（いま入れる） | **命令的**（いま入れる） | **命令的**（`enabledPlugins` を書けば宣言的） | **宣言的**（マニフェストが正） | **宣言的**（依存の宣言と承認の記録が正） |
+| **マニフェスト** | なし | なし | `enabledPlugins`（有効化のみ） | `apm.yml` + `apm.lock` | `package.json` + `pnpm-workspace.yaml` の `permissions` |
+| 主用途 | Skill の検索・導入 | Skill のライフサイクル管理 | 複数拡張の一括配布 | チームの環境の再現 | 依存ライブラリ自身の使い方を届ける |
+| 配布単位 | Skill | Skill | Plugin | 依存ツリー（Skill / Plugin / MCP ほか） | npm パッケージ（内部の `skills/`） |
+| 更新追跡 | CLI 依存 | provenance（git tree SHA） | Marketplace のバージョン | ロックファイル | パッケージのバージョン |
+| バージョン固定 | 導入時の ref 指定（コミット SHA 可）。`update` との関係は未文書化 | `--pin` / コミット SHA 指定 | Marketplace のバージョン / `source.sha`（commit SHA） | `apm.lock`（解決結果を固定） | `pnpm-lock.yaml`（承認はパッケージ単位で、以降のバージョンにも及ぶ） |
+| 対応 Host | 複数エージェント | 複数エージェント | 主に Copilot CLI / VS Code | 複数エージェント | 既存のスキルディレクトリと、環境変数で検出したエージェント（`skills.dirs` で指定可） |
+| 含められる要素 | Skills | Skills | Skills / Agents / Hooks / MCP / LSP | 上記に instructions / prompts を加えた範囲 | Skills |
+| サプライチェーン対策 | 配布元の確認 | `preview` / pin / immutable releases | Marketplace と Enterprise ポリシー | ロックファイルの整合性・ポリシーファイル | `pnpm approve` によるパッケージ単位の承認（中身は検査しない） |
+| 提供元 | Vercel（[下記の注記](#提供元の表記について)） | GitHub（公式） | GitHub（公式） | [7-4 節の注記](#7-4-apm--宣言でチームの環境を再現する)を参照 | pnpm（公式） |
 
 #### 提供元の表記について
 
@@ -529,6 +531,7 @@ apm install microsoft/azure-skills   # 個別に追加する（apm.yml に永続
 | チーム標準の拡張一式を配る | Copilot Plugin + `enabledPlugins` |
 | 組織で使えるリソースを制限する | Enterprise managed settings（Agent Finder / Plugins） |
 | **チームの環境を再現可能にする** | **APM（`apm.yml` をリポジトリにコミットし、`apm install` で復元）** |
+| **依存ライブラリ自身の使い方を Skill で届ける・受け取る** | **pnpm（ライブラリの `skills/` に同梱し、利用側は `pnpm approve` で承認する。[7-6 節](#7-6-pnpm--依存パッケージに同梱された-skill-をつなぐ)）** |
 | **API 上に置いたエージェント自体をコードで管理する** | **`ant apply`（[7-5 節](#7-5-ant-apply--api-上のリソースを宣言で管理する)）** |
 
 ---
@@ -560,6 +563,93 @@ Skill 以外は YAML / JSON / Markdown のいずれでも書けます。リソ�
 **運用上の要点は `claude-lock.json` です。** これは生成物ではなく、ファイルとリモートのリソース ID・origin（組織／ワークスペース）・ハッシュを対応づける**resource identity と drift 管理**の記録です。コミットしておくことで、次回の実行が同じリソースを更新します。Console など外側で変更されたリソースを検出すると、既定では `refusing to apply` で**適用を拒否**します。
 
 **→ plan / 承認、lockfile、drift、破壊的フラグ、CI 運用の詳細は [AI エージェントの実行基盤（ハーネス）](dev-methods/harness.md#宣言でリモートのエージェントを管理する--ant-apply) を参照**
+
+---
+
+### 7-6. pnpm — 依存パッケージに同梱された Skill をつなぐ
+
+7-1〜7-4 の仕組みは、どれも **Skill を Skill として探して入れる**ものでした。pnpm 12.11.0（2026-10-09）で入った agent skills は経路が違います。**ライブラリの作者が、自分のパッケージの使い方を Skill として npm パッケージに同梱します。** 利用者が普段どおり `pnpm install` すると、承認したパッケージの Skill がエージェントのスキルディレクトリへリンクされます。Skill がライブラリのバージョンと一緒に動くため、古い API を教える Skill が手元に残り続けるずれが起きにくくなります。
+
+| 項目 | 内容 |
+|------|------|
+| 提供元・状態 | Official（pnpm）／ GA（pnpm 12.11.0 以降。検出できるエージェントは 12.11.1 で拡大） |
+| 対象 | 各 project の**直接依存だけ**。間接依存が同梱した Skill はリンクされない |
+| 配る側の形式 | パッケージ直下の `skills/<name>/SKILL.md`（1 階層のみ探す）。`package.json` に専用のフィールドは無い。Skill だけのパッケージでもよい |
+| 承認 | 承認するまで何もリンクしない。結果は `pnpm-workspace.yaml` の `permissions` に記録される |
+| リンク名 | `pnpm-<パッケージ名>-<Skill 名>`。スコープ付きは `/` を `+` に置き換える（例: `@acme/kit` の `auth` → `pnpm-@acme+kit-auth`） |
+| 対象外 | グローバルインストール・`pnpm dlx`・`pnpm deploy`。扱いは設計中（[pnpm/tasks#117](https://github.com/pnpm/tasks/issues/117)） |
+
+#### 配る側
+
+```text
+my-package/
+├── package.json
+└── skills/
+    └── migrations/
+        ├── SKILL.md
+        └── reference.md
+```
+
+公開するファイルに `skills/` が含まれている必要があります。`package.json` の `files` で公開対象を絞っている場合は、`skills` を加えてください。実例として [maplibre/navara#861](https://github.com/maplibre/navara/pull/861)（2026-10-13 マージ）は、`@navaramap/three` に `navara-usage` という Skill を同梱しています。
+
+#### 使う側
+
+リポジトリのルートで、PowerShell などのターミナルから実行します。
+
+```powershell
+pnpm install       # 承認待ちの Skill があると一覧が出る（install 自体は失敗しない）
+pnpm approve       # ビルドスクリプトと Skill をまとめて確認し、承認・拒否する
+pnpm permissions   # 許可・拒否・承認待ちを一覧する
+```
+
+承認の結果は `pnpm-workspace.yaml` に次の形で残ります。`false` は拒否の記録で、以後は承認の候補に出ません。
+
+```yaml
+permissions:
+  drizzle-kit:
+    skills: true
+  some-pkg:
+    skills: false
+```
+
+`permissions` は、パッケージごとに「何をしてよいか」を記録する新しい設定です。`skills` のほか、ビルドスクリプトの実行を許す `build` も書けます。`build` は同じパッケージの `allowBuilds` より優先されます。
+
+#### リンク先の決まり方
+
+| 条件 | リンク先 |
+|------|---------|
+| 既定 | workspace ルートに**既にある**スキルディレクトリ（`.claude/skills`・`.cursor/skills` など） |
+| pnpm を動かしているエージェントが環境変数で名乗った場合 | 上記に加えて、そのエージェントのディレクトリ。無ければ作る |
+| `skills.dirs` を設定した場合 | 指定したディレクトリだけ。検出結果を置き換え、無ければ作る。**空リストにすると機能ごと無効**になり、リンク済みの Skill も外れる |
+
+| 環境変数 | 作られるディレクトリ |
+|---------|-------------------|
+| `COPILOT_AGENT` / `COPILOT_CLI` | `.github/skills` |
+| `CLAUDECODE` / `CLAUDE_CODE` | `.claude/skills` |
+| `CURSOR_AGENT` | `.cursor/skills` |
+| `GEMINI_CLI` | `.gemini/skills` |
+| `ANTIGRAVITY_AGENT` / `CODEX_THREAD_ID` / `CODEX_SANDBOX` / `AI_AGENT` | `.agents/skills` |
+
+リンク先を固定したい場合は、`pnpm-workspace.yaml` に次のように書きます。
+
+```yaml
+skills:
+  dirs:
+    - .github/skills
+    - .claude/skills
+```
+
+#### 運用上の注意
+
+- **承認はパッケージ単位で、以降のバージョンにも及びます。** 一度 `skills: true` にすると、更新で Skill の中身が変わっても、Skill が増えても、改めては聞かれません。pnpm は Skill の中身を読まず、承認画面に出るのも Skill 名だけです。中身の確認は、依存を更新するときに `node_modules/<パッケージ>/skills/` の差分を読む運用で補います（[Skill / Plugin のセキュリティ](dev-methods/skill-security.md#承認の記憶がどこまで及ぶか)）。
+- **リンクそのものはコミットされません。** リンクは `node_modules` を指すため、pnpm がリンク先に `pnpm-*` を無視する `.gitignore` を置きます。一方で承認は `pnpm-workspace.yaml` に残るので、**このファイルをコミットすればチームで承認を共有できます**。clone した人は `pnpm install` だけで同じ Skill がそろいます。
+- **承認済みなのにリンク先が無いと、install が失敗します。** エージェントのディレクトリも環境変数も無い環境（CI など）で失敗する場合は、`skills.dirs` でリンク先を明示します。
+- pnpm は自分が作っていないエントリを置き換えも削除もしません。同じ名前のものがあると install が失敗します。パッケージを外す・承認を取り消す・パッケージが Skill を同梱しなくなる、のいずれかでリンクは外れます。
+- 1 つの workspace で同じパッケージが複数のバージョンに解決された場合は、最も高いバージョンの Skill がリンクされます。
+
+> **他の仕組みとの分担。** pnpm が向くのは、**依存しているライブラリ自身の使い方**を届ける場合です。ライブラリと結びつかない Skill（開発プロセス系など）を探して試すなら、引き続き `npx skills` や `gh skill` が向きます。これは pnpm の install が行う処理なので、npm や Yarn で install した場合はリンクされません。
+
+一次資料は 2026-10-18 に確認しました。実機での検証は行っていません。
 
 ---
 
@@ -995,6 +1085,9 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 - [About GitHub Copilot plugins](https://docs.github.com/en/copilot/concepts/agents/about-plugins) — Plugin の概念と構成（公式）
 - [Finding and installing plugins for GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/plugins-finding-installing) — Plugin の導入手順（公式）
 - [GitHub Copilot Plugins 日本語解説](copilot/plugins.md) — 本ガイド内の詳細ページ
+- [pnpm — Agent Skills](https://pnpm.io/agent-skills) ／ [設定 `permissions`・`skills.dirs`](https://pnpm.io/settings/build#permissions) — 同梱 Skill の形式・承認・リンク先（pnpm 公式、2026-10-18 確認）
+- [pnpm releases](https://github.com/pnpm/pnpm/releases) ／ [pnpm/rfcs#35](https://github.com/pnpm/rfcs/pull/35) — 12.11.0・12.11.1 の変更と、設計の経緯（2026-10-09 マージ）
+- [pnpm/tasks#117](https://github.com/pnpm/tasks/issues/117) — グローバルインストール・`pnpm dlx`・`pnpm deploy` での扱い（設計中）
 
 ### Agent Plugins 1.0.0（本ページ 8 節）
 
