@@ -190,7 +190,7 @@ Hermes の Skills は [agentskills.io](https://agentskills.io/specification) 互
 
 `hermes skills install` は、公式の Hub に加えて `skills-sh`・`github`・`url`・`clawhub`・`lobehub` などの取得元から Skill を入れられます。インストール時には必ずセキュリティスキャンが走り、取得元の信頼レベル（`builtin` / `official` / `trusted` / `community`）と合わせて判定されます。`--force` で注意・警告の判定は越えられますが、`dangerous` の判定は越えられません。更新はインストール時のハッシュと比べて検出し、手元で編集した Skill は `--force` なしでは上書きしません。
 
-他のツールと同じ Skill を使う場合は、`~/.hermes/config.yaml` の `skills.external_dirs` に `~/.agents/skills` などを並べます。同名の Skill は project → `~/.hermes/skills/` → `skills.create_dir` → `external_dirs` の順で上位が勝ちます。ただし**外部ディレクトリは書き込み保護の境界ではなく、Hermes が書ける場所ならエージェントが変更し得る**と公式が明記しています。Claude Code や Codex と共有しているディレクトリを指定すると、Hermes が育てた変更がそちらにも入ります。共有するなら読み取り専用の複製を指すか、`skills.write_approval` を有効にしてください。
+他のツールと同じ Skill を使う場合は、`~/.hermes/config.yaml` の `skills.external_dirs` に `~/.agents/skills` などを並べます。同名の Skill は project → `~/.hermes/skills/` → `skills.create_dir` → `external_dirs` の順で上位が勝ちます。ただし**外部ディレクトリは書き込み保護の境界ではなく、Hermes が書ける場所ならエージェントが変更し得る**と公式が明記しています。`~/.agents/skills` は [Codex の個人用 Skill の置き場所](../codex/README.md)でもあるため、そのまま指定すると Hermes が育てた変更が Codex 側にも入ります。共有するなら読み取り専用の複製を指すか、`skills.write_approval` を有効にしてください。
 
 リポジトリ内の `.hermes/skills/` と `.agents/skills/` は、`hermes skills trust` で信頼するまで自動では読み込まれません。clone したリポジトリの Skill が勝手に効かない、安全側の既定です。
 

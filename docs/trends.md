@@ -372,6 +372,8 @@ GitHub Copilot も 2026-10-01 に、**Copilot CLI と GitHub Copilot app** で m
 
 > 手元へ配るのではなく、**接続した MCP server から必要な時に読ませる**経路もできました。MCP の Skills 拡張（SEP-2640）は、Skill を MCP の Resources として届け、承認を全ファイルの digest に結びつけます。主要なコーディングエージェントはまだ対応していないため、本節の仕組みとは分けて [13 節](#skill-を-mcp-server-から配る--skills-拡張sep-2640)と[解説ページ](dev-methods/skills-over-mcp.md)で扱います。
 
+> もう 1 つ、**人が配るのではなくエージェント自身が Skill を書く**経路も広がっています。[Hermes Agent](dev-methods/hermes-agent.md#9-skills-と記憶) は agentskills.io 互換の `SKILL.md` を、複雑なタスクの後やターン終了後の背景レビューで自分で作成・修正し、既定ではすぐ反映します。CLI に内蔵した Hub は skills.sh・GitHub・ClawHub などからも導入でき、インストール時のスキャンと 4 段階の信頼レベルで判定します。本節の仕組みで固定・承認した Skill も、こうしたエージェントと同じディレクトリを共有すると書き換わり得ます。確認の考え方は [Skill / Plugin のセキュリティ](dev-methods/skill-security.md#エージェントが自分で書く-skill) にまとめました。
+
 ---
 
 ### 7-1. `gh skill` — Skill のライフサイクル管理
