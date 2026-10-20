@@ -1,6 +1,6 @@
 # ループエンジニアリング
 
-> **対象ツール**: ツール横断（Claude Code・Codex 等） ｜ **実行環境**: CLI / IDE（デスクトップ） / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-17
+> **対象ツール**: ツール横断（Claude Code・Codex 等） ｜ **実行環境**: CLI / IDE（デスクトップ） / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-21
 
 > エージェントに毎ターン指示を出す代わりに、**エージェントに指示を出し続ける「ループ」の側を設計する**実践を **ループエンジニアリング（loop engineering）** と呼びます。2026-06-07 に Addy Osmani（Google Chrome）が [Loop Engineering](https://addyosmani.com/blog/loop-engineering/) で命名しました。このページは概念、ループの構成要素、停止条件の作り方、そして落とし穴をまとめた解説です。ループが動く土台については [AI エージェントの実行基盤（ハーネス）](harness.md) を参照してください。
 
@@ -120,19 +120,34 @@ Codex の Scheduled tasks との違いは 2 点です。**起動条件の実装�
 
 > 本体は無償の OSS です。基本の Kiro CLI 経路は Kiro プランとアカウントの利用枠を使います。Kiro Crew 0.6.0 では Claude Code / Codex / KAS も選べる Agent Backend が Preview になったため、代替バックエンドの認証・利用枠は選択先の現行情報を確認してください。詳細は[ハーネスの Kiro Crew 節](harness.md#層の関係--セッションごとに-agent-backend-を選ぶ)へ集約しています。
 
+### 何もなかった回を黙らせる — Hermes Agent の cron
+
+時間型の監視ループでは、**ほとんどの回は「変化なし」**です。それを毎回通知すると人は読まなくなり、毎回 LLM を起こすと費用がかさみます。[Hermes Agent](hermes-agent.md)（Nous Research、MIT）の cron は、この「何もなかった回」の扱いを 3 段階で選べます。
+
+| 仕組み | 何もなかった回の動き | LLM を呼ぶか |
+|---|---|---|
+| `[SILENT]` | エージェントが最終応答に `[SILENT]` を含めると配信しない（失敗は必ず配信） | 呼ぶ |
+| `wakeAgent` ゲート | 事前スクリプトが最終行に `{"wakeAgent": false}` を出すと、その回はエージェントを起動しない | **呼ばない** |
+| `no_agent` ジョブ | スクリプトだけを動かし、stdout が空なら無音（非 0 終了・タイムアウトは通知） | 呼ばない |
+
+ループの言葉に直すと、**「変化があったか」という停止条件の判定を、LLM の外の機械的な判定に移せる**ということです。判定に解釈が要らない監視（価格・件数・更新時刻・ステータス）では `wakeAgent` や `no_agent` を使い、LLM は変化があった回の要約や判断だけに使うと、費用と判定の確実さの両方が改善します。
+
+あわせて押さえる性質は次のとおりです。tick は gateway のプロセスが 60 秒ごとに担うため、**gateway を止めるとジョブも止まります**。各回は新しいセッションで動き、前回の結果は `continuity` や `context_from` で明示的に渡します。人がいない cron で承認が必要になった操作は既定で拒否され（`approvals.cron_mode: deny`）、cron から新しい cron は作れません（`cron.allow_agent_scheduling: false`）。どちらも[無人の誤り](#落とし穴)を増やさない安全側の既定です。
+
 ### 定期実行を選ぶときの比較
 
 同じ「automation」や「schedule」という名前でも、常駐場所と状態の寿命が違います。特に VS Code Automations はローカル IDE の Preview 機能であり、クラウドのジョブ基盤ではありません。
 
-| 観点 | VS Code Automations | Codex Scheduled tasks | Claude Code `/loop` | Kiro Crew |
-|------|---------------------|-----------------------|---------------------|-----------|
-| 主な起動条件 | Manual / Hourly / Daily / Weekly | 時刻、または Gmail / Slack / GitHub のイベント | 固定間隔、またはセッション中に選ぶ間隔 | 定期ジョブ、webhook、メッセージ、heartbeat |
-| 実行場所 | ローカルの Agent Host process または VS Code window | デスクトップのローカル実行、または提供面に応じた実行先 | 開いているローカルセッション | 常駐する Kiro Crew 実行環境 |
-| workspace / 分離 | workspace なしも可。対応 agent は New Worktree を選べる | ローカルでは作業中 checkout / Git worktree を選べる | 現在のセッションと作業ディレクトリを継承 | エージェントごとの workspace と sandbox 強度を設計する |
-| 権限・承認 | session configuration を保存。組織ポリシーは迂回せず、run ごとに承認が残り得る | タスクの実行環境・サンドボックス・承認設定に従う | 現在のセッションの権限を継承 | Crew と選択した Agent Backend の両方を確認する（Agent Backend は Preview） |
-| 停止・重複実行 | disable は次回以降だけ。実行中は History から Stop。同一 Automation は直列 | 各起動でタスクを作る。重複時の扱いは対象面の現行仕様を確認する | `Esc` または task の削除。busy 中は turn 後に 1 回実行し、取り逃した回を全 replay しない | heartbeat / task の終了条件と上限を仕様に置く |
+| 観点 | VS Code Automations | Codex Scheduled tasks | Claude Code `/loop` | Kiro Crew | Hermes Agent cron |
+|------|---------------------|-----------------------|---------------------|-----------|-------------------|
+| 主な起動条件 | Manual / Hourly / Daily / Weekly | 時刻、または Gmail / Slack / GitHub のイベント | 固定間隔、またはセッション中に選ぶ間隔 | 定期ジョブ、webhook、メッセージ、heartbeat | 自然言語・`/cron add`・`hermes cron create` で定義した間隔や時刻 |
+| 実行場所 | ローカルの Agent Host process または VS Code window | デスクトップのローカル実行、または提供面に応じた実行先 | 開いているローカルセッション | 常駐する Kiro Crew 実行環境 | 常駐する gateway。コマンドは選んだ terminal backend で動く |
+| workspace / 分離 | workspace なしも可。対応 agent は New Worktree を選べる | ローカルでは作業中 checkout / Git worktree を選べる | 現在のセッションと作業ディレクトリを継承 | エージェントごとの workspace と sandbox 強度を設計する | `--workdir` で作業場所を指定。分離は terminal backend（Docker など）で決まる |
+| 権限・承認 | session configuration を保存。組織ポリシーは迂回せず、run ごとに承認が残り得る | タスクの実行環境・サンドボックス・承認設定に従う | 現在のセッションの権限を継承 | Crew と選択した Agent Backend の両方を確認する（Agent Backend は Preview） | 承認が要る操作は既定で拒否（`approvals.cron_mode: deny`）。ジョブごとに使えるツールを絞れる |
+| 何もなかった回 | — | — | — | — | `[SILENT]` で配信を止める、`wakeAgent` / `no_agent` で LLM を起こさない |
+| 停止・重複実行 | disable は次回以降だけ。実行中は History から Stop。同一 Automation は直列 | 各起動でタスクを作る。重複時の扱いは対象面の現行仕様を確認する | `Esc` または task の削除。busy 中は turn 後に 1 回実行し、取り逃した回を全 replay しない | heartbeat / task の終了条件と上限を仕様に置く | `hermes pause` で全体を止める。exactly-once は保証せず、中断した回は `unknown` のまま自動では再実行しない |
 
-選択の基準は単純です。IDE の作業構成をそのまま定期化するなら VS Code、時刻だけでなく外部イベントも入口にするなら Codex、開いている会話内の短い監視なら `/loop`、セッションを越えて常駐しメモリやチャネルを持たせるなら Kiro Crew が候補になります。どれを使う場合も、[停止条件](#停止条件の作り方)と影響の大きい操作の承認を先に決めます。
+選択の基準は単純です。IDE の作業構成をそのまま定期化するなら VS Code、時刻だけでなく外部イベントも入口にするなら Codex、開いている会話内の短い監視なら `/loop`、セッションを越えて常駐しメモリやチャネルを持たせるなら Kiro Crew、自分の置き場所で動かし結果をメッセージアプリへ届ける監視なら Hermes Agent が候補になります。どれを使う場合も、[停止条件](#停止条件の作り方)と影響の大きい操作の承認を先に決めます。
 
 ### 実行した知識を次の周回へ戻す — Runme + WebMCP
 
@@ -249,6 +264,7 @@ Claude Code には、ループを組むための機能がひととおり揃っ�
 ## 関連ドキュメント
 
 - [AI エージェントの実行基盤（ハーネス）](harness.md) — ループが動く土台。ハーネスが弱いとループはその弱点を増幅する
+- [Hermes Agent](hermes-agent.md) — 常駐してメッセージアプリへ結果を届ける OSS エージェント。cron の組み方と公開前の最低ライン
 - [Skills 最新動向](../trends.md) — ハーネスを含む横断的な動向
 - [オントロジー](ontology.md) — ループに渡す業務知識そのものを定義する。外部状態の実装例（GBrain）も同ページ
 - [コーディングエージェントの選び方](coding-agents.md) — ループの中で実際に作業するツールの比較

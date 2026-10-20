@@ -11,6 +11,10 @@
 - **2026-10-21** エージェントが自分で書く Skill の統制と、Hub からの導入時のスキャンを追記（#283）。
   - [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#エージェントが自分で書く-skill)に「エージェントが自分で書く Skill」を新設した。導入前の確認が届かない理由、`skills.write_approval` による保留と差分の確認、背景レビューの停止、`external_dirs` が書き込み保護の境界ではない点、リンターと注入検査が意図を判定しない点を整理し、Hermes の Hub のスキャンと信頼レベルを 2・3 節（ToxicSkills の監査対象だった ClawHub・skills.sh）と対応づけた。まとめの表に 1 行足した。
   - [Skills 最新動向](docs/trends.md#7-skill-の発見配布更新) 7 節の冒頭に誘導を、[Skill の公開・共有](docs/dev-methods/skill-publishing.md)に `~/.agents/skills/` のような共通の置き場所を書き換えるエージェントと共有する場合の注意を追加した。
+- **2026-10-21** ループエンジニアリング・記憶基盤・業務の安全に Hermes Agent の cron と組み込みの記憶を反映（#284）。
+  - [ループエンジニアリング](docs/dev-methods/loop-engineering.md#何もなかった回を黙らせる--hermes-agent-の-cron)に「何もなかった回を黙らせる — Hermes Agent の cron」を新設し、`[SILENT]`・`wakeAgent` ゲート・`no_agent` ジョブで「変化があったか」の判定を LLM の外へ移す考え方と、gateway 依存・新規セッション・cron での承認拒否などの性質を整理した。「定期実行を選ぶときの比較」に Hermes Agent の列と「何もなかった回」の行を加えた。
+  - [エージェントの記憶基盤](docs/dev-methods/agent-memory.md#本体に組み込まれた記憶--hermes-agent-の例)に、上限つきの `MEMORY.md` / `USER.md` と全文検索の履歴という 2 層の組み込み記憶、外部プロバイダのプラグイン化（v0.22.0）、書き込みの承認を追加し、用途別の選び方に 1 行足した。[長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md#5-冪等性重複実行外部副作用の扱い)に、自動では再実行しない設計と取りこぼしの確認を追加した。
+  - [生成AIを業務で安全に使う](docs/business/safety.md#ノーコードで自分専用のエージェントを動かす前に)に、コードを書かない方が VPS とメッセージアプリでエージェントを動かす前の確認（データの置き場所・話しかけられる人・実行の承認・費用の上限・止め方・紹介記事の利害）を追加した。
 
 - **2026-10-19** MCP の Skills 拡張（`io.modelcontextprotocol/skills`、SEP-2640）の解説を追加（#280）。
   - [MCP Skills 拡張 — Skill を MCP server から配る](docs/dev-methods/skills-over-mcp.md)を新設した。ファイルの Skill・Plugin・server instructions との違い、`skill://` URI と `skills/list` / `skills/get` / `resources/directory/read`、digest つきの目録と上限（512 ファイル・16 MiB）、対応状況（ChatGPT の申請時の取り込み・MCP Inspector など。Claude Code・Copilot・Codex は未対応）、ホストに課された要件（出所の表示・暗黙の実行の禁止・`allowed-tools` の無視・内容に結びついた承認・キャッシュの扱い）、Inspector CLI での検証をまとめた。
