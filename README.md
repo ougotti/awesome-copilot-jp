@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-10-21** [Hermes Agent](docs/dev-methods/hermes-agent.md)の解説を追加。メッセージアプリへ常駐する OSS エージェントの置き場所・モデルの選び方、何もなかった回に LLM を起こさない cron、自分で書き換える Skill と記憶の統制、公開前の最低ラインを整理。
 - **2026-10-19** [MCP Skills 拡張](docs/dev-methods/skills-over-mcp.md)の解説を追加。Skill を MCP server から Resources として配る SEP-2640 の仕組み、対応状況（主要なコーディングエージェントは未対応）、中身が変われば取り消される承認を整理。
 - **2026-10-18** [pnpm の agent skills](docs/trends.md#7-6-pnpm--依存パッケージに同梱された-skill-をつなぐ)を追加。依存パッケージに同梱された Skill を承認制でリンクする pnpm 12.11.0 の機能と、承認が以降のバージョンにも及ぶ点を整理。
 - **2026-10-17** [10-15〜10-17 の最新動向](docs/trends.md#2026-10-1510-17-の更新--無人実行の既定値と会話から届く範囲)を反映。Claude Code 2.1.302 の無人実行の開始モードと subagent の既定、routine の再実行の修正、Slack / Teams からの複数 repository 操作、保存済み指示の監査 API を整理。
 - **2026-10-16** upstream の削除も検知するようにし、[Instructions 一覧](docs/copilot/instructions.md)を 192 件に同期。AI-DLC v2 で止まっていた追跡も直した。
-- **2026-10-16** [Agents 一覧](docs/copilot/agents.md)・[Skills 一覧](docs/copilot/prompts.md)を upstream と照合し、削除済みの Agents 22 件を外して件数を 222 件・128 件に直し、[AI-DLC Workflows](docs/dev-methods/aidlc-workflows.md)を 2.11.0 に更新（6 ページを点検）。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -149,7 +149,8 @@
 | **[Power Apps Plans と AI-DLC の比較](docs/dev-methods/ai-dlc-power-platform.md)** | 本ガイド | — | Cloud / CLI / IDE | Microsoft Power Platform の Plans と AI-DLC の役割、併用案、選び方 |
 | **[AI-DLC・AI-PDLC・AI BPR の用語整理](docs/dev-methods/ai-driven-lifecycle-terms.md)** | 本ガイド | — | CLI / IDE | AWS が公開する 3 つの取り組みの提供形態と対象範囲を分離 |
 | **[仕様駆動開発（SDD）](docs/dev-methods/spec-driven.md)** | 本ガイド | — | CLI / IDE | Spec Kit・OpenSpec・BMAD・Kiro Specsの違い、EARS、AI-DLCとの境界 |
-| **[AI エージェントの実行基盤（ハーネス）](docs/dev-methods/harness.md)** | 本ガイド | — | CLI / Cloud | エージェントを動かす裏側の仕組みと実装例（Copilot Studio / QM）、OpenTelemetry による可観測性 |
+| **[AI エージェントの実行基盤（ハーネス）](docs/dev-methods/harness.md)** | 本ガイド | — | CLI / Cloud | エージェントを動かす裏側の仕組みと実装例（Copilot Studio / QM / Kiro Crew / OpenAI Agents API / Hermes Agent）、OpenTelemetry による可観測性 |
+| **[Hermes Agent](docs/dev-methods/hermes-agent.md)** | 本ガイド | — | CLI / Cloud / Chat UI | 常駐して Telegram などへ連絡してくる OSS エージェント。置き場所・モデルの選び方・「変化があったときだけ知らせる」cron・費用の構造・公開前の最低ライン |
 | **[ループエンジニアリング](docs/dev-methods/loop-engineering.md)** | 本ガイド | — | CLI / Cloud | エージェントを目標へ向けて回すループの設計・停止条件・落とし穴 |
 | **[作業中のエージェントへの指示の出し分け](docs/dev-methods/agent-commands.md)** | 本ガイド | — | CLI | 実行中の steer / queue、サイドチャット（`/btw`・`/side`・`/ask`）、`/goal` の完了条件の書き方と Claude Code・Codex・Copilot CLI の差分 |
 | **[オントロジー](docs/dev-methods/ontology.md)** | 本ガイド | — | CLI / Cloud | 業務の意味（語彙・関係・規則）を定義してエージェントに渡す方法と実装例 |

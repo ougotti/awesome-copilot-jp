@@ -4,6 +4,11 @@
 
 ## 2026-10
 
+- **2026-10-21** Hermes Agent（Nous Research の OSS の常駐型エージェント）の解説を追加（#282）。
+  - [Hermes Agent — 常駐して自分から連絡してくる OSS エージェント](docs/dev-methods/hermes-agent.md)を新設した。動画「Build Your First AI Agent in 20 Minutes (No Coding)」（Metics Media、2026-10-19）が紹介する VPS + Telegram + 安価なモデル + 価格の監視という構成を、公式ドキュメントで裏を取りながら整理した。チャットボット・コーディングエージェント・常駐エージェントの違い、gateway・エージェント本体・terminal backend・モデルの 4 層、置き場所の選び方、最小の手順、モデルの接続先（Claude Code のログインを借りる経路は Pro では使えず extra usage を消費する点を含む）、cron の `[SILENT]` / `wakeAgent` / `no_agent` による「変化があったときだけ知らせる」組み方と cron の性質、費用の 4 分類、公開前の最低ライン（allowlist・承認モード・コンテナ backend・ダッシュボードの bind・v0.21.6 のセキュリティ修正）、Kiro Crew・QM・Letta Code との違いをまとめた。
+  - [ハーネス](docs/dev-methods/harness.md#hermes-agent--個人が自分の置き場所に住まわせるエージェント)の実装一覧を 5 つにして Hermes の節を追加し、[Skills 最新動向](docs/trends.md#10-aiエージェントの実行基盤ハーネス) 10 節に要約を追加した。
+  - 一次資料（README・releases・公式ドキュメント・Nous Portal）は 2026-10-21 に確認した。実機での検証は行っていない。動画の字幕は取得できず、概要欄とチャプターで内容を確認した。
+
 - **2026-10-19** MCP の Skills 拡張（`io.modelcontextprotocol/skills`、SEP-2640）の解説を追加（#280）。
   - [MCP Skills 拡張 — Skill を MCP server から配る](docs/dev-methods/skills-over-mcp.md)を新設した。ファイルの Skill・Plugin・server instructions との違い、`skill://` URI と `skills/list` / `skills/get` / `resources/directory/read`、digest つきの目録と上限（512 ファイル・16 MiB）、対応状況（ChatGPT の申請時の取り込み・MCP Inspector など。Claude Code・Copilot・Codex は未対応）、ホストに課された要件（出所の表示・暗黙の実行の禁止・`allowed-tools` の無視・内容に結びついた承認・キャッシュの扱い）、Inspector CLI での検証をまとめた。
   - [Skills 最新動向](docs/trends.md#skill-を-mcp-server-から配る--skills-拡張sep-2640) 13 節に要約を、7 節の冒頭に誘導を追加した。[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#承認の記憶がどこまで及ぶか)に pnpm の承認との対比を、[MCP と A2A](docs/dev-methods/agent-protocols.md)に Resources を Skill の配布に使う例を追加した。

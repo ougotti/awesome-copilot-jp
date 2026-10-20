@@ -1,8 +1,8 @@
 # AI エージェントの実行基盤（ハーネス）
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-10-17
+> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-10-21
 
-> エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew / OpenAI Agents API）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
+> エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew / OpenAI Agents API / Hermes Agent）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
 
 ---
 
@@ -32,9 +32,9 @@ ChatGPT の「チャットに答える」段階から、タスクを自律的に
 
 > エンジニアの仕事が「コードを書くこと」から「エージェントが確実に働ける環境を設計すること」へ移る、という主張の実証として引かれる事例です。数値は OpenAI の自己報告であり、そのまま一般化できる保証はありません。
 
-## 実装を見る 4 つの入口
+## 実装を見る 5 つの入口
 
-ハーネスは概念だけでは掴みにくいため、性格の異なる実装を 4 つ並べます。
+ハーネスは概念だけでは掴みにくいため、性格の異なる実装を 5 つ並べます。
 
 | 実装 | 形態 | 想定利用者 | 重心 | `提供元` / `状態` |
 |------|------|-----------|------|--------------------|
@@ -42,6 +42,7 @@ ChatGPT の「チャットに答える」段階から、タスクを自律的に
 | QM（Y Combinator） | ソースを読める OSS（MIT） | 組織のプラットフォームエンジニア | 組織のスコープと権限 | Official（Y Combinator） / **Experimental** |
 | Kiro Crew（AWS） | OSS（Apache-2.0）＋公式ビルド | 個人・チームの開発者 | セッションをまたぐ継続と起動条件 | Official（AWS） / GA |
 | OpenAI Agents API | OpenAI管理のCodexハーネスを呼ぶAPI | エージェントを自社サービスへ組み込む開発者 | durable session、orchestration、context compaction、recovery | Official（OpenAI） / **Public Beta** |
+| Hermes Agent（Nous Research） | OSS（MIT）。ハーネスとエージェント本体が一体 | 自分専用のエージェントを置きたい個人 | メッセージアプリへの常駐、cron、自分で育つ Skill と記憶 | Official（Nous Research） / GA |
 
 ## Microsoft Copilot Studio での実装例
 
@@ -172,6 +173,19 @@ QM が Strict / Auto / Dangerous という**渡す内容の選別**の強さを�
 QM が「自前のクラウド・Postgres・インフラ担当者」を前提にするのに対し、Kiro Crew は**手元のマシンで動かせる代わりに、選択したバックエンドのモデル提供・認証・利用枠に依存**します。同じ OSS ハーネスでも、組織へ入れるときに確認する項目はここまで違います。
 
 > 導入手順・対応 OS の細目・コマンドは変わります。導入時は [リポジトリ](https://github.com/kirodotdev/KiroCrew) と [公式ドキュメント](https://kiro.dev/docs/crew/) を一次情報として確認してください。
+
+## Hermes Agent — 個人が自分の置き場所に住まわせるエージェント
+
+[Hermes Agent](hermes-agent.md) は、Nous Research が MIT で公開しているエージェントです。Kiro Crew と同じく常駐して cron やメッセージで動きますが、**Claude Code や Codex を部品として駆動するのではなく、エージェント本体まで自前**で持ち、モデルだけを Nous Portal・OpenRouter・各社の API・ローカルから選びます。
+
+| 層 | 担うもの |
+|----|---------|
+| gateway | Telegram・Discord・Slack などのメッセージアプリを 1 プロセスで受け、cron の tick も担う。止めると定期実行も止まる |
+| エージェント本体 | ツールのループ、承認（`smart` / `manual` / `off`）、Skill と memory の自己更新 |
+| terminal backend | local・Docker・SSH・Modal・Daytona などから、コマンドを実行する場所を選ぶ |
+| モデル | 利用者が選ぶ。費用と送信先も利用者が持つ |
+
+QM が**組織のスコープ**、Kiro Crew が**プロセス分離の強さ**を運用者に選ばせるのに対し、Hermes は**誰が話しかけられるか（allowlist・DM pairing）と、どこでコマンドが走るか（backend）**を個人に選ばせます。置き場所が VPS になると、メッセージアプリの bot がサーバーのシェルへの入口になる点に注意してください。**→ 詳細と公開前の最低ラインは [Hermes Agent](hermes-agent.md#8-公開前の最低ライン) を参照**
 
 ## OpenAI Agents API — CodexハーネスをマネージドAPIで使う
 
