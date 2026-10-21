@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-19
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-21
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-21 | 10 節に Hermes Agent（Nous Research の OSS の常駐型エージェント）を追加し、gateway・cron の `[SILENT]` / `wakeAgent`・モデルの選び方・公開前の最低ラインを [解説ページ](dev-methods/hermes-agent.md) にまとめた |
 | 2026-10-19 | 13 節に MCP の Skills 拡張（`io.modelcontextprotocol/skills`、SEP-2640 は Final）を追加し、Skill を MCP server から Resources として配る仕組み・対応状況・内容に結びついた承認を [解説ページ](dev-methods/skills-over-mcp.md) にまとめた。7 節の冒頭からも誘導した |
 | 2026-10-18 | 7 節に「7-6. pnpm」を新設し、pnpm 12.11.0（2026-10-09）の agent skills（依存パッケージに同梱された Skill を、承認したものだけエージェントのスキルディレクトリへリンクする）を追加した。比較表を 5 つへ拡張し、承認がパッケージ単位で以降のバージョンにも及ぶ点を [Skill / Plugin のセキュリティ](dev-methods/skill-security.md#承認の記憶がどこまで及ぶか)に追加した |
 | 2026-10-17 | 10-15〜10-17 の Claude Code 2.1.302（無人実行の開始モード・subagent の既定・routine の再実行・MCP 互換）・GitHub in Slack / Teams の複数 repository 対応・Compliance API の保存済み指示の取得（Beta）を追加し、製品別の詳細へリンクした |
@@ -370,6 +371,8 @@ GitHub Copilot も 2026-10-01 に、**Copilot CLI と GitHub Copilot app** で m
 | pnpm の agent skills | 依存パッケージが同梱した `skills/<name>/SKILL.md` を、`pnpm install` 時に**承認したものだけ**エージェントのスキルディレクトリへリンクする（[7-6 節](#7-6-pnpm--依存パッケージに同梱された-skill-をつなぐ)） | Official（pnpm） | GA（pnpm 12.11.0 以降、2026-10-09） |
 
 > 手元へ配るのではなく、**接続した MCP server から必要な時に読ませる**経路もできました。MCP の Skills 拡張（SEP-2640）は、Skill を MCP の Resources として届け、承認を全ファイルの digest に結びつけます。主要なコーディングエージェントはまだ対応していないため、本節の仕組みとは分けて [13 節](#skill-を-mcp-server-から配る--skills-拡張sep-2640)と[解説ページ](dev-methods/skills-over-mcp.md)で扱います。
+
+> もう 1 つ、**人が配るのではなくエージェント自身が Skill を書く**経路も広がっています。[Hermes Agent](dev-methods/hermes-agent.md#9-skills-と記憶) は agentskills.io 互換の `SKILL.md` を、複雑なタスクの後やターン終了後の背景レビューで自分で作成・修正し、既定ではすぐ反映します。CLI に内蔵した Hub は skills.sh・GitHub・ClawHub などからも導入でき、インストール時のスキャンと 4 段階の信頼レベルで判定します。本節の仕組みで固定・承認した Skill も、こうしたエージェントと同じディレクトリを共有すると書き換わり得ます。確認の考え方は [Skill / Plugin のセキュリティ](dev-methods/skill-security.md#エージェントが自分で書く-skill) にまとめました。
 
 ---
 
@@ -821,6 +824,8 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 
 実装はベンダー側からも出ました。**Kiro Crew**（AWS が 2026-08-04 に Apache-2.0 で公開。`提供元`: Official / `状態`: GA）は、Agent Client Protocol 経由で `kiro-cli` を駆動する**常駐型のハーネス**です。永続セッションとメモリ、定期ジョブ・ハートビート・認証済み webhook による起動、namespace / Seatbelt による分離（standard / strict / off）と監査コマンドを備え、Slack や Discord からも同じ実行環境へ入れます。ただし**本体が無償の OSS でも、動かすには Kiro のプランが必要**で、モデルの提供はベンダーに依存します。「OSS のハーネス」でも自前で完結するとは限らない、という点は導入判断で確認してください。
 
+個人向けの常駐型では **Hermes Agent**（Nous Research が MIT で公開。`提供元`: Official / `状態`: GA。2026-10-13 の v0.22.0 で SemVer の安定版チャネルが既定に）があります。Kiro Crew と違い、Claude Code や Codex を駆動するのではなく**エージェント本体まで自前**で、gateway が Telegram などのメッセージアプリと cron を受け持ち、モデルは利用者が Nous Portal・OpenRouter・各社の API・ローカルから選びます。cron には、何もなかった回の配信を止める `[SILENT]` と、事前スクリプトの判定で**その回は LLM を起動しない** `wakeAgent` ゲートがあります。2026-10-19 公開の動画「Build Your First AI Agent in 20 Minutes (No Coding)」が VPS と Telegram での構成を紹介していますが、bot がサーバーのシェルへの入口になる点、承認の既定、ダッシュボードの公開範囲は自分で守る必要があります（[解説](dev-methods/hermes-agent.md)）。
+
 2026-09-10には **OpenAI Agents API**（`提供元`: Official / `状態`: Public Beta）が公開されました。これはOpenAI管理のCodexハーネスをAPIとして提供し、durable session、orchestration、context compaction、recoveryをOpenAI側で担います。ただし実行環境は `none` / OpenAI-hosted / self-hostedから選ぶ別の層であり、APIを使うだけでsandbox、network、secret、tool権限の設計が不要になるわけではありません。Codex製品、Agents SDK、Codex SDK / app serverとも役割が異なります。
 
 2026-09-29には[Agents APIのComputer Use](https://developers.openai.com/api/docs/guides/agents-api/tools/computer-use)が追加されました。OpenAI-hosted browserでWeb画面を扱えますが、network policyとWebサイトのoriginごとの承認は別で、originの承認は購入・削除などの操作ごとの確認を保証しません。[ハーネス解説](dev-methods/harness.md#agents-apiでブラウザを操作する2026-09-29)に実行環境と承認の境界をまとめました。
@@ -849,7 +854,7 @@ Copilot usage metrics APIは2026-09-17にCLI customizationの上位5件とdistin
 
 観測面では、Claudeのcache diagnosticsが2026-09-23にGAとなり、Claude Code 2.1.280は`hook_execution_complete` eventへhook出力のサイズを加えました。Copilot usage metrics APIには2026-09-25にPRのレビュー段階ごとの待ち時間（`pull_request_review_times`）が加わりましたが、対象は人が開き人がreviewしたPRだけです。いずれも実行基盤・工程の観測値で、エージェントの品質スコアではありません（[評価の詳細](dev-methods/evals.md#pr-のレビュー待ち時間を品質スコアと混同しない)）。
 
-**→ 概念、Microsoft Copilot Studio・QM・Kiro Crew・OpenAI Agents APIの実装、セキュリティポスチャ、導入の前提、OpenTelemetryでの可観測性は [AI エージェントの実行基盤（ハーネス）](dev-methods/harness.md) を参照**
+**→ 概念、Microsoft Copilot Studio・QM・Kiro Crew・OpenAI Agents API・Hermes Agentの実装、セキュリティポスチャ、導入の前提、OpenTelemetryでの可観測性は [AI エージェントの実行基盤（ハーネス）](dev-methods/harness.md) を参照**
 **→ ループの構成要素・停止条件の作り方・落とし穴は [ループエンジニアリング](dev-methods/loop-engineering.md) を参照**
 GitHub Copilot では 2026-09-30〜10-01 に、性質の違う 2 つの「組み合わせ」が広がりました。**HydraFusion**（Research preview）はモデルピッカーに出る調整役で、1 ターンの中で複数のモデルを Single / Cascade / Critique のいずれかで協調させます（サブエージェントは起動しません）。**Dynamic workflows**（Public preview）は、手順をコードで定義し、判断が要る部分だけをエージェントに任せる Copilot extension です。毎回 Copilot が計画する `/fleet` や autopilot と違い、手順とルールが毎回同じになります。どちらも単一モデルより AI credits を使い得るため、Dynamic workflows では上限（エージェント数・実行時間・おおよその credits）を決めます。`copilot workflow run` は承認の確認を出さず、extension のコードは権限の確認の外で動く点にも注意します（[Copilot ガイド](copilot/README.md#複数のモデルエージェントを組み合わせる--hydrafusion-と-dynamic-workflows)）。
 
@@ -1119,6 +1124,7 @@ Claude Code 2.1.269（Anthropic 公式、2026-09-11）では、この比較を�
 - [Introducing Kiro Crew](https://kiro.dev/blog/introducing-kiro-crew/) — Kiro Crew の公開時の発表（公式・2026-08-04）
 - [kirodotdev/KiroCrew](https://github.com/kirodotdev/KiroCrew) — リポジトリと README（公式・Apache-2.0）
 - [Kiro Crew](https://kiro.dev/crew/) — 製品ページと FAQ（前提となるプラン・対応 OS。公式）
+- [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent) ／ [Releases](https://github.com/NousResearch/hermes-agent/releases) ／ [Documentation](https://hermes-agent.nousresearch.com/docs/) — Hermes Agent の README・v0.22 系の release notes・公式ドキュメント（Nous Research 公式・MIT、2026-10-21 確認）
 - [Inside the LLM Call: GenAI Observability with OpenTelemetry](https://opentelemetry.io/blog/2026/genai-observability/) — GenAI semantic conventions の解説（OpenTelemetry 公式）
 - [VS Code 1.137 release notes](https://code.visualstudio.com/updates/v1_137) — Automations の公開（Microsoft 公式・Preview）
 - [VS Code 1.138 release notes](https://code.visualstudio.com/updates/v1_138) ／ [Create and manage agent automations](https://code.visualstudio.com/docs/agents/run/automations) — Agent Host、Codex継続、`.automation.md`、Preview / rollout（Microsoft 公式）

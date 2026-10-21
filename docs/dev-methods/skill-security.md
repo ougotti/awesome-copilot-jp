@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-19
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-21
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -331,6 +331,23 @@ memory は、組織が承認した規約ではなく**更新も削除もでき�
 
 **→ memory を長時間タスクの状態管理と区別する考え方は [長時間タスクの信頼性設計](agent-reliability.md#学習する-memory-を-checkpoint-と混同しない) を参照**
 
+### エージェントが自分で書く Skill
+
+memory と同じ問題は、**Skill そのもの**でも起きます。ここまでの確認は「人が選んで入れる Skill」を前提にしていましたが、エージェントが使いながら Skill を作り、書き換える製品が出てきました。[Hermes Agent](hermes-agent.md#9-skills-と記憶)（Nous Research、MIT）は `skill_manage` ツールで Skill を作成・部分修正・削除し、複雑なタスクの後やターン終了後の背景レビューでも更新します。既定では書き込みがすぐ反映され、**次回以降の手順そのものが、誰もレビューしないまま変わります**。
+
+人が入れる Skill との違いは、導入前の確認が効かないことです。`gh skill preview` やコミット SHA の固定は「入れる瞬間」を押さえる手段で、入れた後に中身を書き換える主体がエージェント自身だと届きません。
+
+| 確認すること | Hermes での方法 | 一般化した原則 |
+|---|---|---|
+| 書き込みを人が見てから反映する | `skills.write_approval: true` で保留にし、`/skills diff <id>` を読んで `/skills approve` / `reject` | 自動で育つ手順は、反映前の差分を人が読む |
+| 自動の更新を止める | `auxiliary.background_review.enabled: false` | 学習のタイミングを、利用者が把握できる操作に限る |
+| 他のツールへ波及させない | `skills.external_dirs` は**書き込み保護の境界ではない**と公式が明記。Claude Code・Codex と共有するディレクトリを指すと、そちらの Skill も書き換わり得る | 書き換えるエージェントと、固定して使うエージェントでディレクトリを分ける |
+| 中身の検査を過信しない | 作成時のリンターは助言だけで書き込みを止めない。コンテキストファイルの注入検査も「見た目のパターンによる判定」と明記 | パターン検査は意図を判定しない |
+
+Hermes の Hub（`hermes skills install`）は、インストール時に必ずスキャンを走らせ、取得元の信頼レベル（`builtin` / `official` / `trusted` / `community`）と合わせて判定します。`--force` で警告は越えられても `dangerous` の判定は越えられない設計で、[2 節](#2-導入前に何を確認するか)の確認を CLI が代行する形です。ただし取得元には [3 節](#3-第三者監査が示す実態)の監査対象だった ClawHub や skills.sh も含まれます。スキャンを通ったことは、`scripts/` の実行内容や外部への送信先を読んだことの代わりになりません。
+
+本ガイドでは、自分で書き換えるエージェントを使う場合、**Skill のディレクトリを git で管理し、定期的に差分を読む**運用を推奨します。誤った手順が保存されたら、memory と同じく削除・訂正してください。
+
 ### OAuth consentを操作承認とみなさない
 
 外部providerへのOAuth consentは、指定scopeで代理アクセスするgrantを作る手続きです。接続済みでtokenを再利用できても、個々の送信・公開・削除・購入まで承認済みという意味ではありません。
@@ -368,6 +385,7 @@ memory は、組織が承認した規約ではなく**更新も削除もでき�
 | 依存パッケージから受け取る（pnpm） | 承認を発行元への信頼として扱い、依存を更新するたびに `skills/` の差分を読む（[5 節](#承認の記憶がどこまで及ぶか)） |
 | チーム・組織へ配る | `managed-settings.json` で Marketplace と MCP サーバーを限定し、実行操作を `deny` / `ask` / `allow` に分ける |
 | ハーネスごと持ち込む | 権限・承認・サンドボックスの既定値を確認する（[AI エージェントの実行基盤（ハーネス）](harness.md)） |
+| エージェントが Skill を書き換える | 書き込みを承認制にし、Skill のディレクトリを git で管理して差分を読む。固定して使うツールとディレクトリを共有しない（[5 節](#エージェントが自分で書く-skill)） |
 | コマンドを 1 つ入れる | 配布元が公式かを README で確認する・`which` で実体を見る（[6 節](#6-同名の別パッケージという入口)） |
 | 組織で全社に展開する | 導入前の検査に加え、**推論前の許可判定と実行後の監査**まで設計する（[5 節](#5-統制が効く-3-つの段階)。いずれも組織向けプランが前提） |
 
@@ -382,6 +400,7 @@ memory は、組織が承認した規約ではなく**更新も削除もでき�
 - [AI エージェントの実行基盤（ハーネス）](harness.md) — 標準が定めていない権限・承認・サンドボックスが実際に決まる層
 - [Claude Code の Mods](../claude-code/mods.md) — 実行コードを持つ拡張の信頼境界、`plugin validate` での事前確認、`allowManagedModsOnly`
 - [MCP Skills 拡張](skills-over-mcp.md) — MCP server から届く Skill の出所表示、内容に結びついた承認、`allowed-tools` の無視
+- [Hermes Agent](hermes-agent.md) — Skill と memory を自分で書き換える常駐エージェント。Hub からの導入時のスキャン、`external_dirs` の共有
 - [Agents 一覧](../copilot/agents.md) — 導入前監査に使える `trojan-skill-hunter` の解説
 - [GitHub Copilot Plugins](../copilot/plugins.md) — `enabledPlugins` と Marketplace 制限の設定方法
 
@@ -396,6 +415,7 @@ memory は、組織が承認した規約ではなく**更新も削除もでき�
 - [Enterprise managed sandbox in Copilot for JetBrains](https://github.blog/changelog/2026-09-08-enterprise-managed-sandbox-in-copilot-for-jetbrains/) — JetBrains の managed sandbox Public Preview（公式）
 - [New features and improvements in Copilot for JetBrains](https://github.blog/changelog/2026-09-22-new-features-and-improvements-in-copilot-for-jetbrains/) — assisted approvals と MCP ツール制御（公式・2026-09-22）
 - [gh skill マニュアル](https://cli.github.com/manual/gh_skill) — `gh skill preview` などのサブコマンド（公式）
+- [Hermes Agent — Skills System](https://hermes-agent.nousresearch.com/docs/user-guide/features/skills) ／ [Memory](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory) — `skill_manage`・`skills.write_approval`・Hub のスキャンと信頼レベル・`external_dirs`・背景レビュー（Nous Research 公式、2026-10-21 確認）
 - [pnpm — Agent Skills](https://pnpm.io/agent-skills) ／ [設定 `permissions`](https://pnpm.io/settings/build#permissions) — 同梱 Skill の承認がパッケージ単位で以降のバージョンにも及ぶこと（pnpm 公式、2026-10-18 確認）
 - [awesome-agent-skills-security](https://github.com/LLMSecurity/awesome-agent-skills-security) — 攻撃手法と防御策の一覧（コミュニティ）
 - [Inference hooks](https://platform.claude.com/docs/en/manage-claude/inference-hooks) — 推論前の allow / deny 判定（Anthropic 公式）

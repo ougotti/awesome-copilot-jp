@@ -1,6 +1,6 @@
 # エージェントの記憶基盤 — GBrain・Mem0・Graphiti・Letta を比べる
 
-> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか MCP クライアント） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-09-27
+> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか MCP クライアント） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-10-21
 
 > AI エージェントの「外部記憶」をうたう OSS・製品は増えていますが、同じ種類のものではありません。事実を貯める**記憶層**、時間とともに変わる事実を追う**時系列ナレッジグラフ**、記憶を持つ**エージェントの実行基盤**、文書を検索して渡す **RAG アプリ**が混ざっています。このページは、GBrain・Mem0・Graphiti / Zep・Letta と、境界確認のための AnythingLLM・Open WebUI を、一次情報（各 README と公式ドキュメント、**2026-09-27 確認**）に基づいて横並びにし、「複数のエージェントから使うローカルの共通知識基盤として何を選ぶか」を判断する材料をまとめます。GBrain 自体の設計と、オントロジー・ナレッジグラフとの関係は [オントロジー](ontology.md#形式的な定義を作らない選択肢--gbrain) を参照してください。
 
@@ -21,6 +21,21 @@
 
 - **Letta は「記憶の部品」ではありません。** 旧来の Letta（MemGPT）API server は `letta-ai/letta` の archive ブランチへ移され、現在の本体は、記憶を持つエージェント実行基盤の [Letta Code](https://github.com/letta-ai/letta-code)（ドキュメント上は Letta Harness）です。Claude Code や Codex に記憶を足す用途とは前提が違います。
 - **AnythingLLM と Open WebUI は、他のエージェントへ記憶を提供する側ではありません。** どちらも MCP サーバーを**呼び出す**機能を持ち、ユーザーごとの memory 機能もありますが、Claude Code や Codex から共通の記憶として読み書きする MCP サーバーを公開する製品としては説明されていません。RAG の文書検索と、エージェントの記憶は別カテゴリとして扱います。
+
+### 本体に組み込まれた記憶 — Hermes Agent の例
+
+4 つのカテゴリとは別に、**エージェント本体が最初から持っている記憶**もあります。[Hermes Agent](hermes-agent.md)（Nous Research、MIT。2026-10-21 確認）は、Letta と同じく記憶を持つ実行基盤の側ですが、記憶の形はずっと小さく、次の 2 層に分かれています。
+
+| 層 | 中身 | 特徴 |
+|---|---|---|
+| 常に prompt に入る記憶 | `~/.hermes/memories/` の `MEMORY.md`（エージェントのメモ）と `USER.md`（利用者のプロフィール） | **文字数の上限つき**。超えると自動で圧縮せずエラーを返し、エージェントが統合・削除してから書き直す。セッション開始時のスナップショットとして注入され、途中の変更は次のセッションから効く |
+| 必要時に引く履歴 | `~/.hermes/state.db`（SQLite）に全セッションを保存し、FTS5 で全文検索（`session_search`） | 検索結果は要約ではなく実際のメッセージ。機微な情報を話すと、そのまま残り続ける |
+
+「小さく常に効く記憶」と「大きく必要時に引く履歴」を分ける設計は、Claude Code の `CLAUDE.md` と会話履歴の関係にも近く、記憶層を外付けする前に**何を毎回効かせ、何を検索で足りるとするか**を決める参考になります。
+
+外部の記憶基盤は置き換えではなく**併用**です。Hermes の v0.22.0（2026-10-13）では Honcho・Mem0 などの記憶プロバイダが各提供元のプラグインへ移り、`hermes plugins install <name>` で入れて `hermes memory setup` で設定します。外部プロバイダへどのデータが送られ、どれだけ保持されるかは各プロバイダの文書で確認してください。
+
+書き込みは既定ですぐ反映され、ターン終了後の背景レビューでも更新されます。人が確認してから反映したい場合は memory の `write_approval: true`、自動更新を止めるなら `auxiliary.background_review.enabled: false` です（[Skill / Plugin のセキュリティ](skill-security.md#エージェントが自分で書く-skill)）。
 
 ---
 
@@ -103,6 +118,7 @@
 | 自社のチャットボットやアプリに、利用者ごとの記憶を SDK で組み込みたい | **Mem0** | User / Session / Agent の記憶を API で扱える。OSS から始めて Platform へ移行できる |
 | 時間とともに変わる事実を、履歴つきで問い合わせたい | **Graphiti**（運用を任せるなら **Zep**） | 事実ごとに有効期間を持ち、古い事実を削除せず無効化する |
 | 記憶を持ち、自分で学習し続ける常駐エージェントを立てたい | **Letta Code** | 記憶・スキル・prompt の書き換えまで含めた実行基盤 |
+| メッセージアプリから話しかける自分専用のエージェントに、小さく常に効く記憶を持たせたい | **Hermes Agent**（[解説](hermes-agent.md)） | 上限つきの `MEMORY.md` / `USER.md` と全文検索の履歴を本体に持つ。必要なら Mem0・Honcho などをプラグインで併用する |
 | 社内文書をローカルで検索できるチャット環境を、チームに配りたい | **AnythingLLM** / **Open WebUI** | 記憶基盤ではなく RAG アプリとして選ぶ |
 | 語彙・規則を全社で定義し、権限つきでエージェントに渡したい | この比較の外 | [オントロジー](ontology.md)の AWS Context Ontology Accelerator や Palantir Foundry Ontology が対象 |
 
@@ -126,6 +142,7 @@
 
 - [オントロジー](ontology.md) — GBrain の設計と、形式的な語彙定義（オントロジー / ナレッジグラフ / RAG / GraphRAG）との切り分け
 - [AI エージェントの実行基盤（ハーネス）](harness.md) — 記憶を「どこで動くエージェントに」渡すかという実行環境の層
+- [Hermes Agent](hermes-agent.md) — 本体に上限つきの記憶と全文検索の履歴を持つ常駐エージェント
 - [ループエンジニアリング](loop-engineering.md) — ループの外部状態として記憶を使う設計
 - [長時間タスクの信頼性設計](agent-reliability.md#学習する-memory-を-checkpoint-と混同しない) — 学習する memory と checkpoint の違い
 - [Skill / Plugin のセキュリティ](skill-security.md) — エージェントに書き込ませる範囲と、同名パッケージへの注意
