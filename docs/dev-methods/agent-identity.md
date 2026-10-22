@@ -1,6 +1,6 @@
 # AIエージェントのID・認可・委任権限
 
-> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-18
+> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-22
 
 > [Skill / Plugin のセキュリティ](skill-security.md)は Skill・Plugin という**導入するモノ**の確認手順を扱います。このページは、常駐・非同期・マルチエージェントで重要になる**エージェント自身をどう認証し、何を委任してよいかという設計判断**を独立して整理します。
 
@@ -138,6 +138,21 @@ primary IdPとoutbound providerは別です。primary IdPはGatewayのJWT author
 | **監査者（Auditor）** | ログ・記録を事後に確認する人・チーム | 何が起きたかを後から検証できるか |
 
 同一人物が複数の役割を兼ねること自体は問題ではありません。**問題は、この 4 つを区別せずに「エージェントが勝手にやった」で済ませてしまうことです。** 実行主体が明確な ID を持っていれば、少なくとも「どのエージェントが」までは特定できます。
+
+### 誰のための request かをモデル提供者に伝える — Claude API の user profiles（2026-10-20）
+
+エージェントを自社のサービスに組み込んで顧客に提供すると、顧客のための request もすべて**自社の組織から**モデル提供者へ届きます。Claude API の **user profiles** は、request ごとに「どの最終顧客のための request か」を Anthropic に伝える仕組みです。これを付けておくと、安全上の執行措置（制限・利用停止）が組織全体ではなく**その 1 顧客だけ**に掛かり、ほかの顧客の traffic は止まりません（[User profiles](https://platform.claude.com/docs/en/manage-claude/user-profiles)、2026-10-22 確認。API での実行は未検証）。
+
+| 項目 | 内容 |
+|------|------|
+| 作り方 | 顧客の登録時に `POST /v1/user_profiles` で 1 回作り、返った `uprof_` の ID を顧客の記録に保存する。**冪等ではない**ため、呼ぶたびに新しい profile ができる |
+| 単位 | 自社サービスの利用者なら 1 人ごと（`access_type: application`、既定）、API を再販する相手なら 1 社ごと（`passthrough`）。自社の社内利用には付けず、**別の組織**に分ける（workspace を分けるだけでは足りない） |
+| 付け方 | 顧客のための request すべてに `anthropic-user-profile-id` ヘッダー（SDK は `user_profile_id`、CLI は `--user-profile-id`）。Claude in Amazon Bedrock では request body の `user_profile_id` |
+| 送る情報 | すべて任意。わからない値は送らない。氏名やメールアドレスを共有できないなら、自分で計算した hash（`name_hash` / `email_hash`）を送る。会話の内容は profile に含まれない |
+| 執行の確認 | 2026-10-21 から profile に `enforcement_status`（`unrestricted` / `restricted` / `banned`）と `enforcement_actions` が付き、`enforcement_status[]` で絞り込める。開始・終了を [organization webhooks](https://platform.claude.com/docs/en/manage-claude/organization-webhooks)（Beta、アカウントチームへの連絡が必要）で受け取れる |
+| 削除 | 顧客の退会や消去の依頼で `DELETE` する。Anthropic の trust & safety の記録は残る。削除後も約 10 分は同じ ID の request が通り得る |
+
+`passthrough` の profile は会社を表すだけなので、1 人の利用者が特定できる request には Messages API の `metadata.user_id` も併せて送るよう公式が案内しています。これは本ページの「実行主体（Actor）」を、モデル提供者の側にも伝える設計です。
 
 ---
 

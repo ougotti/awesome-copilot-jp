@@ -1356,6 +1356,21 @@ Copilot では、モデルピッカーのモデルが短い間隔で入れ替わ
 - 同じモデル名を **Claude Code や Codex の側**で固定している場合、Copilot の廃止は影響しません。Copilot 経由の利用にだけ効く変更です（Claude Code 側は 2.1.283 の `availableModelsMatch` / `deniedModels` を参照）。
 - 日付と対象は変更され得ます。**廃止日の前に、公式変更ログと組織のモデルピッカーを再確認**してください。
 
+> **2026-10-22 追記**: 2026-10-19 の廃止は[公式の変更ログ](https://github.blog/changelog/2026-10-19-github-copilot-models-deprecated-on-october-19-2026)で実施が告知されました。対象の一覧は変更ログで確認してください。
+
+### モデルの方針を API で管理する — Copilot model policy API（2026-10-19）
+
+モデルを個別に絞っている組織が廃止のたびに設定画面を直す手間は、API で置き換えられるようになりました。**Copilot model policy API**（[GitHub 公式変更ログ](https://github.blog/changelog/2026-10-19-copilot-model-policy-api-for-enterprise-orgs-and-teams)、GET / PATCH が GA）は、次の 4 つの階層でモデルの提供範囲を取得・変更します（2026-10-22 確認。API での実行は未検証）。
+
+| 階層 | endpoint |
+|------|---------|
+| Enterprise | `/enterprises/{enterprise}/copilot/model-policies` |
+| Enterprise team | `/enterprises/{enterprise}/teams/{team_slug}/copilot/model-policies` |
+| Agent app | `/enterprises/{enterprise}/copilot/apps/model-policies` |
+| Organization | `/orgs/{org}/copilot/model-policies` |
+
+Enterprise の方針は、管理を **organization に委任する**か、**enterprise team と agent app に委任する**かを選べます。Agent app の階層があるため、エージェントごとに使えるモデルを人とは別に絞れます。廃止の告知を受けて代替モデルを有効にする作業を、評価が済んだ時点で API から行う運用にできます（[新しいモデルを検証前に使わせない](../claude-code/basics.md#新しいモデルを検証前に使わせない--availablemodelsmatch-と-deniedmodels)と同じ考え方）。
+
 ## 参考リンク
 
 - [github/awesome-copilot](https://github.com/github/awesome-copilot) — カスタマイズの公式リポジトリ

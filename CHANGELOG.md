@@ -20,6 +20,12 @@
   - [Skills 最新動向](docs/trends.md#api-version-2026-10-21-と-ant-cli-202026-10-21) 7-5 節に、`ant apply` を CI で回すリポジトリが CLI を上げる時点で確認する変更の表を追加した（`--api-key` / `--auth-token` の削除、`Authorization: Bearer`、sampling パラメータの 400、`document` / `citations` の制約、Admin API の旧フィールド名、Text Completions とクライアント側 compaction の削除、MIT → Apache 2.0、Go の module path）。Claude Code 2.1.307 の `/claude-api api-version` は挙動の変わる変更を出力で確かめる前提で紹介した。
   - [ハーネスの `ant apply`](docs/dev-methods/harness.md#ci-に載せるときの注意点) の CI の注意点に flag の削除を追加した。
   - 移行ガイドは 2026-10-22 に確認した。SDK・CLI での実機の検証は行っていない。
+- **2026-10-22** 組織統制の更新を反映（#290）。
+  - Inference hooks の Beta 終了（2026-10-20）を [Claude Code の組織での統制](docs/claude-code/basics.md#導入時に確認すること)・[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#5-統制が効く-3-つの段階)・[Skills 最新動向](docs/trends.md#12-skill--plugin-のセキュリティ) 12 節に反映し、対象の製品面、`tool_call` event、circuit breaker に加えて、**判定を通らない経路**（Anthropic が組織のために動かす Code Review・Claude Security のスキャン・smart reports、Bedrock / Google Cloud、API 組織、音声モードの一部）と、拒否後に会話を続ける方法を追記した。
+  - [Web ツールの URL 制限](docs/dev-methods/skill-security.md#web-ツールが取得できる-url-を絞る2026-10-07)に、組織単位の Web fetch の無効化・ドメイン制限と、Managed Agents の `web_fetch` / `web_search` が組織と agent の両方の設定を満たす必要がある点を追加した。
+  - [AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md#誰のための-request-かをモデル提供者に伝える--claude-api-の-user-profiles2026-10-20)に Claude API の user profiles（最終顧客ごとの識別、`enforcement_status`、organization webhooks）を、[GitHub Copilot ガイド](docs/copilot/README.md#モデルの方針を-api-で管理する--copilot-model-policy-api2026-10-19)に Copilot model policy API と 10-19 のモデル廃止の実施を追加した。
+  - [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#2026-10-1810-22-の権限境界の更新)の更新表に、推論前の判定・組織単位の Web 取得・最終顧客ごとの識別・GitHub package firewall（Public Preview、npm のみ）・モデルの方針の行を追加した。
+  - 一次資料は 2026-10-22 に確認した。管理画面・API での検証は行っていない。
 
 - **2026-10-21** Hermes Agent（Nous Research の OSS の常駐型エージェント）の解説を追加（#282）。
   - [Hermes Agent — 常駐して自分から連絡してくる OSS エージェント](docs/dev-methods/hermes-agent.md)を新設した。動画「Build Your First AI Agent in 20 Minutes (No Coding)」（Metics Media、2026-10-19）が紹介する VPS + Telegram + 安価なモデル + 価格の監視という構成を、公式ドキュメントで裏を取りながら整理した。チャットボット・コーディングエージェント・常駐エージェントの違い、gateway・エージェント本体・terminal backend・モデルの 4 層、置き場所の選び方、最小の手順、モデルの接続先（Claude Code のログインを借りる経路は Pro では使えず extra usage を消費する点を含む）、cron の `[SILENT]` / `wakeAgent` / `no_agent` による「変化があったときだけ知らせる」組み方と cron の性質、費用の 4 分類、公開前の最低ライン（allowlist・承認モード・コンテナ backend・ダッシュボードの bind・v0.21.6 のセキュリティ修正）、Kiro Crew・QM・Letta Code との違いをまとめた。

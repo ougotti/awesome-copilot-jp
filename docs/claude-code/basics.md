@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-17
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-22
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -467,13 +467,15 @@ Claude Enterprise では、Skill や Plugin の「入れる前の確認」に加
 | 段階 | 機能 | 状態 | 何ができるか |
 |------|------|------|-------------|
 | 導入前 | Skill / Plugin のセキュリティスキャン | Beta（Enterprise プラン、2026-08-06） | 第三者製の Skill・Plugin を、**アップロードまたは編集された時点**で悪意ある内容がないか自動検査する |
-| 推論前 | Inference hooks | Beta（Claude Enterprise、2026-08-05） | 組織の AI セキュリティサーバーを指定すると、**claude.ai・Cowork・Claude Code の対象プロンプトが、サーバーの allow / deny 判定が返るまで推論に進まない**。リクエストは署名され、失敗時の挙動は設定可能。**拒否はすべて Activity Feed に記録される** |
+| 推論前 | Inference hooks | Claude Enterprise 向けに 2026-08-05 から Beta、**2026-10-20 に Beta を終了** | 組織の AI セキュリティサーバーを指定すると、**claude.ai・Cowork・Claude Code・Claude for Microsoft 365・Claude Tag・Claude in Chrome などの対象プロンプトが、サーバーの allow / deny 判定が返るまで推論に進まない**。**Validate tool calls** を有効にすると、tool の実行前にも判定する（`tool_call` event）。リクエストは署名され、判定の待ち時間（既定 5 秒）と失敗時の挙動は設定可能。**拒否はすべて Activity Feed に記録される** |
 | 実行後 | Compliance API のセッション取得 | 利用者のマシン上のセッション取得は 2026-08-26 に**ベータを終了**（Cowork / Claude Code）。Claude for Microsoft 365 のセッションは 2026-09-24 に**ベータを終了**、Claude in Chrome のセッションは 2026-09-18 から **Beta** | 組織横断でセッションを一覧し、個別セッションのメタデータとトランスクリプトを取得する。既存の Compliance Access Key と `read:compliance_user_data` スコープを使う |
 
 ### 導入時に確認すること
 
 - **いずれも Enterprise 向け**です。個人・チームプランでは使えません
-- **Inference hooks は自組織でセキュリティサーバーを用意する前提**です。判定サーバーが落ちたときの挙動（通すのか止めるのか）を設定で決めておく必要があります
+- **Inference hooks は自組織でセキュリティサーバーを用意する前提**です。判定サーバーが落ちたときの挙動（通すのか止めるのか）を設定で決めておく必要があります。障害が続くと circuit breaker が働き、その間はすべての request にこの設定が適用されます
+- **Inference hooks を通らない呼び出しがあります**（2026-10-22 確認）。Anthropic が組織のために動かす **Code Review（GitHub の PR のレビュー）・Claude Security のスキャン・smart reports** のモデル呼び出しは対象外です（利用者が Claude Code で実行する `/code-review` は対象）。Amazon Bedrock・Google Cloud、Claude Platform の API 組織も対象外で、音声モードでは一部の tool call が送られません。判定は allow / deny だけで、prompt の書き換え・伏せ字はできず、画像だけの内容は検査されません。**Inference hooks を唯一の DLP にしない**でください（[Inference hooks](https://platform.claude.com/docs/en/manage-claude/inference-hooks)）
+- 拒否された内容は会話に残るため、続けると同じ理由で拒否され続けます。Claude Code では `/rewind` で該当の prompt まで戻すか `/clear` で始め直す、と公式が案内しています
 - Compliance API で取得できるのは**利用者のマシン上で動いたセッションを含みます**。監査の範囲と、従業員への周知の要否を法務・人事と確認してください
 - 取得できる面は増えています。Claude for Microsoft 365（Excel・PowerPoint・Word・Outlook）は `product_surface` が `office_agents` で始まる値、Claude in Chrome は `claude_in_chrome` で区別します。監査対象の一覧に、これらの面を加えるかを決めてください
 
