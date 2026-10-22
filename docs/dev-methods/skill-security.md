@@ -303,6 +303,18 @@ managed policy を利用者の設定や起動 flag で弱められると想定�
 
 出典: [Claude Platform release notes（2026-10-15）](https://platform.claude.com/docs/en/release-notes/overview)、[List user preferences](https://platform.claude.com/docs/en/manage-claude/compliance-org-data#list-user-preferences)（2026-10-17 確認、API 実行は未検証）。
 
+### 2026-10-18〜10-22 の権限境界の更新
+
+2026-10-22 に公式資料を確認しました。この期間は、**更新するだけで今までより通るようになる変更**が複数の製品で入っています。release note と公式 docs の照合のみで、実機・管理画面での確認はしていません。
+
+| 層 | 変更と運用上の意味 | 詳細・一次情報 |
+|---|---|---|
+| MCP の allowlist | Claude Code 2.1.305 で、`allowedMcpServers` が `managed-mcp.json` の stdio server のうち `${VAR}` を `env` にだけ使うものを絞り込まなくなった。allowlist から外していたものは**更新で読み込まれる**。止めるなら `deniedMcpServers` に書く。**allowlist だけで止める設計は、製品の更新で穴が開くことがある** | [Claude Code](../claude-code/basics.md#21304〜21307--統制が緩む変更と締まる見える変更)、[2.1.305](https://github.com/anthropics/claude-code/releases/tag/v2.1.305) |
+| sandbox | Claude Code 2.1.305 の `sandbox.allowNestedUserNamespaces` は、公式が「sandbox のファイル保護を迂回できる」と明記。Chromium などのために有効にした端末の sandbox は、書き込み境界として扱わない | 同上 |
+| 人が決める確認 | Claude Code 2.1.304 の Mods の `decider: "person"` で、確認を承認画面か host の callback に限り、誰にも聞けない場面では拒否にできる。[自然言語の判断と強制する制御を分ける](#自然言語の判断と強制する制御を分ける)ときの、強制側の部品になる | [Claude Code の Mods](../claude-code/mods.md)、[2.1.304](https://github.com/anthropics/claude-code/releases/tag/v2.1.304) |
+| Skill の許可 | Claude Code 2.1.304 で、hook を止められた Skill は `allowed-tools` も持ち込めない。2.1.305 で `allowManagedPermissionRulesOnly` が desktop の plugin の `allowed-tools` にも及ぶ | [Claude Code](../claude-code/basics.md#21304〜21307--統制が緩む変更と締まる見える変更) |
+| 止めた記録 | Claude Code 2.1.307 の OTel `claude_code.safety_event` で、rule・auto mode・hook・sandbox が止めた・確認を求めた tool 呼び出しを集計できる | [2.1.307](https://github.com/anthropics/claude-code/releases/tag/v2.1.307) |
+
 ### ローカルモデル・offline・telemetry は別の境界
 
 「ローカルモデルを使う」ことと、「外部へ何も送らない」ことは同じではありません。GitHub Copilot CLI 1.0.94-0（2026-10-07）は `/model` で起動中の Ollama のモデルを追加できるようになりましたが、公式は**ローカルモデルの選択では offline mode にならず、GitHub の telemetry も止まらない**と明記しています。offline mode（`COPILOT_OFFLINE=true`）を有効にしても、provider がリモートならプロンプトとコード文脈はその provider へ送られます。**モデル・送信先・offline・telemetry を別々に確認**してください。**→ [GitHub Copilot ガイド](../copilot/README.md#ローカルモデルを使う--ollama-の発見と-offline-modecli-1094-0)**

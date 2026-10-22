@@ -832,6 +832,54 @@ MCP connector の `mcp-client-2026-09-15` beta header と組み合わせると�
 
 **→ 組織での見直しの観点は [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#2026-10-1510-17-の権限境界の更新) を参照**
 
+### 2.1.304〜2.1.307 — 統制が緩む変更と、締まる・見える変更
+
+> **確認日: 2026-10-22**。**提供元: Official / 状態: GA（CLI の正式リリース）**。[2.1.304](https://github.com/anthropics/claude-code/releases/tag/v2.1.304)（2026-10-19）、[2.1.305](https://github.com/anthropics/claude-code/releases/tag/v2.1.305)（2026-10-20）、[2.1.306](https://github.com/anthropics/claude-code/releases/tag/v2.1.306)（2026-10-21）、[2.1.307](https://github.com/anthropics/claude-code/releases/tag/v2.1.307)（2026-10-21）の release に基づきます（日付は公式 release の UTC 日付。2.1.303 と 2.1.308 は不具合修正のみ）。本ガイドでは実機で再現していません。
+
+この期間は、**更新するだけで今までより通るようになる変更**が 2 つあります。先にこれを確認してください。
+
+**統制が緩む方向の変更（更新前に確認する）**
+
+| 版 | 変更 | 見直すこと |
+|----|------|-----------|
+| 2.1.305 | **`allowedMcpServers` が、`managed-mcp.json` の stdio server のうち `${VAR}` を `env` にだけ使うものを絞り込まなくなった**。allowlist から外していたそうした server は、**更新すると読み込まれる** | 止めたい server は `deniedMcpServers` に書く。allowlist だけで止めていた構成を洗い出す |
+| 2.1.305 | `sandbox.allowNestedUserNamespaces` を追加。Linux の sandbox 内で user namespace を作れるようにする（Chromium・rootless podman 向け）。**公式は「sandbox のファイル保護を迂回できる」と明記** | 有効にするなら、その端末の sandbox は書き込み境界として扱わない。managed settings で禁止するかを決める |
+| 2.1.304 | tool search を、独自の `ANTHROPIC_BASE_URL` の背後でも既定で有効にした（gateway が 400 / 422 を返したら外して再送） | LLM gateway で tool 定義を検査・記録している場合、送られる tool の形が変わる |
+
+**統制が締まる・見える方向の変更**
+
+| 版 | 変更 | 運用上の意味 |
+|----|------|-------------|
+| 2.1.304 | [Mods](mods.md) の `tool.check` に **`decider: "person"`**。その確認は承認画面か host の callback でしか承認できず、誰にも聞けない場面では mod の理由を添えて拒否される | auto mode や classifier に委ねたくない確認を、人の判断に固定できる |
+| 2.1.304 | Mods の `settings.read` hook が**設定の層ごと**に受け取り、統合後の設定を書き換えられる。managed mod が組織の設定を**上限**にでき、保存期間の掃除に使う `cleanupPeriodDays` も対象 | 利用者の設定で組織の値を緩められない形を、mod で作れる |
+| 2.1.304 | plugin の hook だけを許すポリシーで、main conversation で使う Skill の hook が外される場合、その Skill の **`allowed-tools` も付与しない** | hook を止めた Skill が、許可だけ持ち込む抜け道を塞ぐ |
+| 2.1.304 | 1 つの取得元（リポジトリ・自分のフォルダ・plugin）の Skill が登録できる hook を、session あたり 1,024 個・matcher 16,384 文字までに制限 | 大量の hook を登録する Skill は動かなくなる |
+| 2.1.305 | `allowManagedPermissionRulesOnly` を設定した組織では、Claude Desktop がパス指定で読み込む plugin の `allowed-tools` を付与しない | managed の許可だけを効かせる設定が、desktop の plugin にも及ぶ |
+| 2.1.307 | OpenTelemetry に **`claude_code.safety_event`**。permission rule・auto mode・安全チェック・hook・sandbox が止めた、確認を求めた、差し戻した tool 呼び出しごとに出る | 「何が止められたか」を集計できる。→ [ハーネスの OTel](../dev-methods/harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions) |
+| 2.1.307 | `/permissions` の Recently denied に拒否した shell コマンドそのものを表示し、承認すると説明ではなくコマンドを名指しする | 何を承認したかが曖昧なまま許可しない |
+
+**無人実行・再開の修正**
+
+| 版 | 変更 | 影響を受けていた構成 |
+|----|------|-------------------|
+| 2.1.307 | HTTP MCP の tool 呼び出しが、**呼び出し中に接続が切れると 2 回送られていた**。read-only か idempotent の tool だけを再試行するよう修正 | 書き込みをする remote MCP tool。過去に二重の作成・送信がなかったか確認する（[信頼性設計](../dev-methods/agent-reliability.md#5-冪等性重複実行外部副作用の扱い)） |
+| 2.1.304 | `claude --worktree` が、HEAD が detached か別のブランチのとき、終了時に確認なしで worktree とブランチを削除し、**コミットを失い得た** | `--worktree` で作業した端末。失ったコミットは `git reflog` で探す |
+| 2.1.304 | plugin が subagent を起動・再実行して、headless 実行を `--max-turns`・Stop・入力の終了を越えて続けていた | 回数や時間の上限を `--max-turns` で決めていた無人実行 |
+| 2.1.305 | Workflow の再開で、完了済みの `pipeline()` / `parallel()` の agent を記録から返さず再実行していた | workflow を途中から再開する運用（[ループエンジニアリング](../dev-methods/loop-engineering.md#定期実行の再実行と外部副作用--claude-code-21302)） |
+| 2.1.305 | cloud session や SDK の `setMcpServers` で渡した MCP server が、後から利用者の設定にある同名の server に置き換えられていた | 呼び出し側が接続先を固定していたつもりの構成 |
+
+**運用の新機能**
+
+- `/auto-mode-setup`（2.1.304）— プロジェクトと最近の session を読み、auto mode に環境を教える対話型の設定。Bedrock・Vertex・Foundry・telemetry off の session でも使えます。
+- `/claude-api managed-agents-secure`（2.1.304）— Managed Agents の agent の設定を、Anthropic の公開しているセキュリティガイドと比べます。設定は変えません。
+- Code Review（2.1.304〜2.1.307）— Owner が組織に **Quick / Standard（既定）/ Deep** のレビュー段階を選び、リポジトリごとに変えられます。組織のすべてのリポジトリ（後から追加したものを含む）を対象にする設定と、`@claude review always` の購読をやめる `@claude review stop`（`off` / `pause`）も追加されました。→ [AI コードレビューはどの指示を読むか](../dev-methods/review-instructions.md)
+
+**更新時の確認手順（検証用プロジェクトで行う設計例。本ガイドでの実測ではありません）**
+
+1. `managed-mcp.json` の stdio server で `${VAR}` を `env` に使うものを一覧にし、allowlist から外していたものを `deniedMcpServers` に移す。更新後に `claude mcp list` で読み込まれないことを確かめる。
+2. `sandbox.allowNestedUserNamespaces` を誰かが有効にしていないか、managed settings と配布している settings を確認する。
+3. 書き込みをする remote MCP tool があれば、2.1.307 より前に二重の作成・送信が起きていなかったかを、相手側の記録で確認する。
+
 ## セットアップ
 
 ```bash

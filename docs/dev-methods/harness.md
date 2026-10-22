@@ -1,6 +1,6 @@
 # AI エージェントの実行基盤（ハーネス）
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-10-21
+> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-10-22
 
 > エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew / OpenAI Agents API / Hermes Agent）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
 
@@ -335,6 +335,8 @@ Claude Code 2.1.274 では `claude_code.managed_settings_resolved` OTel event �
 2.1.283（2026-09-25）では、`OTEL_LOG_TOOL_CONTENT=1` のときに `tool.output` span event へ記録される内容に、**MCP tool・WebFetch・WebSearch の出力**が加わりました。外部の Web ページや社内システムから取得した内容まで監視基盤へ送られる可能性があるため、この変数を有効にしている組織は、送信先の保存期間と閲覧権限を見直してください。
 
 2.1.301（2026-10-15）では、ツール実行の許可・拒否を記録する `tool_decision` event に **`classifier_verdict`**（auto mode の classifier の判定）と **`permission_mode`** が加わりました。`OTEL_LOG_TOOL_DETAILS=1` のときは、classifier が拒否に使った組み込みルールの名前 **`classifier_category`** も記録されます。これまで「許可された」としか見えなかった判定を、**permission rule による判定か、モデル（classifier）による判定か**で分けて集計できます。auto mode を既定にした組織（[2.1.283 の変更](../claude-code/basics.md#auto-mode-が既定の開始モードになる範囲--21283)）では、classifier の拒否が多い操作を allow / deny rule に移す材料になります。
+
+2.1.307（2026-10-21）では、止められた呼び出しだけを拾う **`claude_code.safety_event`** event が加わりました。permission rule・auto mode・安全チェック・hook・sandbox のいずれかが、tool 呼び出しを**止めた・確認を求めた・差し戻した**ときに 1 件ずつ出ます。`tool_decision` が「すべての判定」を記録するのに対し、こちらは「統制が働いた場面」の一覧です。sandbox や hook が実際にどれだけ止めているかを、判定の種類ごとに見られます（[2.1.307](https://github.com/anthropics/claude-code/releases/tag/v2.1.307)。属性の詳細は release note に記載がないため、手元の出力で確認してください）。
 
 API 側では、Claude の **cache diagnostics** が 2026-09-23 に GA になりました。Messages request に `diagnostics` object を含めると、prompt cache が前の request と比べて効かなかった理由を診断できます（`cache-diagnosis-2026-04-07` beta header は不要になりました）。会話途中で tool を追加する inline tools（Beta）のように cache を保つ設計を検証するときに使えます。
 
