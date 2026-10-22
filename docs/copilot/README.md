@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-17
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-22
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -636,6 +636,46 @@ MCP の設定変更は 1.0.93 から turn 間に反映され、1.0.94 では dis
 Plugin と MCP の信頼性の修正（`--plugin-dir` の Skill / custom agent の解決、remote marketplace の認証の再試行、tool 一覧の更新時の MCP tool 定義の再確認）は [プラグインの可搬性](../dev-methods/plugin-portability.md#copilot-cli-10961097--plugin-の読み込みと再開時の-hook) にまとめています。以上は公式 release note と docs の確認で、Autopilot での `ask` の扱いなどの実機検証は未実施です。出典: [Copilot CLI v1.0.96](https://github.com/github/copilot-cli/releases/tag/v1.0.96)、[v1.0.97](https://github.com/github/copilot-cli/releases/tag/v1.0.97)。
 
 **1.0.98（2026-10-14）**では、session を再開したときに**放棄された承認待ちの作業を再開せず、まだ有効な承認要求だけを続ける**ようになりました。また、Node の環境で子プロセスの終了 signal が失われても、command hook が確実に完了します。1.0.97 の「取り消した書き込みを再実行しない」と合わせ、再開後に承認待ちの一覧と差分を確認する手順は変わりません。出典: [Copilot CLI v1.0.98](https://github.com/github/copilot-cli/releases/tag/v1.0.98)（2026-10-16 確認）。
+
+### CLI 1.0.100〜1.0.102 と VS Code 1.143 — sandbox の既定と、Skill・Plugin・指示の入り方
+
+> **確認日: 2026-10-22**。**提供元: Official / 状態: GA（CLI の正式リリース）・Stable（VS Code）**。[Copilot CLI v1.0.100](https://github.com/github/copilot-cli/releases/tag/v1.0.100)（10-19）、[v1.0.101](https://github.com/github/copilot-cli/releases/tag/v1.0.101)（10-20）、[v1.0.102](https://github.com/github/copilot-cli/releases/tag/v1.0.102)（10-21）と [VS Code 1.143 release notes](https://code.visualstudio.com/updates) に基づきます。VS Code 側の Experimental / Preview の機能は表に明記しました。本ガイドでは実機で確認していません。
+
+**sandbox の既定が緩む変更（更新前に確認する）**
+
+| 版 | 変更 | 見直すこと |
+|---|---|---|
+| CLI 1.0.100 | **sandbox が localhost と private network へのアクセスを既定で許可**するようになった | sandbox を「外へ出られない」前提で使っていた場合、社内の管理画面・DB・メタデータ endpoint などに届くようになる。止めたいなら sandbox の network 設定で明示的に絞る |
+| CLI 1.0.101 | macOS で、local access が有効で host filter がないとき、sandbox 内のコマンドが localhost の TCP service に直接接続できる | 同上 |
+| CLI 1.0.100 / 1.0.102 | sandbox の通信が、sandbox 側の proxy がない場合に `HTTPS_PROXY` / `HTTP_PROXY` / `NO_PROXY` / `ALL_PROXY` を継承する | 端末の proxy 設定が sandbox の通信経路にも効く。proxy で通信を記録・制限している組織は、sandbox の通信もそこを通るか確かめる |
+| CLI 1.0.100 | developer tool access を有効にすると、sandbox 内からパッケージやビルドのキャッシュに書き込める | キャッシュ汚染の経路になり得る。必要な端末だけで有効にする |
+
+**Skill・Plugin・指示の入り方の変更**
+
+| 版 | 変更 | 運用上の意味 |
+|---|---|---|
+| CLI 1.0.100 | GitHub のインストールリンク（`copilot plugin install "ghapp://air/install?..."`）から、**release note が「verified」と呼ぶ** Skill と Plugin を導入できる | 何をもって verified とするかは release note に説明がなく、changelog にも該当記事が見つからない（2026-10-22 確認）。GitHub は `gh skill` で導入する Skill を検証しないと説明しているため（[Skills 最新動向 7-1 節](../trends.md#7-1-gh-skill--skill-のライフサイクル管理)）、**リンクの経路だけで中身を信頼しない** |
+| CLI 1.0.100 | **信頼済みのリポジトリの Plugin を、chat の前に自動で導入・更新する** | リポジトリを信頼する操作が、Plugin のコードを入れる操作も兼ねる。信頼する前に `.github` の Plugin 設定を読む |
+| CLI 1.0.101 / 1.0.102 | Team が定義した GitHub の marketplace から Team に割り当てられた Plugin を導入。marketplace が `git-subdir` の取得元を受け付ける | 配る側は Team 単位で Plugin を割り当てられる。[GitHub Copilot Plugins](plugins.md) |
+| CLI 1.0.100 | リポジトリの `.github/instructions` のパス別の指示を、agent が該当ファイルを読む・編集するときに**自動で適用** | `applyTo` の範囲が CLI でも効く。範囲の広すぎる指示は、CLI の作業全体に効くようになる（[Instructions](#instructions---コーディング規約の自動適用)） |
+| CLI 1.0.100 | Skill の `allowed-tools` の rule で引数の中のカンマを分割しなくなった。**一覧の構造が曖昧なときは、範囲を限定しない rule を付与せず確認に回す** | 許可が広く解釈される方向の誤りを、確認する方向に倒した |
+| CLI 1.0.100 | semantic code search をオンラインの session で既定で有効にした | コードの索引を作る処理が既定で動く |
+
+**承認と統制の変更**
+
+| 版 | 変更 | 運用上の意味 |
+|---|---|---|
+| CLI 1.0.101 | `assistedApprovalInstructions` で、Assisted Permissions の判定に組織の方針を渡せる | 自然言語の判断に指示を足す仕組みで、強制ではない（[自然言語の判断と強制する制御を分ける](../dev-methods/skill-security.md#自然言語の判断と強制する制御を分ける)） |
+| CLI 1.0.101 | extension の capability 要求は Assisted の判定ではなく、明示的な承認にする | — |
+| CLI 1.0.102 | subagent が custom tool と MCP tool の承認を引き継ぐ | 同じ承認を何度も聞かれなくなる一方、親で与えた承認が subagent にも及ぶ |
+| CLI 1.0.100 | `--trust-folder`（`-p` や標準入力で始める一度きりの session 用）、`--disable-client-telemetry` | 無人実行でフォルダを信頼する範囲を、その実行に限れる |
+| CLI 1.0.100 / 1.0.102 | 管理者の設定が選んだモデルを上書きしたときに通知し、`-p` でも managed の Auto のモデル選択に従う | 組織のモデル方針が無人実行にも効く |
+| VS Code 1.143 | Copilot harness が新規 session の既定。管理の `permissions.deny` が空でない、または `sandbox.enabled: true` なら Copilot harness が必須（[1.142](#vs-code-1142--統制を入れると-copilot-harness-へ移るpermission-mode-を絞る)）で、そのとき Local harness は無効と表示 | — |
+| VS Code 1.143 | 組織が必須とした agent plugin を、Copilot harness の session で自動的に導入・更新する | 配る側は必須の Plugin を確実に届けられる。利用者側では止められない |
+| VS Code 1.143 | Windows / macOS の Agent Host で、sandbox の CA 証明書の信頼を「Sandbox: Manage Trusted CA」で管理。管理ポリシーが許せば、session ごとに terminal の sandbox を切り替えられる | session 単位で sandbox を外せる設定を許すかを、組織で決める |
+| VS Code 1.143 | managed の `telemetry.headersProvider` で、OpenTelemetry の export に動的なヘッダーを付ける（Copilot Agent Host の session のみ） | [誰の操作かを付ける](#誰の操作かを付ける本文を種類ごとに取る2026-10-12)設定と併せて使う |
+
+VS Code 1.143 の model comparison（Preview）、オンデバイスモデル（Experimental）、Session Activity Bar（Experimental）など UI 中心の変更はこのページでは扱いません。
 
 ### Agentic CLI の customization 利用指標
 
