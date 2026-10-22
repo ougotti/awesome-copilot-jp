@@ -826,6 +826,8 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 
 個人向けの常駐型では **Hermes Agent**（Nous Research が MIT で公開。`提供元`: Official / `状態`: GA。2026-10-13 の v0.22.0 で SemVer の安定版チャネルが既定に）があります。Kiro Crew と違い、Claude Code や Codex を駆動するのではなく**エージェント本体まで自前**で、gateway が Telegram などのメッセージアプリと cron を受け持ち、モデルは利用者が Nous Portal・OpenRouter・各社の API・ローカルから選びます。cron には、何もなかった回の配信を止める `[SILENT]` と、事前スクリプトの判定で**その回は LLM を起動しない** `wakeAgent` ゲートがあります。2026-10-19 公開の動画「Build Your First AI Agent in 20 Minutes (No Coding)」が VPS と Telegram での構成を紹介していますが、bot がサーバーのシェルへの入口になる点、承認の既定、ダッシュボードの公開範囲は自分で守る必要があります（[解説](dev-methods/hermes-agent.md)）。
 
+同じ「先に連絡してくる」形を事業者が運営する製品として、Anthropic は 2026-10-21 に **Claude Duet**（`提供元`: Official / `状態`: Research Preview。米国の Pro / Max 向けのウェイトリスト制で、日本からは未提供）を公開しました。接続したアプリを数時間ごとに確認し、対応が必要なときだけ連絡し、大きな仕事は Anthropic のクラウドの仮想マシンで進めます。送信・支払い・署名・削除の前には必ず確認し、承認があっても証券取引と口座間の送金は行いません。背景での確認もプランの利用上限を消費します。Hermes Agent・ChatGPT の dots との違いは[比較表](dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dots)にまとめました。
+
 2026-09-10には **OpenAI Agents API**（`提供元`: Official / `状態`: Public Beta）が公開されました。これはOpenAI管理のCodexハーネスをAPIとして提供し、durable session、orchestration、context compaction、recoveryをOpenAI側で担います。ただし実行環境は `none` / OpenAI-hosted / self-hostedから選ぶ別の層であり、APIを使うだけでsandbox、network、secret、tool権限の設計が不要になるわけではありません。Codex製品、Agents SDK、Codex SDK / app serverとも役割が異なります。
 
 2026-09-29には[Agents APIのComputer Use](https://developers.openai.com/api/docs/guides/agents-api/tools/computer-use)が追加されました。OpenAI-hosted browserでWeb画面を扱えますが、network policyとWebサイトのoriginごとの承認は別で、originの承認は購入・削除などの操作ごとの確認を保証しません。[ハーネス解説](dev-methods/harness.md#agents-apiでブラウザを操作する2026-09-29)に実行環境と承認の境界をまとめました。
