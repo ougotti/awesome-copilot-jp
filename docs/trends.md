@@ -570,6 +570,23 @@ Skill 以外は YAML / JSON / Markdown のいずれでも書けます。リソ�
 
 **→ plan / 承認、lockfile、drift、破壊的フラグ、CI 運用の詳細は [AI エージェントの実行基盤（ハーネス）](dev-methods/harness.md#宣言でリモートのエージェントを管理する--ant-apply) を参照**
 
+#### API version `2026-10-21` と `ant` CLI 2.0（2026-10-21）
+
+Claude API は 2026-10-21 に、`2023-06-01` 以来の新しい API version **`2026-10-21`** を公開しました。同日に出た各言語の SDK の新しいメジャー版と **`ant` CLI 2.0.0** は、既定でこの version を送ります（[Migrating to API version 2026-10-21](https://platform.claude.com/docs/en/api/migration-2026-10-21)、2026-10-22 確認）。`ant apply` を CI で回しているリポジトリは、CLI を上げる時点で次を確認してください。
+
+| 変更 | 影響する使い方 |
+|---|---|
+| **`--api-key` / `--auth-token` を削除**（コマンドラインの値はシェル履歴やプロセス一覧に残るため）。v1.27.0 から警告を出していた | CI で flag に鍵を渡していると `flag provided but not defined` で止まる。環境変数か secret の仕組みで渡す |
+| SDK / CLI が API key を `Authorization: Bearer` で送り、client は資格情報を 1 つだけ持つ | gateway や proxy で `X-Api-Key` を前提に検査・付け替えしている構成 |
+| Messages API で `temperature` / `top_p` / `top_k` を送ると 400 | 出力を揃えるために温度を下げていた Agent や評価。代わりの設定はなく、続けるならその request だけ `2023-06-01` に残す |
+| `assistant` メッセージに直接置いた `document` block、`user` メッセージの `text` block の `citations` が 400 | 会話履歴を組み立て直して送るアプリ |
+| Admin API・Enterprise Analytics API の旧フィールド名と API key の `workspace_id` を削除（`scope` を読む） | 組織の管理・監査を自動化しているスクリプト |
+| SDK の Text Completions、tool runner のクライアント側 compaction（TypeScript / Ruby）を削除 | 古い統合コード |
+| SDK と CLI のライセンスが **MIT から Apache 2.0** に | 同梱・再配布の扱いを社内の基準で確認する |
+| Go で入れる場合は module path が `github.com/anthropics/anthropic-cli/v2` に | `go install` で CLI を入れている CI |
+
+Claude Code 2.1.307 には、Claude API のコードを `2026-10-21` へ移す `/claude-api api-version` が加わりました。移行の下書きに使えますが、上の表のように**挙動が変わる変更**（温度を下げていた request など）は、コードが通るかではなく出力が変わらないかで確かめてください。
+
 ---
 
 ### 7-6. pnpm — 依存パッケージに同梱された Skill をつなぐ

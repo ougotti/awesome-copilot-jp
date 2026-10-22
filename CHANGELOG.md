@@ -16,6 +16,10 @@
   - [GitHub Copilot ガイド](docs/copilot/README.md#cli-1010010102-と-vs-code-1143--sandbox-の既定とskillplugin指示の入り方)に節を新設した。sandbox が localhost・private network へのアクセスを既定で許可する変更と proxy の継承、GitHub のインストールリンクからの「verified」な Skill / Plugin の導入（基準は非公開）、信頼済みリポジトリの Plugin の自動導入、Team の marketplace、`.github/instructions` のパス別の指示の自動適用、Skill の `allowed-tools` の解釈の修正、`assistedApprovalInstructions`・subagent への承認の引き継ぎ・`--trust-folder`、VS Code 1.143 の必須 agent plugin の自動導入・session ごとの sandbox 切り替え・`telemetry.headersProvider` を整理した。
   - [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#2026-10-1810-22-の権限境界の更新)に、sandbox の通信・信頼と導入の結びつき・「verified」の意味の 3 行を追加した。
   - release note は 2026-10-22 に確認した。実機での検証は行っていない。
+- **2026-10-22** Claude API version `2026-10-21` と SDK / `ant` CLI 2.0 を反映（#289）。
+  - [Skills 最新動向](docs/trends.md#api-version-2026-10-21-と-ant-cli-202026-10-21) 7-5 節に、`ant apply` を CI で回すリポジトリが CLI を上げる時点で確認する変更の表を追加した（`--api-key` / `--auth-token` の削除、`Authorization: Bearer`、sampling パラメータの 400、`document` / `citations` の制約、Admin API の旧フィールド名、Text Completions とクライアント側 compaction の削除、MIT → Apache 2.0、Go の module path）。Claude Code 2.1.307 の `/claude-api api-version` は挙動の変わる変更を出力で確かめる前提で紹介した。
+  - [ハーネスの `ant apply`](docs/dev-methods/harness.md#ci-に載せるときの注意点) の CI の注意点に flag の削除を追加した。
+  - 移行ガイドは 2026-10-22 に確認した。SDK・CLI での実機の検証は行っていない。
 
 - **2026-10-21** Hermes Agent（Nous Research の OSS の常駐型エージェント）の解説を追加（#282）。
   - [Hermes Agent — 常駐して自分から連絡してくる OSS エージェント](docs/dev-methods/hermes-agent.md)を新設した。動画「Build Your First AI Agent in 20 Minutes (No Coding)」（Metics Media、2026-10-19）が紹介する VPS + Telegram + 安価なモデル + 価格の監視という構成を、公式ドキュメントで裏を取りながら整理した。チャットボット・コーディングエージェント・常駐エージェントの違い、gateway・エージェント本体・terminal backend・モデルの 4 層、置き場所の選び方、最小の手順、モデルの接続先（Claude Code のログインを借りる経路は Pro では使えず extra usage を消費する点を含む）、cron の `[SILENT]` / `wakeAgent` / `no_agent` による「変化があったときだけ知らせる」組み方と cron の性質、費用の 4 分類、公開前の最低ライン（allowlist・承認モード・コンテナ backend・ダッシュボードの bind・v0.21.6 のセキュリティ修正）、Kiro Crew・QM・Letta Code との違いをまとめた。

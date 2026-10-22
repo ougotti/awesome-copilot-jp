@@ -435,6 +435,7 @@ Console などファイルの外側でリソースが編集・アーカイブ・
 - **途中で失敗した場合も、ジョブの最後に `claude-lock.json` をコミットする**。部分適用でも、作成済みのリソースは記録されているため
 - **同時に 1 つだけ実行する**。lockfile はロックされない
 - 認証は保存した API キーではなく [Workload Identity Federation](https://platform.claude.com/docs/en/manage-claude/workload-identity-federation) を使う
+- **`ant` CLI 2.0.0（2026-10-21）では `--api-key` / `--auth-token` の flag が削除された**。flag で鍵を渡しているジョブは CLI を上げると止まる。CLI 2.0 は API version `2026-10-21` を既定で送るため、上げる前に [Skills 最新動向 7-5 節の移行表](../trends.md#api-version-2026-10-21-と-ant-cli-202026-10-21)を確認する
 
 **人間の責任境界**: plan の承認（対話時）とレビュー（`--dry-run` の出力）が、変更を止められる唯一の地点です。`--yes` で自動適用する経路には、その前段に PR レビューを置いてください。
 
