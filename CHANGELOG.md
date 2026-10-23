@@ -4,6 +4,29 @@
 
 ## 2026-10
 
+- **2026-10-22** Claude Duet（Anthropic、2026-10-21、Research Preview）を追加（#286）。
+  - [Hermes Agent](docs/dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dots)に「11. 事業者が運営する選択肢 — Claude Duet・ChatGPT の dots」を新設し、運営者・動く場所・モデル・接続先・確認の頻度・承認・費用を 3 つで比べた。米国の Pro / Max 向けのウェイトリスト制で日本からは使えないこと、承認があっても証券取引と口座間の送金は行わないこと、背景での確認も利用上限を消費すること、外から届く文面の指示への注意を明記した。「30 秒で判断する」からも誘導した。
+  - [Skills 最新動向](docs/trends.md#10-aiエージェントの実行基盤ハーネス) 10 節に要約を、[生成AIを業務で安全に使う](docs/business/safety.md#ノーコードで自分専用のエージェントを動かす前に)に事業者が運営する製品でも変わらない確認を追加した。
+  - 一次資料（発表記事・製品ページ・ヘルプ記事）は 2026-10-22 に確認した。日本からは利用できないため実機では確認していない。
+- **2026-10-22** Claude Code 2.1.304〜2.1.307 の統制に関わる変更を反映（#287）。
+  - [Claude Code のカスタマイズ機能](docs/claude-code/basics.md#2130421307--統制が緩む変更と締まる見える変更)に節を新設した。**更新で今までより通るようになる変更**（`allowedMcpServers` が `managed-mcp.json` の一部の stdio server を絞り込まなくなり `deniedMcpServers` が必要に、`sandbox.allowNestedUserNamespaces` は sandbox のファイル保護を迂回できる、gateway の背後での tool search）と、締まる・見える変更（Mods の `decider: "person"` と `settings.read` による上限、hook を止めた Skill の `allowed-tools`、`claude_code.safety_event`）、無人実行の修正（HTTP MCP の二重送信、`--worktree` のコミット消失、`--max-turns` 超過、Workflow の再開）を分け、更新時の確認手順をまとめた。
+  - [Mods](docs/claude-code/mods.md#2130421305-で統制に使える部品が増えた)・[ハーネスの OTel](docs/dev-methods/harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions)・[信頼性設計](docs/dev-methods/agent-reliability.md#5-冪等性重複実行外部副作用の扱い)・[AI コードレビュー](docs/dev-methods/review-instructions.md#レビューの深さも基準と同じく変更として扱う)（Quick / Standard / Deep と `@claude review stop`）へ反映し、[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#2026-10-1810-22-の権限境界の更新)に「2026-10-18〜10-22 の権限境界の更新」を新設した。
+  - release note は 2026-10-22 に確認した。実機での検証は行っていない。
+- **2026-10-22** Copilot CLI 1.0.100〜1.0.102 と VS Code 1.143 を反映（#288）。
+  - [GitHub Copilot ガイド](docs/copilot/README.md#cli-1010010102-と-vs-code-1143--sandbox-の既定とskillplugin指示の入り方)に節を新設した。sandbox が localhost・private network へのアクセスを既定で許可する変更と proxy の継承、GitHub のインストールリンクからの「verified」な Skill / Plugin の導入（基準は非公開）、信頼済みリポジトリの Plugin の自動導入、Team の marketplace、`.github/instructions` のパス別の指示の自動適用、Skill の `allowed-tools` の解釈の修正、`assistedApprovalInstructions`・subagent への承認の引き継ぎ・`--trust-folder`、VS Code 1.143 の必須 agent plugin の自動導入・session ごとの sandbox 切り替え・`telemetry.headersProvider` を整理した。
+  - [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#2026-10-1810-22-の権限境界の更新)に、sandbox の通信・信頼と導入の結びつき・「verified」の意味の 3 行を追加した。
+  - release note は 2026-10-22 に確認した。実機での検証は行っていない。
+- **2026-10-22** Claude API version `2026-10-21` と SDK / `ant` CLI 2.0 を反映（#289）。
+  - [Skills 最新動向](docs/trends.md#api-version-2026-10-21-と-ant-cli-202026-10-21) 7-5 節に、`ant apply` を CI で回すリポジトリが CLI を上げる時点で確認する変更の表を追加した（`--api-key` / `--auth-token` の削除、`Authorization: Bearer`、sampling パラメータの 400、`document` / `citations` の制約、Admin API の旧フィールド名、Text Completions とクライアント側 compaction の削除、MIT → Apache 2.0、Go の module path）。Claude Code 2.1.307 の `/claude-api api-version` は挙動の変わる変更を出力で確かめる前提で紹介した。
+  - [ハーネスの `ant apply`](docs/dev-methods/harness.md#ci-に載せるときの注意点) の CI の注意点に flag の削除を追加した。
+  - 移行ガイドは 2026-10-22 に確認した。SDK・CLI での実機の検証は行っていない。
+- **2026-10-22** 組織統制の更新を反映（#290）。
+  - Inference hooks の Beta 終了（2026-10-20）を [Claude Code の組織での統制](docs/claude-code/basics.md#導入時に確認すること)・[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#5-統制が効く-3-つの段階)・[Skills 最新動向](docs/trends.md#12-skill--plugin-のセキュリティ) 12 節に反映し、対象の製品面、`tool_call` event、circuit breaker に加えて、**判定を通らない経路**（Anthropic が組織のために動かす Code Review・Claude Security のスキャン・smart reports、Bedrock / Google Cloud、API 組織、音声モードの一部）と、拒否後に会話を続ける方法を追記した。
+  - [Web ツールの URL 制限](docs/dev-methods/skill-security.md#web-ツールが取得できる-url-を絞る2026-10-07)に、組織単位の Web fetch の無効化・ドメイン制限と、Managed Agents の `web_fetch` / `web_search` が組織と agent の両方の設定を満たす必要がある点を追加した。
+  - [AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md#誰のための-request-かをモデル提供者に伝える--claude-api-の-user-profiles2026-10-20)に Claude API の user profiles（最終顧客ごとの識別、`enforcement_status`、organization webhooks）を、[GitHub Copilot ガイド](docs/copilot/README.md#モデルの方針を-api-で管理する--copilot-model-policy-api2026-10-19)に Copilot model policy API と 10-19 のモデル廃止の実施を追加した。
+  - [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#2026-10-1810-22-の権限境界の更新)の更新表に、推論前の判定・組織単位の Web 取得・最終顧客ごとの識別・GitHub package firewall（Public Preview、npm のみ）・モデルの方針の行を追加した。
+  - 一次資料は 2026-10-22 に確認した。管理画面・API での検証は行っていない。
+
 - **2026-10-21** Hermes Agent（Nous Research の OSS の常駐型エージェント）の解説を追加（#282）。
   - [Hermes Agent — 常駐して自分から連絡してくる OSS エージェント](docs/dev-methods/hermes-agent.md)を新設した。動画「Build Your First AI Agent in 20 Minutes (No Coding)」（Metics Media、2026-10-19）が紹介する VPS + Telegram + 安価なモデル + 価格の監視という構成を、公式ドキュメントで裏を取りながら整理した。チャットボット・コーディングエージェント・常駐エージェントの違い、gateway・エージェント本体・terminal backend・モデルの 4 層、置き場所の選び方、最小の手順、モデルの接続先（Claude Code のログインを借りる経路は Pro では使えず extra usage を消費する点を含む）、cron の `[SILENT]` / `wakeAgent` / `no_agent` による「変化があったときだけ知らせる」組み方と cron の性質、費用の 4 分類、公開前の最低ライン（allowlist・承認モード・コンテナ backend・ダッシュボードの bind・v0.21.6 のセキュリティ修正）、Kiro Crew・QM・Letta Code との違いをまとめた。
   - [ハーネス](docs/dev-methods/harness.md#hermes-agent--個人が自分の置き場所に住まわせるエージェント)の実装一覧を 5 つにして Hermes の節を追加し、[Skills 最新動向](docs/trends.md#10-aiエージェントの実行基盤ハーネス) 10 節に要約を追加した。
@@ -115,7 +138,7 @@
 - **2026-10-08** 2026-09-26〜10-03 の最新動向の残りを反映（#232）。Computer Use・Dynamic workflows・Code Review API は 10-05〜06 の更新で対応済み。
   - [GitHub Copilot ガイド](docs/copilot/README.md#vs-code-1140--copilot-harness複数フォルダの-sessionremote-host-への委任)に VS Code 1.140（Copilot harness と Local harness の区別、Agents window の複数フォルダの session と remote host への委任＝Experimental、MCP の保存先と `.vscode/mcp.json` の deprecated、OTel の identity capture は既定オフで Local harness のみ）と、Copilot CLI 1.0.89〜1.0.91（`.claude/rules` 互換、`oauthScopes`、`--mcp-github-auth`、read-only のディレクトリ承認、`copilot sandbox ca`、読み取り専用 pipeline の review）を追加した。
   - [複数ルート運用](docs/copilot/multi-root.md#agents-window-の複数フォルダの-session-は別機能vs-code-1140)の「Agents window は対象外」を保ったまま、1.140 の Agents window の機能を別機能として比較表で区別した。
-  - [Claude Code のカスタマイズ機能](docs/claude-code/basics.md#21285〜21288-の統制に関わる変更)に 2.1.288 の修正（remote MCP の二重実行、`bash -c` 内の危険な `rm`、フックのスキップ、plugin agent の設定、cloud session のモデル、path 限定ルール、バックグラウンドの時間制限）と、2.1.285〜2.1.287（`plugin configure`、`.mcpb`、`allowedProviders`、managed settings の読み取りエラーの境界、`prompt_text`、`bareElicitationCapability`、`__proto__`）を追加し、2.1.288 以上を推奨下限の候補として示した（LTS とは書かない）。
+  - [Claude Code のカスタマイズ機能](docs/claude-code/basics.md#2128521288-の統制に関わる変更)に 2.1.288 の修正（remote MCP の二重実行、`bash -c` 内の危険な `rm`、フックのスキップ、plugin agent の設定、cloud session のモデル、path 限定ルール、バックグラウンドの時間制限）と、2.1.285〜2.1.287（`plugin configure`、`.mcpb`、`allowedProviders`、managed settings の読み取りエラーの境界、`prompt_text`、`bareElicitationCapability`、`__proto__`）を追加し、2.1.288 以上を推奨下限の候補として示した（LTS とは書かない）。
   - [Codex ガイド](docs/codex/README.md#codex-cli-01600（2026-10-01）)に 0.160.0 を追加し、[信頼性設計](docs/dev-methods/agent-reliability.md#5-冪等性重複実行外部副作用の扱い)・[プラグインの可搬性](docs/dev-methods/plugin-portability.md#instruction-ファイルは別のエージェントにも読まれる)・[ハーネス](docs/dev-methods/harness.md)・[最新動向](docs/trends.md)に要約を追加した。各一次情報を2026-10-08に確認した。
 
 - **2026-10-08** mattpocock/skills の新規 Skill 3 件を反映（#233）。

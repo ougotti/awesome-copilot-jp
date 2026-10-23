@@ -18,10 +18,10 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-10-22** [10-18〜10-22 の最新動向](docs/trends.md#2026-10-1810-22-の更新--更新するだけで通るようになる変更)を反映。Claude Code と Copilot CLI で更新するだけで通るようになる変更（MCP の allowlist・sandbox のローカルネットワーク）、[Claude Duet](docs/dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dots)、API version `2026-10-21`、Inference hooks の Beta 終了と判定を通らない経路を整理。
 - **2026-10-21** [Hermes Agent](docs/dev-methods/hermes-agent.md)の解説を追加。メッセージアプリへ常駐する OSS エージェントの置き場所・モデルの選び方、何もなかった回に LLM を起こさない cron、自分で書き換える Skill と記憶の統制、公開前の最低ラインを整理。
 - **2026-10-19** [MCP Skills 拡張](docs/dev-methods/skills-over-mcp.md)の解説を追加。Skill を MCP server から Resources として配る SEP-2640 の仕組み、対応状況（主要なコーディングエージェントは未対応）、中身が変われば取り消される承認を整理。
 - **2026-10-18** [pnpm の agent skills](docs/trends.md#7-6-pnpm--依存パッケージに同梱された-skill-をつなぐ)を追加。依存パッケージに同梱された Skill を承認制でリンクする pnpm 12.11.0 の機能と、承認が以降のバージョンにも及ぶ点を整理。
-- **2026-10-17** [10-15〜10-17 の最新動向](docs/trends.md#2026-10-1510-17-の更新--無人実行の既定値と会話から届く範囲)を反映。Claude Code 2.1.302 の無人実行の開始モードと subagent の既定、routine の再実行の修正、Slack / Teams からの複数 repository 操作、保存済み指示の監査 API を整理。
 - **2026-10-16** upstream の削除も検知するようにし、[Instructions 一覧](docs/copilot/instructions.md)を 192 件に同期。AI-DLC v2 で止まっていた追跡も直した。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**

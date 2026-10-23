@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-17
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-22
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -467,13 +467,15 @@ Claude Enterprise では、Skill や Plugin の「入れる前の確認」に加
 | 段階 | 機能 | 状態 | 何ができるか |
 |------|------|------|-------------|
 | 導入前 | Skill / Plugin のセキュリティスキャン | Beta（Enterprise プラン、2026-08-06） | 第三者製の Skill・Plugin を、**アップロードまたは編集された時点**で悪意ある内容がないか自動検査する |
-| 推論前 | Inference hooks | Beta（Claude Enterprise、2026-08-05） | 組織の AI セキュリティサーバーを指定すると、**claude.ai・Cowork・Claude Code の対象プロンプトが、サーバーの allow / deny 判定が返るまで推論に進まない**。リクエストは署名され、失敗時の挙動は設定可能。**拒否はすべて Activity Feed に記録される** |
+| 推論前 | Inference hooks | Claude Enterprise 向けに 2026-08-05 から Beta、**2026-10-20 に Beta を終了** | 組織の AI セキュリティサーバーを指定すると、**claude.ai・Cowork・Claude Code・Claude for Microsoft 365・Claude Tag・Claude in Chrome などの対象プロンプトが、サーバーの allow / deny 判定が返るまで推論に進まない**。**Validate tool calls** を有効にすると、tool の実行前にも判定する（`tool_call` event）。リクエストは署名され、判定の待ち時間（既定 5 秒）と失敗時の挙動は設定可能。**拒否はすべて Activity Feed に記録される** |
 | 実行後 | Compliance API のセッション取得 | 利用者のマシン上のセッション取得は 2026-08-26 に**ベータを終了**（Cowork / Claude Code）。Claude for Microsoft 365 のセッションは 2026-09-24 に**ベータを終了**、Claude in Chrome のセッションは 2026-09-18 から **Beta** | 組織横断でセッションを一覧し、個別セッションのメタデータとトランスクリプトを取得する。既存の Compliance Access Key と `read:compliance_user_data` スコープを使う |
 
 ### 導入時に確認すること
 
 - **いずれも Enterprise 向け**です。個人・チームプランでは使えません
-- **Inference hooks は自組織でセキュリティサーバーを用意する前提**です。判定サーバーが落ちたときの挙動（通すのか止めるのか）を設定で決めておく必要があります
+- **Inference hooks は自組織でセキュリティサーバーを用意する前提**です。判定サーバーが落ちたときの挙動（通すのか止めるのか）を設定で決めておく必要があります。障害が続くと circuit breaker が働き、その間はすべての request にこの設定が適用されます
+- **Inference hooks を通らない呼び出しがあります**（2026-10-22 確認）。Anthropic が組織のために動かす **Code Review（GitHub の PR のレビュー）・Claude Security のスキャン・smart reports** のモデル呼び出しは対象外です（利用者が Claude Code で実行する `/code-review` は対象）。Amazon Bedrock・Google Cloud、Claude Platform の API 組織も対象外で、音声モードでは一部の tool call が送られません。判定は allow / deny だけで、prompt の書き換え・伏せ字はできず、画像だけの内容は検査されません。**Inference hooks を唯一の DLP にしない**でください（[Inference hooks](https://platform.claude.com/docs/en/manage-claude/inference-hooks)）
+- 拒否された内容は会話に残るため、続けると同じ理由で拒否され続けます。Claude Code では `/rewind` で該当の prompt まで戻すか `/clear` で始め直す、と公式が案内しています
 - Compliance API で取得できるのは**利用者のマシン上で動いたセッションを含みます**。監査の範囲と、従業員への周知の要否を法務・人事と確認してください
 - 取得できる面は増えています。Claude for Microsoft 365（Excel・PowerPoint・Word・Outlook）は `product_surface` が `office_agents` で始まる値、Claude in Chrome は `claude_in_chrome` で区別します。監査対象の一覧に、これらの面を加えるかを決めてください
 
@@ -831,6 +833,54 @@ MCP connector の `mcp-client-2026-09-15` beta header と組み合わせると�
 これらの不具合に対して設定の回避策を入れていた場合は、恒久的な運用にせず、2.1.302 へ更新したうえで副作用のない操作で再検証してから回避策を外してください。**MCP・Plugin・worktree をこの構成で使う環境では 2.1.302 以上を検証する下限候補**とします。公式 LTS や、以後の版が不要という意味ではありません。
 
 **→ 組織での見直しの観点は [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#2026-10-1510-17-の権限境界の更新) を参照**
+
+### 2.1.304〜2.1.307 — 統制が緩む変更と、締まる・見える変更
+
+> **確認日: 2026-10-22**。**提供元: Official / 状態: GA（CLI の正式リリース）**。[2.1.304](https://github.com/anthropics/claude-code/releases/tag/v2.1.304)（2026-10-19）、[2.1.305](https://github.com/anthropics/claude-code/releases/tag/v2.1.305)（2026-10-20）、[2.1.306](https://github.com/anthropics/claude-code/releases/tag/v2.1.306)（2026-10-21）、[2.1.307](https://github.com/anthropics/claude-code/releases/tag/v2.1.307)（2026-10-21）の release に基づきます（日付は公式 release の UTC 日付。2.1.303 と 2.1.308 は不具合修正のみ）。本ガイドでは実機で再現していません。
+
+この期間は、**更新するだけで今までより通るようになる変更**が 2 つあります。先にこれを確認してください。
+
+**統制が緩む方向の変更（更新前に確認する）**
+
+| 版 | 変更 | 見直すこと |
+|----|------|-----------|
+| 2.1.305 | **`allowedMcpServers` が、`managed-mcp.json` の stdio server のうち `${VAR}` を `env` にだけ使うものを絞り込まなくなった**。allowlist から外していたそうした server は、**更新すると読み込まれる** | 止めたい server は `deniedMcpServers` に書く。allowlist だけで止めていた構成を洗い出す |
+| 2.1.305 | `sandbox.allowNestedUserNamespaces` を追加。Linux の sandbox 内で user namespace を作れるようにする（Chromium・rootless podman 向け）。**公式は「sandbox のファイル保護を迂回できる」と明記** | 有効にするなら、その端末の sandbox は書き込み境界として扱わない。managed settings で禁止するかを決める |
+| 2.1.304 | tool search を、独自の `ANTHROPIC_BASE_URL` の背後でも既定で有効にした（gateway が 400 / 422 を返したら外して再送） | LLM gateway で tool 定義を検査・記録している場合、送られる tool の形が変わる |
+
+**統制が締まる・見える方向の変更**
+
+| 版 | 変更 | 運用上の意味 |
+|----|------|-------------|
+| 2.1.304 | [Mods](mods.md) の `tool.check` に **`decider: "person"`**。その確認は承認画面か host の callback でしか承認できず、誰にも聞けない場面では mod の理由を添えて拒否される | auto mode や classifier に委ねたくない確認を、人の判断に固定できる |
+| 2.1.304 | Mods の `settings.read` hook が**設定の層ごと**に受け取り、統合後の設定を書き換えられる。managed mod が組織の設定を**上限**にでき、保存期間の掃除に使う `cleanupPeriodDays` も対象 | 利用者の設定で組織の値を緩められない形を、mod で作れる |
+| 2.1.304 | plugin の hook だけを許すポリシーで、main conversation で使う Skill の hook が外される場合、その Skill の **`allowed-tools` も付与しない** | hook を止めた Skill が、許可だけ持ち込む抜け道を塞ぐ |
+| 2.1.304 | 1 つの取得元（リポジトリ・自分のフォルダ・plugin）の Skill が登録できる hook を、session あたり 1,024 個・matcher 16,384 文字までに制限 | 大量の hook を登録する Skill は動かなくなる |
+| 2.1.305 | `allowManagedPermissionRulesOnly` を設定した組織では、Claude Desktop がパス指定で読み込む plugin の `allowed-tools` を付与しない | managed の許可だけを効かせる設定が、desktop の plugin にも及ぶ |
+| 2.1.307 | OpenTelemetry に **`claude_code.safety_event`**。permission rule・auto mode・安全チェック・hook・sandbox が止めた、確認を求めた、差し戻した tool 呼び出しごとに出る | 「何が止められたか」を集計できる。→ [ハーネスの OTel](../dev-methods/harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions) |
+| 2.1.307 | `/permissions` の Recently denied に拒否した shell コマンドそのものを表示し、承認すると説明ではなくコマンドを名指しする | 何を承認したかが曖昧なまま許可しない |
+
+**無人実行・再開の修正**
+
+| 版 | 変更 | 影響を受けていた構成 |
+|----|------|-------------------|
+| 2.1.307 | HTTP MCP の tool 呼び出しが、**呼び出し中に接続が切れると 2 回送られていた**。read-only か idempotent の tool だけを再試行するよう修正 | 書き込みをする remote MCP tool。過去に二重の作成・送信がなかったか確認する（[信頼性設計](../dev-methods/agent-reliability.md#5-冪等性重複実行外部副作用の扱い)） |
+| 2.1.304 | `claude --worktree` が、HEAD が detached か別のブランチのとき、終了時に確認なしで worktree とブランチを削除し、**コミットを失い得た** | `--worktree` で作業した端末。失ったコミットは `git reflog` で探す |
+| 2.1.304 | plugin が subagent を起動・再実行して、headless 実行を `--max-turns`・Stop・入力の終了を越えて続けていた | 回数や時間の上限を `--max-turns` で決めていた無人実行 |
+| 2.1.305 | Workflow の再開で、完了済みの `pipeline()` / `parallel()` の agent を記録から返さず再実行していた | workflow を途中から再開する運用（[ループエンジニアリング](../dev-methods/loop-engineering.md#定期実行の再実行と外部副作用--claude-code-21302)） |
+| 2.1.305 | cloud session や SDK の `setMcpServers` で渡した MCP server が、後から利用者の設定にある同名の server に置き換えられていた | 呼び出し側が接続先を固定していたつもりの構成 |
+
+**運用の新機能**
+
+- `/auto-mode-setup`（2.1.304）— プロジェクトと最近の session を読み、auto mode に環境を教える対話型の設定。Bedrock・Vertex・Foundry・telemetry off の session でも使えます。
+- `/claude-api managed-agents-secure`（2.1.304）— Managed Agents の agent の設定を、Anthropic の公開しているセキュリティガイドと比べます。設定は変えません。
+- Code Review（2.1.304〜2.1.307）— Owner が組織に **Quick / Standard（既定）/ Deep** のレビュー段階を選び、リポジトリごとに変えられます。組織のすべてのリポジトリ（後から追加したものを含む）を対象にする設定と、`@claude review always` の購読をやめる `@claude review stop`（`off` / `pause`）も追加されました。→ [AI コードレビューはどの指示を読むか](../dev-methods/review-instructions.md)
+
+**更新時の確認手順（検証用プロジェクトで行う設計例。本ガイドでの実測ではありません）**
+
+1. `managed-mcp.json` の stdio server で `${VAR}` を `env` に使うものを一覧にし、allowlist から外していたものを `deniedMcpServers` に移す。更新後に `claude mcp list` で読み込まれないことを確かめる。
+2. `sandbox.allowNestedUserNamespaces` を誰かが有効にしていないか、managed settings と配布している settings を確認する。
+3. 書き込みをする remote MCP tool があれば、2.1.307 より前に二重の作成・送信が起きていなかったかを、相手側の記録で確認する。
 
 ## セットアップ
 

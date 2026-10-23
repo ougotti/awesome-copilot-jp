@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-21
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-22
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-22 | 10-18〜10-22 の更新を追加した。10 節に Claude Duet（Research Preview）、7-5 節に API version `2026-10-21` と `ant` CLI 2.0、12 節に Inference hooks の Beta 終了と判定を通らない経路。冒頭に「2026-10-18〜10-22 の更新」の一覧を置き、Claude Code 2.1.304〜2.1.307・Copilot CLI 1.0.100〜1.0.102・VS Code 1.143 の詳細は製品別ページへ集約した |
 | 2026-10-21 | 10 節に Hermes Agent（Nous Research の OSS の常駐型エージェント）を追加し、gateway・cron の `[SILENT]` / `wakeAgent`・モデルの選び方・公開前の最低ラインを [解説ページ](dev-methods/hermes-agent.md) にまとめた |
 | 2026-10-19 | 13 節に MCP の Skills 拡張（`io.modelcontextprotocol/skills`、SEP-2640 は Final）を追加し、Skill を MCP server から Resources として配る仕組み・対応状況・内容に結びついた承認を [解説ページ](dev-methods/skills-over-mcp.md) にまとめた。7 節の冒頭からも誘導した |
 | 2026-10-18 | 7 節に「7-6. pnpm」を新設し、pnpm 12.11.0（2026-10-09）の agent skills（依存パッケージに同梱された Skill を、承認したものだけエージェントのスキルディレクトリへリンクする）を追加した。比較表を 5 つへ拡張し、承認がパッケージ単位で以降のバージョンにも及ぶ点を [Skill / Plugin のセキュリティ](dev-methods/skill-security.md#承認の記憶がどこまで及ぶか)に追加した |
@@ -73,6 +74,22 @@
 | 2026-08-01 | 「Skill の発見・配布・更新」を追加（`gh skill` / Agent Finder・ARD / Copilot Plugins） |
 | 2026-07-29 | 常設ページ化（旧タイトル「2026年7月版」）。ガイド全体の更新は [更新履歴（CHANGELOG）](../CHANGELOG.md) を参照 |
 | 2026-07-22 | 初版公開（Matt Pocock's Skills / Context7 / Firecrawl / Vercel / Record & Replay / Computer Use の6テーマ） |
+
+## 2026-10-18〜10-22 の更新 — 更新するだけで通るようになる変更
+
+対象期間の一次情報を 2026-10-22 に確認しました。Codex（Stable は 0.163.0、以降は alpha のみ）・MCP・Agent Skills・Agent Plugins には新しい正式 release がありません。モデルの追加・価格、UI だけの更新は対象外です。release note と公式 docs の照合のみで、実機での検証は行っていません。
+
+| 公開日（公式掲載日 / release の UTC 日付） | 更新 | 提供元・状態 | 詳細 |
+|---|---|---|---|
+| 10-19〜21 | Claude Code 2.1.304〜2.1.307。`allowedMcpServers` が一部の managed stdio server を絞り込まなくなる（`deniedMcpServers` が必要）、`sandbox.allowNestedUserNamespaces`、Mods の `decider: "person"`、`claude_code.safety_event`、HTTP MCP の二重送信と `--worktree` のコミット消失の修正、Code Review のレベル | Official / GA | [Claude Code](claude-code/basics.md#2130421307--統制が緩む変更と締まる見える変更)、[Mods](claude-code/mods.md#2130421305-で統制に使える部品が増えた) |
+| 10-19〜21 | Copilot CLI 1.0.100〜1.0.102。sandbox が localhost・private network を既定で許可、GitHub のリンクからの「verified」な Skill / Plugin、信頼済みリポジトリの Plugin の自動導入、`.github/instructions` の自動適用 | Official / GA | [GitHub Copilot ガイド](copilot/README.md#cli-1010010102-と-vs-code-1143--sandbox-の既定とskillplugin指示の入り方) |
+| 10-19 頃 | VS Code 1.143。Copilot harness が新規 session の既定、必須の agent plugin の自動導入、session ごとの sandbox 切り替え | Official / Stable（一部 Preview / Experimental） | 同上 |
+| 10-21 | Claude Duet。接続したアプリを見張り、必要なときだけ連絡するエージェント型アプリ（米国の Pro / Max、ウェイトリスト制） | Official / Research Preview | [10 節](#10-aiエージェントの実行基盤ハーネス)、[比較](dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dots) |
+| 10-21 | Claude API version `2026-10-21` と SDK / `ant` CLI 2.0（sampling パラメータの削除、`--api-key` の削除、Apache 2.0） | Official / GA | [7-5 節](#api-version-2026-10-21-と-ant-cli-202026-10-21) |
+| 10-20 | Inference hooks の Beta 終了、組織単位の Web fetch の制限、user profiles と organization webhooks（Beta） | Official / GA（webhooks は Beta） | [セキュリティ](dev-methods/skill-security.md#2026-10-1810-22-の権限境界の更新)、[ID・認可](dev-methods/agent-identity.md#誰のための-request-かをモデル提供者に伝える--claude-api-の-user-profiles2026-10-20) |
+| 10-19〜20 | Copilot model policy API、GitHub package firewall（npm のみ） | Official / GA・Public Preview | [model policy API](copilot/README.md#モデルの方針を-api-で管理する--copilot-model-policy-api2026-10-19)、[セキュリティ](dev-methods/skill-security.md#2026-10-1810-22-の権限境界の更新) |
+
+この期間は、**更新するだけで今までより通るようになる変更**が Claude Code（MCP の allowlist）と Copilot CLI（sandbox のローカルネットワーク）の両方で入りました。製品の更新を配る前に、[止めたつもりのものが止まっているか](dev-methods/skill-security.md#2026-10-1810-22-の権限境界の更新)を検証用の端末で確かめてください。
 
 ## 2026-10-15〜10-17 の更新 — 無人実行の既定値と、会話から届く範囲
 
@@ -570,6 +587,23 @@ Skill 以外は YAML / JSON / Markdown のいずれでも書けます。リソ�
 
 **→ plan / 承認、lockfile、drift、破壊的フラグ、CI 運用の詳細は [AI エージェントの実行基盤（ハーネス）](dev-methods/harness.md#宣言でリモートのエージェントを管理する--ant-apply) を参照**
 
+#### API version `2026-10-21` と `ant` CLI 2.0（2026-10-21）
+
+Claude API は 2026-10-21 に、`2023-06-01` 以来の新しい API version **`2026-10-21`** を公開しました。同日に出た各言語の SDK の新しいメジャー版と **`ant` CLI 2.0.0** は、既定でこの version を送ります（[Migrating to API version 2026-10-21](https://platform.claude.com/docs/en/api/migration-2026-10-21)、2026-10-22 確認）。`ant apply` を CI で回しているリポジトリは、CLI を上げる時点で次を確認してください。
+
+| 変更 | 影響する使い方 |
+|---|---|
+| **`--api-key` / `--auth-token` を削除**（コマンドラインの値はシェル履歴やプロセス一覧に残るため）。v1.27.0 から警告を出していた | CI で flag に鍵を渡していると `flag provided but not defined` で止まる。環境変数か secret の仕組みで渡す |
+| SDK / CLI が API key を `Authorization: Bearer` で送り、client は資格情報を 1 つだけ持つ | gateway や proxy で `X-Api-Key` を前提に検査・付け替えしている構成 |
+| Messages API で `temperature` / `top_p` / `top_k` を送ると 400 | 出力を揃えるために温度を下げていた Agent や評価。代わりの設定はなく、続けるならその request だけ `2023-06-01` に残す |
+| `assistant` メッセージに直接置いた `document` block、`user` メッセージの `text` block の `citations` が 400 | 会話履歴を組み立て直して送るアプリ |
+| Admin API・Enterprise Analytics API の旧フィールド名と API key の `workspace_id` を削除（`scope` を読む） | 組織の管理・監査を自動化しているスクリプト |
+| SDK の Text Completions、tool runner のクライアント側 compaction（TypeScript / Ruby）を削除 | 古い統合コード |
+| SDK と CLI のライセンスが **MIT から Apache 2.0** に | 同梱・再配布の扱いを社内の基準で確認する |
+| Go で入れる場合は module path が `github.com/anthropics/anthropic-cli/v2` に | `go install` で CLI を入れている CI |
+
+Claude Code 2.1.307 には、Claude API のコードを `2026-10-21` へ移す `/claude-api api-version` が加わりました。移行の下書きに使えますが、上の表のように**挙動が変わる変更**（温度を下げていた request など）は、コードが通るかではなく出力が変わらないかで確かめてください。
+
 ---
 
 ### 7-6. pnpm — 依存パッケージに同梱された Skill をつなぐ
@@ -826,6 +860,8 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 
 個人向けの常駐型では **Hermes Agent**（Nous Research が MIT で公開。`提供元`: Official / `状態`: GA。2026-10-13 の v0.22.0 で SemVer の安定版チャネルが既定に）があります。Kiro Crew と違い、Claude Code や Codex を駆動するのではなく**エージェント本体まで自前**で、gateway が Telegram などのメッセージアプリと cron を受け持ち、モデルは利用者が Nous Portal・OpenRouter・各社の API・ローカルから選びます。cron には、何もなかった回の配信を止める `[SILENT]` と、事前スクリプトの判定で**その回は LLM を起動しない** `wakeAgent` ゲートがあります。2026-10-19 公開の動画「Build Your First AI Agent in 20 Minutes (No Coding)」が VPS と Telegram での構成を紹介していますが、bot がサーバーのシェルへの入口になる点、承認の既定、ダッシュボードの公開範囲は自分で守る必要があります（[解説](dev-methods/hermes-agent.md)）。
 
+同じ「先に連絡してくる」形を事業者が運営する製品として、Anthropic は 2026-10-21 に **Claude Duet**（`提供元`: Official / `状態`: Research Preview。米国の Pro / Max 向けのウェイトリスト制で、日本からは未提供）を公開しました。接続したアプリを数時間ごとに確認し、対応が必要なときだけ連絡し、大きな仕事は Anthropic のクラウドの仮想マシンで進めます。送信・支払い・署名・削除の前には必ず確認し、承認があっても証券取引と口座間の送金は行いません。背景での確認もプランの利用上限を消費します。Hermes Agent・ChatGPT の dots との違いは[比較表](dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dots)にまとめました。
+
 2026-09-10には **OpenAI Agents API**（`提供元`: Official / `状態`: Public Beta）が公開されました。これはOpenAI管理のCodexハーネスをAPIとして提供し、durable session、orchestration、context compaction、recoveryをOpenAI側で担います。ただし実行環境は `none` / OpenAI-hosted / self-hostedから選ぶ別の層であり、APIを使うだけでsandbox、network、secret、tool権限の設計が不要になるわけではありません。Codex製品、Agents SDK、Codex SDK / app serverとも役割が異なります。
 
 2026-09-29には[Agents APIのComputer Use](https://developers.openai.com/api/docs/guides/agents-api/tools/computer-use)が追加されました。OpenAI-hosted browserでWeb画面を扱えますが、network policyとWebサイトのoriginごとの承認は別で、originの承認は購入・削除などの操作ごとの確認を保証しません。[ハーネス解説](dev-methods/harness.md#agents-apiでブラウザを操作する2026-09-29)に実行環境と承認の境界をまとめました。
@@ -890,7 +926,7 @@ Snyk の「ToxicSkills」調査（2026-02-05 公開）は、ClawHub と skills.s
 
 最低限の対処は 3 つです — **`gh skill preview` で中身を読む**、**タグではなくコミット SHA で固定する**、**組織では `managed-settings.json` で Marketplace と MCP サーバーを限定する**。
 
-2026 年 8 月には、統制の範囲が**導入前から前後へ**広がりました。組織向けプラン限定ですが、**推論前**に組織のセキュリティサーバーが allow / deny を返すまで待つ仕組み（Inference hooks）と、**実行後**に利用者のマシン上のセッションまでトランスクリプトを取得する仕組み（Compliance API）が加わっています。中身が安全な Skill でも、渡される入力や実行される文脈まではスキャンできないためです。
+2026 年 8 月には、統制の範囲が**導入前から前後へ**広がりました。組織向けプラン限定ですが、**推論前**に組織のセキュリティサーバーが allow / deny を返すまで待つ仕組み（Inference hooks）と、**実行後**に利用者のマシン上のセッションまでトランスクリプトを取得する仕組み（Compliance API）が加わっています。中身が安全な Skill でも、渡される入力や実行される文脈まではスキャンできないためです。Inference hooks は 2026-10-20 に Beta を終えましたが、Anthropic が組織のために動かす Code Review・Claude Security のスキャンなどは判定の対象外です（[判定を通らない経路](dev-methods/skill-security.md#2026-10-1810-22-の権限境界の更新)）。
 
 2026 年 9 月には**実行する操作そのもの**も中央制御の対象になりました。GitHub Copilot の enterprise managed permissions（GitHub 公式、2026-09-09、GA）は `Shell` / `Read` / `Edit` / `Domain` を `deny` / `ask` / `allow` に分け、managed `ask` には毎回新しい承認を要求します。Claude Managed Agents permission policies（Anthropic 公式、Beta）は agent / MCP tool call ごとに allow / ask / deny を評価し、`evaluated_permission` をイベントに残します。Claude の `auto` は人の確認を保証しないため、人が必ず止める操作は `always_ask` にします。Claude Code のローカル権限設定とは別機能です。
 
@@ -904,7 +940,7 @@ Claude Code 2.1.271〜2.1.277では、`AGENTS.md`は`CLAUDE.md`がない場合�
 
 2026-10-07 の Copilot CLI 1.0.94-0 では、`/model` が起動中の Ollama から対応モデルを見つけて追加できるようになりました。ただし公式は、**ローカルモデルを選んでも offline mode にはならず（`COPILOT_OFFLINE=true` で明示する）、GitHub の telemetry も止まらない**と明記しています。offline mode でも provider がリモートなら、プロンプトとコード文脈はその provider へ送られます。「ローカルで動かしている」ことと「外部へ送らない」ことを分けて確認します（[Copilot ガイド](copilot/README.md#ローカルモデルを使う--ollama-の発見と-offline-modecli-1094-0)）。
 
-Claude Code 2.1.288（2026-10-02）では、**リモート MCP server の大きな結果で tool 呼び出しが 2 回実行され得た**問題、`bash -c` 内の危険な `rm` が bypassPermissions や allow ルールの下で確認なしに動き得た問題、`PreToolUse` / `PermissionRequest` のフックがマッチングの失敗でスキップされていた問題（修正後はブロック）が直りました。2.1.285 の `allowedProviders`、2.1.287 の OTel `prompt_text`（`prompt` と同じくマスクが必要）も統制に関わります（[Claude Code の詳細](claude-code/basics.md#21285〜21288-の統制に関わる変更)）。Copilot CLI 1.0.90 の `--mcp-github-auth` は、GitHub の認証を承認した MCP server の origin にだけ渡します。
+Claude Code 2.1.288（2026-10-02）では、**リモート MCP server の大きな結果で tool 呼び出しが 2 回実行され得た**問題、`bash -c` 内の危険な `rm` が bypassPermissions や allow ルールの下で確認なしに動き得た問題、`PreToolUse` / `PermissionRequest` のフックがマッチングの失敗でスキップされていた問題（修正後はブロック）が直りました。2.1.285 の `allowedProviders`、2.1.287 の OTel `prompt_text`（`prompt` と同じくマスクが必要）も統制に関わります（[Claude Code の詳細](claude-code/basics.md#2128521288-の統制に関わる変更)）。Copilot CLI 1.0.90 の `--mcp-github-auth` は、GitHub の認証を承認した MCP server の origin にだけ渡します。
 
 Claude Code 2.1.292（2026-10-06）では、**ネットワーク（UNC）パスのファイル読み取りで、`PreToolUse` フックの承認や auto mode が確認を飛ばしていた**問題が修正されました。同じ版で、Windows の 8.3 短縮名などの別表記で指定したホームフォルダ・ドライブの `rm -rf`、読み取り中のリンク差し替えによる範囲外の notebook / PDF の読み取り、途中で現れた managed sandbox の読み取り拒否パスの扱いも修正されています。共有フォルダは UNC のまま渡さずドライブに割り当てて必要なサブフォルダだけを渡し、permission ルール・sandbox・共有側のアクセス権を別々に確かめます（[Claude Code の詳細](claude-code/basics.md#共有フォルダと-windows-のパスを扱う前に--21292-の修正)）。
 

@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-21
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-22
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -144,7 +144,7 @@ Claude Code 2.1.287（2026-10-01）の **Mods** は、プラグインが Claude 
 | 段階 | 何をするか | 例 |
 |------|-----------|-----|
 | **導入前** | 入れてよいものかを検査する | Skill / Plugin のセキュリティスキャン（第三者製の Skill・Plugin をアップロード・編集の時点で検査） |
-| **推論前** | 実行される直前に許可・拒否を判定する | Inference hooks（組織の AI セキュリティサーバーが allow / deny を返すまで待つ） |
+| **推論前** | 実行される直前に許可・拒否を判定する | Inference hooks（組織の AI セキュリティサーバーが allow / deny を返すまで待つ。2026-10-20 に Beta を終了。Anthropic が組織のために動かす Code Review などは[対象外](#2026-10-1810-22-の権限境界の更新)） |
 | **実行後** | 何が行われたかを後から確認する | Compliance API（セッションのトランスクリプトを取得する。2026-10-15 から、保存された Instructions も取得できる＝[Beta](#2026-10-1510-17-の権限境界の更新)） |
 
 **導入前だけでは埋まらない穴がある**、というのがこの並びの意味です。中身が安全な Skill でも、渡される入力や実行される文脈まではスキャンできません。推論前の判定と実行後の監査は、そこを埋める層です。
@@ -202,6 +202,16 @@ GitHub と Anthropic の機能は、どちらも「実行時の権限」を扱�
 | `allowed_domains` の検査 | 有効な web ツールの `allowed_domains` に `allowed_hosts` 外の entry があると、session の作成・更新が 400 になる | `allowed_hosts` の entry は `*.` で始まらない限り**完全一致**。`["example.com"]` は `docs.example.com` を含まない |
 
 unrestricted networking と self-hosted 環境はこの制限の対象外です。社内の文書や MCP の結果に含まれる URL を agent に取得させる設計にしていた場合は、その URL を利用者のメッセージとして渡す流れに変える必要があります。
+
+2026-10-20 には、この上に**組織の層**が加わりました（[release notes](https://platform.claude.com/docs/en/release-notes/overview)、2026-10-22 確認。管理画面・API での実行は未検証）。
+
+| 変更 | 挙動 |
+|------|------|
+| 組織単位で Web fetch を無効化 | 組織の管理者が Claude Console の **Capabilities** で Web fetch を止めると、web fetch tool を含む Messages API の request は 400 になる。Managed Agents の session では `web_fetch` の呼び出しが agent へのエラー結果として返る |
+| 組織のドメイン制限 | 有効にしたまま、同じ画面で許可・ブロックするドメインを決められる。Managed Agents の `web_fetch` は、**組織のリストと agent の `allowed_domains` / `blocked_domains` の両方**を通った URL だけを取得し、redirect 先も検査する |
+| `web_search` | Managed Agents の session も組織の「Allow web search」（10-06 から）とドメイン制限（10-14 から）に従い、組織と agent の両方の設定で許可された結果だけを受け取る |
+
+agent ごとの設定と組織の設定は**両方を満たす必要がある**ため、組織の制限を入れると、これまで動いていた agent の取得が止まり得ます。入れる前に、agent が取得している host を一覧にしてください。
 
 **→ Managed Agents をハーネスとして運用するときの介入方法は [AI エージェントの実行基盤](harness.md#実行中の権限判定と介入--claude-managed-agents) を参照**
 
@@ -302,6 +312,26 @@ managed policy を利用者の設定や起動 flag で弱められると想定�
 - 組織として強制したい指示は、利用者の Instructions ではなく managed settings など管理者が配る仕組みに置く
 
 出典: [Claude Platform release notes（2026-10-15）](https://platform.claude.com/docs/en/release-notes/overview)、[List user preferences](https://platform.claude.com/docs/en/manage-claude/compliance-org-data#list-user-preferences)（2026-10-17 確認、API 実行は未検証）。
+
+### 2026-10-18〜10-22 の権限境界の更新
+
+2026-10-22 に公式資料を確認しました。この期間は、**更新するだけで今までより通るようになる変更**が複数の製品で入っています。release note と公式 docs の照合のみで、実機・管理画面での確認はしていません。
+
+| 層 | 変更と運用上の意味 | 詳細・一次情報 |
+|---|---|---|
+| MCP の allowlist | Claude Code 2.1.305 で、`allowedMcpServers` が `managed-mcp.json` の stdio server のうち `${VAR}` を `env` にだけ使うものを絞り込まなくなった。allowlist から外していたものは**更新で読み込まれる**。止めるなら `deniedMcpServers` に書く。**allowlist だけで止める設計は、製品の更新で穴が開くことがある** | [Claude Code](../claude-code/basics.md#2130421307--統制が緩む変更と締まる見える変更)、[2.1.305](https://github.com/anthropics/claude-code/releases/tag/v2.1.305) |
+| sandbox | Claude Code 2.1.305 の `sandbox.allowNestedUserNamespaces` は、公式が「sandbox のファイル保護を迂回できる」と明記。Chromium などのために有効にした端末の sandbox は、書き込み境界として扱わない | 同上 |
+| 人が決める確認 | Claude Code 2.1.304 の Mods の `decider: "person"` で、確認を承認画面か host の callback に限り、誰にも聞けない場面では拒否にできる。[自然言語の判断と強制する制御を分ける](#自然言語の判断と強制する制御を分ける)ときの、強制側の部品になる | [Claude Code の Mods](../claude-code/mods.md)、[2.1.304](https://github.com/anthropics/claude-code/releases/tag/v2.1.304) |
+| Skill の許可 | Claude Code 2.1.304 で、hook を止められた Skill は `allowed-tools` も持ち込めない。2.1.305 で `allowManagedPermissionRulesOnly` が desktop の plugin の `allowed-tools` にも及ぶ | [Claude Code](../claude-code/basics.md#2130421307--統制が緩む変更と締まる見える変更) |
+| 止めた記録 | Claude Code 2.1.307 の OTel `claude_code.safety_event` で、rule・auto mode・hook・sandbox が止めた・確認を求めた tool 呼び出しを集計できる | [2.1.307](https://github.com/anthropics/claude-code/releases/tag/v2.1.307) |
+| sandbox の通信 | Copilot CLI 1.0.100 で、sandbox が **localhost と private network へのアクセスを既定で許可**。sandbox を「外へ出られない」前提にしていた構成では、社内の管理画面・DB・メタデータ endpoint に届くようになる。network 設定で明示的に絞る | [GitHub Copilot ガイド](../copilot/README.md#cli-1010010102-と-vs-code-1143--sandbox-の既定とskillplugin指示の入り方) |
+| 信頼と導入の結びつき | Copilot CLI 1.0.100 で、信頼済みのリポジトリの Plugin を chat の前に自動で導入・更新する。VS Code 1.143 は組織が必須とした agent plugin を自動で導入する。**リポジトリを信頼する操作が、コードを入れる操作も兼ねる**ようになった | 同上 |
+| 「verified」の意味 | Copilot CLI 1.0.100 の GitHub のインストールリンクは「verified」な Skill / Plugin を入れるとするが、基準は公開されていない（2026-10-22 確認）。[2 節](#2-導入前に何を確認するか)の確認を省かない | 同上 |
+| 推論前の判定 | Inference hooks が 2026-10-20 に Beta を終了（Claude Enterprise）。ただし Anthropic が組織のために動かす Code Review・Claude Security のスキャン・smart reports、Bedrock / Google Cloud、Claude Platform の API 組織は対象外。**判定を通らない経路を一覧にしてから**、DLP の担当範囲を決める | [Claude Code の組織での統制](../claude-code/basics.md#導入時に確認すること)、[Inference hooks](https://platform.claude.com/docs/en/manage-claude/inference-hooks) |
+| 組織単位の Web 取得 | Claude Console の Capabilities で Web fetch を組織ごと無効化でき、Managed Agents の `web_fetch` は組織のドメイン制限と agent の `allowed_domains` / `blocked_domains` の**両方**を通った URL だけを取得する（redirect 先も対象）。`web_search` も組織の設定に従う（2026-10-20） | [Web ツールの URL 制限](#web-ツールが取得できる-url-を絞る2026-10-07)、[release notes](https://platform.claude.com/docs/en/release-notes/overview) |
+| 最終顧客ごとの識別 | Claude API の user profiles（2026-10-20）で、自社サービスの顧客ごとの request を識別し、執行措置を 1 顧客に限定できる。制限・解除は organization webhooks（Beta）で受け取れる | [AIエージェントのID・認可・委任権限](agent-identity.md#誰のための-request-かをモデル提供者に伝える--claude-api-の-user-profiles2026-10-20) |
+| 依存パッケージの入口 | GitHub package firewall（2026-10-20、Public Preview、Enterprise Cloud、現時点は npm のみ）が、パッケージのメタデータ取得とダウンロードを、クールダウン期間・Advisory Database・attestation の検査で止める。coding agent や CI はレジストリへ直接つながず firewall を経由させる。**エージェントが入れる依存**の入口を、Skill とは別に絞る手段 | [GitHub package firewall](https://github.blog/changelog/2026-10-20-github-package-firewall-in-public-preview) |
+| モデルの方針 | Copilot model policy API（2026-10-19、GA）で、enterprise・enterprise team・agent app・organization のモデルの提供範囲を API で取得・変更できる。enterprise は organization か team への委任を選ぶ | [GitHub Copilot ガイド](../copilot/README.md#モデルの方針を-api-で管理する--copilot-model-policy-api2026-10-19)、[changelog](https://github.blog/changelog/2026-10-19-copilot-model-policy-api-for-enterprise-orgs-and-teams) |
 
 ### ローカルモデル・offline・telemetry は別の境界
 
