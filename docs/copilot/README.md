@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-22
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-23
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -677,6 +677,8 @@ Plugin と MCP の信頼性の修正（`--plugin-dir` の Skill / custom agent �
 
 VS Code 1.143 の model comparison（Preview）、オンデバイスモデル（Experimental）、Session Activity Bar（Experimental）など UI 中心の変更はこのページでは扱いません。
 
+**1.0.103（2026-10-22）**では、**ACP の session が、保存した sandbox 設定と `--sandbox` / `--no-sandbox` の指定に従う**ようになりました（再開時も）。JetBrains などから ACP で CLI を動かしていた場合、それまでは sandbox の設定が効いていなかった可能性があります。あわせて、Windows の `npm.cmd` などの開発ツールの shim にも `npm` と同じ sandbox の許可が付き、`dnx` は既存の .NET / NuGet の許可を使えるようになりました。起動時の `--remote` / `--no-remote` は廃止され、hosting と接続の flag に整理されています。出典: [Copilot CLI v1.0.103](https://github.com/github/copilot-cli/releases/tag/v1.0.103)（2026-10-23 確認、実機では未検証）。
+
 ### Agentic CLI の customization 利用指標
 
 2026-09-17、Copilot usage metrics API に CLI の Skill / custom agent / MCP / slash command / Plugin 指標が加わりました。
@@ -689,6 +691,17 @@ VS Code 1.143 の model comparison（Preview）、オンデバイスモデル（
 顧客定義名は privacy のため Skill / custom agent / MCP / Plugin では `other`、custom slash command では `custom` にまとめられます。MCP の `interaction_count` は**接続 / 再接続の試行回数**で、tool call 数ではありません（成功・失敗の両方を数える）。Plugin は Plugin に属する Skill invocation の subset で、同じ activity が Skill totals にも入るため、両者を加算しません。
 
 この指標が示すのは adoption、利用の偏り、enablement gap です。生産性、成果物の品質、MCP 接続の成功率を直接示す評価指標ではありません。
+
+**2026-10-22 の変更 — 自作の Skill・agent・MCP server を名前で集計する**（[GitHub 公式変更ログ](https://github.blog/changelog/2026-10-22-custom-skills-agents-and-mcp-servers-in-usage-metrics-api)、2026-10-23 確認。API での実行は未検証）
+
+| 変更 | 内容 |
+|------|------|
+| 名前の表示 | `totals_by_skill` / `totals_by_custom_agent` / `totals_by_mcp` / `totals_by_slash_cmd` / `totals_by_plugin` で、組織が定義した項目を `other` / `custom` にまとめず**設定した名前**で返す。前後の空白を除き、128 文字まで。ファイルパスに見える名前は引き続きまとめる |
+| 件数 | 各配列のレコードあたりの項目を 5 件から**最大 25 件**に。残りは末尾の `other` |
+| 対象 | Copilot CLI（対話・prompt mode）、Copilot app、JetBrains などの ACP 連携、Copilot SDK。IDE は agent 機能が Copilot SDK v1.0.21 以降で動く場合だけで、組み込みチャットの telemetry は名前を出さない。prompt mode・app・ACP は CLI 1.0.97 以降 |
+| 変わらないもの | `interaction_count` と `distinct_*_use_count` の計算方法。名前は**公開後に処理されたレポート日から**で、過去の日付は `other` / `custom` のまま |
+
+**名前は組織の外へ出る情報になり得ます。** Skill や MCP server の名前に顧客名・案件名・内部システム名を入れている場合、レポートを組織外と共有する前に名前を確認するよう公式も注意しています。数値はクライアントの telemetry 由来で、古いクライアントや telemetry を止めた端末の分は数えられません。採用状況の傾向として読み、[Skill の効果の評価](../dev-methods/evals.md)とは分けてください。
 
 2026-09-25 には repository 単位の `repos-1-day` report に `pull_request_review_times` が加わり、ready for review → 初回 review、初回 → 最終 review、最終 review → merge の各段階の median / p90 を取得できるようになりました。人が開き、別の人が review した PR だけが対象で、Copilot code review・bot・author 自身の review は計時しません。**→ 測定対象・欠測・読み方は [Skill / エージェントの評価](../dev-methods/evals.md#pr-のレビュー待ち時間を品質スコアと混同しない) を参照**
 
@@ -948,7 +961,9 @@ JetBrains Gateway / リモート開発環境では、inline chat とその入口
 
 2026-09-24、Copilot Business / Enterprise の enterprise / organization 設定に、**一般提供（GA）された eligible な機能と client capability の global default policy** が追加されました。設定は今すぐできますが、利用者の機能アクセスに影響し始めるのは **2026-10-22** からです。
 
-> **確認日: 2026-09-27 / 状態: 設定受付中（2026-10-22 適用開始）**。適用後は公式文書と管理画面で実際の挙動を再確認してください。
+> **確認日: 2026-10-23 / 状態: GA**。2026-10-22 の[公式変更ログ](https://github.blog/changelog/2026-10-22-global-default-for-copilot-features-generally-available)で GA となり、**2026-10-22〜10-26 に enterprise / organization ごとに順次適用**されます。自組織に適用されたかは管理画面で確認してください（本ガイドでは管理画面を確認していません）。
+>
+> 適用は**一度だけ**です。Unconfigured の項目は、適用の時点で選ばれている global default に一度従って設定され、**その後に global default を変えても、すでに設定された項目は変わりません**。適用後に方針を変える場合は、項目ごとに設定し直します。
 
 | 項目 | 内容 |
 |------|------|

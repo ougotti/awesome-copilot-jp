@@ -76,7 +76,7 @@ Agent Plugins 1.0.0 は可搬なパッケージ形式を定めた一方で、安
 
 Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMarketplaces`・`strictKnownMarketplaces` で統制できます。2026-08-18 には GitHub Copilot for JetBrains も同じ `managed-settings.json` による統制対象に加わり、MCP の許可リスト・Plugin の marketplace 制限・エージェントの承認バイパス禁止（`permissions.disableBypassPermissionsMode`）を中央設定できるようになりました。Claude Code もこれらに相当する設定（`additionalMarketplaces` / `allowedMarketplaces` を同義エイリアスとして追加）を持っており、**設定キー名がツール間で近づき始めています**。
 
-2026-09-25 からは、これらの file の書式誤りや無効な team mapping を enterprise の AI controls ページの validator で確認できます。また、2026-10-22 から Copilot Business / Enterprise の「新機能の既定ポリシー」が適用され、**Unconfigured のまま**の MCP servers in Copilot などの policy は、選んだ global default に従います。明示した設定は保持されます。**→ 期限前の確認手順は [GitHub Copilot ガイド](../copilot/README.md#新機能の既定ポリシー--2026-10-22-から適用) を参照**
+2026-09-25 からは、これらの file の書式誤りや無効な team mapping を enterprise の AI controls ページの validator で確認できます。また、2026-10-22 に Copilot Business / Enterprise の「新機能の既定ポリシー」が GA になり、10-26 までに順次適用されます。**Unconfigured のまま**の MCP servers in Copilot などの policy は、適用の時点の global default に一度だけ従い、その後に global default を変えても変わりません。明示した設定は保持されます。**→ 期限前の確認手順は [GitHub Copilot ガイド](../copilot/README.md#新機能の既定ポリシー--2026-10-22-から適用) を参照**
 
 ### 実行する操作を `deny` / `ask` / `allow` に分ける
 
