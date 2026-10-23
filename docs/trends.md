@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-22
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-23
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-23 | 冒頭に「2026-10-22〜10-23 の更新」の一覧を置き、Claude Code 2.1.309・Codex CLI 0.164.0・Copilot CLI 1.0.103・Copilot の global default の GA と usage metrics の変更を製品別ページへ集約した |
 | 2026-10-22 | 10-18〜10-22 の更新を追加した。10 節に Claude Duet（Research Preview）、7-5 節に API version `2026-10-21` と `ant` CLI 2.0、12 節に Inference hooks の Beta 終了と判定を通らない経路。冒頭に「2026-10-18〜10-22 の更新」の一覧を置き、Claude Code 2.1.304〜2.1.307・Copilot CLI 1.0.100〜1.0.102・VS Code 1.143 の詳細は製品別ページへ集約した |
 | 2026-10-21 | 10 節に Hermes Agent（Nous Research の OSS の常駐型エージェント）を追加し、gateway・cron の `[SILENT]` / `wakeAgent`・モデルの選び方・公開前の最低ラインを [解説ページ](dev-methods/hermes-agent.md) にまとめた |
 | 2026-10-19 | 13 節に MCP の Skills 拡張（`io.modelcontextprotocol/skills`、SEP-2640 は Final）を追加し、Skill を MCP server から Resources として配る仕組み・対応状況・内容に結びついた承認を [解説ページ](dev-methods/skills-over-mcp.md) にまとめた。7 節の冒頭からも誘導した |
@@ -74,6 +75,19 @@
 | 2026-08-01 | 「Skill の発見・配布・更新」を追加（`gh skill` / Agent Finder・ARD / Copilot Plugins） |
 | 2026-07-29 | 常設ページ化（旧タイトル「2026年7月版」）。ガイド全体の更新は [更新履歴（CHANGELOG）](../CHANGELOG.md) を参照 |
 | 2026-07-22 | 初版公開（Matt Pocock's Skills / Context7 / Firecrawl / Vercel / Record & Replay / Computer Use の6テーマ） |
+
+## 2026-10-22〜10-23 の更新 — sandbox の外で動いていたもの
+
+対象期間の一次情報を 2026-10-23 に確認しました。Claude の apps・Platform・MCP・Agent Skills には新しい掲載がありません。release note と公式 docs の照合のみで、実機での検証は行っていません。
+
+| 公開日（公式掲載日 / release の UTC 日付） | 更新 | 提供元・状態 | 詳細 |
+|---|---|---|---|
+| 10-22 | Claude Code 2.1.309。sandbox の Bash がシェルの起動ファイルを sandbox の外で実行していた問題、`--mcp-config` の設定ファイルの書き換え、`Edit(path)` の deny の回避、Windows の PowerShell hook の fail-open を修正。`sed -i` が `/rewind` で戻らない、`claude ultrareview` がワークスペースの信頼を要求 | Official / GA | [Claude Code](claude-code/basics.md#21309--sandbox-と権限の境界の修正rewind-で戻らない操作)、[巻き戻しの範囲](dev-methods/agent-reliability.md#ツールの巻き戻しが戻す範囲を確かめる) |
+| 10-23 | Codex CLI 0.164.0。`/presets`、`/model`・`/permissions` の引数、enterprise MCP の認証、リモートの Bash での資格情報のマスク、sandbox の検査の強化 | Official / GA | [Codex CLI](codex/README.md#codex-cli-01640--presetsenterprise-mcp-の認証資格情報のマスク) |
+| 10-22 | Copilot CLI 1.0.103。ACP の session が sandbox の設定に従う | Official / GA | [GitHub Copilot ガイド](copilot/README.md#cli-1010010102-と-vs-code-1143--sandbox-の既定とskillplugin指示の入り方) |
+| 10-22 | Copilot の新機能の global default が GA（10-26 までに順次適用、未設定の項目に一度だけ効く）。usage metrics API が自作の Skill・agent・MCP server を名前で集計 | Official / GA・Improvement | [既定ポリシー](copilot/README.md#新機能の既定ポリシー--2026-10-22-から適用)、[利用指標](copilot/README.md#agentic-cli-の-customization-利用指標) |
+
+この期間は、**sandbox を設定していても、その外で動いていた処理**の修正が目立ちました（Claude Code のシェル起動ファイル、Copilot CLI の ACP の session）。sandbox を境界として使う端末は、修正を含む版に揃えたうえで、[止めたつもりのものが止まっているか](dev-methods/skill-security.md#2026-10-1810-22-の権限境界の更新)を確かめてください。
 
 ## 2026-10-18〜10-22 の更新 — 更新するだけで通るようになる変更
 
