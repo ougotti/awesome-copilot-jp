@@ -4,6 +4,11 @@
 
 ## 2026-10
 
+- **2026-10-23** Codex CLI 0.164.0 を反映（#294）。
+  - [Codex ガイド](docs/codex/README.md#codex-cli-01640--presetsenterprise-mcp-の認証資格情報のマスク)に節を新設した。`/presets`、`/model`・`/permissions` への引数の直接指定、enterprise MCP の認証を Codex のアカウントの権限や専用サインインで行う変更、リモートの Bash と Zsh snapshot での資格情報のマスク、macOS の sandbox の検査の強化、Windows の proxy 認証、Bedrock の設定ウィザード、再開時に thread の設定を保つ修正を整理した。
+  - [作業中のエージェントへの指示](docs/dev-methods/agent-commands.md#ツールごとのキーとコマンド)に `/presets` と `/rewind` の範囲の追記を、[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#2026-10-1810-22-の権限境界の更新)の更新表に 1 行を追加した。
+  - release note は 2026-10-23 に確認した。実機での検証は行っていない。
+
 - **2026-10-23** Claude Code 2.1.309 を反映（#293）。
   - [Claude Code のカスタマイズ機能](docs/claude-code/basics.md#21309--sandbox-と権限の境界の修正rewind-で戻らない操作)に節を新設した。sandbox の Bash がシェルの起動ファイルを sandbox の外で実行していた問題、`--mcp-config` の設定ファイルの書き換え、`Edit(path)` の deny のリダイレクトによる回避、worktree isolation の guard、Windows の PowerShell hook の fail-open など境界を抜け得た不具合の修正と、`sed -i` が `/rewind` で戻らなくなった変更、`claude ultrareview` のワークスペースの信頼、bypass モードでの危険な `rm` の即時拒否、sandbox なしへの fallback の拒否を整理した。
   - [長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md#ツールの巻き戻しが戻す範囲を確かめる)に「ツールの巻き戻しが戻す範囲を確かめる」を、[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#2026-10-1810-22-の権限境界の更新)の更新表に 1 行を追加した。

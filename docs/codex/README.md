@@ -1,6 +1,6 @@
 # Codex ガイド（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-10-16
+> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-10-23
 
 Codex に作業手順や外部サービスとの連携を持たせる方法は 2 つあります。**Skill**（指示・スクリプト・リソースをまとめたフォルダ）と、Skill に MCP サーバー・コネクタ・フックなどを束ねて配る **Plugin** です。OpenAI は現在、再利用・配布の単位として Plugin を勧めています。
 
@@ -305,6 +305,31 @@ session 側の変更は、会話と下書きを別の面へ持ち越す仕組み
 - **Daybreak**（OpenAI の防御目的のサイバーセキュリティ向けアクセスプログラム）の CLI 対応が、対象アカウントで既定有効になった。`codex exec` でも、サーバーが許可すれば API key で選べる。利用資格や組織での有効化の条件は変わらないため、[公式の案内](https://openai.com/daybreak/)で確認する。
 
 **モデル設定の棚卸し**: 2026-10-14、ChatGPT でサインインした Codex では GPT-5.5 が廃止されました（API key の session は対象外）。[公式の changelog](https://learn.chatgpt.com/docs/changelog) は、**保存した設定・managed config・custom agent・scheduled task** に GPT-5.5 を書いている場合は更新するよう案内しています。モデル名を固定している場所を一覧にしておくと、次の廃止にも対応しやすくなります。
+
+### Codex CLI 0.164.0 — `/presets`・enterprise MCP の認証・資格情報のマスク
+
+**提供元: Official / 状態: GA（Stable release）**。[0.164.0](https://github.com/openai/codex/releases/tag/rust-v0.164.0)（2026-10-23 UTC）を 2026-10-23 に確認しました。0.163.0 以降の 8 日間は alpha だけが出ていました。本ガイドでは実機で確認していません。
+
+**操作の変更**
+
+| 変更 | 使いどころ・注意 |
+|------|-----------------|
+| **`/presets`** — よく使う prompt と slash command を、10 個の番号付きスロットに保存してキーボードのメニューから呼び出す | チームの定型の依頼を手元で再利用する。中身はローカルの保存で、チームへ配るなら Skill（[Skill の公開・共有](../dev-methods/skill-publishing.md)）にする |
+| `/model` と `/permissions` に引数を直接書ける。model・reasoning effort・speed・permission profile を 1 行で切り替える | 切り替えた権限は、その後の turn にも効く。強い profile へ一時的に上げた場合は、作業後に戻す |
+| Kitty / Sixel に対応した端末で、全画面の transcript に画像のプレビュー | — |
+| 承認の選択が終わるまで、キューに入った prompt を進めない | 承認待ちの間に次の依頼が先に動く問題の修正 |
+
+**権限・認証・通信**
+
+| 変更 | 運用上の確認 |
+|------|-------------|
+| **enterprise の MCP 接続を、Codex のアカウントの権限（eligible な account grant）か専用のサインインで認証**できる。secret を必要とする OAuth client にも対応 | MCP server ごとに別の token を配っていた構成を、Codex のアカウントにまとめられる。どのアカウントの権限で MCP を呼んでいるかを、[ID・認可の設計](../dev-methods/agent-identity.md)と照らして確認する |
+| 対応するリモートの Bash コマンドと Zsh snapshot の session で、**資格情報を伏せる**（custom provider の資格情報を含む） | 0.163.0 の opt-in の credential masking に続く変更。伏せるのは出力の表示とログで、コマンドに資格情報を渡すこと自体は止めない |
+| macOS の大文字小文字違いのメタデータパスと、実行ファイルを探すときの置き換え可能な symlink に対する sandbox の検査を強化 | sandbox を書き込み境界として使う macOS の端末は 0.164.0 に揃える |
+| Windows の HTTPS / WebSocket が、proxy の認証要求にサインイン中のユーザーの Negotiate / NTLM で応答する | 社内 proxy を通す Windows 端末 |
+| Amazon Bedrock の設定ウィザードを既定で有効にし、AWS の資格情報が見つかると API key の入力を AWS のサインイン方法と並べて出す | Bedrock 経由で使う場合の初期設定 |
+
+**再開と compaction**: 再開した session が、圧縮された履歴を見つけて **thread の設定を全体の既定で上書きせずに復元**するようになりました。compaction に失敗したとき、部分的な要約が会話履歴に残らなくなっています。`-c` / `--config` を複数のサブコマンドの階層に書いたときの上書きも保たれます。再開後に権限や model が変わっていないかを確かめる手順（[0.163.0](#codex-cli-01630--再開時の権限復元network-proxy-の強化応答中の-steer)）は変わりません。
 
 ### Codexを製品へ組み込む入口を分ける
 
