@@ -4,6 +4,11 @@
 
 ## 2026-10
 
+- **2026-10-23** Claude Code 2.1.309 を反映（#293）。
+  - [Claude Code のカスタマイズ機能](docs/claude-code/basics.md#21309--sandbox-と権限の境界の修正rewind-で戻らない操作)に節を新設した。sandbox の Bash がシェルの起動ファイルを sandbox の外で実行していた問題、`--mcp-config` の設定ファイルの書き換え、`Edit(path)` の deny のリダイレクトによる回避、worktree isolation の guard、Windows の PowerShell hook の fail-open など境界を抜け得た不具合の修正と、`sed -i` が `/rewind` で戻らなくなった変更、`claude ultrareview` のワークスペースの信頼、bypass モードでの危険な `rm` の即時拒否、sandbox なしへの fallback の拒否を整理した。
+  - [長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md#ツールの巻き戻しが戻す範囲を確かめる)に「ツールの巻き戻しが戻す範囲を確かめる」を、[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#2026-10-1810-22-の権限境界の更新)の更新表に 1 行を追加した。
+  - release note は 2026-10-23 に確認した。実機での検証は行っていない。
+
 - **2026-10-23** リンク検査が、GitHub で飛ばないアンカーを見逃す問題を修正（#292）。
   - `scripts/check_links.py` は、リンク側のフラグメントも見出しと同じ規則で slug に変換してから比べていたため、`〜` や全角かっこを含むアンカーを通していた。フラグメントは URL デコードだけを行い、そのまま見出しの ID と比べるようにした。同名の見出しに GitHub が付ける `-1`・`-2` にも対応した。
   - 修正後の検査で見つかった `#codex-cli-01600（2026-10-01）`（2 か所）を直し、[CONTRIBUTING](CONTRIBUTING.md#編集ルール)にアンカーは記号を除いた形で書く旨を追加した。

@@ -1,6 +1,6 @@
 # 長時間タスクの信頼性設計
 
-> **対象ツール**: ツール横断（Claude Code・Codex・MCP・LangGraph ほか） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-22
+> **対象ツール**: ツール横断（Claude Code・Codex・MCP・LangGraph ほか） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-23
 
 > [ループエンジニアリング](loop-engineering.md)はエージェントを反復実行する方法と停止条件を、[AI エージェントの実行基盤（ハーネス）](harness.md)は実行環境を扱います。このページはその間にある、**長時間・多段階の仕事で小さな失敗が累積する問題**と、それを抑える信頼性設計を扱います。評価ツールや telemetry の網羅ではなく、**実行中の故障を前提にした** checkpoint・再開・冪等性・検証・reliability budget が対象です。
 
@@ -97,6 +97,10 @@ MCP Tasks の仕様は、キャンセル済みタスクの再利用について�
 > Once a task is cancelled, it MUST remain in cancelled status even if execution continues to completion or fails.
 
 **「キャンセルした」という状態遷移そのものが、後から覆らない事実として扱われます。** これは長時間タスクの信頼性設計に共通する考え方です。取り消しは「なかったことにする」のではなく、「取り消したという事実を記録する」操作として設計してください。
+
+### ツールの「巻き戻し」が戻す範囲を確かめる
+
+rollback をツールの機能に任せる場合は、**何が戻り、何が戻らないか**を先に確かめます。Claude Code の `/rewind` は、Claude Code 自身のファイル編集の checkpoint を戻しますが、Bash のコマンドによる変更は戻しません。2.1.309（2026-10-22 UTC）では `sed -i` もファイル編集のプレビューではなく通常の Bash として実行されるようになり、`/rewind` の対象から外れました（[Claude Code](../claude-code/basics.md#21309--sandbox-と権限の境界の修正rewind-で戻らない操作)）。外部への送信・削除・デプロイも、どのツールの巻き戻しでも戻りません。**戻せない操作は、実行前の承認か、git の commit・backup のような別の checkpoint で守ってください。**
 
 ### 継続作業では停止対象も分けて記録する
 
