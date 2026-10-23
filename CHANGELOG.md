@@ -4,6 +4,26 @@
 
 ## 2026-10
 
+- **2026-10-23** GitHub の 2026-10-22 の更新と Copilot CLI 1.0.103 を反映（#295）。
+  - [新機能の既定ポリシー](docs/copilot/README.md#新機能の既定ポリシー--2026-10-22-から適用)の状態を GA に更新し、10-22〜10-26 の順次適用と、Unconfigured の項目には適用時に**一度だけ**効き、後から global default を変えても変わらない点を追記した。[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#4-組織で許可範囲を絞る)の記述も合わせた。
+  - [Agentic CLI の customization 利用指標](docs/copilot/README.md#agentic-cli-の-customization-利用指標)に、自作の Skill・agent・MCP server・slash command・Plugin を名前で集計する変更（最大 25 件、対象の面、過去の日付は変わらない）と、名前が組織外へ出る情報になり得る注意を追加した。
+  - [Copilot CLI 1.0.100〜1.0.102 の節](docs/copilot/README.md#cli-1010010102-と-vs-code-1143--sandbox-の既定とskillplugin指示の入り方)に、1.0.103 で ACP の session が sandbox の設定に従うようになった変更を追記した。
+  - 一次資料は 2026-10-23 に確認した。管理画面・API での検証は行っていない。
+
+- **2026-10-23** Codex CLI 0.164.0 を反映（#294）。
+  - [Codex ガイド](docs/codex/README.md#codex-cli-01640--presetsenterprise-mcp-の認証資格情報のマスク)に節を新設した。`/presets`、`/model`・`/permissions` への引数の直接指定、enterprise MCP の認証を Codex のアカウントの権限や専用サインインで行う変更、リモートの Bash と Zsh snapshot での資格情報のマスク、macOS の sandbox の検査の強化、Windows の proxy 認証、Bedrock の設定ウィザード、再開時に thread の設定を保つ修正を整理した。
+  - [作業中のエージェントへの指示](docs/dev-methods/agent-commands.md#ツールごとのキーとコマンド)に `/presets` と `/rewind` の範囲の追記を、[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#2026-10-1810-22-の権限境界の更新)の更新表に 1 行を追加した。
+  - release note は 2026-10-23 に確認した。実機での検証は行っていない。
+
+- **2026-10-23** Claude Code 2.1.309 を反映（#293）。
+  - [Claude Code のカスタマイズ機能](docs/claude-code/basics.md#21309--sandbox-と権限の境界の修正rewind-で戻らない操作)に節を新設した。sandbox の Bash がシェルの起動ファイルを sandbox の外で実行していた問題、`--mcp-config` の設定ファイルの書き換え、`Edit(path)` の deny のリダイレクトによる回避、worktree isolation の guard、Windows の PowerShell hook の fail-open など境界を抜け得た不具合の修正と、`sed -i` が `/rewind` で戻らなくなった変更、`claude ultrareview` のワークスペースの信頼、bypass モードでの危険な `rm` の即時拒否、sandbox なしへの fallback の拒否を整理した。
+  - [長時間タスクの信頼性設計](docs/dev-methods/agent-reliability.md#ツールの巻き戻しが戻す範囲を確かめる)に「ツールの巻き戻しが戻す範囲を確かめる」を、[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#2026-10-1810-22-の権限境界の更新)の更新表に 1 行を追加した。
+  - release note は 2026-10-23 に確認した。実機での検証は行っていない。
+
+- **2026-10-23** リンク検査が、GitHub で飛ばないアンカーを見逃す問題を修正（#292）。
+  - `scripts/check_links.py` は、リンク側のフラグメントも見出しと同じ規則で slug に変換してから比べていたため、`〜` や全角かっこを含むアンカーを通していた。フラグメントは URL デコードだけを行い、そのまま見出しの ID と比べるようにした。同名の見出しに GitHub が付ける `-1`・`-2` にも対応した。
+  - 修正後の検査で見つかった `#codex-cli-01600（2026-10-01）`（2 か所）を直し、[CONTRIBUTING](CONTRIBUTING.md#編集ルール)にアンカーは記号を除いた形で書く旨を追加した。
+
 - **2026-10-22** Claude Duet（Anthropic、2026-10-21、Research Preview）を追加（#286）。
   - [Hermes Agent](docs/dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dots)に「11. 事業者が運営する選択肢 — Claude Duet・ChatGPT の dots」を新設し、運営者・動く場所・モデル・接続先・確認の頻度・承認・費用を 3 つで比べた。米国の Pro / Max 向けのウェイトリスト制で日本からは使えないこと、承認があっても証券取引と口座間の送金は行わないこと、背景での確認も利用上限を消費すること、外から届く文面の指示への注意を明記した。「30 秒で判断する」からも誘導した。
   - [Skills 最新動向](docs/trends.md#10-aiエージェントの実行基盤ハーネス) 10 節に要約を、[生成AIを業務で安全に使う](docs/business/safety.md#ノーコードで自分専用のエージェントを動かす前に)に事業者が運営する製品でも変わらない確認を追加した。
@@ -139,7 +159,7 @@
   - [GitHub Copilot ガイド](docs/copilot/README.md#vs-code-1140--copilot-harness複数フォルダの-sessionremote-host-への委任)に VS Code 1.140（Copilot harness と Local harness の区別、Agents window の複数フォルダの session と remote host への委任＝Experimental、MCP の保存先と `.vscode/mcp.json` の deprecated、OTel の identity capture は既定オフで Local harness のみ）と、Copilot CLI 1.0.89〜1.0.91（`.claude/rules` 互換、`oauthScopes`、`--mcp-github-auth`、read-only のディレクトリ承認、`copilot sandbox ca`、読み取り専用 pipeline の review）を追加した。
   - [複数ルート運用](docs/copilot/multi-root.md#agents-window-の複数フォルダの-session-は別機能vs-code-1140)の「Agents window は対象外」を保ったまま、1.140 の Agents window の機能を別機能として比較表で区別した。
   - [Claude Code のカスタマイズ機能](docs/claude-code/basics.md#2128521288-の統制に関わる変更)に 2.1.288 の修正（remote MCP の二重実行、`bash -c` 内の危険な `rm`、フックのスキップ、plugin agent の設定、cloud session のモデル、path 限定ルール、バックグラウンドの時間制限）と、2.1.285〜2.1.287（`plugin configure`、`.mcpb`、`allowedProviders`、managed settings の読み取りエラーの境界、`prompt_text`、`bareElicitationCapability`、`__proto__`）を追加し、2.1.288 以上を推奨下限の候補として示した（LTS とは書かない）。
-  - [Codex ガイド](docs/codex/README.md#codex-cli-01600（2026-10-01）)に 0.160.0 を追加し、[信頼性設計](docs/dev-methods/agent-reliability.md#5-冪等性重複実行外部副作用の扱い)・[プラグインの可搬性](docs/dev-methods/plugin-portability.md#instruction-ファイルは別のエージェントにも読まれる)・[ハーネス](docs/dev-methods/harness.md)・[最新動向](docs/trends.md)に要約を追加した。各一次情報を2026-10-08に確認した。
+  - [Codex ガイド](docs/codex/README.md#codex-cli-016002026-10-01)に 0.160.0 を追加し、[信頼性設計](docs/dev-methods/agent-reliability.md#5-冪等性重複実行外部副作用の扱い)・[プラグインの可搬性](docs/dev-methods/plugin-portability.md#instruction-ファイルは別のエージェントにも読まれる)・[ハーネス](docs/dev-methods/harness.md)・[最新動向](docs/trends.md)に要約を追加した。各一次情報を2026-10-08に確認した。
 
 - **2026-10-08** mattpocock/skills の新規 Skill 3 件を反映（#233）。
   - [mattpocock/skills 解説](docs/dev-methods/mattpocock-skills.md#新規-skill-の使い分け2026-10-05-追加分)に、`implement-spec`（仕様全体を統合ブランチへ、タスクグラフの frontier ごとにサブエージェントで並列実装）・`retro`（セッション後の環境改善）をユーザー呼び出しへ、`pr`（Summary / Evidence / Merge Danger の PR 本文の型）をモデル呼び出しへ追加した。

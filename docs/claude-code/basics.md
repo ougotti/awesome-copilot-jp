@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-22
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-23
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -881,6 +881,47 @@ MCP connector の `mcp-client-2026-09-15` beta header と組み合わせると�
 1. `managed-mcp.json` の stdio server で `${VAR}` を `env` に使うものを一覧にし、allowlist から外していたものを `deniedMcpServers` に移す。更新後に `claude mcp list` で読み込まれないことを確かめる。
 2. `sandbox.allowNestedUserNamespaces` を誰かが有効にしていないか、managed settings と配布している settings を確認する。
 3. 書き込みをする remote MCP tool があれば、2.1.307 より前に二重の作成・送信が起きていなかったかを、相手側の記録で確認する。
+
+### 2.1.309 — sandbox と権限の境界の修正、`/rewind` で戻らない操作
+
+> **確認日: 2026-10-23**。**提供元: Official / 状態: GA（CLI の正式リリース）**。[2.1.309](https://github.com/anthropics/claude-code/releases/tag/v2.1.309)（2026-10-22 UTC）の release に基づきます（2.1.308 は不具合修正のみ）。本ガイドでは実機で再現していません。
+
+この版は、**sandbox や deny rule を抜けられた不具合の修正**が中心です。修正前の版で sandbox を境界として使っていた端末は、2.1.309 以上に揃えてください。
+
+**境界を抜け得た不具合の修正**
+
+| 範囲 | 修正内容 | 影響を受けていた構成 |
+|------|---------|-------------------|
+| sandbox（macOS / Linux） | sandbox の Bash が、**コマンドのたびにシェルの起動ファイルを sandbox の外で実行していた** | `~/.zshrc` などに処理を書いている端末。起動ファイルを書き換えられると、sandbox の外でコードが動き得た |
+| sandbox（macOS） | `denyWrite` の glob が、symlink 経由でたどったフォルダの実際の場所に効かなかった | symlink で作業ディレクトリをつないでいる構成 |
+| sandbox（Linux） | session より長く生きた background のコマンドに対して、書き込みの deny が外れていた | 長時間の background 実行 |
+| MCP の設定 | `--mcp-config` で渡した設定ファイルを、sandbox 内のコマンドや自動承認の編集で**書き換えられた** | 設定ファイルで接続先を固定していたつもりの無人実行 |
+| MCP の設定 | 無効にした MCP server が、`-p` / SDK の session で後の許可の確認によって再接続された | 一時的に server を止めていた運用 |
+| deny rule | `Edit(path)` の deny が、subshell を含むコマンドの Bash のリダイレクトでは効かないことがあった | ファイルの保護を Edit の deny だけで行っていた構成 |
+| Bash の許可判定 | 開けない可能性のあるリダイレクトを持つコマンドが設定した変数を信頼していた。`cd` を包んだ・前置きした複合コマンドで git を動かす場合に確認を出さなかった | 複合コマンドを自動承認している環境 |
+| worktree isolation | locale を前置きしたコマンドや zsh の算術コマンドで、isolation の guard を抜けられた。Claude Code が作る worktree が git replace ref を無視するように | worktree で作業を隔離する subagent / session |
+| hook（Windows） | PowerShell で動く hook が**終了コード 2 でも止めなかった**。`"shell": "powershell"` の PreToolUse / PermissionRequest hook が、Git for Windows がないと **fail-open** していた | Windows で PowerShell の hook を配っている組織（[2.1.299 の修正](#2129921301--mcp-の許可ルールの完全一致化と-hook-の-fail-closed-化)の続き） |
+| PowerShell の許可判定（Windows） | 現在のディレクトリを指す `Set-Location` / `cd` に余分な引数が付いたものを自動承認していた（確認を出すよう修正） | — |
+| 設定の保護 | config ディレクトリを symlink でたどったとき、profile store の書き込み保護が効かなかった | — |
+| agent team | split-pane の teammate が、leader のコマンドラインで指定した tool の deny と `--tools` を引き継いでいなかった | leader の起動時に tool を絞っていた agent team |
+
+**挙動の変更**
+
+| 変更 | 運用上の意味 |
+|------|-------------|
+| **`sed -i` が通常の Bash の確認になり、書いたとおりに実行される**。以前のようなファイル編集のプレビューではなくなり、ほかの Bash による編集と同じく **`/rewind` で戻らない** | `/rewind` で戻せる前提で `sed -i` を許可していた場合は見直す（[`/rewind` で戻らない操作](../dev-methods/agent-reliability.md#7-pause--resume--cancel--rollback)） |
+| `claude ultrareview` がワークスペースの信頼を求める。端末では確認し、それ以外では拒否する。スクリプトは `--trust-workspace`（値なし。PR 番号や base branch はその前に置く）か `CLAUDE_CODE_DISABLE_ULTRAREVIEW_TRUST_CHECK=1` | CI などから ultrareview を呼ぶスクリプトは更新が必要 |
+| Desktop app と VS Code の bypass permissions モードで、危険な `rm` / `rmdir` の確認を出さず**即座に拒否**し、書き直しのヒントを返す | 無人の session が確認待ちで止まらない代わりに、その操作は実行されない |
+| sandbox を有効にしたが動かせない環境で、sandbox から除外したコマンドが書き込み先リストのパスへ書く前に確認する。**sandbox なしでの実行への fallback は拒否** | sandbox が使えない端末で、黙って sandbox なしに切り替わらない |
+| worktree の作成・再利用で git が object を必要時に取りに行かない（partial clone は先に取得する） | 隔離した worktree からの意図しない通信を減らす |
+| 上限を超える入れ子の `CLAUDE.md` は先頭だけを読み込む | 巨大な `CLAUDE.md` で compaction を繰り返していた問題の修正。後半の規約は読まれないため、大きな指示は分割する |
+| PR・Issue・コメントで、役割名やプレースホルダーを `@` メンションとして書き、無関係な GitHub ユーザーに通知していた問題を修正 | — |
+
+**更新時の確認手順（検証用プロジェクトで行う設計例。本ガイドでの実測ではありません）**
+
+1. sandbox を書き込み境界として使う端末を 2.1.309 以上に揃え、シェルの起動ファイルに秘密情報や外部通信を書いていないか確認する。
+2. Windows で PowerShell の hook を使っている場合、終了コード 2 で対象の操作が止まること、Git for Windows がない端末でも止まることを確かめる。
+3. `ultrareview` を呼ぶスクリプトに `--trust-workspace` を足すか、信頼の確認が要る運用に変える。
 
 ## セットアップ
 

@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-22
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-23
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -76,7 +76,7 @@ Agent Plugins 1.0.0 は可搬なパッケージ形式を定めた一方で、安
 
 Plugin 側も同じ `managed-settings.json` の `enabledPlugins`・`extraKnownMarketplaces`・`strictKnownMarketplaces` で統制できます。2026-08-18 には GitHub Copilot for JetBrains も同じ `managed-settings.json` による統制対象に加わり、MCP の許可リスト・Plugin の marketplace 制限・エージェントの承認バイパス禁止（`permissions.disableBypassPermissionsMode`）を中央設定できるようになりました。Claude Code もこれらに相当する設定（`additionalMarketplaces` / `allowedMarketplaces` を同義エイリアスとして追加）を持っており、**設定キー名がツール間で近づき始めています**。
 
-2026-09-25 からは、これらの file の書式誤りや無効な team mapping を enterprise の AI controls ページの validator で確認できます。また、2026-10-22 から Copilot Business / Enterprise の「新機能の既定ポリシー」が適用され、**Unconfigured のまま**の MCP servers in Copilot などの policy は、選んだ global default に従います。明示した設定は保持されます。**→ 期限前の確認手順は [GitHub Copilot ガイド](../copilot/README.md#新機能の既定ポリシー--2026-10-22-から適用) を参照**
+2026-09-25 からは、これらの file の書式誤りや無効な team mapping を enterprise の AI controls ページの validator で確認できます。また、2026-10-22 に Copilot Business / Enterprise の「新機能の既定ポリシー」が GA になり、10-26 までに順次適用されます。**Unconfigured のまま**の MCP servers in Copilot などの policy は、適用の時点の global default に一度だけ従い、その後に global default を変えても変わりません。明示した設定は保持されます。**→ 期限前の確認手順は [GitHub Copilot ガイド](../copilot/README.md#新機能の既定ポリシー--2026-10-22-から適用) を参照**
 
 ### 実行する操作を `deny` / `ask` / `allow` に分ける
 
@@ -315,7 +315,7 @@ managed policy を利用者の設定や起動 flag で弱められると想定�
 
 ### 2026-10-18〜10-22 の権限境界の更新
 
-2026-10-22 に公式資料を確認しました。この期間は、**更新するだけで今までより通るようになる変更**が複数の製品で入っています。release note と公式 docs の照合のみで、実機・管理画面での確認はしていません。
+2026-10-22 に公式資料を確認しました（Claude Code 2.1.309 と Codex 0.164.0 の行は 2026-10-23 に追加）。この期間は、**更新するだけで今までより通るようになる変更**が複数の製品で入っています。release note と公式 docs の照合のみで、実機・管理画面での確認はしていません。
 
 | 層 | 変更と運用上の意味 | 詳細・一次情報 |
 |---|---|---|
@@ -330,6 +330,8 @@ managed policy を利用者の設定や起動 flag で弱められると想定�
 | 推論前の判定 | Inference hooks が 2026-10-20 に Beta を終了（Claude Enterprise）。ただし Anthropic が組織のために動かす Code Review・Claude Security のスキャン・smart reports、Bedrock / Google Cloud、Claude Platform の API 組織は対象外。**判定を通らない経路を一覧にしてから**、DLP の担当範囲を決める | [Claude Code の組織での統制](../claude-code/basics.md#導入時に確認すること)、[Inference hooks](https://platform.claude.com/docs/en/manage-claude/inference-hooks) |
 | 組織単位の Web 取得 | Claude Console の Capabilities で Web fetch を組織ごと無効化でき、Managed Agents の `web_fetch` は組織のドメイン制限と agent の `allowed_domains` / `blocked_domains` の**両方**を通った URL だけを取得する（redirect 先も対象）。`web_search` も組織の設定に従う（2026-10-20） | [Web ツールの URL 制限](#web-ツールが取得できる-url-を絞る2026-10-07)、[release notes](https://platform.claude.com/docs/en/release-notes/overview) |
 | 最終顧客ごとの識別 | Claude API の user profiles（2026-10-20）で、自社サービスの顧客ごとの request を識別し、執行措置を 1 顧客に限定できる。制限・解除は organization webhooks（Beta）で受け取れる | [AIエージェントのID・認可・委任権限](agent-identity.md#誰のための-request-かをモデル提供者に伝える--claude-api-の-user-profiles2026-10-20) |
+| sandbox の外で動いていた処理 | Claude Code 2.1.309（10-22）で、sandbox の Bash が**シェルの起動ファイルを sandbox の外で毎回実行していた**問題、`--mcp-config` の設定ファイルを sandbox 内から書き換えられた問題、`Edit(path)` の deny をリダイレクトで回避できた問題、Windows の PowerShell hook が終了コード 2 で止まらず fail-open していた問題を修正。**sandbox を境界にする端末は 2.1.309 以上に揃える** | [Claude Code](../claude-code/basics.md#21309--sandbox-と権限の境界の修正rewind-で戻らない操作)、[2.1.309](https://github.com/anthropics/claude-code/releases/tag/v2.1.309) |
+| MCP の認証と資格情報 | Codex CLI 0.164.0（10-23）で、enterprise の MCP 接続を Codex のアカウントの権限か専用サインインで認証できる。リモートの Bash と Zsh snapshot では資格情報を伏せる。**伏せるのは表示とログで、コマンドへ渡すこと自体は止めない** | [Codex CLI 0.164.0](../codex/README.md#codex-cli-01640--presetsenterprise-mcp-の認証資格情報のマスク) |
 | 依存パッケージの入口 | GitHub package firewall（2026-10-20、Public Preview、Enterprise Cloud、現時点は npm のみ）が、パッケージのメタデータ取得とダウンロードを、クールダウン期間・Advisory Database・attestation の検査で止める。coding agent や CI はレジストリへ直接つながず firewall を経由させる。**エージェントが入れる依存**の入口を、Skill とは別に絞る手段 | [GitHub package firewall](https://github.blog/changelog/2026-10-20-github-package-firewall-in-public-preview) |
 | モデルの方針 | Copilot model policy API（2026-10-19、GA）で、enterprise・enterprise team・agent app・organization のモデルの提供範囲を API で取得・変更できる。enterprise は organization か team への委任を選ぶ | [GitHub Copilot ガイド](../copilot/README.md#モデルの方針を-api-で管理する--copilot-model-policy-api2026-10-19)、[changelog](https://github.blog/changelog/2026-10-19-copilot-model-policy-api-for-enterprise-orgs-and-teams) |
 

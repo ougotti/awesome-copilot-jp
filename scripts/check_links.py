@@ -11,6 +11,7 @@ import re
 import sys
 import unicodedata
 from pathlib import Path
+from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parent.parent
 LINK_RE = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
@@ -36,7 +37,12 @@ def slugify(text: str) -> str:
 
 
 def collect_headings(path: Path) -> set[str]:
+    """ファイル内の見出しから、GitHub が付けるアンカー ID の集合を作る。
+
+    同じ slug の見出しが複数あると、GitHub は 2 つ目以降に `-1`, `-2` … を付ける。
+    """
     slugs: set[str] = set()
+    seen: dict[str, int] = {}
     in_code = False
     for line in path.read_text(encoding="utf-8").splitlines():
         if line.strip().startswith("```"):
@@ -46,8 +52,22 @@ def collect_headings(path: Path) -> set[str]:
             continue
         m = HEADING_RE.match(line)
         if m:
-            slugs.add(slugify(m.group(1)))
+            slug = slugify(m.group(1))
+            count = seen.get(slug, 0)
+            seen[slug] = count + 1
+            slugs.add(slug if count == 0 else f"{slug}-{count}")
     return slugs
+
+
+def anchor_matches(anchor: str, slugs: set[str]) -> bool:
+    """リンクのフラグメントが見出しの ID に一致するか。
+
+    GitHub はフラグメントを slug に変換せずに見出しの ID と照合するため、
+    フラグメント側は URL デコードだけを行う（記号を含むと GitHub では飛ばない）。
+    大文字小文字の違いは GitHub 側で吸収されるため、小文字化した形も許す。
+    """
+    decoded = unquote(anchor)
+    return decoded in slugs or decoded.lower() in slugs
 
 
 def iter_md_files() -> list[Path]:
@@ -81,7 +101,7 @@ def main() -> int:
                     # 同一ファイル内アンカー
                     anchor = target[1:]
                     slugs = heading_cache.setdefault(md, collect_headings(md))
-                    if slugify(anchor) not in slugs:
+                    if not anchor_matches(anchor, slugs):
                         errors.append(f"{rel}:{lineno} 壊れたアンカー: {target}")
                     continue
 
@@ -95,7 +115,7 @@ def main() -> int:
                     continue
                 if anchor and dest.suffix == ".md":
                     slugs = heading_cache.setdefault(dest, collect_headings(dest))
-                    if slugify(anchor) not in slugs:
+                    if not anchor_matches(anchor, slugs):
                         errors.append(f"{rel}:{lineno} 壊れたアンカー: {target}")
 
     print(f"チェック対象: {len(md_files)} ファイル")
