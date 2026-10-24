@@ -1,6 +1,6 @@
 # AI 時代のコードレビュー — 正しさの基準を守り、AI レビュアーの精度を測る
 
-> **対象ツール**: ツール横断（GitHub Copilot code review・Claude Code Code Review ほか AI レビュアー） ｜ **実行環境**: Cloud（PR レビュー）／ CLI（ローカルでの評価） ｜ **対象読者**: AI が書いた変更をレビューする開発者・AI レビューを導入する担当者 ｜ **最終更新**: 2026-10-15
+> **対象ツール**: ツール横断（GitHub Copilot code review・Claude Code Code Review ほか AI レビュアー） ｜ **実行環境**: Cloud（PR レビュー）／ CLI（ローカルでの評価） ｜ **対象読者**: AI が書いた変更をレビューする開発者・AI レビューを導入する担当者 ｜ **最終更新**: 2026-10-24
 
 > AI が実装した変更をレビューするとき、「テストが通った」だけでは正しさを判断できません。テストそのものが削除・弱化されていれば、**何も検証しなくなった結果としてテストが通る**からです。また、AI レビュアーの指摘も、誤検知（正しいコードへの指摘）と見逃し（問題への無指摘）の両方を起こします。このページは、**正しさの基準（test oracle）を実装の変更から守る方法**と、**AI レビュアーの品質を測る方法**を整理します。
 
@@ -242,6 +242,7 @@ npm run judge -- --candidate ./findings --provider openai --model <model-id> \
 
 ## 関連ドキュメント
 
+- [人の仕事はどこに移るか](human-role.md) — レビューが律速になるときの対策と、人が持ち続ける仕事
 - [AI コードレビューはどの指示を読むか](review-instructions.md) — 指示ファイルの参照元（head / base）、レビュー基準の更新・検証・CODEOWNERS での承認
 - [Skill / エージェントの評価（evals）](evals.md) — 回帰評価と本番品質の評価、マージ後の品質の測り方
 - [GitHub Copilot ガイド — カスタマイズが効く場所](../copilot/README.md#カスタマイズが効く場所--レビューとエージェント) — Copilot code review の skills・MCP・effort level・API
