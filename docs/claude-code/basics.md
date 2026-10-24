@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-23
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-24
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -951,6 +951,7 @@ CLAUDE.md              # プロジェクトの前提・規約
 
 ## 関連ドキュメント
 
+- [エージェントが働きやすいリポジトリ](../dev-methods/agent-ready-repo.md) — `CLAUDE.md`・`AGENTS.md` に何を書き、何をテストや Skill に移すか
 - [コマンド一覧（付録）](commands.md) — 組み込みスラッシュコマンドとキーボードショートカットのスナップショット
 - [Anthropic 公式スキル](official-skills.md) — docx / pdf / pptx / xlsx などの公式スキル
 - [GitHub Copilot Plugins](../copilot/plugins.md) — Copilot 側の Plugin との比較

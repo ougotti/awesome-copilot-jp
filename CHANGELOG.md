@@ -4,6 +4,14 @@
 
 ## 2026-10
 
+- **2026-10-24** エージェント活用とこれからのソフトウェア開発を扱う 5 ページを追加（#298〜#302）。どのページも数値は一次資料（報告書・論文・公式ドキュメント）で確認できたものだけを書き、Hacker News の議論は「コミュニティの見方」として区別して併記した。
+  - [AI 導入の効果をどう測るか](docs/dev-methods/ai-adoption-metrics.md)（#298）— 採用・活動・成果の 3 層、DORA の「増幅器」という位置づけ、METR の 2025-07 の研究（体感と実測のずれ）と 2026-02 の更新（選択効果で測れなくなった理由）、指標の落とし穴、導入の効果を測る手順、製品の指標が測るもの・測らないもの。
+  - [エージェントが働きやすいリポジトリ](docs/dev-methods/agent-ready-repo.md)（#299）— 指示ファイルの効果を調べた研究（成功率は上がらず費用は 20% 以上増えた）と Vercel の評価、各ツールが読む指示ファイル、何を指示ファイルに書き何を Skill・テスト・CI に移すか、エージェントが自分で確かめる仕組み、保守の方法。
+  - [エージェントの費用管理](docs/dev-methods/agent-costs.md)（#300）— 費用が膨らむ仕組み、Copilot の AI Credits と予算の階層（organization 以上は既定で止まらない）、Claude Code の上限と `/usage`・`modelPricing`・`--max-budget-usd`、Codex の利用枠、チームでの配分。
+  - [人の仕事はどこに移るか](docs/dev-methods/human-role.md)（#301）— GitHub での採用とエージェントの PR の大きさ・マージ後の変化を調べた研究、雇用の統計（いずれも限界つき）、律速がレビューに移る理由と対策、人が持ち続ける仕事、経験の浅い開発者の育成。提案時に挙げた working paper のうち原典を確認できなかったものは使っていない。
+  - [レガシーのモダナイゼーション](docs/dev-methods/legacy-modernization.md)（#302）— 理解 → 振る舞いの固定 → 分割 → 変換 → 検証の段階、Microsoft・GitHub・AWS Transform（富士通 GS21 にも対応）・Anthropic の手順の比較、失敗しやすい点、進め方の設計例。
+  - [evals](docs/dev-methods/evals.md)・[AI コードレビュー](docs/dev-methods/ai-code-review.md)・[ループエンジニアリング](docs/dev-methods/loop-engineering.md)・[マルチエージェント](docs/dev-methods/multi-agent.md)・[仕様駆動開発](docs/dev-methods/spec-driven.md)・[Claude Code](docs/claude-code/basics.md) の関連ドキュメントから誘導した。
+
 - **2026-10-23** GitHub の 2026-10-22 の更新と Copilot CLI 1.0.103 を反映（#295）。
   - [新機能の既定ポリシー](docs/copilot/README.md#新機能の既定ポリシー--2026-10-22-から適用)の状態を GA に更新し、10-22〜10-26 の順次適用と、Unconfigured の項目には適用時に**一度だけ**効き、後から global default を変えても変わらない点を追記した。[Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#4-組織で許可範囲を絞る)の記述も合わせた。
   - [Agentic CLI の customization 利用指標](docs/copilot/README.md#agentic-cli-の-customization-利用指標)に、自作の Skill・agent・MCP server・slash command・Plugin を名前で集計する変更（最大 25 件、対象の面、過去の日付は変わらない）と、名前が組織外へ出る情報になり得る注意を追加した。

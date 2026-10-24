@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-10-24** エージェント活用とこれからの開発を扱う 5 ページを追加。[導入の効果の測り方](docs/dev-methods/ai-adoption-metrics.md)、[エージェントが働きやすいリポジトリ](docs/dev-methods/agent-ready-repo.md)、[費用管理](docs/dev-methods/agent-costs.md)、[人の仕事はどこに移るか](docs/dev-methods/human-role.md)、[レガシーのモダナイゼーション](docs/dev-methods/legacy-modernization.md)。Hacker News の議論も「コミュニティの見方」として併記。
 - **2026-10-23** [10-22〜10-23 の最新動向](docs/trends.md#2026-10-2210-23-の更新--sandbox-の外で動いていたもの)を反映。Claude Code 2.1.309 の sandbox・権限の修正と `/rewind` で戻らない `sed -i`、Codex CLI 0.164.0、Copilot の global default の GA を整理。リンク検査が GitHub で飛ばないアンカーも検出するよう直した。
 - **2026-10-22** [10-18〜10-22 の最新動向](docs/trends.md#2026-10-1810-22-の更新--更新するだけで通るようになる変更)を反映。Claude Code と Copilot CLI で更新するだけで通るようになる変更（MCP の allowlist・sandbox のローカルネットワーク）、[Claude Duet](docs/dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dots)、API version `2026-10-21`、Inference hooks の Beta 終了と判定を通らない経路を整理。
 - **2026-10-21** [Hermes Agent](docs/dev-methods/hermes-agent.md)の解説を追加。メッセージアプリへ常駐する OSS エージェントの置き場所・モデルの選び方、何もなかった回に LLM を起こさない cron、自分で書き換える Skill と記憶の統制、公開前の最低ラインを整理。
 - **2026-10-19** [MCP Skills 拡張](docs/dev-methods/skills-over-mcp.md)の解説を追加。Skill を MCP server から Resources として配る SEP-2640 の仕組み、対応状況（主要なコーディングエージェントは未対応）、中身が変われば取り消される承認を整理。
-- **2026-10-18** [pnpm の agent skills](docs/trends.md#7-6-pnpm--依存パッケージに同梱された-skill-をつなぐ)を追加。依存パッケージに同梱された Skill を承認制でリンクする pnpm 12.11.0 の機能と、承認が以降のバージョンにも及ぶ点を整理。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -150,6 +150,11 @@
 | **[AI-DLC・AI-PDLC・AI BPR の用語整理](docs/dev-methods/ai-driven-lifecycle-terms.md)** | 本ガイド | — | CLI / IDE | AWS が公開する 3 つの取り組みの提供形態と対象範囲を分離 |
 | **[仕様駆動開発（SDD）](docs/dev-methods/spec-driven.md)** | 本ガイド | — | CLI / IDE | Spec Kit・OpenSpec・BMAD・Kiro Specsの違い、EARS、AI-DLCとの境界 |
 | **[AI エージェントの実行基盤（ハーネス）](docs/dev-methods/harness.md)** | 本ガイド | — | CLI / Cloud | エージェントを動かす裏側の仕組みと実装例（Copilot Studio / QM / Kiro Crew / OpenAI Agents API / Hermes Agent）、OpenTelemetry による可観測性 |
+| **[AI 導入の効果をどう測るか](docs/dev-methods/ai-adoption-metrics.md)** | 本ガイド | — | — | 採用・活動・成果の 3 層、DORA と METR が示す傾向と限界、指標の落とし穴、製品の指標が測るもの |
+| **[エージェントが働きやすいリポジトリ](docs/dev-methods/agent-ready-repo.md)** | 本ガイド | — | CLI / IDE / Cloud | `AGENTS.md`・`CLAUDE.md` の効果の研究、何を指示ファイルに書き何をテスト・Skill・CI に移すか、自分で確かめる仕組み |
+| **[エージェントの費用管理](docs/dev-methods/agent-costs.md)** | 本ガイド | — | — | 費用が膨らむ仕組み、Copilot の予算の階層・Claude Code の上限と `/usage`・Codex の利用枠、チームでの配分 |
+| **[人の仕事はどこに移るか](docs/dev-methods/human-role.md)** | 本ガイド | — | — | レビューが律速になる理由と対策、人が持ち続ける仕事、経験の浅い開発者の育成 |
+| **[レガシーのモダナイゼーション](docs/dev-methods/legacy-modernization.md)** | 本ガイド | — | CLI / IDE / Cloud | 理解 → 振る舞いの固定 → 変換 → 検証の段階、Microsoft・GitHub・AWS Transform の手順、失敗しやすい点 |
 | **[Hermes Agent](docs/dev-methods/hermes-agent.md)** | 本ガイド | — | CLI / Cloud / Chat UI | 常駐して Telegram などへ連絡してくる OSS エージェント。置き場所・モデルの選び方・「変化があったときだけ知らせる」cron・費用の構造・公開前の最低ライン |
 | **[ループエンジニアリング](docs/dev-methods/loop-engineering.md)** | 本ガイド | — | CLI / Cloud | エージェントを目標へ向けて回すループの設計・停止条件・落とし穴 |
 | **[作業中のエージェントへの指示の出し分け](docs/dev-methods/agent-commands.md)** | 本ガイド | — | CLI | 実行中の steer / queue、サイドチャット（`/btw`・`/side`・`/ask`）、`/goal` の完了条件の書き方と Claude Code・Codex・Copilot CLI の差分 |
