@@ -1,6 +1,6 @@
 # 仕様駆動開発（SDD） — 仕様を実行可能な入力にする
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Cursor・Codex・Kiro など） ｜ **実行環境**: CLI / IDE ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-09-18
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Cursor・Codex・Kiro など） ｜ **実行環境**: CLI / IDE ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-24
 
 > このページは GitHub Spec Kit を中心に、OpenSpec・BMAD Method・Kiro Specsとの選び方を整理します。コマンド名・生成物・対応エージェントは変わるため、導入時は各公式ドキュメントを確認してください。以下の `状態` は公式発表に明示された成熟度だけを記し、明記がないものは `—` とします。
 
@@ -151,6 +151,7 @@ While <任意の事前条件>, when <任意のトリガー>, the <システム�
 
 ## 関連ドキュメント
 
+- [レガシーのモダナイゼーション](legacy-modernization.md) — 既存システムから仕様とテストを取り出してから移す
 - [AI-DLC Workflows](aidlc-workflows.md) — AWS Labsによる5フェーズの適応型ワークフロー
 - [コーディングエージェントの選び方](coding-agents.md) — `AGENTS.md` など、エージェント横断の設定ファイルの位置づけ
 - [Skill / Plugin のセキュリティ](skill-security.md) — spec-kit が生成するコマンドファイル・スクリプトを導入する前に確認すること
