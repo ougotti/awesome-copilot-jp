@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-23
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-27
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-27 | [週次記事](dev-methods/agent-updates-2026-10-27.md)を追加。Copilot assisted permissions の GA・CLI 1.0.104、Claude Code 2.1.311、Work / Codex の Terra を、承認・再開・画面操作の軸で整理した。前週10-23の補足は区別した。 |
 | 2026-10-23 | 冒頭に「2026-10-22〜10-23 の更新」の一覧を置き、Claude Code 2.1.309・Codex CLI 0.164.0・Copilot CLI 1.0.103・Copilot の global default の GA と usage metrics の変更を製品別ページへ集約した |
 | 2026-10-22 | 10-18〜10-22 の更新を追加した。10 節に Claude Duet（Research Preview）、7-5 節に API version `2026-10-21` と `ant` CLI 2.0、12 節に Inference hooks の Beta 終了と判定を通らない経路。冒頭に「2026-10-18〜10-22 の更新」の一覧を置き、Claude Code 2.1.304〜2.1.307・Copilot CLI 1.0.100〜1.0.102・VS Code 1.143 の詳細は製品別ページへ集約した |
 | 2026-10-21 | 10 節に Hermes Agent（Nous Research の OSS の常駐型エージェント）を追加し、gateway・cron の `[SILENT]` / `wakeAgent`・モデルの選び方・公開前の最低ラインを [解説ページ](dev-methods/hermes-agent.md) にまとめた |
@@ -75,6 +76,10 @@
 | 2026-08-01 | 「Skill の発見・配布・更新」を追加（`gh skill` / Agent Finder・ARD / Copilot Plugins） |
 | 2026-07-29 | 常設ページ化（旧タイトル「2026年7月版」）。ガイド全体の更新は [更新履歴（CHANGELOG）](../CHANGELOG.md) を参照 |
 | 2026-07-22 | 初版公開（Matt Pocock's Skills / Context7 / Firecrawl / Vercel / Record & Replay / Computer Use の6テーマ） |
+
+## 2026-10-26〜10-27 の更新 — 任せ続けるための承認・再開・画面操作
+
+今週は Copilot assisted permissions の GA と CLI 1.0.104、Claude Code 2.1.311 の長時間実行・再開の修正、Work / Codex の GPT-6.1 Terra 提供開始がありました。解説と一次資料は、[今週のエージェント動向](dev-methods/agent-updates-2026-10-27.md)にまとめています。前週10-23の Teams・利用指標・Claude Code 2.1.310 は補足として分けています。公式資料は10-27に確認し、実機検証は行っていません。
 
 ## 2026-10-22〜10-23 の更新 — sandbox の外で動いていたもの
 
