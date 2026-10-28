@@ -1,6 +1,6 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-27
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-28
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
 
@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-28 | 冒頭に「2026-10-23〜10-24 の更新」の一覧を置き、[週次記事](dev-methods/agent-updates-2026-10-27.md)の補足で触れた Claude Code 2.1.310・Copilot の `totals_by_client`・Teams の通知からの PR を、製品別ページへ詳しく反映した |
 | 2026-10-27 | [週次記事](dev-methods/agent-updates-2026-10-27.md)を追加。Copilot assisted permissions の GA・CLI 1.0.104、Claude Code 2.1.311、Work / Codex の Terra を、承認・再開・画面操作の軸で整理した。前週10-23の補足は区別した。 |
 | 2026-10-23 | 冒頭に「2026-10-22〜10-23 の更新」の一覧を置き、Claude Code 2.1.309・Codex CLI 0.164.0・Copilot CLI 1.0.103・Copilot の global default の GA と usage metrics の変更を製品別ページへ集約した |
 | 2026-10-22 | 10-18〜10-22 の更新を追加した。10 節に Claude Duet（Research Preview）、7-5 節に API version `2026-10-21` と `ant` CLI 2.0、12 節に Inference hooks の Beta 終了と判定を通らない経路。冒頭に「2026-10-18〜10-22 の更新」の一覧を置き、Claude Code 2.1.304〜2.1.307・Copilot CLI 1.0.100〜1.0.102・VS Code 1.143 の詳細は製品別ページへ集約した |
@@ -80,6 +81,18 @@
 ## 2026-10-26〜10-27 の更新 — 任せ続けるための承認・再開・画面操作
 
 今週は Copilot assisted permissions の GA と CLI 1.0.104、Claude Code 2.1.311 の長時間実行・再開の修正、Work / Codex の GPT-6.1 Terra 提供開始がありました。解説と一次資料は、[今週のエージェント動向](dev-methods/agent-updates-2026-10-27.md)にまとめています。前週10-23の Teams・利用指標・Claude Code 2.1.310 は補足として分けています。公式資料は10-27に確認し、実機検証は行っていません。
+
+## 2026-10-23〜10-24 の更新 — 条件つきの fail-open と、通知からの書き込み
+
+対象期間の一次情報を 2026-10-28 に確認しました。Codex・Copilot CLI の新しい stable、MCP・Agent Skills・Agent Plugins の新しい正式 spec / release はありません。release note と公式 changelog の照合のみで、実機での検証は行っていません。
+
+| 公開日（公式掲載日 / release の UTC 日付） | 更新 | 提供元・状態 | 詳細 |
+|---|---|---|---|
+| 10-23 | Claude Code 2.1.310。Windows で Git Bash がなく hook の command が引用符の文字列だけのとき hook が通していた問題、読み取りの確認に symlink の行き先、Ubuntu の AppArmor による sandbox の制限の診断、Monitor の対象の拡大、非対話の MCP elicitation の timeout 後に同じ呼び出しを繰り返さない、Enterprise role に cloud session と Remote Control | Official / GA | [Claude Code](claude-code/basics.md#21310--windows-の-hooksymlink-の行き先sandbox-が動かない理由)、[MCP の契約](dev-methods/mcp-tool-contracts.md#答える人がいないときの問い合わせelicitation) |
+| 10-23 | Copilot usage metrics API の `totals_by_client`（ツールごとのモデルの呼び出し・session・token） | Official / Improvement | [利用指標](copilot/README.md#agentic-cli-の-customization-利用指標) |
+| 10-23 | Teams の GitHub app で、通知から Copilot に調査・修正・PR の作成。旧 app は 2026-11-16 に廃止 | Official / Improvement | [Teams](copilot/README.md#teams-の通知から修正pr-まで進める2026-10-23と旧-app-の廃止11-16) |
+
+この期間の修正は**特定の条件でだけ起きていた fail-open**（Windows の hook）でした。「hook は失敗したら止まる」と一般化せず、自分の端末の条件で止まることを確かめてください。通知を起点にした書き込みは、[会話の範囲と書き込む権限を分けて](dev-methods/skill-security.md#2026-10-2310-24-の権限境界の更新)扱います。
 
 ## 2026-10-22〜10-23 の更新 — sandbox の外で動いていたもの
 

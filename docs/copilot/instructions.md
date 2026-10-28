@@ -1,8 +1,8 @@
 # Instructions 一覧と活用ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-28
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **192 個の Instructions** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **193 個の Instructions** を日本語で解説します。
 >
 > **2026-10-16 の点検**: upstream で統合・削除された `powershell-pester-5`（→ `powershell-pester-6`）と Java の移行 3 件（→ `java-upgrade`）を差し替え、掲載が漏れていた `ansible` を追加しました。
 
@@ -403,6 +403,7 @@ applyTo: "**/*.py"
 |-----------|------|---------|
 | [`mongo-dba.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/mongo-dba.instructions.md) | MongoDB DBA 規約 | MongoDB 管理 |
 | [`ms-sql-dba.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/ms-sql-dba.instructions.md) | SQL Server DBA 規約 | SQL Server 管理 |
+| [`sql-server-safe-tsql.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/sql-server-safe-tsql.instructions.md) | 本番に近い SQL Server で安全に動く T-SQL の書き方（`*.sql`・`*.ps1` に適用）。書き込みは `XACT_ABORT` と `THROW` を使う、`@@TRANCOUNT` を見る、**既定は失敗時に何も変えない dry run**、大量の更新は小分けにして `OUTPUT ... INTO` で移したものだけ消す、DMV の診断は読み取り専用。`DROP`・`TRUNCATE`・`KILL` などは生成前に影響を示して確認を求める | 本番 DB への書き込みスクリプト・SQL Server Agent のジョブのレビュー |
 | [`sql-sp-generation.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/sql-sp-generation.instructions.md) | SQL ストアドプロシージャ生成 | DB 開発 |
 
 ---
@@ -572,7 +573,7 @@ applyTo: "**/*.py"
 
 ## まとめ
 
-Instructions は **192 ファイル** あり、以下のカテゴリに分類されます：
+Instructions は **193 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な内容 |
 |---------|----------|---------|

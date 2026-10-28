@@ -1,6 +1,6 @@
 # MCP ツールの契約設計 — 入出力・副作用・失敗を先に決める
 
-> **対象ツール**: ツール横断（MCP を利用する Claude Code・Codex・GitHub Copilot ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: MCP サーバー開発者・エージェント運用者 ｜ **最終更新**: 2026-09-29
+> **対象ツール**: ツール横断（MCP を利用する Claude Code・Codex・GitHub Copilot ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: MCP サーバー開発者・エージェント運用者 ｜ **最終更新**: 2026-10-28
 
 > [外部操作の手段の選び方](tool-selection.md)は「MCP を使うか」を、[MCP と A2A](agent-protocols.md)はプロトコルの役割を扱います。このページは **MCP の Tool を公開すると決めた後**、呼び出し側とサーバー側の契約をどう設計・検証するかに絞ります。以下は [MCP 2026-07-28 版の Tools 仕様](https://modelcontextprotocol.io/specification/2026-07-28/server/tools)を基にしています。
 
@@ -103,6 +103,18 @@
 ## 4. 確認 UI とサーバー側認可を分ける
 
 MCP は Tool の呼び出しを人が拒否できる設計を推奨していますが、特定の確認画面をプロトコルで強制しません。機微な更新の **実行前確認**はクライアント側で、対象 Issue を操作できるかの **認可**はサーバー側で行います。サーバーは `issue_id` と利用者の権限を毎回照合し、`expected_version` も再確認します。画面で一度確認したという事実だけで、権限や状態の再確認を省略してはいけません。[Tools 仕様の User Interaction Model と Security Considerations](https://modelcontextprotocol.io/specification/2026-07-28/server/tools)を参照してください。OAuth scope・token audience・委任権限の詳細は [AI エージェントの ID・認可](agent-identity.md)にまとめています。
+
+### 答える人がいないときの問い合わせ（elicitation）
+
+Tool の途中で利用者に追加の入力を求める **elicitation** は、対話の session では人が答えますが、`-p` や SDK・定期実行のような**非対話の session では誰も答えません**。答えを待ったまま timeout すると、呼び出し側は「失敗したので、もう一度」と同じ呼び出しを繰り返しがちで、途中まで進んだ副作用が重なることがあります。
+
+Claude Code 2.1.310（2026-10-23 UTC）は、非対話の session でこの状態になったとき、Claude に**答えが来なかったことと、同じ呼び出しを繰り返さないこと**を伝えるようになりました（[2.1.310](https://github.com/anthropics/claude-code/releases/tag/v2.1.310)）。クライアント側の対策に頼らず、サーバー側でも次を契約に入れておきます。
+
+- 問い合わせが必要な Tool は、問い合わせの**前に**副作用を起こさない。答えを得てから書き込む
+- 答えが来なかった場合の結果を `isError: true` の業務エラーとして返し、「答えがないため実行していない」ことを明示する
+- 非対話で使われる前提の Tool は、問い合わせなしで判断できる引数（明示の確認フラグなど）を用意する
+
+これは**再試行そのものの禁止ではありません**。答えが来ないことが原因の失敗を、通信の一時的な失敗と区別して扱う、という契約です。再試行の設計全体は [長時間タスクの信頼性設計](agent-reliability.md#5-冪等性重複実行外部副作用の扱い) を参照してください。
 
 ## 5. 最小の確認手順
 

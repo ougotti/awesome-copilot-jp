@@ -172,6 +172,7 @@
     "spec-driven-workflow-v1.instructions.md",
     "springboot-4-migration.instructions.md",
     "springboot.instructions.md",
+    "sql-server-safe-tsql.instructions.md",
     "sql-sp-generation.instructions.md",
     "svelte.instructions.md",
     "swift-mcp-server.instructions.md",
