@@ -8,6 +8,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-10-28 | 10 節と「2026-10-23〜10-24 の更新」に Meta の Muse（2026-10-23 に日本で提供開始）を追加し、Hermes Agent・Claude Duet・dots との[比較表](dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dotsmeta-の-muse)に日本からの利用可否の行を加えた |
 | 2026-10-28 | 冒頭に「2026-10-23〜10-24 の更新」の一覧を置き、[週次記事](dev-methods/agent-updates-2026-10-27.md)の補足で触れた Claude Code 2.1.310・Copilot の `totals_by_client`・Teams の通知からの PR を、製品別ページへ詳しく反映した |
 | 2026-10-27 | [週次記事](dev-methods/agent-updates-2026-10-27.md)を追加。Copilot assisted permissions の GA・CLI 1.0.104、Claude Code 2.1.311、Work / Codex の Terra を、承認・再開・画面操作の軸で整理した。前週10-23の補足は区別した。 |
 | 2026-10-23 | 冒頭に「2026-10-22〜10-23 の更新」の一覧を置き、Claude Code 2.1.309・Codex CLI 0.164.0・Copilot CLI 1.0.103・Copilot の global default の GA と usage metrics の変更を製品別ページへ集約した |
@@ -91,6 +92,7 @@
 | 10-23 | Claude Code 2.1.310。Windows で Git Bash がなく hook の command が引用符の文字列だけのとき hook が通していた問題、読み取りの確認に symlink の行き先、Ubuntu の AppArmor による sandbox の制限の診断、Monitor の対象の拡大、非対話の MCP elicitation の timeout 後に同じ呼び出しを繰り返さない、Enterprise role に cloud session と Remote Control | Official / GA | [Claude Code](claude-code/basics.md#21310--windows-の-hooksymlink-の行き先sandbox-が動かない理由)、[MCP の契約](dev-methods/mcp-tool-contracts.md#答える人がいないときの問い合わせelicitation) |
 | 10-23 | Copilot usage metrics API の `totals_by_client`（ツールごとのモデルの呼び出し・session・token） | Official / Improvement | [利用指標](copilot/README.md#agentic-cli-の-customization-利用指標) |
 | 10-23 | Teams の GitHub app で、通知から Copilot に調査・修正・PR の作成。旧 app は 2026-11-16 に廃止 | Official / Improvement | [Teams](copilot/README.md#teams-の通知から修正pr-まで進める2026-10-23と旧-app-の廃止11-16) |
+| 10-23 | Meta の Muse が日本で提供開始（北米以外で初）。専用の仮想マシンで動き、状況が変わったときや承認が必要なときに連絡してくる個人向けエージェント。高度な音声モード・独自のメールアドレスなどは日本での提供を別途案内 | Official / GA（一部機能は日本で未提供） | [10 節](#10-aiエージェントの実行基盤ハーネス)、[比較](dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dotsmeta-の-muse) |
 
 この期間の修正は**特定の条件でだけ起きていた fail-open**（Windows の hook）でした。「hook は失敗したら止まる」と一般化せず、自分の端末の条件で止まることを確かめてください。通知を起点にした書き込みは、[会話の範囲と書き込む権限を分けて](dev-methods/skill-security.md#2026-10-2310-24-の権限境界の更新)扱います。
 
@@ -116,7 +118,7 @@
 | 10-19〜21 | Claude Code 2.1.304〜2.1.307。`allowedMcpServers` が一部の managed stdio server を絞り込まなくなる（`deniedMcpServers` が必要）、`sandbox.allowNestedUserNamespaces`、Mods の `decider: "person"`、`claude_code.safety_event`、HTTP MCP の二重送信と `--worktree` のコミット消失の修正、Code Review のレベル | Official / GA | [Claude Code](claude-code/basics.md#2130421307--統制が緩む変更と締まる見える変更)、[Mods](claude-code/mods.md#2130421305-で統制に使える部品が増えた) |
 | 10-19〜21 | Copilot CLI 1.0.100〜1.0.102。sandbox が localhost・private network を既定で許可、GitHub のリンクからの「verified」な Skill / Plugin、信頼済みリポジトリの Plugin の自動導入、`.github/instructions` の自動適用 | Official / GA | [GitHub Copilot ガイド](copilot/README.md#cli-1010010102-と-vs-code-1143--sandbox-の既定とskillplugin指示の入り方) |
 | 10-19 頃 | VS Code 1.143。Copilot harness が新規 session の既定、必須の agent plugin の自動導入、session ごとの sandbox 切り替え | Official / Stable（一部 Preview / Experimental） | 同上 |
-| 10-21 | Claude Duet。接続したアプリを見張り、必要なときだけ連絡するエージェント型アプリ（米国の Pro / Max、ウェイトリスト制） | Official / Research Preview | [10 節](#10-aiエージェントの実行基盤ハーネス)、[比較](dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dots) |
+| 10-21 | Claude Duet。接続したアプリを見張り、必要なときだけ連絡するエージェント型アプリ（米国の Pro / Max、ウェイトリスト制） | Official / Research Preview | [10 節](#10-aiエージェントの実行基盤ハーネス)、[比較](dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dotsmeta-の-muse) |
 | 10-21 | Claude API version `2026-10-21` と SDK / `ant` CLI 2.0（sampling パラメータの削除、`--api-key` の削除、Apache 2.0） | Official / GA | [7-5 節](#api-version-2026-10-21-と-ant-cli-202026-10-21) |
 | 10-20 | Inference hooks の Beta 終了、組織単位の Web fetch の制限、user profiles と organization webhooks（Beta） | Official / GA（webhooks は Beta） | [セキュリティ](dev-methods/skill-security.md#2026-10-1810-22-の権限境界の更新)、[ID・認可](dev-methods/agent-identity.md#誰のための-request-かをモデル提供者に伝える--claude-api-の-user-profiles2026-10-20) |
 | 10-19〜20 | Copilot model policy API、GitHub package firewall（npm のみ） | Official / GA・Public Preview | [model policy API](copilot/README.md#モデルの方針を-api-で管理する--copilot-model-policy-api2026-10-19)、[セキュリティ](dev-methods/skill-security.md#2026-10-1810-22-の権限境界の更新) |
@@ -892,7 +894,7 @@ GitHub の実装では `$schema` は**任意**で、**プラグインルート�
 
 個人向けの常駐型では **Hermes Agent**（Nous Research が MIT で公開。`提供元`: Official / `状態`: GA。2026-10-13 の v0.22.0 で SemVer の安定版チャネルが既定に）があります。Kiro Crew と違い、Claude Code や Codex を駆動するのではなく**エージェント本体まで自前**で、gateway が Telegram などのメッセージアプリと cron を受け持ち、モデルは利用者が Nous Portal・OpenRouter・各社の API・ローカルから選びます。cron には、何もなかった回の配信を止める `[SILENT]` と、事前スクリプトの判定で**その回は LLM を起動しない** `wakeAgent` ゲートがあります。2026-10-19 公開の動画「Build Your First AI Agent in 20 Minutes (No Coding)」が VPS と Telegram での構成を紹介していますが、bot がサーバーのシェルへの入口になる点、承認の既定、ダッシュボードの公開範囲は自分で守る必要があります（[解説](dev-methods/hermes-agent.md)）。
 
-同じ「先に連絡してくる」形を事業者が運営する製品として、Anthropic は 2026-10-21 に **Claude Duet**（`提供元`: Official / `状態`: Research Preview。米国の Pro / Max 向けのウェイトリスト制で、日本からは未提供）を公開しました。接続したアプリを数時間ごとに確認し、対応が必要なときだけ連絡し、大きな仕事は Anthropic のクラウドの仮想マシンで進めます。送信・支払い・署名・削除の前には必ず確認し、承認があっても証券取引と口座間の送金は行いません。背景での確認もプランの利用上限を消費します。Hermes Agent・ChatGPT の dots との違いは[比較表](dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dots)にまとめました。
+同じ「先に連絡してくる」形を事業者が運営する製品として、Anthropic は 2026-10-21 に **Claude Duet**（`提供元`: Official / `状態`: Research Preview。米国の Pro / Max 向けのウェイトリスト制で、日本からは未提供）を公開しました。接続したアプリを数時間ごとに確認し、対応が必要なときだけ連絡し、大きな仕事は Anthropic のクラウドの仮想マシンで進めます。送信・支払い・署名・削除の前には必ず確認し、承認があっても証券取引と口座間の送金は行いません。背景での確認もプランの利用上限を消費します。Meta の **Muse**（`提供元`: Official。2026-09-08 に米国で公開し、2026-10-23 に北米以外で初めて日本で提供開始。多くの基本機能は無料）も同じ形で、利用者ごとに隔離された仮想マシンで動き、インターネットへのアクセスは Muse とは独立した Sentinel エージェントが管理し、メール送信や購入の前に確認します。日本で今すぐ試せるのは、この中では Muse と dots（対象プランで順次提供）です。Hermes Agent・ChatGPT の dots・Muse との違いは[比較表](dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dotsmeta-の-muse)にまとめました。
 
 2026-09-10には **OpenAI Agents API**（`提供元`: Official / `状態`: Public Beta）が公開されました。これはOpenAI管理のCodexハーネスをAPIとして提供し、durable session、orchestration、context compaction、recoveryをOpenAI側で担います。ただし実行環境は `none` / OpenAI-hosted / self-hostedから選ぶ別の層であり、APIを使うだけでsandbox、network、secret、tool権限の設計が不要になるわけではありません。Codex製品、Agents SDK、Codex SDK / app serverとも役割が異なります。
 

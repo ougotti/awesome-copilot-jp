@@ -4,6 +4,11 @@
 
 ## 2026-10
 
+- **2026-10-28** Meta の Muse（2026-10-23 に日本で提供開始）を追加。
+  - [Hermes Agent](docs/dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dotsmeta-の-muse)の 11 節を「事業者が運営する選択肢 — Claude Duet・ChatGPT の dots・Meta の Muse」に改め、比較表に Muse の列と「日本から」の行を加えた。Muse は利用者ごとに隔離された仮想マシン（Muse Secure VM）で動き、インターネットへのアクセスを独立した Sentinel エージェントが管理し、メール送信や購入の前に確認すること、多くの基本機能が無料であること、高度な音声モード・独自のメールアドレスなどは日本での提供が別途案内であること、仮想マシン全体を暗号化する Muse Confidential VM は未提供であることを明記した。
+  - [Skills 最新動向](docs/trends.md#10-aiエージェントの実行基盤ハーネス)の 10 節と「2026-10-23〜10-24 の更新」に要約を、[生成AIを業務で安全に使う](docs/business/safety.md#ノーコードで自分専用のエージェントを動かす前に)に Muse を追加した。
+  - 一次資料（Meta の発表記事と日本語のニュースルーム、OpenAI の dots のドキュメント）は 2026-10-28 に確認した。実機では確認していない。
+
 - **2026-10-28** 2026-10-23〜10-24 の更新を製品別ページへ反映（#297）。[週次記事](docs/dev-methods/agent-updates-2026-10-27.md)の補足で触れた項目を、手順と境界つきで詳しくした。
   - [Claude Code のカスタマイズ機能](docs/claude-code/basics.md#21310--windows-の-hooksymlink-の行き先sandbox-が動かない理由)に 2.1.310 の節を新設した。Windows で Git Bash がなく hook の command が引用符の文字列だけのときに hook が通していた問題（この条件の修正であり、すべての hook が fail-closed になったわけではない）、読み取りの確認での symlink の行き先、auto mode の外部読み取りの確認、Ubuntu の AppArmor による sandbox の制限の診断、Monitor と長い foreground の sleep、非対話の MCP elicitation の timeout、Enterprise role の cloud session と Remote Control を整理した。
   - [MCP ツールの契約設計](docs/dev-methods/mcp-tool-contracts.md#答える人がいないときの問い合わせelicitation)に「答える人がいないときの問い合わせ（elicitation）」を新設し、問い合わせの前に副作用を起こさない、答えがないことを業務エラーとして返す、という契約を加えた。[信頼性設計](docs/dev-methods/agent-reliability.md#5-冪等性重複実行外部副作用の扱い)・[ハーネス](docs/dev-methods/harness.md#同じハーネスでも起動経路で既定が違う--claude-code-21302)にも反映した。
@@ -48,7 +53,7 @@
   - 修正後の検査で見つかった `#codex-cli-01600（2026-10-01）`（2 か所）を直し、[CONTRIBUTING](CONTRIBUTING.md#編集ルール)にアンカーは記号を除いた形で書く旨を追加した。
 
 - **2026-10-22** Claude Duet（Anthropic、2026-10-21、Research Preview）を追加（#286）。
-  - [Hermes Agent](docs/dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dots)に「11. 事業者が運営する選択肢 — Claude Duet・ChatGPT の dots」を新設し、運営者・動く場所・モデル・接続先・確認の頻度・承認・費用を 3 つで比べた。米国の Pro / Max 向けのウェイトリスト制で日本からは使えないこと、承認があっても証券取引と口座間の送金は行わないこと、背景での確認も利用上限を消費すること、外から届く文面の指示への注意を明記した。「30 秒で判断する」からも誘導した。
+  - [Hermes Agent](docs/dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dotsmeta-の-muse)に「11. 事業者が運営する選択肢 — Claude Duet・ChatGPT の dots」を新設し、運営者・動く場所・モデル・接続先・確認の頻度・承認・費用を 3 つで比べた。米国の Pro / Max 向けのウェイトリスト制で日本からは使えないこと、承認があっても証券取引と口座間の送金は行わないこと、背景での確認も利用上限を消費すること、外から届く文面の指示への注意を明記した。「30 秒で判断する」からも誘導した。
   - [Skills 最新動向](docs/trends.md#10-aiエージェントの実行基盤ハーネス) 10 節に要約を、[生成AIを業務で安全に使う](docs/business/safety.md#ノーコードで自分専用のエージェントを動かす前に)に事業者が運営する製品でも変わらない確認を追加した。
   - 一次資料（発表記事・製品ページ・ヘルプ記事）は 2026-10-22 に確認した。日本からは利用できないため実機では確認していない。
 - **2026-10-22** Claude Code 2.1.304〜2.1.307 の統制に関わる変更を反映（#287）。

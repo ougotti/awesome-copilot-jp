@@ -1,6 +1,6 @@
 # Hermes Agent — 常駐して自分から連絡してくる OSS エージェント
 
-> **対象ツール**: Hermes Agent（Nous Research） ｜ **実行環境**: CLI / Cloud（VPS・サーバーレス）/ Chat UI（Telegram などのメッセージアプリ） ｜ **対象読者**: 個人用の常駐エージェントを試したい人・導入を判断するエンジニア ｜ **最終更新**: 2026-10-22
+> **対象ツール**: Hermes Agent（Nous Research） ｜ **実行環境**: CLI / Cloud（VPS・サーバーレス）/ Chat UI（Telegram などのメッセージアプリ） ｜ **対象読者**: 個人用の常駐エージェントを試したい人・導入を判断するエンジニア ｜ **最終更新**: 2026-10-28
 
 > [Hermes Agent](https://github.com/NousResearch/hermes-agent) は、Nous Research が MIT ライセンスで公開しているエージェントです。Claude Code や Codex が「呼ぶと動く」のに対し、Hermes は **gateway が常駐し、決まった時刻やメッセージをきっかけに動いて、結果を Telegram などへ送ってきます**。このページは、Metics Media の動画 [Build Your First AI Agent in 20 Minutes (No Coding)](https://www.youtube.com/watch?v=rCkYVxOX-dI)（2026-10-19 公開）が紹介する構成（VPS + Telegram + 安価なモデル + 価格の監視）を、公式ドキュメントで裏を取りながら、実行場所・接続・承認・費用の層に分けて整理します。
 
@@ -14,10 +14,10 @@
 | こうしたい | Hermes は | 代わりの候補 |
 |---|---|---|
 | 寝ている間も定期的に確認して、**変化があったときだけ**スマホに知らせてほしい | 向いている。cron と gateway が中心機能 | [Codex の Scheduled tasks](../codex/README.md#6-定期イベントで動かすscheduled-tasks)、[Kiro Crew](harness.md#kiro-crew--常駐して動き続けるハーネス) |
-| スマホのメッセージアプリから、自分専用のエージェントに話しかけたい | 向いている。Telegram・Discord・Slack・Signal など 1 つの gateway で受ける | [ChatGPT の dots](../codex/README.md#個人の定期作業dotsteam-tasksを選ぶ)、[Claude Duet](#11-事業者が運営する選択肢--claude-duetchatgpt-の-dots)（どちらも自分でサーバーを持たない） |
+| スマホのメッセージアプリから、自分専用のエージェントに話しかけたい | 向いている。Telegram・Discord・Slack・Signal など 1 つの gateway で受ける | [ChatGPT の dots](../codex/README.md#個人の定期作業dotsteam-tasksを選ぶ)、[Claude Duet・Meta の Muse](#11-事業者が運営する選択肢--claude-duetchatgpt-の-dotsmeta-の-muse)（いずれも自分でサーバーを持たない） |
 | モデルを自分で選び、費用を自分で管理したい | 向いている。Nous Portal・OpenRouter・各社の API キー・ローカルモデルを切り替えられる | [OpenCode](coding-agents.md#opencode--プロバイダーを選ぶ前提の設計) |
 | リポジトリで開発作業を任せたい | 主目的ではない（できなくはない） | [コーディングエージェントの選び方](coding-agents.md) |
-| サーバーの管理をしたくない、業務データを社外の VPS に置けない | 向いていない | 事業者が運営する [Claude Duet・dots](#11-事業者が運営する選択肢--claude-duetchatgpt-の-dots)、[事務・ビジネス活用ガイド](../business/README.md) |
+| サーバーの管理をしたくない、業務データを社外の VPS に置けない | 向いていない | 事業者が運営する [Claude Duet・dots・Muse](#11-事業者が運営する選択肢--claude-duetchatgpt-の-dotsmeta-の-muse)、[事務・ビジネス活用ガイド](../business/README.md) |
 
 「ノーコード」でも、**サーバー・bot のトークン・API キー・課金・承認の設定を自分で持つ**ことに変わりはありません。8 節の最低ラインを読んでから始めてください。
 
@@ -211,26 +211,31 @@ OpenClaw を使っていた場合、セットアップウィザードが `~/.ope
 
 Hermes は**個人が自分の置き場所とモデルを選べる自由度**が最も高く、そのぶん**承認・公開範囲・費用の既定を自分で守る責任**も最も大きくなります。
 
-## 11. 事業者が運営する選択肢 — Claude Duet・ChatGPT の dots
+## 11. 事業者が運営する選択肢 — Claude Duet・ChatGPT の dots・Meta の Muse
 
 「先に連絡してくる」エージェントは、事業者が運営する製品としても出ています。Anthropic は 2026-10-21 に **Claude Duet** のリサーチプレビューを公開しました。毎朝、接続したアプリ全体の要点を届け、日中はそれらを見張って**対応が必要なときだけ連絡してくる** iOS / Android / claude.ai のアプリです。大きな仕事は Anthropic のクラウド上の仮想マシンとブラウザで進めるため、利用者の PC やスマートフォンを起動しておく必要はありません（[Introducing Claude Duet](https://claude.com/resources/articles/claude-duet)）。
 
+Meta は 2026-09-08 に米国で **Muse** を公開し、2026-10-23（日本時間）に**北米以外で初めて日本で提供を始めました**。利用者ごとに隔離されたクラウド上の専用の仮想マシン（Muse Secure VM）で動き、アプリを閉じても作業を続け、状況が変わったときや承認が必要なときに戻ってきます。iOS / Android のアプリと muse.ai で使え、多くの基本機能は無料です（[Introducing Muse](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/)、[日本での提供開始](https://about.fb.com/ja/news/2026/10/muse-personal-ai-agent-launches-in-japan/)）。
+
 > [!NOTE]
-> 2026-10-22 時点で Claude Duet は**米国の Pro / Max 利用者向けのウェイトリスト制**です。Team / Enterprise は対象外で、日本からは使えません。本ガイドは公式の発表とヘルプ記事に基づいて整理しており、実機では確認していません。
+> 2026-10-28 時点で、Claude Duet は**米国の Pro / Max 利用者向けのウェイトリスト制**で、Team / Enterprise は対象外、日本からは使えません。Muse は日本で使えますが、米国で発表された高度な音声モード・Muse Realtime Avatar・Muse 独自のメールアドレスは、日本での提供状況を「別途案内する」とされています。dots は順次提供中で、対象プランでもすぐに表示されるとは限りません。本ガイドは各社の公式の発表とヘルプ記事に基づいて整理しており、実機では確認していません。
 
-| 観点 | Hermes Agent | Claude Duet | ChatGPT の [dots](../codex/README.md#個人の定期作業dotsteam-tasksを選ぶ) |
-|---|---|---|---|
-| 運営するのは | 利用者（自分の PC・VPS） | Anthropic | OpenAI |
-| 動く場所 | 自分で選んだ置き場所と terminal backend | Anthropic のクラウドの仮想マシンとブラウザ | 専用の Cloud computer |
-| モデル | 利用者が選ぶ | **選べない**（Opus 5.5 を作業量に応じて使う） | 製品側が決める |
-| つながる先 | 利用者が入れたツール・MCP・Skill | Claude のアカウントで設定済みの memory・Skill・connector（Gmail・Google カレンダー・Slack・HubSpot など） | ChatGPT の memory と、dot ごとに許可したアプリ・PC |
-| 確認の頻度 | cron の間隔を利用者が決める | 数時間ごと。確認と確認の間に届いたものは見落とし得る | 会話の合間に進捗を追い、決まった時刻の仕事は保存したスケジュールで動く |
-| 承認 | `approvals.mode` を利用者が設定 | 送信・支払い・署名・削除の前に必ず確認。**承認があっても証券取引と口座間の送金は行わない** | アカウントへの変更や共有の前に自動チェックが入り、承認依頼か本人への引き継ぎを判断 |
-| 費用 | モデル・ツール・置き場所を利用者が払う | プランの利用上限をほかの Claude と共有。**背景での確認も上限を消費する** | 会話と、そこから始める Work / Codex タスクで扱いが違う |
+| 観点 | Hermes Agent | Claude Duet | ChatGPT の [dots](../codex/README.md#個人の定期作業dotsteam-tasksを選ぶ) | Meta の Muse |
+|---|---|---|---|---|
+| 運営するのは | 利用者（自分の PC・VPS） | Anthropic | OpenAI | Meta |
+| 日本から | 使える（置き場所しだい） | **使えない** | 対象プランで順次提供（Pro は EEA・英国・スイスを除く地域が対象） | **使える**（2026-10-23 から） |
+| 動く場所 | 自分で選んだ置き場所と terminal backend | Anthropic のクラウドの仮想マシンとブラウザ | 専用の Cloud computer | 利用者ごとに隔離された専用の仮想マシン（Muse Secure VM）とブラウザ |
+| モデル | 利用者が選ぶ | **選べない**（Opus 5.5 を作業量に応じて使う） | 製品側が決める | **選べない**（Meta の Muse Spark） |
+| つながる先 | 利用者が入れたツール・MCP・Skill | Claude のアカウントで設定済みの memory・Skill・connector（Gmail・Google カレンダー・Slack・HubSpot など） | ChatGPT の memory と、dot ごとに許可したアプリ・PC | 利用者が選んだアプリ（Gmail・Google カレンダー・Instagram など）。メールは「読むだけ」か「送信まで」かをアプリごとに選ぶ。日本ではメルカリ・マネーフォワード ME・チケットぴあとの連携を進めている |
+| 確認の頻度 | cron の間隔を利用者が決める | 数時間ごと。確認と確認の間に届いたものは見落とし得る | 会話の合間に進捗を追い、決まった時刻の仕事は保存したスケジュールで動く | 状況が変わったときと承認が必要なときに戻ってくる。確認の間隔は公表されていない |
+| 承認 | `approvals.mode` を利用者が設定 | 送信・支払い・署名・削除の前に必ず確認。**承認があっても証券取引と口座間の送金は行わない** | アカウントへの変更や共有の前に自動チェックが入り、承認依頼か本人への引き継ぎを判断 | メール送信や購入の前に確認。インターネットへのアクセスは Muse とは独立した **Sentinel** エージェントが管理し、パスワードと支払い方法は Muse から見えない |
+| 費用 | モデル・ツール・置き場所を利用者が払う | プランの利用上限をほかの Claude と共有。**背景での確認も上限を消費する** | 会話と、そこから始める Work / Codex タスクで扱いが違う | 多くの基本機能は無料。多く使う場合はサブスクリプション |
 
-選び方の軸は「何を自分で持ちたいか」です。置き場所・モデル・承認の既定を自分で決めたいなら Hermes、運営は任せて既存の Claude の connector と Skill をそのまま使いたいなら Duet、ChatGPT と Codex に仕事をつなぎたいなら dots が候補になります。
+選び方の軸は「何を自分で持ちたいか」です。置き場所・モデル・承認の既定を自分で決めたいなら Hermes、運営は任せて既存の Claude の connector と Skill をそのまま使いたいなら Duet、ChatGPT と Codex に仕事をつなぎたいなら dots が候補になります。**日本で今すぐ、無料の範囲から試せるのは Muse** です。旅行の予約や買い物など、仕事以外の用事も主な用途に含まれます。
 
 事業者が運営していても、**外から届く文面に含まれる指示**の問題は消えません。Duet のヘルプ記事も、他人が書いたメールや Web ページに誤誘導を狙った指示が含まれ得ること、完全な防御はないため重要な操作に承認を求めていることを明記しています。承認を求められたら、何を送る・払う・消すのかを読んでから応じてください。接続したアプリはいつでも切断できますが、**切断前の会話から得た情報は記憶として残る**とされています（[Get started with Claude Duet](https://support.claude.com/en/articles/17631495-get-started-with-claude-duet)）。
+
+Muse では、過去の操作と今後の予定の履歴を確認でき、接続したアプリの権限の変更や切断、覚えたことを「忘れて」と頼むこともできます。会話を Meta の AI モデルの学習に使わない設定（オプトアウト）があり、会話と仮想マシン内のデータは Meta の広告システムと共有しないとされています。一方、仮想マシン全体を利用者だけが持つ鍵で暗号化する **Muse Confidential VM** は「今年後半」の予定で、2026-10-28 時点では提供されていません。業務のメールや顧客の情報をつなぐ前に、[業務で使ってよい情報の線引き](../business/safety.md)を確認してください。
 
 ---
 
@@ -259,4 +264,6 @@ Hermes は**個人が自分の置き場所とモデルを選べる自由度**が
   - [Providers](https://hermes-agent.nousresearch.com/docs/integrations/providers) — Nous Portal・OpenRouter・Anthropic・Codex・ローカルモデル
 - [Nous Portal](https://portal.nousresearch.com/) — プランとモデル単価（2026-10-21 確認）
 - [Introducing Claude Duet](https://claude.com/resources/articles/claude-duet) ／ [Get started with Claude Duet](https://support.claude.com/en/articles/17631495-get-started-with-claude-duet) — Claude Duet の発表と、提供条件・承認・利用量・既知の制限（Anthropic 公式、2026-10-22 確認）
+- [Introducing Muse](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/) ／ [Muse の日本での提供開始](https://about.fb.com/ja/news/2026/10/muse-personal-ai-agent-launches-in-japan/) — Muse の発表と、日本での提供範囲・連携先・Sentinel・Muse Secure VM（Meta 公式、2026-10-28 確認）
+- [Dots](https://learn.chatgpt.com/docs/dots) — dots の提供条件・接続・承認（OpenAI 公式、2026-10-28 確認）
 - [Build Your First AI Agent in 20 Minutes (No Coding)](https://www.youtube.com/watch?v=rCkYVxOX-dI) — 本ページの起点にした動画（Metics Media、2026-10-19。概要欄にアフィリエイトリンクあり）
