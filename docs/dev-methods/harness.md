@@ -1,6 +1,6 @@
 # AI エージェントの実行基盤（ハーネス）
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-10-22
+> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-10-28
 
 > エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew / OpenAI Agents API / Hermes Agent）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
 
@@ -283,6 +283,10 @@ Claude Code の修正は逆方向の例です。以前は親 session で設定�
 | 判定するモデル | `CLAUDE_CODE_AUTO_MODE_MODEL` は client 側の auto mode classifier のモデルだけを変える。server 側の auto mode は変わらない | 「どこで判定しているか」を確認してから設定する |
 
 起動経路を増やすときは、定義の可搬性と同じく、**開始モード・subagent の実行形態・hook の並列度を実行先で確かめ直す**必要があります。詳細は [Claude Code のカスタマイズ機能](../claude-code/basics.md#21302--無人実行の開始モードと-subagent-の実行方式)を参照してください。
+
+2.1.310（2026-10-23 UTC）では、**Monitor tool と plugin monitor** が Bedrock・Vertex・Foundry と、telemetry や不要な通信を止めた環境でも使えるようになり、同じ環境で長い foreground の sleep を止めるようになりました。提供経路によって「待つ」処理の書き方が変わっていたものを揃える変更です。無人実行で何かの完了を待つときは、sleep で時間を稼がず Monitor で状態を見る形にしてください（[Claude Code 2.1.310](../claude-code/basics.md#21310--windows-の-hooksymlink-の行き先sandbox-が動かない理由)）。
+
+起動経路は、チャットの通知からも増えています。2026-10-23 には Teams の GitHub app が、届いた Issue の通知から Copilot に調査・修正・PR の作成まで頼めるようになりました。**通知が見える会話の範囲と、書き込みを実行するアカウントの権限は別の層**です（[GitHub Copilot ガイド](../copilot/README.md#teams-の通知から修正pr-まで進める2026-10-23と旧-app-の廃止11-16)）。
 
 ### VS Code 1.140 — Copilot harness を Agent Host で動かし、remote host へ委任する
 

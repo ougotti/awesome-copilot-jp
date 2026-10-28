@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-23
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-28
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -701,6 +701,24 @@ VS Code 1.143 の model comparison（Preview）、オンデバイスモデル（
 | 対象 | Copilot CLI（対話・prompt mode）、Copilot app、JetBrains などの ACP 連携、Copilot SDK。IDE は agent 機能が Copilot SDK v1.0.21 以降で動く場合だけで、組み込みチャットの telemetry は名前を出さない。prompt mode・app・ACP は CLI 1.0.97 以降 |
 | 変わらないもの | `interaction_count` と `distinct_*_use_count` の計算方法。名前は**公開後に処理されたレポート日から**で、過去の日付は `other` / `custom` のまま |
 
+**2026-10-23 の変更 — 使ったツール（client）ごとに集計する**（[GitHub 公式変更ログ](https://github.blog/changelog/2026-10-23-usage-metrics-api-adds-usage-from-tools-like-opencode/)、2026-10-28 確認。API での実行は未検証）
+
+enterprise・organization・enterprise-user・organization-user の 1 日と 28 日のレポートに **`totals_by_client`** が加わりました。Copilot のモデルの呼び出しが、どのツールから来たかで分かれます。
+
+| 項目 | 内容 |
+|------|------|
+| client の値 | `opencode`、`claude_code`、`codex`、`zed`、`copilot_cli`、`github_app`、`cloud_agent`、`code_review`、`vscode`、`jetbrains`。認識できないものは `other` |
+| 指標 | `request_count`、`session_count`、`token_usage`（入力・出力・リクエストあたりの平均）、`totals_by_model`（モデル別。`model_selection_mode` は `user_selected` / `auto` / `product_selected`、ほかは `other` / `unknown`） |
+| 28 日のレポート | 集計レポートの各 `day_totals` に入る。利用がなければ空の配列 |
+
+読むときの注意は 3 つです。
+
+- **`request_count` はモデルの呼び出しの数**で、人が送った prompt の数・エージェントの作業の数・成功した task の数ではありません。1 つの prompt で何度も呼び出されることがあります
+- **client は各リクエストに付く識別子による best-effort の分類**で、利用者や利用したツールの真正性を証明するものではありません
+- code review と cloud agent のリクエストは `product_selected` になり、code review のモデルは `unknown` になります
+
+上の「名前で集計する」変更（自作の Skill・agent・MCP など、何を使ったか）とは別の切り口で、こちらは**どのツールから Copilot のモデルを使ったか**です。採用の層の指標として読みます（[AI 導入の効果をどう測るか](../dev-methods/ai-adoption-metrics.md)）。
+
 **名前は組織の外へ出る情報になり得ます。** Skill や MCP server の名前に顧客名・案件名・内部システム名を入れている場合、レポートを組織外と共有する前に名前を確認するよう公式も注意しています。数値はクライアントの telemetry 由来で、古いクライアントや telemetry を止めた端末の分は数えられません。採用状況の傾向として読み、[Skill の効果の評価](../dev-methods/evals.md)とは分けてください。
 
 2026-09-25 には repository 単位の `repos-1-day` report に `pull_request_review_times` が加わり、ready for review → 初回 review、初回 → 最終 review、最終 review → merge の各段階の median / p90 を取得できるようになりました。人が開き、別の人が review した PR だけが対象で、Copilot code review・bot・author 自身の review は計時しません。**→ 測定対象・欠測・読み方は [Skill / エージェントの評価](../dev-methods/evals.md#pr-のレビュー待ち時間を品質スコアと混同しない) を参照**
@@ -754,6 +772,23 @@ VS Code の Agent Host では、1.141 の managed setting として同じ `telem
 - 作られた Issue・PR は、通常どおり repository 側のレビューと branch protection を通す
 
 出典: [Multi-repository support and other improvements for GitHub in Slack and Teams](https://github.blog/changelog/2026-10-15-copilot-in-slack-and-teams-adds-model-and-repository-updates/)（2026-10-17 確認。Slack / Teams での実操作は未検証）。cross-repository の権限の考え方は [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md#2026-10-1510-17-の権限境界の更新)へ。
+
+### Teams の通知から修正・PR まで進める（2026-10-23）と、旧 app の廃止（11-16）
+
+**提供元: Official / 状態: Improvement（2026-10-23）**。Microsoft Teams の GitHub app が通知と Copilot を統合しました。channel・group chat・private chat に届いた Issue の通知に対して `@GitHub` を呼ぶと、**Issue を調べ、bug を直し、PR を作る**ところまで進められます。PR の確認・テスト・マージはチームが行います（[Turn notifications into code with GitHub Copilot in Teams](https://github.blog/changelog/2026-10-23-turn-notifications-into-code-with-github-copilot-in-teams/)、2026-10-28 確認。Teams での実操作は未検証）。
+
+| 項目 | 内容 |
+|---|---|
+| 統合された app | これまで「GitHub notifications」と呼ばれていた app。既存の通知 app は最新版に更新すれば、通知はそのまま使える |
+| 旧 GitHub app | 「GitHub (deprecated)」に改名され、**2026-11-16 に廃止**予定 |
+| 移行の手順 | 統合版の app を入れる → Teams で `@GitHub` を呼ぶ → GitHub アカウントを接続する → 対象の repository を選ぶ |
+| 必要なプラン・権限 | changelog には記載なし |
+
+**通知を起点にした書き込み**が加わった点が、10-15 の複数 repository 対応との違いです。通知の届く会話には、その repository に権限のない人も参加していることがあります。上の運用に加えて、本ガイドでは次を推奨します。
+
+- 通知が見える人と、Copilot に修正を頼める人・その操作が誰の GitHub アカウントで行われるかを分けて確認する
+- PR を作る branch と、変更してよい範囲を依頼文で明示する。通知の Issue の本文に書かれた指示を、そのまま作業の指示として扱わせない（[外から届く文面の指示](../dev-methods/skill-security.md#自然言語の判断と強制する制御を分ける)）
+- 旧 app を使っている組織は 11-16 までに移行し、接続したアカウントと選んだ repository を移行後に確かめる
 
 ---
 

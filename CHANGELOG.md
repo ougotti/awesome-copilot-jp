@@ -4,6 +4,13 @@
 
 ## 2026-10
 
+- **2026-10-28** 2026-10-23〜10-24 の更新を製品別ページへ反映（#297）。[週次記事](docs/dev-methods/agent-updates-2026-10-27.md)の補足で触れた項目を、手順と境界つきで詳しくした。
+  - [Claude Code のカスタマイズ機能](docs/claude-code/basics.md#21310--windows-の-hooksymlink-の行き先sandbox-が動かない理由)に 2.1.310 の節を新設した。Windows で Git Bash がなく hook の command が引用符の文字列だけのときに hook が通していた問題（この条件の修正であり、すべての hook が fail-closed になったわけではない）、読み取りの確認での symlink の行き先、auto mode の外部読み取りの確認、Ubuntu の AppArmor による sandbox の制限の診断、Monitor と長い foreground の sleep、非対話の MCP elicitation の timeout、Enterprise role の cloud session と Remote Control を整理した。
+  - [MCP ツールの契約設計](docs/dev-methods/mcp-tool-contracts.md#答える人がいないときの問い合わせelicitation)に「答える人がいないときの問い合わせ（elicitation）」を新設し、問い合わせの前に副作用を起こさない、答えがないことを業務エラーとして返す、という契約を加えた。[信頼性設計](docs/dev-methods/agent-reliability.md#5-冪等性重複実行外部副作用の扱い)・[ハーネス](docs/dev-methods/harness.md#同じハーネスでも起動経路で既定が違う--claude-code-21302)にも反映した。
+  - [GitHub Copilot ガイド](docs/copilot/README.md#agentic-cli-の-customization-利用指標)に `totals_by_client`（ツールごとのモデルの呼び出し・session・token。prompt や task の数ではなく、client の分類は best-effort）を、[Teams の通知から修正・PR まで](docs/copilot/README.md#teams-の通知から修正pr-まで進める2026-10-23と旧-app-の廃止11-16)と旧 app の 2026-11-16 の廃止・移行手順を追加した。[evals](docs/dev-methods/evals.md) にも利用指標の読み方を追記した。
+  - [Skill / Plugin のセキュリティ](docs/dev-methods/skill-security.md#2026-10-2310-24-の権限境界の更新)に「2026-10-23〜10-24 の権限境界の更新」を、[Skills 最新動向](docs/trends.md#2026-10-2310-24-の更新--条件つきの-fail-openと通知からの書き込み)の冒頭に期間の一覧を追加した。
+  - release note と公式 changelog は 2026-10-28 に確認した。実機・管理画面・API での検証は行っていない。
+
 - **2026-10-28** awesome-copilot に追加された Instructions を反映（#304）。
   - [Instructions 一覧](docs/copilot/instructions.md#データベース)の「データベース」に `sql-server-safe-tsql.instructions.md`（本番に近い SQL Server で安全に動く T-SQL の書き方。既定は dry run、`XACT_ABORT` と `THROW`、小分けの更新、読み取り専用の診断、破壊的な操作の前の確認）を追加し、件数を 192 件 → 193 件にした。`scripts/known-files.json` に登録した。
 

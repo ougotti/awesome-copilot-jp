@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-23
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-28
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -334,6 +334,18 @@ managed policy を利用者の設定や起動 flag で弱められると想定�
 | MCP の認証と資格情報 | Codex CLI 0.164.0（10-23）で、enterprise の MCP 接続を Codex のアカウントの権限か専用サインインで認証できる。リモートの Bash と Zsh snapshot では資格情報を伏せる。**伏せるのは表示とログで、コマンドへ渡すこと自体は止めない** | [Codex CLI 0.164.0](../codex/README.md#codex-cli-01640--presetsenterprise-mcp-の認証資格情報のマスク) |
 | 依存パッケージの入口 | GitHub package firewall（2026-10-20、Public Preview、Enterprise Cloud、現時点は npm のみ）が、パッケージのメタデータ取得とダウンロードを、クールダウン期間・Advisory Database・attestation の検査で止める。coding agent や CI はレジストリへ直接つながず firewall を経由させる。**エージェントが入れる依存**の入口を、Skill とは別に絞る手段 | [GitHub package firewall](https://github.blog/changelog/2026-10-20-github-package-firewall-in-public-preview) |
 | モデルの方針 | Copilot model policy API（2026-10-19、GA）で、enterprise・enterprise team・agent app・organization のモデルの提供範囲を API で取得・変更できる。enterprise は organization か team への委任を選ぶ | [GitHub Copilot ガイド](../copilot/README.md#モデルの方針を-api-で管理する--copilot-model-policy-api2026-10-19)、[changelog](https://github.blog/changelog/2026-10-19-copilot-model-policy-api-for-enterprise-orgs-and-teams) |
+
+### 2026-10-23〜10-24 の権限境界の更新
+
+2026-10-28 に公式資料を確認しました。release note と公式 changelog の照合のみで、実機・管理画面での確認はしていません。
+
+| 層 | 変更と運用上の意味 | 詳細・一次情報 |
+|---|---|---|
+| hook の fail-open | Claude Code 2.1.310 で、**Windows で Git Bash がなく、hook の `command` が引用符で囲んだ文字列だけ**のとき、PreToolUse / PermissionRequest hook が実行されずに tool の呼び出しが通っていた問題を修正。**この条件の修正であり、すべての hook が fail-closed になったわけではない**。Windows に hook を配る組織は 2.1.310 以上に揃え、hook を起動できない状態で操作が止まるかを確かめる | [Claude Code 2.1.310](../claude-code/basics.md#21310--windows-の-hooksymlink-の行き先sandbox-が動かない理由) |
+| 読み取りの確認 | 同じ版で、読み取りの確認画面に symbolic link の行き先を表示。**表示された名前ではなく、実際に読まれるファイル**を見て承認する | 同上 |
+| sandbox が動かない理由 | Linux の `/sandbox` が Ubuntu の AppArmor による user namespace の制限を示すようになった。**sandbox が動かないことを、承認や除外を広げて回避しない**。ホストの制限を先に確かめる | 同上 |
+| role と実行権限 | Enterprise の custom role で、cloud session と Remote Control を role ごとに許可できる。**role で使えることと、各リポジトリ・tool で実行できることは別の層** | 同上 |
+| 通知からの書き込み | Teams の GitHub app で、届いた通知から Copilot に修正と PR の作成を頼める。通知が見える会話の参加者と、書き込むアカウントの権限を分けて確認する。旧 app は 2026-11-16 に廃止 | [GitHub Copilot ガイド](../copilot/README.md#teams-の通知から修正pr-まで進める2026-10-23と旧-app-の廃止11-16) |
 
 ### ローカルモデル・offline・telemetry は別の境界
 

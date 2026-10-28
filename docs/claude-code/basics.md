@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-24
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-28
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -922,6 +922,30 @@ MCP connector の `mcp-client-2026-09-15` beta header と組み合わせると�
 1. sandbox を書き込み境界として使う端末を 2.1.309 以上に揃え、シェルの起動ファイルに秘密情報や外部通信を書いていないか確認する。
 2. Windows で PowerShell の hook を使っている場合、終了コード 2 で対象の操作が止まること、Git for Windows がない端末でも止まることを確かめる。
 3. `ultrareview` を呼ぶスクリプトに `--trust-workspace` を足すか、信頼の確認が要る運用に変える。
+
+### 2.1.310 — Windows の hook、symlink の行き先、sandbox が動かない理由
+
+> **確認日: 2026-10-28**。**提供元: Official / 状態: GA（CLI の正式リリース）**。[2.1.310](https://github.com/anthropics/claude-code/releases/tag/v2.1.310)（2026-10-23 UTC、日本時間 10-24）の release に基づきます。本ガイドでは実機で再現していません。2.1.309 までの修正（`sed -i` と `/rewind`、`--mcp-config`、PowerShell の hook など）は[前の節](#21309--sandbox-と権限の境界の修正rewind-で戻らない操作)を参照してください。
+
+**境界の修正**
+
+| 修正 | 成立していた条件 | 見直すこと |
+|------|----------------|-----------|
+| PreToolUse / PermissionRequest hook が**実行できないまま tool の呼び出しを通していた** | **Windows で Git Bash がなく、かつ hook の `command` が引用符で囲んだ文字列だけ**（引用符つきのパスなど）のとき | Windows の端末に hook を配っている組織は 2.1.310 以上に揃える。すべての hook が常に fail-closed になったという意味ではなく、この条件の修正。[2.1.299](#2129921301--mcp-の許可ルールの完全一致化と-hook-の-fail-closed-化)・[2.1.309](#21309--sandbox-と権限の境界の修正rewind-で戻らない操作)の修正に続くもの |
+| ファイル読み取りの許可の確認で、**symbolic link の行き先が表示されていなかった** | symlink を経由する読み取り | 確認画面に出る名前だけでなく、実際に読まれるファイルを見て承認する。deny rule が symlink の行き先に効くかは、権限の設定とファイルシステムの両方で確かめる |
+| auto mode で作業ディレクトリの外を初めて読む前の確認が、**その読み取りを止めると shell のコマンドも確認を求めるようになる**ことを示す | 作業ディレクトリの外を読む操作 | 止めたときの影響を理解してから選ぶ |
+| Linux の `/sandbox` と起動時の警告が、**Ubuntu の AppArmor による user namespace の制限**で bubblewrap が sandbox を起動できないことと、その解除方法を示す | Ubuntu で sandbox が動かない端末 | sandbox が動かないのを、承認の範囲や除外の拡大で回避しない。まずホストの制限を確かめる |
+
+**無人実行と運用の変更**
+
+| 変更 | 運用上の意味 |
+|------|-------------|
+| **Monitor tool と plugin monitor** を、Bedrock・Vertex・Foundry、および telemetry や不要な通信を止めた環境でも使える。同じ環境で**長い foreground の sleep を止める**ようになった | 待つ処理を sleep で書かず、Monitor に寄せる。sleep の一般的な禁止ではなく、これらの環境の長い foreground の sleep が対象 |
+| 非対話の session で、MCP server の**問い合わせ（elicitation）に誰も答えないまま tool の呼び出しが timeout した**とき、Claude に「答えが来なかったので同じ呼び出しを繰り返さない」と伝える | 答える人がいない問い合わせで同じ呼び出しを繰り返し、副作用が重なるのを防ぐ。再試行の一般的な禁止ではない（[MCP ツールの契約設計](../dev-methods/mcp-tool-contracts.md)） |
+| `-p` / Agent SDK の大きな transcript の compaction でメモリの使用量を改善 | 長時間の無人実行の安定性 |
+| Enterprise の custom role に、**Claude Code の cloud session と Remote Control の権限**を追加。管理画面で有効にするときに、その権限を持つ role の一覧を示して確認する | role で「使えるか」を分けられる。role に権限を付けることと、各リポジトリ・tool で何を実行できるかは別の層として確認する |
+| 一部の gateway や互換サーバーが `effort-2025-11-24` の beta 値や会話途中の system message を拒否するとき、それらを外して再送する | gateway の背後で使う構成 |
+| `cleanupPeriodDays` を非常に大きくすると、貼り付けた画像などの最近のファイルが掃除で消えていた問題を修正 | 保存期間を延ばしている環境 |
 
 ## セットアップ
 
