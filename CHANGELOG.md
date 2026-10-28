@@ -4,6 +4,9 @@
 
 ## 2026-10
 
+- **2026-10-28** awesome-copilot に追加された Instructions を反映（#304）。
+  - [Instructions 一覧](docs/copilot/instructions.md#データベース)の「データベース」に `sql-server-safe-tsql.instructions.md`（本番に近い SQL Server で安全に動く T-SQL の書き方。既定は dry run、`XACT_ABORT` と `THROW`、小分けの更新、読み取り専用の診断、破壊的な操作の前の確認）を追加し、件数を 192 件 → 193 件にした。`scripts/known-files.json` に登録した。
+
 - **2026-10-27** [今週のエージェント動向](docs/dev-methods/agent-updates-2026-10-27.md)を追加。
   - 10-26〜10-27の Copilot assisted permissions の GA・CLI 1.0.104、Claude Code 2.1.311、Work / Codex の GPT-6.1 Terra を、承認・再開・画面操作の軸で整理した。
   - 前週10-23の Teams 統合・利用指標の `totals_by_client`・Claude Code 2.1.310 は補足として区別した。製品の変更と記事の解釈、UTC の公開日と日本時間、資料確認と実機検証を分けて記載した。
