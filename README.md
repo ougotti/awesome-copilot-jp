@@ -19,10 +19,10 @@
 -->
 
 - **2026-10-30** [チームで常設するエージェント](docs/dev-methods/team-automations.md)を追加。GitHub Universe の Shared Copilot Automations・自己改善する Automations・Agent Merge・Agentic Workflows の GA を、名義・費用・起動条件・改善の判断の軸で整理。
+- **2026-10-28** [事業者が運営する常駐エージェントの比較](docs/dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dotsmeta-の-muse)に、2026-10-23 に日本で提供が始まった Meta の Muse を追加。Claude Duet・dots と並べ、日本から使えるか・動く場所・承認（Sentinel）・費用を整理。
 - **2026-10-28** [10-23〜10-24 の最新動向](docs/trends.md#2026-10-2310-24-の更新--条件つきの-fail-open-と通知からの書き込み)を製品別ページへ反映。Claude Code 2.1.310 の Windows の hook・symlink・sandbox の診断、Copilot のツール別の利用指標、Teams の通知から PR（旧 app は 11-16 に廃止）を整理。Instructions を 193 件に更新。
 - **2026-10-27** [今週のエージェント動向](docs/dev-methods/agent-updates-2026-10-27.md)を追加。Copilot の承認支援の正式提供と Autopilot の待機、Claude Code の再開・subagent の修正、Work / Codex の Terra を「任せ続けるための承認・再開・画面操作」で整理。
 - **2026-10-24** エージェント活用とこれからの開発を扱う 5 ページを追加。[導入の効果の測り方](docs/dev-methods/ai-adoption-metrics.md)、[エージェントが働きやすいリポジトリ](docs/dev-methods/agent-ready-repo.md)、[費用管理](docs/dev-methods/agent-costs.md)、[人の仕事はどこに移るか](docs/dev-methods/human-role.md)、[レガシーのモダナイゼーション](docs/dev-methods/legacy-modernization.md)。Hacker News の議論も「コミュニティの見方」として併記。
-- **2026-10-23** [10-22〜10-23 の最新動向](docs/trends.md#2026-10-2210-23-の更新--sandbox-の外で動いていたもの)を反映。Claude Code 2.1.309 の sandbox・権限の修正と `/rewind` で戻らない `sed -i`、Codex CLI 0.164.0、Copilot の global default の GA を整理。リンク検査が GitHub で飛ばないアンカーも検出するよう直した。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
