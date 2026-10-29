@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-10-30** [チームで常設するエージェント](docs/dev-methods/team-automations.md)を追加。GitHub Universe の Shared Copilot Automations・自己改善する Automations・Agent Merge・Agentic Workflows の GA を、名義・費用・起動条件・改善の判断の軸で整理。
 - **2026-10-28** [10-23〜10-24 の最新動向](docs/trends.md#2026-10-2310-24-の更新--条件つきの-fail-open-と通知からの書き込み)を製品別ページへ反映。Claude Code 2.1.310 の Windows の hook・symlink・sandbox の診断、Copilot のツール別の利用指標、Teams の通知から PR（旧 app は 11-16 に廃止）を整理。Instructions を 193 件に更新。
 - **2026-10-27** [今週のエージェント動向](docs/dev-methods/agent-updates-2026-10-27.md)を追加。Copilot の承認支援の正式提供と Autopilot の待機、Claude Code の再開・subagent の修正、Work / Codex の Terra を「任せ続けるための承認・再開・画面操作」で整理。
 - **2026-10-24** エージェント活用とこれからの開発を扱う 5 ページを追加。[導入の効果の測り方](docs/dev-methods/ai-adoption-metrics.md)、[エージェントが働きやすいリポジトリ](docs/dev-methods/agent-ready-repo.md)、[費用管理](docs/dev-methods/agent-costs.md)、[人の仕事はどこに移るか](docs/dev-methods/human-role.md)、[レガシーのモダナイゼーション](docs/dev-methods/legacy-modernization.md)。Hacker News の議論も「コミュニティの見方」として併記。
 - **2026-10-23** [10-22〜10-23 の最新動向](docs/trends.md#2026-10-2210-23-の更新--sandbox-の外で動いていたもの)を反映。Claude Code 2.1.309 の sandbox・権限の修正と `/rewind` で戻らない `sed -i`、Codex CLI 0.164.0、Copilot の global default の GA を整理。リンク検査が GitHub で飛ばないアンカーも検出するよう直した。
-- **2026-10-22** [10-18〜10-22 の最新動向](docs/trends.md#2026-10-1810-22-の更新--更新するだけで通るようになる変更)を反映。Claude Code と Copilot CLI で更新するだけで通るようになる変更（MCP の allowlist・sandbox のローカルネットワーク）、[Claude Duet](docs/dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dots)、API version `2026-10-21`、Inference hooks の Beta 終了と判定を通らない経路を整理。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -156,6 +156,7 @@
 | **[人の仕事はどこに移るか](docs/dev-methods/human-role.md)** | 本ガイド | — | — | レビューが律速になる理由と対策、人が持ち続ける仕事、経験の浅い開発者の育成 |
 | **[レガシーのモダナイゼーション](docs/dev-methods/legacy-modernization.md)** | 本ガイド | — | CLI / IDE / Cloud | 理解 → 振る舞いの固定 → 変換 → 検証の段階、Microsoft・GitHub・AWS Transform の手順、失敗しやすい点 |
 | **[Hermes Agent](docs/dev-methods/hermes-agent.md)** | 本ガイド | — | CLI / Cloud / Chat UI | 常駐して Telegram などへ連絡してくる OSS エージェント。置き場所・モデルの選び方・「変化があったときだけ知らせる」cron・費用の構造・公開前の最低ライン |
+| **[チームで常設するエージェント](docs/dev-methods/team-automations.md)** | 本ガイド | — | Cloud | Copilot Automations の personal / shared（名義・課金・承認）、Agentic Workflows との選び方、trigger と入力の信頼、費用の上限の止まり方、自己改善の改善案の判断、Agent Merge |
 | **[ループエンジニアリング](docs/dev-methods/loop-engineering.md)** | 本ガイド | — | CLI / Cloud | エージェントを目標へ向けて回すループの設計・停止条件・落とし穴 |
 | **[作業中のエージェントへの指示の出し分け](docs/dev-methods/agent-commands.md)** | 本ガイド | — | CLI | 実行中の steer / queue、サイドチャット（`/btw`・`/side`・`/ask`）、`/goal` の完了条件の書き方と Claude Code・Codex・Copilot CLI の差分 |
 | **[オントロジー](docs/dev-methods/ontology.md)** | 本ガイド | — | CLI / Cloud | 業務の意味（語彙・関係・規則）を定義してエージェントに渡す方法と実装例 |

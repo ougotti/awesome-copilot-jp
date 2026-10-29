@@ -264,6 +264,7 @@ Claude Code には、ループを組むための機能がひととおり揃っ�
 ## 関連ドキュメント
 
 - [エージェントの費用管理](agent-costs.md) — 停止条件に入れる費用の上限と、製品ごとの予算の仕組み
+- [チームで常設するエージェント](team-automations.md) — GitHub 上で動く Copilot Automations の名義・課金・trigger・自己改善、Agent Merge
 - [AI エージェントの実行基盤（ハーネス）](harness.md) — ループが動く土台。ハーネスが弱いとループはその弱点を増幅する
 - [Hermes Agent](hermes-agent.md) — 常駐してメッセージアプリへ結果を届ける OSS エージェント。cron の組み方と公開前の最低ライン
 - [Skills 最新動向](../trends.md) — ハーネスを含む横断的な動向

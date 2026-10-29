@@ -199,6 +199,7 @@ primary IdPとoutbound providerは別です。primary IdPはGatewayのJWT author
 ## 関連ドキュメント
 
 - [MCP と A2A — 役割の違いと併用方法](agent-protocols.md) — MCP・A2A それぞれの認証・認可の位置づけ、未解決事項として挙げた agent identity・委任権限の集約先
+- [チームで常設するエージェント](team-automations.md) — 作った人ではなく Copilot の名義で動き、リポジトリの所有者に課金される shared automation の例
 - [AI エージェントの実行基盤（ハーネス）](harness.md) — 認証・権限を引き受ける control plane の層
 - [Skill / Plugin のセキュリティ](skill-security.md) — 導入前の確認手順、MCP allowlists による組織統制
 - [エージェントに外部操作を与える手段の選び方](tool-selection.md) — 読み取り／入力／送信・購入・削除で分ける承認境界

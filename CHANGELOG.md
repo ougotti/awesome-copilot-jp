@@ -4,6 +4,12 @@
 
 ## 2026-10
 
+- **2026-10-30** [チームで常設するエージェント](docs/dev-methods/team-automations.md)を追加。
+  - 2026-10-28 の GitHub Universe で出た Shared Copilot Automations、trigger・tool・費用の上限の追加、自己改善する Automations、Agent Merge、Agentic Workflows の GA を、「誰の名義で動き、誰が払い、何をきっかけに動き、誰が改善を判断するか」の軸で整理した。
+  - Automations（Git に入らない）と Agentic Workflows（PR でレビューする）の選び方、personal と shared の違い（型は後から変えられない、shared の PR には追加の承認）、write 権限のない人のイベントを無視する既定、連鎖での自己再発火、run ごとの上限と日・週・月の上限の止まり方の違い、Agent Merge の課金先とテストの弱化の点検を書いた。
+  - VS Code のローカルの Automations とは別物であることを [GitHub Copilot ガイド](docs/copilot/README.md#automations--エージェントタスクを定期実行する)に明記し、[ループエンジニアリング](docs/dev-methods/loop-engineering.md)・[費用管理](docs/dev-methods/agent-costs.md)・[ID・認可](docs/dev-methods/agent-identity.md)から誘導した。
+  - 公式の changelog と docs は 2026-10-30 に確認した。実機・管理画面での検証は行っていない。Hacker News では中身のある議論がまだないことも記した。
+
 - **2026-10-28** 2026-10-23〜10-24 の更新を製品別ページへ反映（#297）。[週次記事](docs/dev-methods/agent-updates-2026-10-27.md)の補足で触れた項目を、手順と境界つきで詳しくした。
   - [Claude Code のカスタマイズ機能](docs/claude-code/basics.md#21310--windows-の-hooksymlink-の行き先sandbox-が動かない理由)に 2.1.310 の節を新設した。Windows で Git Bash がなく hook の command が引用符の文字列だけのときに hook が通していた問題（この条件の修正であり、すべての hook が fail-closed になったわけではない）、読み取りの確認での symlink の行き先、auto mode の外部読み取りの確認、Ubuntu の AppArmor による sandbox の制限の診断、Monitor と長い foreground の sleep、非対話の MCP elicitation の timeout、Enterprise role の cloud session と Remote Control を整理した。
   - [MCP ツールの契約設計](docs/dev-methods/mcp-tool-contracts.md#答える人がいないときの問い合わせelicitation)に「答える人がいないときの問い合わせ（elicitation）」を新設し、問い合わせの前に副作用を起こさない、答えがないことを業務エラーとして返す、という契約を加えた。[信頼性設計](docs/dev-methods/agent-reliability.md#5-冪等性重複実行外部副作用の扱い)・[ハーネス](docs/dev-methods/harness.md#同じハーネスでも起動経路で既定が違う--claude-code-21302)にも反映した。
