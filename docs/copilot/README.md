@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-28
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-30
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -352,7 +352,7 @@ Hooks は、GitHub Copilot コーディングエージェントのセッショ�
 
 ### 概要
 
-Agentic Workflows は、GitHub Actions 上でコーディングエージェントを実行する AI 駆動のリポジトリ自動化の仕組みです。
+Agentic Workflows は、GitHub Actions 上でコーディングエージェントを実行する AI 駆動のリポジトリ自動化の仕組みです。2026-10-28 に [GA](https://github.blog/changelog/2026-10-28-github-agentic-workflows-generally-available) になりました。GitHub 上の設定で作る Copilot Automations との選び方は [チームで常設するエージェント](../dev-methods/team-automations.md#2-automations-と-agentic-workflows-のどちらで作るか) を参照してください。
 
 ### こんなときに使える
 
@@ -423,6 +423,8 @@ import した側が workspace、agent、model、permissions、isolation をロ�
 > 保存した permission options は組織ポリシーを迂回しません。将来の run で承認待ちになる可能性があるため、無人化する前に Manual run で確認してください。Automation を無効にしても、すでに実行中のセッションは止まりません。History から Stop を選びます。
 
 **→ Codex Scheduled tasks、Claude Code `/loop`、Kiro Crew との比較は [ループエンジニアリング](../dev-methods/loop-engineering.md#定期実行を選ぶときの比較) を参照**
+
+> **GitHub 上で動く Copilot Automations とは別物です。** 同じ名前の **Copilot Automations** は Copilot cloud agent として GitHub 上で動き、リポジトリの Agents タブ・Copilot app・REST API から作ります。2026-10-28 には、チームで共有してリポジトリに属する shared の型、24 種類の trigger の追加、AI credits の上限、自己改善の改善案が加わりました。VS Code 1.144 以降で `chat.automations.cloud.enabled` を有効にすると、Agents ウィンドウにも表示されます。名義・課金・起動条件の決め方は [チームで常設するエージェント](../dev-methods/team-automations.md) を参照してください。
 
 ### VS Code 1.138 の Agent Host と Codex 継続
 

@@ -4,6 +4,12 @@
 
 ## 2026-10
 
+- **2026-10-30** [チームで常設するエージェント](docs/dev-methods/team-automations.md)を追加。
+  - 2026-10-28 の GitHub Universe で出た Shared Copilot Automations、trigger・tool・費用の上限の追加、自己改善する Automations、Agent Merge、Agentic Workflows の GA を、「誰の名義で動き、誰が払い、何をきっかけに動き、誰が改善を判断するか」の軸で整理した。
+  - Automations（Git に入らない）と Agentic Workflows（PR でレビューする）の選び方、personal と shared の違い（型は後から変えられない、shared の PR には追加の承認）、write 権限のない人のイベントを無視する既定、連鎖での自己再発火、run ごとの上限と日・週・月の上限の止まり方の違い、Agent Merge の課金先とテストの弱化の点検を書いた。
+  - VS Code のローカルの Automations とは別物であることを [GitHub Copilot ガイド](docs/copilot/README.md#automations--エージェントタスクを定期実行する)に明記し、[ループエンジニアリング](docs/dev-methods/loop-engineering.md)・[費用管理](docs/dev-methods/agent-costs.md)・[ID・認可](docs/dev-methods/agent-identity.md)から誘導した。
+  - 公式の changelog と docs は 2026-10-30 に確認した。実機・管理画面での検証は行っていない。Hacker News では中身のある議論がまだないことも記した。
+
 - **2026-10-28** Meta の Muse（2026-10-23 に日本で提供開始）を追加。
   - [Hermes Agent](docs/dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dotsmeta-の-muse)の 11 節を「事業者が運営する選択肢 — Claude Duet・ChatGPT の dots・Meta の Muse」に改め、比較表に Muse の列と「日本から」の行を加えた。Muse は利用者ごとに隔離された仮想マシン（Muse Secure VM）で動き、インターネットへのアクセスを独立した Sentinel エージェントが管理し、メール送信や購入の前に確認すること、多くの基本機能が無料であること、高度な音声モード・独自のメールアドレスなどは日本での提供が別途案内であること、仮想マシン全体を暗号化する Muse Confidential VM は未提供であることを明記した。
   - [Skills 最新動向](docs/trends.md#10-aiエージェントの実行基盤ハーネス)の 10 節と「2026-10-23〜10-24 の更新」に要約を、[生成AIを業務で安全に使う](docs/business/safety.md#ノーコードで自分専用のエージェントを動かす前に)に Muse を追加した。

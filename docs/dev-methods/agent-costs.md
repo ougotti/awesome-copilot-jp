@@ -99,6 +99,7 @@ Codex は ChatGPT のプランに含まれ、**ChatGPT Work などと共通の�
 ## 関連ドキュメント
 
 - [AI 導入の効果をどう測るか](ai-adoption-metrics.md) — 費用と並べて見る効果の測り方
+- [チームで常設するエージェント](team-automations.md#6-費用の上限--止まるものと止まらないもの) — Copilot Automations の run・日・週・月の上限の止まり方と、Agent Merge の課金先
 - [エージェントが働きやすいリポジトリ](agent-ready-repo.md) — 毎回読まれる指示ファイルを短く保つ
 - [マルチエージェントを使う境界線](multi-agent.md) — 分けると文脈の数だけ費用がかかる
 - [ループエンジニアリング](loop-engineering.md) — 停止条件に費用の上限を入れる
