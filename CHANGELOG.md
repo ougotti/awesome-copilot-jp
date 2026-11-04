@@ -2,6 +2,13 @@
 
 本ガイドの主な更新を時系列で記録します。upstream の新規スキル検出への対応と、ガイド本体の構成変更・解説追加をここにまとめます。
 
+## 2026-11
+
+- **2026-11-04** [今週のエージェント動向](docs/dev-methods/agent-updates-2026-11-04.md)を追加。
+  - 10-29〜11-04の APM / Dependabot、Claude Message threads（Beta）、Codex CLI 0.166.0・Claude Code 2.1.318、Copilot in JetBrains Air・BYOK 利用指標、WorkSpaces の対応 OS を、更新・再開・実行場所と費用の管理につなげた。
+  - 10-28の自己改善する Automations は背景として扱い、既存の「チームで常設するエージェント」へ誘導した。公式の変更と記事の提案を区別し、資料確認日と未実施の実機検証を明記した。
+  - README と[最新動向](docs/trends.md)から誘導した。
+
 ## 2026-10
 
 - **2026-10-30** [チームで常設するエージェント](docs/dev-methods/team-automations.md)を追加。
