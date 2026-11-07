@@ -1,6 +1,6 @@
 # エージェントに外部操作を与える手段の選び方 — API・connector・MCP・CLI・Computer Use
 
-> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-06
+> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-07
 
 > [Skills 最新動向「Computer Use / Browser Use」](../trends.md#6-computer-use--browser-use)は「専用 Plugin・コネクタ・MCP がある場合は構造化された連携を優先する」と述べています。このページはその判断基準を独立させ、**API・connector・MCP・CLI・Computer Use をどの順で検討し、どこで承認を挟むか**を整理します。Computer Use そのものの機能解説は [trends.md 6 節](../trends.md#6-computer-use--browser-use)を参照してください。
 
@@ -127,6 +127,10 @@ OpenAI のエージェント構築ガイドは、MCP ツールを使う場面に
 - サービスごとのログイン手順・資格情報の扱い（[生成AIを業務で安全に使う](../business/safety.md)を参照）
 
 ---
+
+## Copilot connectors を選ぶ条件
+
+[2026-10-28 の発表](https://github.blog/changelog/2026-10-28-github-copilot-in-vs-code-universe-releases/)（Official / Preview、2026-11-07 確認）では、自前 MCP server の管理なしで接続し、同じアカウントの対応 client で再利用できます。既存 connector が必要な read / write を満たすなら管理負担を減らせます。独自 tool が必要なら MCP / API を比較し、認証主体・scope・監査・障害時の fallback を確かめます。条件は [Copilot ガイド](../copilot/README.md)を参照してください。実機試験は未実施です。
 
 ## 関連ドキュメント
 

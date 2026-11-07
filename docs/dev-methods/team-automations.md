@@ -1,6 +1,6 @@
 # チームで常設するエージェント — 名義・費用・起動条件・改善の設計
 
-> **対象ツール**: GitHub Copilot（Copilot Automations・GitHub Agentic Workflows・Agent Merge） ｜ **実行環境**: Cloud ｜ **対象読者**: リポジトリの管理者・チームのリード・エージェントを無人で動かす人 ｜ **最終更新**: 2026-10-30
+> **対象ツール**: GitHub Copilot（Copilot Automations・GitHub Agentic Workflows・Agent Merge） ｜ **実行環境**: Cloud ｜ **対象読者**: リポジトリの管理者・チームのリード・エージェントを無人で動かす人 ｜ **最終更新**: 2026-11-07
 
 > これまでのコーディングエージェントは、**人が頼んで、人が結果を受け取る**道具でした。2026-10-28 の GitHub Universe で、GitHub は **リポジトリに属し、チームで編集し、Copilot の名義で動き、リポジトリの所有者に課金される** automation を出しました。同じ日に、PR の CI の失敗やコンフリクトを cloud で直し続ける Agent Merge、エージェントのワークフローを Markdown で書いて Actions で動かす Agentic Workflows の GA も発表されています。
 >
@@ -178,6 +178,10 @@ Copilot Automations のように **cloud で動き、リポジトリに属し、
 - Agent Merge の commit で、テストが弱められていないか
 
 ---
+
+## Project automation と repository の自動化を分ける
+
+[2026-10-28 の Copilot Projects](https://github.blog/changelog/2026-10-28-github-copilot-app-universe-releases/)（Official / Preview、2026-11-07 確認）は複数 repository や外部 context をまとめ、Project automation を設定できます。repository の shared Automation や Agentic Workflow をそのまま置き換える管理単位ではありません。Project の所有者・接続先・trigger・結果のレビュー担当を決め、repository 側の権限と別に記録します。実機試験は未実施です。
 
 ## 関連ドキュメント
 

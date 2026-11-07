@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-30
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-07
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -1471,6 +1471,18 @@ Enterprise の方針は、管理を **organization に委任する**か、**ente
 - [Copilot CLI v1.0.96](https://github.com/github/copilot-cli/releases/tag/v1.0.96) ／ [v1.0.97](https://github.com/github/copilot-cli/releases/tag/v1.0.97) ／ [Hooks reference](https://docs.github.com/en/copilot/reference/hooks-reference) — permission の判定主体の表示、agent-scoped hooks、Autopilot での `ask` の扱い、再開時の plugin hook（GitHub 公式・2026-10-12〜13）
 - [Content exclusions generally available in Copilot app and CLI](https://github.blog/changelog/2026-09-02-content-exclusions-generally-available-in-copilot-app-and-cli/) — app / CLI での GA（公式・2026-09-02）
 - [Content exclusion for GitHub Copilot](https://docs.github.com/en/copilot/concepts/context/content-exclusion) — 対応面・非対応面と制限の一次情報（公式）
+
+## 組織の認証と複数 context の管理（2026-10-27〜10-28）
+
+以下は **提供元: Official / 状態: Preview**（SDK authentication / Projects は Public preview）です。2026-11-07 に公式発表を確認しました。実機・管理画面での試験は未実施です。
+
+| 入口 | 使いどころと条件 |
+|---|---|
+| [Copilot SDK server-to-server authentication](https://github.blog/changelog/2026-10-27-github-copilot-supports-server-to-server-authentication/) | 個人の sign-in に依存しない service / agent。組織へ install した GitHub App に read-only の `Copilot Requests` organization permission を与え、短命の installation token を SDK へ渡す。費用・model policy・budget は installation を所有する組織に帰属する。`app_client_id` で使用量を追い、suspend / uninstall で停止する。 |
+| [Copilot Projects](https://github.blog/changelog/2026-10-28-github-copilot-app-universe-releases/) | 複数 repository・design・Slack・会議メモを、context・agents・結果と一緒にまとめる。Project automation を設定できる。単一 repository の session / shared Automation とは管理単位を分ける。 |
+| [Copilot connectors](https://github.blog/changelog/2026-10-28-github-copilot-in-vs-code-universe-releases/) | 自前 MCP server の install / management なしで Slack・Notion・Microsoft Learn などへ接続する。全 Copilot plan、Copilot harness が対象。同一アカウントの対応 client 間で再利用できる。Business / Enterprise は Editor preview features の許可が必要。 |
+
+[Agent Host Protocol（AHP）](https://github.blog/changelog/2026-10-28-github-copilot-in-vs-code-universe-releases/) は **Official / Open protocol** です。独自 client を Agent Host の live session につなぎ、再接続後の未取得 update を追随します。TypeScript・Rust・Go・Kotlin・Swift の client library が案内されています。独自 client の入口であり、tool permission や credential の自動移送の保証ではありません。導入の比較は [ハーネス](../dev-methods/harness.md)、[Plugin の統制](plugins.md)、[tool の選び方](../dev-methods/tool-selection.md)を参照してください。
 
 ## 関連ドキュメント
 
