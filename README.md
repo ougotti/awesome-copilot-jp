@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-11-07** [11-05〜11-07 の最新動向](docs/trends.md)を反映。Claude Code の prompt 待ち拒否、Codex の fresh approval と MCP 接続、Copilot のレビュー指標・計測欠損・local automation を整理。
 - **2026-11-07** [10-27〜10-30 の最新動向](docs/trends.md)を反映。Claude Code の書き込み境界、Codex の承認・再開、Copilot の組織認証、Plugin の推奨既定と企業の強制設定を整理。
 - **2026-10-30** [チームで常設するエージェント](docs/dev-methods/team-automations.md)を追加。GitHub Universe の Shared Copilot Automations・自己改善する Automations・Agent Merge・Agentic Workflows の GA を、名義・費用・起動条件・改善の判断の軸で整理。
 - **2026-10-28** [事業者が運営する常駐エージェントの比較](docs/dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dotsmeta-の-muse)に、2026-10-23 に日本で提供が始まった Meta の Muse を追加。Claude Duet・dots と並べ、日本から使えるか・動く場所・承認（Sentinel）・費用を整理。
 - **2026-10-28** [10-23〜10-24 の最新動向](docs/trends.md#2026-10-2310-24-の更新--条件つきの-fail-open-と通知からの書き込み)を製品別ページへ反映。Claude Code 2.1.310 の Windows の hook・symlink・sandbox の診断、Copilot のツール別の利用指標、Teams の通知から PR（旧 app は 11-16 に廃止）を整理。Instructions を 193 件に更新。
-- **2026-10-27** [今週のエージェント動向](docs/dev-methods/agent-updates-2026-10-27.md)を追加。Copilot の承認支援の正式提供と Autopilot の待機、Claude Code の再開・subagent の修正、Work / Codex の Terra を「任せ続けるための承認・再開・画面操作」で整理。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 

@@ -202,6 +202,21 @@ memory は**更新・削除できる repository 固有の文脈**として扱い
 
 対象範囲は [Claude Code](../claude-code/basics.md) / [Codex](../codex/README.md)を参照してください。
 
+## MCP task と保存失敗を確認する試験
+
+[Claude Code 2.1.319](https://github.com/anthropics/claude-code/releases/tag/v2.1.319) と [Codex 0.167](https://github.com/openai/codex/releases/tag/rust-v0.167.0)（Official / GA）を 2026-11-07 に確認しました。以下は未実施の導入試験です。本番データを使わず、使い捨て環境と無害な endpoint / task で行います。
+
+| 条件 | 記録する期待結果 |
+|---|---|
+| Claude の safety check を使えない構成で `-p` を text / JSON 出力で実行。 | auto-mode action の拒否なら exit 1。成果物・外部副作用の完了記録も照合する。 |
+| MCP task を background / call 内待機で実行し、途中で resume。 | task の識別子・完了通知・結果が一致し、重複実行しない。missing server + `-p --resume` と prompt では deferred call 保持・exit 1・後続入力拒否を確認する。 |
+| Plan mode で中断し、別 permission mode で再開。 | `CLAUDE_CODE_RESUME_INTERRUPTED_TURN` が未承認 turn を再実行しない。 |
+| 容量制限のある使い捨て volume、read-only folder、bind mount で保存。 | error / exit code と config / 成果物の再読込を確認し、backup から復旧できる。保存修正を一般的な atomic write 保証にはしない。 |
+| Codex で同 endpoint に concurrent request、待機中の終了・cancel。 | network prompt が直列化され、request 終了後に残らない。fresh checkpoint は再実行でも人の判断を要求する。 |
+| Codex の provider / backend を切り替える。 | draft / transcript と未読結果を確認。resume 不可の新 chat は tool・credential・permission を別に確認する。 |
+
+詳細な version・設定条件は [Claude Code](../claude-code/basics.md) / [Codex](../codex/README.md)を参照してください。
+
 ## 関連ドキュメント
 
 - [ループエンジニアリング](loop-engineering.md) — 停止条件の作り方、無人で回すループの落とし穴。本ページはその「失敗を前提にした継続・再開」を深掘りする

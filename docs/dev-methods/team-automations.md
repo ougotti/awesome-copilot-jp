@@ -183,6 +183,18 @@ Copilot Automations のように **cloud で動き、リポジトリに属し、
 
 [2026-10-28 の Copilot Projects](https://github.blog/changelog/2026-10-28-github-copilot-app-universe-releases/)（Official / Preview、2026-11-07 確認）は複数 repository や外部 context をまとめ、Project automation を設定できます。repository の shared Automation や Agentic Workflow をそのまま置き換える管理単位ではありません。Project の所有者・接続先・trigger・結果のレビュー担当を決め、repository 側の権限と別に記録します。実機試験は未実施です。
 
+## local・shared・cloud の自動化を比較する
+
+**提供元: Official**。[2026-11-06 の週次発表](https://github.blog/changelog/2026-11-06-github-copilot-weekly-releases-november-2/)と [VS Code 1.145](https://code.visualstudio.com/updates/v1_145) を 2026-11-07 に確認しました。local の cron / workspace custom agent は提供済みで Preview 表記なし、[VS Code からの cloud automation 管理](https://code.visualstudio.com/docs/agents/run/automations)は Preview です。実機試験は未実施です。
+
+| 管理単位 | 実行場所・所有者 | 承認・停止の確認 |
+|---|---|---|
+| VS Code local automation | 自分の開発環境。schedule 時は computer が awake で agent が利用可能である必要がある。cron と workspace custom agent に対応。 | 保存する permission と初回結果を確認する。端末・agent の停止時に継続すると想定しない。 |
+| repository shared Copilot Automation（GA） | GitHub の cloud。repository の共有設定と実行名義・課金先を管理する。 | 本ページの shared の承認、trigger、上限、disable / cancel を確認する。local cron の対応を cloud へ一般化しない。 |
+| Copilot Project automation（Preview） | Copilot app の複数 context を束ねる Project。 | Project owner・接続先・trigger・review 担当を別に記録する。 |
+
+VS Code の cloud automation に cron は提供されていません。local の schedule を共有しても実行環境・認証・policy の継承は別に確認します。反復処理の設計は [ループエンジニアリング](loop-engineering.md)を参照してください。
+
 ## 関連ドキュメント
 
 - [ループエンジニアリング](loop-engineering.md) — 定期実行の比較と停止条件の作り方

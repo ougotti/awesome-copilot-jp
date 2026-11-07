@@ -502,6 +502,12 @@ Codex CLI 0.162.0（Official / Stable、2026-10-08）は worktrees feature が�
 
 2026-11-07 確認。[AHP](https://github.blog/changelog/2026-10-28-github-copilot-in-vs-code-universe-releases/)（Official / Open protocol）は Agent Host の live session に独自 client を接続する入口です。reconnect 後の update 追随と、tool の認可・credential・host trust は別に確認します。[SDK の組織認証](https://github.blog/changelog/2026-10-27-github-copilot-supports-server-to-server-authentication/)（Official / Preview）は実行名義、[Projects](https://github.blog/changelog/2026-10-28-github-copilot-app-universe-releases/)（Official / Preview）は複数 context をまとめる単位です。[Copilot ガイド](../copilot/README.md)と[自動化の管理単位](team-automations.md)を参照してください。実機試験は未実施です。
 
+## MCP の task・接続・chat の寿命
+
+2026-11-07 確認、実機試験は未実施です。[Claude Code 2.1.319](https://github.com/anthropics/claude-code/releases/tag/v2.1.319)（Official / GA）の MCP task の即時 background 化は host の待機 policy です。MCP Tasks protocol の意味と切り分け、foreground への切替・完了通知・resume の検証を [製品別ガイド](../claude-code/basics.md)で確認します。
+
+[Codex の per-chat lease](https://github.com/openai/codex/pull/57978) は拡張を宣言する pooled stdio server に限定されます。chat 解放時の cancel と lease release、失敗時の pool 除去を確認し、他 chat が共有接続を使い続ける場合と分けます。0.167 収録の managed network / fresh human checkpoint も [Codex ガイド](../codex/README.md)へ集約しています（Official / GA）。接続の共有は認可の共有を意味しません。
+
 ## 関連ドキュメント
 
 - [ループエンジニアリング](loop-engineering.md) — ハーネスの 1 つ上の階。エージェントを目標へ向けて回す反復サイクルの設計

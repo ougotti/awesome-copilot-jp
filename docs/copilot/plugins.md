@@ -279,6 +279,12 @@ VS Code では **Agent plugins** として一般提供され、「Agent Plugins 
 - [Agent Plugins 1.0 in VS Code, Copilot CLI, and the Copilot app](https://github.blog/changelog/2026-08-12-agent-plugins-1-0-in-vs-code-copilot-cli-and-the-copilot-app/) — GitHub 実装の提供開始（公式）
 - [MCP allowlists in enterprise managed settings](https://github.blog/changelog/2026-08-06-mcp-allowlists-in-enterprise-managed-settings/) — MCP 許可リスト（公式）
 
+## 設定の棚卸しと導入後の評価（2026-11-05〜11-06）
+
+**提供元: Official / 状態: GA（発表で提供済み、Preview 表記なし）**。2026-11-07 確認、実機試験は未実施です。[Copilot CLI の `/settings`](https://github.blog/changelog/2026-11-06-github-copilot-weekly-releases-november-2/) は Plugins / MCP を含む統合 dashboard と検索を提供します。設定画面の統合を policy の統合・上書きと解釈せず、設定元を照合してください。
+
+[code review の customization 別集計](https://github.blog/changelog/2026-11-05-usage-metrics-api-adds-code-review-details-and-addressed-rate/)は、instructions / Skills / MCP / none による違いを調べる材料です。集計方法・merge 日基準・bot PR の扱い・欠損の注意は [addressed rate の読み方](../dev-methods/evals.md#copilot-code-review-の-addressed-rate)へ集約しています。breakdown だけを Plugin の効果の因果証明には使いません。
+
 ## 関連ドキュメント
 
 - [GitHub Copilot ガイド](README.md) — Copilot のカスタマイズ全体像
