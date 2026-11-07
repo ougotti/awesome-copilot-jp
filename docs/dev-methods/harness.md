@@ -1,6 +1,6 @@
 # AI エージェントの実行基盤（ハーネス）
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-10-28
+> **対象ツール**: ツール横断 ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア・プラットフォーム担当 ｜ **最終更新**: 2026-11-07
 
 > エージェントは「モデル」だけでは動きません。ツール呼び出し・状態管理・ループ制御・権限といった裏側の仕組みを **ハーネス（harness）** と呼びます。このページは概念、実装例（Microsoft Copilot Studio / QM / Kiro Crew / OpenAI Agents API / Hermes Agent）、そして「なぜ設計を意識するのか」を 1 か所にまとめた解説です。最近の動きだけを追いたい場合は [Skills 最新動向 10 節](../trends.md#10-aiエージェントの実行基盤ハーネス) を参照してください。
 
@@ -497,6 +497,10 @@ Codex CLI 0.162.0（Official / Stable、2026-10-08）は worktrees feature が�
 **→ ループの構成要素・停止条件の作り方・落とし穴は [ループエンジニアリング](loop-engineering.md) を参照**
 
 ---
+
+## session と組織の実行主体を分ける
+
+2026-11-07 確認。[AHP](https://github.blog/changelog/2026-10-28-github-copilot-in-vs-code-universe-releases/)（Official / Open protocol）は Agent Host の live session に独自 client を接続する入口です。reconnect 後の update 追随と、tool の認可・credential・host trust は別に確認します。[SDK の組織認証](https://github.blog/changelog/2026-10-27-github-copilot-supports-server-to-server-authentication/)（Official / Preview）は実行名義、[Projects](https://github.blog/changelog/2026-10-28-github-copilot-app-universe-releases/)（Official / Preview）は複数 context をまとめる単位です。[Copilot ガイド](../copilot/README.md)と[自動化の管理単位](team-automations.md)を参照してください。実機試験は未実施です。
 
 ## 関連ドキュメント
 

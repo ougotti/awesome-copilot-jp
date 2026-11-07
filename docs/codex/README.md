@@ -1,6 +1,6 @@
 # Codex ガイド（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-10-23
+> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-11-07
 
 Codex に作業手順や外部サービスとの連携を持たせる方法は 2 つあります。**Skill**（指示・スクリプト・リソースをまとめたフォルダ）と、Skill に MCP サーバー・コネクタ・フックなどを束ねて配る **Plugin** です。OpenAI は現在、再利用・配布の単位として Plugin を勧めています。
 
@@ -330,6 +330,21 @@ session 側の変更は、会話と下書きを別の面へ持ち越す仕組み
 | Amazon Bedrock の設定ウィザードを既定で有効にし、AWS の資格情報が見つかると API key の入力を AWS のサインイン方法と並べて出す | Bedrock 経由で使う場合の初期設定 |
 
 **再開と compaction**: 再開した session が、圧縮された履歴を見つけて **thread の設定を全体の既定で上書きせずに復元**するようになりました。compaction に失敗したとき、部分的な要約が会話履歴に残らなくなっています。`-c` / `--config` を複数のサブコマンドの階層に書いたときの上書きも保たれます。再開後に権限や model が変わっていないかを確かめる手順（[0.163.0](#codex-cli-01630--再開時の権限復元network-proxy-の強化応答中の-steer)）は変わりません。
+
+### Codex CLI 0.165 / 0.166 — Marketplace と再開時の権限
+
+**提供元: Official / 状態: GA（Stable release）**。[0.165.0](https://github.com/openai/codex/releases/tag/rust-v0.165.0)（2026-10-27 UTC、10-28 JST）と [0.166.0](https://github.com/openai/codex/releases/tag/rust-v0.166.0)（10-29 UTC、10-30 JST）を 2026-11-07 に確認しました。実機試験は未実施です。
+
+| 変更 | 運用で確認すること |
+|---|---|
+| 0.165: Marketplace URL の検証後、Git が許可 pattern と異なる host へ接続できる gap を修正。 | 登録 URL と実際の接続 host を確認する。URL 検査だけを配布元の信頼性の保証にしない。 |
+| 0.165: 明示 override のない fresh TUI は server の default approval reviewer を尊重。 | server・起動引数・有効な承認設定を記録する。 |
+| 0.165: local response future の破棄で remote MCP request を cancel。interrupt / Plan mode 後に queued message が作業を再開する問題を修正。 | cancel 済みでも外部副作用の完了は照会する。無害な queued task で中断後の再実行がないか確認する。 |
+| 0.166: resume / fork で確認済み approval / permission を保持。 | 現在の managed policy と起動 override を含む有効な設定を、再開前後で比較する。別環境への恒久 grant と解釈しない。 |
+| 0.166: `codex queue --resume`、親の unarchive 時の子孫復元、app-server の起動・終了 race と TUI reconnect を改善。 | 実行中・完了済み task と未読結果を確認し、再送前に副作用の記録を照合する。reasoning token accounting の保持も含む。 |
+| 0.166: `codex doctor --network-only`。 | CLI の端末で config・connectivity・WebSocket の診断に使う。sandbox や全機能の検査の代わりにはしない。 |
+
+権限の基礎は [OpenAI 公式の sandbox / approvals](https://learn.chatgpt.com/docs/agent-approvals-security#sandbox-and-approvals)、再開を確かめる手順は [信頼性設計](../dev-methods/agent-reliability.md)を参照してください。週次記事で扱う再開修正と、ここで扱う設定・実行範囲の検証を組み合わせます。
 
 ### Codexを製品へ組み込む入口を分ける
 

@@ -1,6 +1,6 @@
 # エージェントが働きやすいリポジトリ — 渡すコンテキストの設計
 
-> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか AGENTS.md 対応ツール） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: リポジトリを管理する開発者・チームのリード ｜ **最終更新**: 2026-10-24
+> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか AGENTS.md 対応ツール） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: リポジトリを管理する開発者・チームのリード ｜ **最終更新**: 2026-11-07
 
 > コーディングエージェントの出来は、モデルだけでなく**リポジトリが何を渡すか**で変わります。指示ファイル（`AGENTS.md`・`CLAUDE.md`・`.github/copilot-instructions.md`）に何を書くか、何を Skill やテスト・CI に移すか、エージェントが自分の変更をどう確かめられるようにするか。このページは、ツールごとのページに散らばっていた指示ファイルの説明を横断して、**設計の判断**をまとめます。各ツールの配置場所の細かい規則は、末尾の関連ドキュメントから各ガイドを参照してください。
 
@@ -91,6 +91,10 @@ Gloaguen らの [Evaluating AGENTS.md: Are Repository-Level Context Files Helpfu
 - 複数のツールを使う場合、どのツールがどのファイルを読むかを把握しているか（Claude Code の `CLAUDE.md` 優先に注意）
 
 ---
+
+## 巨大な指示ファイルと path Skill の点検
+
+[Claude Code 2.1.312](https://github.com/anthropics/claude-code/releases/tag/v2.1.312)（Official / GA、2026-10-27 UTC、2026-11-07 確認）は、一部だけ見た巨大な `CLAUDE.md` / rules / `@` include の上書きと、Bash の `cd` 後の path Skill 発見を修正しています。保守では全体 read または局所 edit、diff review、復旧できる Git 履歴を用意します。path Skill は repository root と深い subdirectory の双方から無害な課題で確かめます。これは推奨手順で、実機試験は未実施です。
 
 ## 関連ドキュメント
 

@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-28
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-07
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -946,6 +946,23 @@ MCP connector の `mcp-client-2026-09-15` beta header と組み合わせると�
 | Enterprise の custom role に、**Claude Code の cloud session と Remote Control の権限**を追加。管理画面で有効にするときに、その権限を持つ role の一覧を示して確認する | role で「使えるか」を分けられる。role に権限を付けることと、各リポジトリ・tool で何を実行できるかは別の層として確認する |
 | 一部の gateway や互換サーバーが `effort-2025-11-24` の beta 値や会話途中の system message を拒否するとき、それらを外して再送する | gateway の背後で使う構成 |
 | `cleanupPeriodDays` を非常に大きくすると、貼り付けた画像などの最近のファイルが掃除で消えていた問題を修正 | 保存期間を延ばしている環境 |
+
+### 2.1.312 / 2.1.314 — 書き込み範囲と組織 policy を確かめる
+
+**提供元: Official / 状態: GA（CLI の正式リリース）**。[2.1.312](https://github.com/anthropics/claude-code/releases/tag/v2.1.312)（2026-10-27 UTC、10-28 JST）と [2.1.314](https://github.com/anthropics/claude-code/releases/tag/v2.1.314)（10-30 UTC）を 2026-11-07 に確認しました。以下は release の記載と導入時の確認手順です。実機試験は未実施です。
+
+| 制御・修正 | 対象と確認方法 |
+|---|---|
+| `permissions.blockWritesOutsideWorkingDirectories`（2.1.314） | 有効にすると `Write` / `Edit` / `NotebookEdit` は working directories 外のパスを全 permission mode で拒否する。既定で有効とは書かれていない。Bash / MCP を含む全書き込みの遮断へ拡大解釈しない。 |
+| permission mode / tool rule | 実行時の確認方式と tool の許可・確認・拒否を扱う。上記の対象 tool は、mode を変えても directory 外 write が許可されるわけではない。 |
+| read block / sandbox | `blockReadsOutsideWorkingDirectories` は読み取り、sandbox は隔離された実行の範囲を扱う。write block と別に、実際に使う OS・shell・tool で許可と拒否を確認する。 |
+| managed policy の取得（2.1.312） | VS Code で sign-in 後、session の残りで managed settings / organization policy を取得しない問題を修正。再サインイン後に有効な設定と、policy が拒否する無害な操作を確認する。 |
+| 巨大な指示ファイル（2.1.312） | 一部だけ読んだ `CLAUDE.md` / rules / `@` include を上書きする問題を修正。全体 read または局所 edit、diff review、復旧用の履歴を組み合わせる。Bash で深い directory へ移った後も path Skill が適用されるか確認する。 |
+| `claude -p` の startup failure（2.1.314） | 無出力・exit 0 だった失敗は error を出して exit 1 になる。scheduler は終了コード、期待した成果物、外部操作の完了記録を別々に確認する。 |
+
+**Gateway の認証と監査**: 2.1.312 の `oidc.user_id_claim` は利用者を識別する id_token claim を選び、2.1.314 の upstream `groups` は IdP group による routing を failover 時にも適用します。Bedrock の `guardrail_trace` は発火した filter を記録し、matched text は記録しません。組織が effort を制限した際は許容 level に下げて retry し、使用 level を表示します。運用時の責任分界は [ID・認可](../dev-methods/agent-identity.md)を参照してください。
+
+導入試験では使い捨ての directory を用意し、内外のダミーファイルへの対象 tool 操作を mode ごとに比較します。設定の配布元と有効値を記録し、Bash / MCP / sandbox の結果を同じ保証としてまとめないでください。
 
 ## セットアップ
 

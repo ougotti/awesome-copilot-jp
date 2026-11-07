@@ -1,6 +1,6 @@
 # Skill / Plugin のセキュリティ
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-28
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex ほか） ｜ **実行環境**: IDE / CLI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-11-07
 
 > Skill と Plugin は「読み込ませる文書」ではなく、**エージェントの振る舞いを書き換える指示**です。スクリプトや MCP 接続も同梱できるため、ライブラリの依存追加と同じ慎重さが要ります。このページは、標準がまだ定義していない領域・導入前の確認手順・第三者監査の実態・組織での絞り込みを 1 か所に集約した解説です。
 
@@ -434,6 +434,18 @@ Hermes の Hub（`hermes skills install`）は、インストール時に必ず�
 | 組織で全社に展開する | 導入前の検査に加え、**推論前の許可判定と実行後の監査**まで設計する（[5 節](#5-統制が効く-3-つの段階)。いずれも組織向けプランが前提） |
 
 ---
+
+## 2026-10-27〜10-30 の policy 境界
+
+2026-11-07 確認。以下は導入試験の観点です。実機試験は未実施です。
+
+| 対象 | 確認する境界 | 詳細・一次情報 |
+|---|---|---|
+| Claude Code 2.1.312 / 2.1.314（Official / GA） | sign-in 後の managed policy 取得、対象 file tool の directory 外 write 拒否、巨大な指示ファイルの編集を別々に確認する。sandbox・read block・Bash / MCP まで同じ設定で制御できるとは扱わない。 | [製品別の制御表](../claude-code/basics.md)、[2.1.314](https://github.com/anthropics/claude-code/releases/tag/v2.1.314)。 |
+| Codex 0.165 / 0.166（Official / GA） | Marketplace URL と Git の接続 host、fresh session の reviewer、resume / fork 後の有効な permission を照合する。 | [製品別ガイド](../codex/README.md)、[0.165](https://github.com/openai/codex/releases/tag/rust-v0.165.0)。 |
+| Copilot Plugins（Official / GA） | repository default は推奨、enterprise の require / block は強制。表示と install の認可も分ける。 | [Plugin の設定元と強制力](../copilot/plugins.md)。 |
+
+設定の配布だけで適用済みと判断せず、ダミー対象で許可と拒否を試し、version・有効値・設定元を記録してください。
 
 ## 関連ドキュメント
 

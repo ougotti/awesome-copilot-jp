@@ -2,6 +2,13 @@
 
 本ガイドの主な更新を時系列で記録します。upstream の新規スキル検出への対応と、ガイド本体の構成変更・解説追加をここにまとめます。
 
+## 2026-11
+
+- **2026-11-07** #309 の 10-27〜10-30 の未掲載差分を反映。
+  - [Claude Code](docs/claude-code/basics.md)の write block・policy・指示ファイル保護・Gateway、[Codex](docs/codex/README.md)の Marketplace と approval / resume、[Copilot](docs/copilot/README.md)の組織認証・Projects・connectors・AHP を追加した。
+  - [Copilot Plugins](docs/copilot/plugins.md)の repository defaults を強制設定と読める説明を修正し、enterprise controls との違いを明記した。運用ガイドへ設定の適用・再開・失効を確認する手順を追加した。
+  - 公式 release / 発表を 2026-11-07 に再確認。製品・API・管理画面の実機試験は未実施で、導入時の試験手順として記載した。
+
 ## 2026-10
 
 - **2026-10-30** [チームで常設するエージェント](docs/dev-methods/team-automations.md)を追加。
