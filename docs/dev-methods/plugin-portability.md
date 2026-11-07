@@ -193,6 +193,12 @@ Copilot CLI でも、1.0.94 の discovery 前の MCP enable / disable、1.0.95 �
 
 2026-11-07 確認。[Codex 0.165](https://github.com/openai/codex/releases/tag/rust-v0.165.0)（Official / GA）は許可 pattern に合う Marketplace URL と Git の接続 host が異なる gap を修正しました。[Copilot Plugin controls](https://github.blog/changelog/2026-10-28-repository-plugin-defaults-and-enterprise-plugin-controls-generally-available/)（Official / GA）では repository の推奨既定と enterprise の強制を分けます。client 移行後に承認済み source と required / blocked Plugin の適用を確認します。詳細は [Copilot Plugins](../copilot/plugins.md)へ集約しています。実機試験は未実施です。
 
+## refresh 時の override と診断情報
+
+2026-11-07 確認、実機試験は未実施です。[Codex の MCP config refresh](https://github.com/openai/codex/pull/57974) は session `plugins` を省略・指定・空 map で保持・置換・解除します。他の override や user settings の保持と、managed policy の強制を分けます。[bundle URL の除外](https://github.com/openai/codex/pull/58165)は署名 token を含み得る URL を debug / error に残さず host などの診断情報を残す修正です（0.167 収録、Official / GA）。一般的な全ログの秘密情報除去の保証ではありません。
+
+導入・更新後は tools / hooks の revoke・復元、有効な設定元、診断出力を確認します。Copilot CLI の [統合 `/settings`](../copilot/plugins.md)でも、設定画面が一つであることと policy の優先順位を分けます。
+
 ## 関連ドキュメント
 
 - [Skills 最新動向 8 節](../trends.md#8-agent-plugins-100--マルチベンダー共通のエージェント設定標準) — 標準の成り立ち・ガバナンス・各ツールの対応状況

@@ -4,6 +4,11 @@
 
 ## 2026-11
 
+- **2026-11-07** #311 の 11-05〜11-07 の未掲載差分を反映。
+  - [Claude Code 2.1.319](docs/claude-code/basics.md)の prompt 待ち拒否、auto mode の check path、MCP task と resume / 保存境界を追加した。
+  - [Codex 0.167](docs/codex/README.md)の managed network / fresh checkpoint の文書化と、収録 PR の MCP lease・Plugin override・approval metadata・diagnostics の対象範囲、draft / transcript の継続を整理した。
+  - [Copilot](docs/copilot/README.md)の telemetry / version gap と engagement、[code review の addressed rate](docs/dev-methods/evals.md#copilot-code-review-の-addressed-rate)、設定・local automation・Slack / Teams GA を追加した。実機試験は未実施で、確認手順と資料上の事実を区別した。
+
 - **2026-11-07** #309 の 10-27〜10-30 の未掲載差分を反映。
   - [Claude Code](docs/claude-code/basics.md)の write block・policy・指示ファイル保護・Gateway、[Codex](docs/codex/README.md)の Marketplace と approval / resume、[Copilot](docs/copilot/README.md)の組織認証・Projects・connectors・AHP を追加した。
   - [Copilot Plugins](docs/copilot/plugins.md)の repository defaults を強制設定と読める説明を修正し、enterprise controls との違いを明記した。運用ガイドへ設定の適用・再開・失効を確認する手順を追加した。

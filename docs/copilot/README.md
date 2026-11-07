@@ -1484,6 +1484,25 @@ Enterprise の方針は、管理を **organization に委任する**か、**ente
 
 [Agent Host Protocol（AHP）](https://github.blog/changelog/2026-10-28-github-copilot-in-vs-code-universe-releases/) は **Official / Open protocol** です。独自 client を Agent Host の live session につなぎ、再接続後の未取得 update を追随します。TypeScript・Rust・Go・Kotlin・Swift の client library が案内されています。独自 client の入口であり、tool permission や credential の自動移送の保証ではありません。導入の比較は [ハーネス](../dev-methods/harness.md)、[Plugin の統制](plugins.md)、[tool の選び方](../dev-methods/tool-selection.md)を参照してください。
 
+## 2026-11-05〜11-06 — 計測と設定の更新
+
+**提供元: Official / 状態: GA（発表で提供済み。以下の項目に Preview 表記なし）**。2026-11-07 に一次情報を確認しました。実機・API・管理画面の検証は未実施です。
+
+### 利用指標の欠損を先に確認する
+
+[11-05 の telemetry / version gap](https://github.blog/changelog/2026-11-05-usage-metrics-api-flags-telemetry-and-version-gaps/) は、enterprise / organization の user report に `client_telemetry_present` と `usage_metrics_requirements` を追加しました。`false` は活動を検知したが editor の usage events が届いていない状態です。最低 version を満たしても proxy などで欠損し得ます。日次の `missing_client_telemetry_user_count` と `below_usage_metrics_minimum_user_count` は重複し得るため合算せず、日をまたぐ unique user 数にも使いません。`null` / omitted は利用不可で、0 / false と区別します。リリース前の日付には値がありません。
+
+[11-06 の impact dashboard](https://github.blog/changelog/2026-11-06-copilot-impact-dashboard-adds-chat-and-vs-code-agent-usage/) と enterprise / organization の28日 report は、feature engagement に `chat` / `vscode_agent` を追加しました。28日中2日以上の利用を数え、同じ人が複数 feature に入ります。adoption phase の判定は変わらず、Chat-first users の API 値は `No Cohort` のままです。いずれも Copilot usage metrics policy と閲覧権限（owner / billing manager / `View Copilot Metrics` を持つ role など）が必要です。code review の指標は [evals](../dev-methods/evals.md#copilot-code-review-の-addressed-rate)へ集約しています。
+
+### 設定・自動化・会話からの書き込み
+
+| 更新 | 対象と確認 |
+|---|---|
+| [CLI の `/settings`](https://github.blog/changelog/2026-11-06-github-copilot-weekly-releases-november-2/) | Plugins / MCP などを統合 dashboard で横断検索できる。[Plugins](plugins.md)の設定元・企業 policy を併せて確認する。 |
+| 同発表の assisted approval instructions | opt-in の personal instructions で local session の承認支援を調整する。enterprise の強制 policy・無条件 auto-approval と混同しない。 |
+| 同発表の VS Code 1.145 local automations | cron expression と workspace custom agent に対応。[実行場所と所有者の比較](../dev-methods/team-automations.md#localsharedcloud-の自動化を比較する)で選ぶ。 |
+| [Slack / Teams の `@GitHub` GA](https://github.blog/changelog/2026-11-06-github-copilot-in-slack-and-teams-is-generally-available/) | 作成する Issue / PR に会話と利用者の attribution を付ける。Teams Canvas は plan / diff / preview を共同 review する入口。対象 repository・実行主体・書き込み権限・人の review を確認する。 |
+
 ## 関連ドキュメント
 
 - [VS Code エディタウィンドウでの複数ルート運用](multi-root.md) — 複数フォルダを横断するエージェントセッションの設定と制約（Experimental）

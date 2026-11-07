@@ -964,6 +964,31 @@ MCP connector の `mcp-client-2026-09-15` beta header と組み合わせると�
 
 導入試験では使い捨ての directory を用意し、内外のダミーファイルへの対象 tool 操作を mode ごとに比較します。設定の配布元と有効値を記録し、Bash / MCP / sandbox の結果を同じ保証としてまとめないでください。
 
+### 2.1.319 — prompt 待ちと MCP task の寿命
+
+**提供元: Official / 状態: GA（CLI の正式リリース）**。[2.1.319](https://github.com/anthropics/claude-code/releases/tag/v2.1.319) は 2026-11-06 17:04 UTC（11-07 JST）公開。2026-11-07 に再確認しました。実機試験は未実施です。
+
+`permissions.denyInsteadOfPrompting` は、permission prompt を待つ tool call を拒否して turn を継続します。terminal・subagent・teammate に適用されます。全 tool の恒久 deny や自動承認ではありません。Bash の deny / ask rule が quoted word を見落とす問題も修正されました。
+
+| auto mode の条件 | 2.1.319 の check path |
+|---|---|
+| telemetry / feature flags が無効、または gateway のため server check が届かない。 | server が確認できない call は確認または拒否となり、built-in classifier へ暗黙 fallback しない。Bedrock / Vertex / Foundry の挙動はこの変更の対象外。 |
+| `CLAUDE_CODE_AUTO_MODE_SERVER=0` を明示する。 | built-in classifier を使い続ける明示選択。管理者が配布する policy と照合する。 |
+| gateway で `CLAUDE_CODE_AUTO_MODE_SERVER=1` を明示する。 | `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS` があっても server check を有効にする。後者を managed settings が指定する場合、`1` も managed settings が指定する必要がある。通信の到達性は別に確認する。 |
+| project / Plugin が server check を再有効化しようとする。 | project 外で無効にした選択を、project / Plugin は再有効化できない。 |
+
+`claude -p` は safety check 不在で auto-mode action を拒否した場合、text / JSON とも exit 1 になります。終了コードだけで副作用なしと判断せず、成果物と完了記録を照合します。
+
+| MCP / 再開・保存の変更 | 判断すること |
+|---|---|
+| terminal で server が tool call を task として実行すると、即座に background に移し、完了後に結果を通知する。 | `CLAUDE_CODE_DISABLE_MCP_TASK_BACKGROUND` で call 内の待機に戻せる。host の待機 policy と MCP Tasks protocol の意味を分ける。 |
+| older handshake の server の接続失敗・空結果、resume 後の長時間 connector call の結果欠落を修正。 | `claude -p --resume` と prompt の組み合わせで MCP server が欠ける場合、deferred call を保持して exit 1、後続入力を拒否する。server を復旧してから完了・重複を確認する。 |
+| `CLAUDE_CODE_RESUME_INTERRUPTED_TURN` は Plan mode で中断した turn を別 mode で再開しても再実行しない。 | 未承認 plan の中断箇所と mode を記録し、再開時に比較する。 |
+| `/tasks` で restart 後も finished subagent を再表示・再開できる。cloud の `/loop` 確認に container 終了で timer が止まる説明を追加。 | task の保存と timer の永続実行を同じ寿命と扱わない。 |
+| disk full・read-only folder・bind mount で config / settings / 編集ファイルが空・途中になる保存を修正し、session 間の save を直列化。 | 一般的な atomicity / durability の保証ではない。保存後に config と成果物を読み戻す。 |
+
+非対話・resume・保存失敗を確認する試験は [信頼性設計](../dev-methods/agent-reliability.md)、権限判定の見直しは [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md)を参照してください。
+
 ## セットアップ
 
 ```bash
