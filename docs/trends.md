@@ -12,7 +12,7 @@
 |---|---|---|
 | Anthropic / Official / GA | [Claude Code](claude-code/basics.md) — 2.1.312 / 2.1.314 の working-directory write block、sign-in 後の policy、指示ファイル保護、Gateway と非対話 exit code。 | 2026-10-27 / 10-30 UTC。 |
 | OpenAI / Official / GA | [Codex](codex/README.md) — 0.165 / 0.166 の Marketplace 接続 host、approval reviewer、interrupt / resume / fork と network doctor。 | 2026-10-27 / 10-29 UTC。 |
-| GitHub / Official / Preview | [Copilot](copilot/README.md) — SDK の組織認証、Projects、connectors。AHP は Open protocol。 | 2026-10-27〜10-28。 |
+| GitHub / Official / Preview | [Copilot](copilot/README.md) — SDK の組織認証、Projects、connectors。AHP は Official / Open protocol。 | 2026-10-27〜10-28。 |
 | GitHub / Official / GA | [Copilot Plugins](copilot/plugins.md) — repository defaults と enterprise require / block。Customization Marketplace は Preview。 | 2026-10-28。 |
 
 ## このページの更新履歴
