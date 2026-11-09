@@ -1,6 +1,6 @@
 # Skill / エージェントの評価（evals） — 変更時の回帰と本番品質を分けて測る
 
-> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・本番エージェント基盤ほか） ｜ **実行環境**: CLI（ターミナル）/ Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-28
+> **対象ツール**: ツール横断（GitHub Copilot・Claude Code・Codex・本番エージェント基盤ほか） ｜ **実行環境**: CLI（ターミナル）/ Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-07
 
 > [Skill / Plugin のセキュリティ](skill-security.md)は「**導入前**に入れてよいものか」を扱います。このページはその先、「**変更した Skill / Plugin が効いているか**」と「**本番エージェントが目的を達成しているか**」を測る話です。両者は対象と実行頻度が異なります。
 
@@ -260,6 +260,19 @@ Skill 向けには [Skill Selection Accuracy / Skill Instruction Following](http
 - **組み込み / custom evaluator** — helpfulness などの組み込み evaluator と、業務固有の evaluator を使い分ける
 
 AWS の本番監視例では、AgentCore Evaluations による品質評価と AWS DevOps Agent によるインフラ調査を 2 層として組み合わせています。これは AWS サービスを使った構成例であり、すべてのエージェント基盤が同じ機能や統合を持つという意味ではありません。他の基盤へ適用するときは、同じ製品名ではなく「品質」と「インフラを別の問いとして測る」という区分だけを持ち込みます。
+
+### Copilot code review の addressed rate
+
+**提供元: Official / 状態: GA（提供済み、Preview 表記なし）**。[2026-11-05 の発表](https://github.blog/changelog/2026-11-05-usage-metrics-api-adds-code-review-details-and-addressed-rate/)を 2026-11-07 に確認しました。enterprise / organization の `repos-1-day` の `copilot_code_review` が対象です。API の実データ検証は未実施です。
+
+| 指標・集計条件 | 読み方 |
+|---|---|
+| `total_comments_addressed / total_comments_evaluated` | 分母が正のとき addressed rate を算出する。0 件なら算出不可とする。suggestion 適用だけでなく、Copilot への修正依頼、手編集、後続 PR で直すとの返信も addressed に含む。修正完了・不具合解消率ではない。 |
+| severity / review tier / comment type / customization 別 | instructions / Skills / MCP / none を比較できる。課題・repository・review tier の差を揃えずに因果効果とは言えない。 |
+| merge 日に計上 | コメント投稿日と比較しない。bot 作成 PR のコメントは通常評価されないが、人の change request がなかった merged PR の指標には bot PR も含まれる。 |
+| 無活動と欠損 | 対象 report の無活動日は count 0 / empty array。未提供・欠損の値を0へ変換しない。過去期間との field 差を確認する。 |
+
+[telemetry gap の発表](https://github.blog/changelog/2026-11-05-usage-metrics-api-flags-telemetry-and-version-gaps/)に従い、利用指標との比較では missing telemetry / minimum version を併記します。欠損の多い期間を低利用・低効果と解釈せず、条件を揃えて比較してください。API・閲覧条件と field の範囲は [Copilot ガイド](../copilot/README.md)を参照してください。
 
 ## 7. 評価から改善・検証・昇格へつなぐ
 

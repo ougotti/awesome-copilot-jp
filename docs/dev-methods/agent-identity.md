@@ -1,6 +1,6 @@
 # AIエージェントのID・認可・委任権限
 
-> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-22
+> **対象ツール**: ツール横断（Claude Code・Codex・GitHub Copilot ほか） ｜ **実行環境**: CLI / IDE / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-07
 
 > [Skill / Plugin のセキュリティ](skill-security.md)は Skill・Plugin という**導入するモノ**の確認手順を扱います。このページは、常駐・非同期・マルチエージェントで重要になる**エージェント自身をどう認証し、何を委任してよいかという設計判断**を独立して整理します。
 
@@ -195,6 +195,12 @@ primary IdPとoutbound providerは別です。primary IdPはGatewayのJWT author
 - パスワード・API キー・token そのものの掲載
 - Microsoft Agent 365 等、特定製品の機能一覧
 - 法的な責任主体についての断定（誰が法的責任を負うかは、本ページの対象外）
+
+## 組織名義の実行と Gateway の利用者識別
+
+2026-11-07 確認。[Copilot SDK の組織認証](https://github.blog/changelog/2026-10-27-github-copilot-supports-server-to-server-authentication/)（Official / Preview）は installation owner に費用・policy を帰属させます。短命 token と App の suspend / uninstall、`app_client_id` の監査を一組で設計します。条件は [Copilot ガイド](../copilot/README.md)へ集約しています。
+
+Claude apps gateway では [2.1.312](https://github.com/anthropics/claude-code/releases/tag/v2.1.312) の `oidc.user_id_claim` が利用者識別、[2.1.314](https://github.com/anthropics/claude-code/releases/tag/v2.1.314) の `groups` が failover を含む routing、`guardrail_trace` が Bedrock filter の発火記録を担います（Official / GA）。識別子・routing・本文を含まない監査ログを区別します。実機での policy・課金・失効の検証は未実施です。
 
 ## 関連ドキュメント
 

@@ -55,7 +55,7 @@ CLI 側でも、続行時の状態が修正されています。
 
 ## 3. 実行場所と費用の集計先を追う
 
-Copilot in JetBrains Air は、既存の Copilot 契約を使って作業を実行します。クラウド実行には Air Teams を利用できる組織と管理者の有効化などが必要です。実行環境は新しい VM 上の Docker container で、**タスク間で状態を引き継ぎません**。また、Air の利用分析には Copilot 使用量が含まれず、Air 内で Copilot の支出上限を設定することもできません。[公式の前提条件と制約](https://github.blog/changelog/2026-11-03-github-copilot-is-now-available-in-jetbrains-air/)
+Copilot in JetBrains Air は、既存の Copilot 契約を使って作業を実行します。クラウド実行には Air Teams を利用できる組織と管理者の有効化などが必要です。実行環境は新しい VM 上の Docker container で、**タスク間で状態を引き継ぎません**。また、Air の利用分析には Copilot 使用量が含まれず、Air 内で Copilot の支出上限を設定することもできません。[公式の前提条件と制約](https://github.blog/changelog/2026-11-03-github-copilot-is-now-available-in-jetbrains-air/)。
 
 WorkSpaces の追加 OS 対応は、エージェントが使うアプリに合わせて環境を選ぶ更新です。Linux では root access を使った開発・テスト・スクリプト実行、Windows 11 では業務アプリの操作が想定されています。Windows Server と同様に IAM・ネットワーク隔離などの管理を引き継ぎます。[AWS の発表](https://aws.amazon.com/about-aws/whats-new/2026/11/workspaces-ai-agents-linux-windows-11/)
 
