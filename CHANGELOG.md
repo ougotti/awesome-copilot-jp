@@ -20,6 +20,11 @@
   - [Copilot Plugins](docs/copilot/plugins.md)の repository defaults を強制設定と読める説明を修正し、enterprise controls との違いを明記した。運用ガイドへ設定の適用・再開・失効を確認する手順を追加した。
   - 公式 release / 発表を 2026-11-07 に再確認。製品・API・管理画面の実機試験は未実施で、導入時の試験手順として記載した。
 
+- **2026-11-04** [今週のエージェント動向](docs/dev-methods/agent-updates-2026-11-04.md)を追加。
+  - 10-29〜11-04の APM / Dependabot、Claude Message threads（Beta）、Codex CLI 0.166.0・Claude Code 2.1.318、Copilot in JetBrains Air・BYOK 利用指標、WorkSpaces の対応 OS を、更新・再開・実行場所と費用の管理につなげた。
+  - 10-28の自己改善する Automations は背景として扱い、既存の「チームで常設するエージェント」へ誘導した。公式の変更と記事の提案を区別し、資料確認日と未実施の実機検証を明記した。
+  - README と[最新動向](docs/trends.md)から誘導した。
+
 ## 2026-10
 
 - **2026-10-30** [チームで常設するエージェント](docs/dev-methods/team-automations.md)を追加。

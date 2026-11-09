@@ -32,6 +32,7 @@
 |------|---------|
 | 2026-11-07 | #311 の承認・MCP 寿命・計測差分を追加。network policy の移行条件、拡張を宣言する server の lease、override の省略・置換・解除を区別した。 |
 | 2026-11-07 | #309 の未掲載差分を製品別ページへ反映。write・policy・認証・Plugin の強制力と、再開時の確認手順を追加した。 |
+| 2026-11-04 | [10-29〜11-04の週次記事](dev-methods/agent-updates-2026-11-04.md)を追加。APM の更新 PR、Message threads、CLI の再開修正、実行環境と BYOK 指標を、更新・再開・改善の管理という切り口で整理した。 |
 | 2026-10-28 | 10 節と「2026-10-23〜10-24 の更新」に Meta の Muse（2026-10-23 に日本で提供開始）を追加し、Hermes Agent・Claude Duet・dots との[比較表](dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dotsmeta-の-muse)に日本からの利用可否の行を加えた |
 | 2026-10-28 | 冒頭に「2026-10-23〜10-24 の更新」の一覧を置き、[週次記事](dev-methods/agent-updates-2026-10-27.md)の補足で触れた Claude Code 2.1.310・Copilot の `totals_by_client`・Teams の通知からの PR を、製品別ページへ詳しく反映した |
 | 2026-10-27 | [週次記事](dev-methods/agent-updates-2026-10-27.md)を追加。Copilot assisted permissions の GA・CLI 1.0.104、Claude Code 2.1.311、Work / Codex の Terra を、承認・再開・画面操作の軸で整理した。前週10-23の補足は区別した。 |
@@ -102,6 +103,10 @@
 | 2026-08-01 | 「Skill の発見・配布・更新」を追加（`gh skill` / Agent Finder・ARD / Copilot Plugins） |
 | 2026-07-29 | 常設ページ化（旧タイトル「2026年7月版」）。ガイド全体の更新は [更新履歴（CHANGELOG）](../CHANGELOG.md) を参照 |
 | 2026-07-22 | 初版公開（Matt Pocock's Skills / Context7 / Firecrawl / Vercel / Record & Replay / Computer Use の6テーマ） |
+
+## 2026-10-29〜11-04 の更新 — 更新・再開・改善を管理する
+
+依存関係の更新を PR にする Dependabot の APM 対応、Claude API の Message threads（Beta）、Codex CLI 0.166.0・Claude Code 2.1.318 の再開に関わる修正、Copilot in JetBrains Air・BYOK 利用指標、WorkSpaces の Linux・Windows 11 対応を、[週次記事](dev-methods/agent-updates-2026-11-04.md)にまとめました。10-28の常設エージェントと自己改善の詳細は、既存の[チームで常設するエージェント](dev-methods/team-automations.md)へ誘導しています。一次資料は11-04に確認し、実機検証は行っていません。
 
 ## 2026-10-26〜10-27 の更新 — 任せ続けるための承認・再開・画面操作
 
