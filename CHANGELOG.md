@@ -4,6 +4,12 @@
 
 ## 2026-11
 
+- **2026-11-09** [エージェントの周辺ツールが終わるとき](docs/dev-methods/tool-exit-plan.md)を追加。
+  - 2026-11-04 の Conductor の Meta への合流の発表を受けて、Conductor Cloud の 11-13 の読み取り専用化・11-20 の終了とデータ削除、ローカルの Mac アプリの 2027 年初めの終了を表にした。発表が日付だけで時刻とタイムゾーンを書いていないことも記した。
+  - 利用者が期限までにやること（Export data の中身の確認、Transfer to local で移らないかもしれない branch・未 push の commit を Git で持ち出す、渡した OAuth・API key を片づける）をまとめた。
+  - 周辺ツールに預けているものを、コード・会話・手順と設定・認証・実行環境・契約の層に分け、各製品の並列機能で足りるかの確認と、次のツールを選ぶときの「退出のしやすさ」の条件を書いた。Hacker News の議論は「コミュニティの見方」として分けた。
+  - [マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md#関連ドキュメント)から誘導した。Conductor の公式の発表と changelog は 2026-11-09 に確認した。実機での検証は行っていない。
+
 - **2026-11-07** #311 の 11-05〜11-07 の未掲載差分を反映。
   - [Claude Code 2.1.319](docs/claude-code/basics.md)の prompt 待ち拒否、auto mode の check path、MCP task と resume / 保存境界を追加した。
   - [Codex 0.167](docs/codex/README.md)の managed network / fresh checkpoint の文書化と、収録 PR の MCP lease・Plugin override・approval metadata・diagnostics の対象範囲、draft / transcript の継続を整理した。
