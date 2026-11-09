@@ -1,6 +1,6 @@
 # ループエンジニアリング
 
-> **対象ツール**: ツール横断（Claude Code・Codex 等） ｜ **実行環境**: CLI / IDE（デスクトップ） / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-24
+> **対象ツール**: ツール横断（Claude Code・Codex 等） ｜ **実行環境**: CLI / IDE（デスクトップ） / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-07
 
 > エージェントに毎ターン指示を出す代わりに、**エージェントに指示を出し続ける「ループ」の側を設計する**実践を **ループエンジニアリング（loop engineering）** と呼びます。2026-06-07 に Addy Osmani（Google Chrome）が [Loop Engineering](https://addyosmani.com/blog/loop-engineering/) で命名しました。このページは概念、ループの構成要素、停止条件の作り方、そして落とし穴をまとめた解説です。ループが動く土台については [AI エージェントの実行基盤（ハーネス）](harness.md) を参照してください。
 
@@ -260,6 +260,10 @@ Claude Code には、ループを組むための機能がひととおり揃っ�
 内側のループ（実行・検証）はエージェントが回してよく、外側のループ（何を出荷するかの判断と説明責任）は人が持つ、という切り分けが [Own the Outer Loop](https://addyosmani.com/blog/own-the-outer-loop/)（2026-07-15）で示されています。委譲するのは作業であって、判断ではありません。
 
 ---
+
+## cron と custom agent を組み合わせる前に
+
+[VS Code 1.145](https://code.visualstudio.com/updates/v1_145)（Official / GA、2026-11-06 発表、2026-11-07 確認）は local automations の5 field cron と workspace custom agent を追加しています。cloud automation の cron へは適用できません。computer が awake で agent が利用可能なこと、保存した permission、初回の出力、disable / cancel の手順を確認します。local / shared / Project の比較は [チームの自動化](team-automations.md#localsharedcloud-の自動化を比較する)へ集約しています。実機試験は未実施です。
 
 ## 関連ドキュメント
 

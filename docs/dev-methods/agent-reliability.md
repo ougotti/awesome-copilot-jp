@@ -1,6 +1,6 @@
 # 長時間タスクの信頼性設計
 
-> **対象ツール**: ツール横断（Claude Code・Codex・MCP・LangGraph ほか） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-28
+> **対象ツール**: ツール横断（Claude Code・Codex・MCP・LangGraph ほか） ｜ **実行環境**: CLI / Cloud ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-07
 
 > [ループエンジニアリング](loop-engineering.md)はエージェントを反復実行する方法と停止条件を、[AI エージェントの実行基盤（ハーネス）](harness.md)は実行環境を扱います。このページはその間にある、**長時間・多段階の仕事で小さな失敗が累積する問題**と、それを抑える信頼性設計を扱います。評価ツールや telemetry の網羅ではなく、**実行中の故障を前提にした** checkpoint・再開・冪等性・検証・reliability budget が対象です。
 
@@ -189,6 +189,33 @@ memory は**更新・削除できる repository 固有の文脈**として扱い
 - eval framework の網羅（[Skill / エージェントの評価（evals）](evals.md)の範囲）
 - telemetry schema の詳細（[AI エージェントの実行基盤（ハーネス）「動かした後に何が見えるか」](harness.md#動かした後に何が見えるか--opentelemetry-genai-semantic-conventions)の範囲）
 - 「完全自律なら人間確認不要」という主張
+
+## 2026-10-27〜10-30 の再開試験
+
+[Claude Code 2.1.314](https://github.com/anthropics/claude-code/releases/tag/v2.1.314) と [Codex 0.165](https://github.com/openai/codex/releases/tag/rust-v0.165.0) / [0.166](https://github.com/openai/codex/releases/tag/rust-v0.166.0)（Official / GA）を 2026-11-07 に確認しました。以下は提案する試験で、本ガイドでの実施結果ではありません。
+
+| 試験 | 成功の判定 |
+|---|---|
+| Claude の無人起動を意図的に失敗させる。 | `claude -p` の exit 1 と error を取得し、成果物が未完成と判定される。出力があるだけで成功にしない。 |
+| Codex で無害な task を queue し、interrupt / Plan mode へ移る。 | 意図しない再開がない。MCP cancel は外部 service の副作用記録も照会する。 |
+| Codex の resume / fork / reconnect / queue resume を行う。 | 有効な approval / permission、task の完了記録、未読結果を比較する。app-server の終了・再起動後に重複処理がない。 |
+
+対象範囲は [Claude Code](../claude-code/basics.md) / [Codex](../codex/README.md)を参照してください。
+
+## MCP task と保存失敗を確認する試験
+
+[Claude Code 2.1.319](https://github.com/anthropics/claude-code/releases/tag/v2.1.319) と [Codex 0.167](https://github.com/openai/codex/releases/tag/rust-v0.167.0)（Official / GA）を 2026-11-07 に確認しました。以下は未実施の導入試験です。本番データを使わず、使い捨て環境と無害な endpoint / task で行います。
+
+| 条件 | 記録する期待結果 |
+|---|---|
+| Claude の safety check を使えない構成で `-p` を text / JSON 出力で実行。 | auto-mode action の拒否なら exit 1。成果物・外部副作用の完了記録も照合する。 |
+| MCP task を background / call 内待機で実行し、途中で resume。 | task の識別子・完了通知・結果が一致し、重複実行しない。missing server + `-p --resume` と prompt では deferred call 保持・exit 1・後続入力拒否を確認する。 |
+| Plan mode で中断し、別 permission mode で再開。 | `CLAUDE_CODE_RESUME_INTERRUPTED_TURN` が未承認 turn を再実行しない。 |
+| 容量制限のある使い捨て volume、read-only folder、bind mount で保存。 | error / exit code と config / 成果物の再読込を確認し、backup から復旧できる。保存修正を一般的な atomic write 保証にはしない。 |
+| Codex で同 endpoint に concurrent request、待機中の終了・cancel。 | network prompt が直列化され、request 終了後に残らない。fresh checkpoint は再実行でも人の判断を要求する。 |
+| Codex の provider / backend を切り替える。 | draft / transcript と未読結果を確認。resume 不可の新 chat は tool・credential・permission を別に確認する。 |
+
+詳細な version・設定条件は [Claude Code](../claude-code/basics.md) / [Codex](../codex/README.md)を参照してください。
 
 ## 関連ドキュメント
 

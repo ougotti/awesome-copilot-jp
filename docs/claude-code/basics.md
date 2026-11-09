@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-28
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-07
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -946,6 +946,48 @@ MCP connector の `mcp-client-2026-09-15` beta header と組み合わせると�
 | Enterprise の custom role に、**Claude Code の cloud session と Remote Control の権限**を追加。管理画面で有効にするときに、その権限を持つ role の一覧を示して確認する | role で「使えるか」を分けられる。role に権限を付けることと、各リポジトリ・tool で何を実行できるかは別の層として確認する |
 | 一部の gateway や互換サーバーが `effort-2025-11-24` の beta 値や会話途中の system message を拒否するとき、それらを外して再送する | gateway の背後で使う構成 |
 | `cleanupPeriodDays` を非常に大きくすると、貼り付けた画像などの最近のファイルが掃除で消えていた問題を修正 | 保存期間を延ばしている環境 |
+
+### 2.1.312 / 2.1.314 — 書き込み範囲と組織 policy を確かめる
+
+**提供元: Official / 状態: GA（CLI の正式リリース）**。[2.1.312](https://github.com/anthropics/claude-code/releases/tag/v2.1.312)（2026-10-27 UTC、10-28 JST）と [2.1.314](https://github.com/anthropics/claude-code/releases/tag/v2.1.314)（10-30 UTC）を 2026-11-07 に確認しました。以下は release の記載と導入時の確認手順です。実機試験は未実施です。
+
+| 制御・修正 | 対象と確認方法 |
+|---|---|
+| `permissions.blockWritesOutsideWorkingDirectories`（2.1.314） | 有効にすると `Write` / `Edit` / `NotebookEdit` は working directories 外のパスを全 permission mode で拒否する。既定で有効とは書かれていない。Bash / MCP を含む全書き込みの遮断へ拡大解釈しない。 |
+| permission mode / tool rule | 実行時の確認方式と tool の許可・確認・拒否を扱う。上記の対象 tool は、mode を変えても directory 外 write が許可されるわけではない。 |
+| read block / sandbox | `blockReadsOutsideWorkingDirectories` は読み取り、sandbox は隔離された実行の範囲を扱う。write block と別に、実際に使う OS・shell・tool で許可と拒否を確認する。 |
+| managed policy の取得（2.1.312） | VS Code で sign-in 後、session の残りで managed settings / organization policy を取得しない問題を修正。再サインイン後に有効な設定と、policy が拒否する無害な操作を確認する。 |
+| 巨大な指示ファイル（2.1.312） | 一部だけ読んだ `CLAUDE.md` / rules / `@` include を上書きする問題を修正。全体 read または局所 edit、diff review、復旧用の履歴を組み合わせる。Bash で深い directory へ移った後も path Skill が適用されるか確認する。 |
+| `claude -p` の startup failure（2.1.314） | 無出力・exit 0 だった失敗は error を出して exit 1 になる。scheduler は終了コード、期待した成果物、外部操作の完了記録を別々に確認する。 |
+
+**Gateway の認証と監査**: 2.1.312 の `oidc.user_id_claim` は利用者を識別する id_token claim を選び、2.1.314 の upstream `groups` は IdP group による routing を failover 時にも適用します。Bedrock の `guardrail_trace` は発火した filter を記録し、matched text は記録しません。組織が effort を制限した際は許容 level に下げて retry し、使用 level を表示します。運用時の責任分界は [ID・認可](../dev-methods/agent-identity.md)を参照してください。
+
+導入試験では使い捨ての directory を用意し、内外のダミーファイルへの対象 tool 操作を mode ごとに比較します。設定の配布元と有効値を記録し、Bash / MCP / sandbox の結果を同じ保証としてまとめないでください。
+
+### 2.1.319 — prompt 待ちと MCP task の寿命
+
+**提供元: Official / 状態: GA（CLI の正式リリース）**。[2.1.319](https://github.com/anthropics/claude-code/releases/tag/v2.1.319) は 2026-11-06 17:04 UTC（11-07 JST）公開。2026-11-07 に再確認しました。実機試験は未実施です。
+
+`permissions.denyInsteadOfPrompting` は、permission prompt を待つ tool call を拒否して turn を継続します。terminal・subagent・teammate に適用されます。全 tool の恒久 deny や自動承認ではありません。Bash の deny / ask rule が quoted word を見落とす問題も修正されました。
+
+| auto mode の条件 | 2.1.319 の check path |
+|---|---|
+| telemetry / feature flags が無効、または gateway のため server check が届かない。 | server が確認できない call は確認または拒否となり、built-in classifier へ暗黙 fallback しない。Bedrock / Vertex / Foundry の挙動はこの変更の対象外。 |
+| `CLAUDE_CODE_AUTO_MODE_SERVER=0` を明示する。 | built-in classifier を使い続ける明示選択。管理者が配布する policy と照合する。 |
+| gateway で `CLAUDE_CODE_AUTO_MODE_SERVER=1` を明示する。 | `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS` があっても server check を有効にする。後者を managed settings が指定する場合、`1` も managed settings が指定する必要がある。通信の到達性は別に確認する。 |
+| project / Plugin が server check を再有効化しようとする。 | project 外で無効にした選択を、project / Plugin は再有効化できない。 |
+
+`claude -p` は safety check 不在で auto-mode action を拒否した場合、text / JSON とも exit 1 になります。終了コードだけで副作用なしと判断せず、成果物と完了記録を照合します。
+
+| MCP / 再開・保存の変更 | 判断すること |
+|---|---|
+| terminal で server が tool call を task として実行すると、即座に background に移し、完了後に結果を通知する。 | `CLAUDE_CODE_DISABLE_MCP_TASK_BACKGROUND` で call 内の待機に戻せる。host の待機 policy と MCP Tasks protocol の意味を分ける。 |
+| older handshake の server の接続失敗・空結果、resume 後の長時間 connector call の結果欠落を修正。 | `claude -p --resume` と prompt の組み合わせで MCP server が欠ける場合、deferred call を保持して exit 1、後続入力を拒否する。server を復旧してから完了・重複を確認する。 |
+| `CLAUDE_CODE_RESUME_INTERRUPTED_TURN` は Plan mode で中断した turn を別 mode で再開しても再実行しない。 | 未承認 plan の中断箇所と mode を記録し、再開時に比較する。 |
+| `/tasks` で restart 後も finished subagent を再表示・再開できる。cloud の `/loop` 確認に container 終了で timer が止まる説明を追加。 | task の保存と timer の永続実行を同じ寿命と扱わない。 |
+| disk full・read-only folder・bind mount で config / settings / 編集ファイルが空・途中になる保存を修正し、session 間の save を直列化。 | 一般的な atomicity / durability の保証ではない。保存後に config と成果物を読み戻す。 |
+
+非対話・resume・保存失敗を確認する試験は [信頼性設計](../dev-methods/agent-reliability.md)、権限判定の見直しは [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md)を参照してください。
 
 ## セットアップ
 

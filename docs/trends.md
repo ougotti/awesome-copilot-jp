@@ -1,13 +1,37 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-28
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-07
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
+
+## 2026-11-05〜11-07 の更新 — 承認と計測の条件
+
+2026-11-07 に公式 release / 発表と上流 PR を確認しました。実機試験は未実施です。0.167 の Documentation と収録 PR は、機能の新設日を示すものではありません。
+
+| 提供元・状態 | 更新と読む場所 | 公開日 |
+|---|---|---|
+| Anthropic / Official / GA | [Claude Code 2.1.319](claude-code/basics.md) — `denyInsteadOfPrompting`、auto mode check path、MCP task と resume / 保存境界。 | 2026-11-06 UTC（11-07 JST）。 |
+| OpenAI / Official / GA | [Codex 0.167](codex/README.md) — managed network / fresh checkpoint の文書化、MCP lease・Plugin override・network approval・draft / transcript 継続。 | 2026-11-06 UTC。 |
+| GitHub / Official / GA | [Copilot 指標](copilot/README.md)と [code review の評価](dev-methods/evals.md#copilot-code-review-の-addressed-rate) — addressed rate・customization breakdown・telemetry gap・Chat / VS Code Agents の engagement。 | 2026-11-05〜11-06。 |
+| GitHub / Official / GA | [Copilot の設定・承認支援](copilot/README.md)、[自動化の比較](dev-methods/team-automations.md#localsharedcloud-の自動化を比較する) — CLI 統合 settings、opt-in local approval instructions、local cron / custom agent、Slack / Teams GA。VS Code の cloud automation 管理は Preview。 | 2026-11-06。 |
+
+## 2026-10-27〜10-30 の更新 — 書き込みと組織の権限
+
+2026-11-07 に公式資料を再確認しました。実機試験は未実施です。週次記事で扱う話題の再掲を避け、製品別の設定と運用手順へ集約しています。
+
+| 提供元・状態 | 更新と読む場所 | 公開日 |
+|---|---|---|
+| Anthropic / Official / GA | [Claude Code](claude-code/basics.md) — 2.1.312 / 2.1.314 の working-directory write block、sign-in 後の policy、指示ファイル保護、Gateway と非対話 exit code。 | 2026-10-27 / 10-30 UTC。 |
+| OpenAI / Official / GA | [Codex](codex/README.md) — 0.165 / 0.166 の Marketplace 接続 host、approval reviewer、interrupt / resume / fork と network doctor。 | 2026-10-27 / 10-29 UTC。 |
+| GitHub / Official / Preview | [Copilot](copilot/README.md) — SDK の組織認証、Projects、connectors。AHP は Official / Open protocol。 | 2026-10-27〜10-28。 |
+| GitHub / Official / GA | [Copilot Plugins](copilot/plugins.md) — repository defaults と enterprise require / block。Customization Marketplace は Preview。 | 2026-10-28。 |
 
 ## このページの更新履歴
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-11-07 | #311 の承認・MCP 寿命・計測差分を追加。network policy の移行条件、拡張を宣言する server の lease、override の省略・置換・解除を区別した。 |
+| 2026-11-07 | #309 の未掲載差分を製品別ページへ反映。write・policy・認証・Plugin の強制力と、再開時の確認手順を追加した。 |
 | 2026-10-28 | 10 節と「2026-10-23〜10-24 の更新」に Meta の Muse（2026-10-23 に日本で提供開始）を追加し、Hermes Agent・Claude Duet・dots との[比較表](dev-methods/hermes-agent.md#11-事業者が運営する選択肢--claude-duetchatgpt-の-dotsmeta-の-muse)に日本からの利用可否の行を加えた |
 | 2026-10-28 | 冒頭に「2026-10-23〜10-24 の更新」の一覧を置き、[週次記事](dev-methods/agent-updates-2026-10-27.md)の補足で触れた Claude Code 2.1.310・Copilot の `totals_by_client`・Teams の通知からの PR を、製品別ページへ詳しく反映した |
 | 2026-10-27 | [週次記事](dev-methods/agent-updates-2026-10-27.md)を追加。Copilot assisted permissions の GA・CLI 1.0.104、Claude Code 2.1.311、Work / Codex の Terra を、承認・再開・画面操作の軸で整理した。前週10-23の補足は区別した。 |

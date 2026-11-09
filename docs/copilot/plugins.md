@@ -1,6 +1,6 @@
 # GitHub Copilot Plugins
 
-> **対象ツール**: GitHub Copilot（Copilot アプリ / CLI / VS Code） ｜ **実行環境**: Chat UI（Copilot アプリ）／ CLI（ターミナル）／ IDE（VS Code） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
+> **対象ツール**: GitHub Copilot（Copilot アプリ / CLI / VS Code） ｜ **実行環境**: Chat UI（Copilot アプリ）／ CLI（ターミナル）／ IDE（VS Code） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-07
 
 Plugin は、Custom Agents・Skills・Hooks・MCP サーバー設定・LSP サーバー設定を **1 つの配布単位** にまとめる仕組みです。Skill を 1 個ずつ配る代わりに、チームやプロジェクトに必要な拡張一式をまとめて配布・更新できます。
 
@@ -168,7 +168,7 @@ Marketplace の情報は `~/.cache/copilot/marketplaces/`（Linux）または `~
 | 設定ファイル | 適用範囲 | 用途 |
 |-------------|---------|------|
 | `~/.copilot/settings.json` | ユーザー全体 | 個人が常用する Plugin |
-| `.github/copilot/settings.json` | リポジトリ | そのリポジトリの開発者全員に同じ Plugin を適用 |
+| `.github/copilot/settings.json` | リポジトリ | contributor が作業を始めるための Plugin の推奨既定。企業 policy が許せば無効化できる。 |
 
 ```json
 {
@@ -180,7 +180,18 @@ Marketplace の情報は `~/.cache/copilot/marketplaces/`（Linux）または `~
 
 リポジトリ側の設定ファイルをコミットしておけば、クローンした開発者が同じ Plugin 構成で作業を始められます。Copilot cloud agent（クラウド上のコーディングエージェント）は、この `enabledPlugins` を使う宣言的な方法のみに対応しています。既定で登録されていない Marketplace から導入したい場合は、同じ設定ファイルの `extraKnownMarketplaces` フィールドにも追加してください。
 
-Enterprise では **managed settings** により、利用してよい Plugin を組織のポリシーとして強制し、自動インストールする Plugin を指定することもできます（VS Code・Copilot CLI・Copilot アプリが対象）。CLI 1.0.81 から、`enabledPlugins` と `extraKnownMarketplaces` は**エントリごとに managed の値が優先**され、組織が固定した Plugin や Marketplace はローカルで有効・無効を切り替えたり、参照先を変えたりできません。`/plugin` の一覧では `Managed` の印が付きます。repository の `enabledPlugins` で有効・無効が決まっている Plugin に `enable` / `disable` を実行すると、どの設定ファイルが決めているかを示すエラーになります。
+### repository defaults と enterprise controls（2026-10-28）
+
+**提供元: Official / 状態: GA**。VS Code・Copilot CLI・Copilot app が対象です（2026-11-07 確認、実機試験は未実施）。[公式発表](https://github.blog/changelog/2026-10-28-repository-plugin-defaults-and-enterprise-plugin-controls-generally-available/)。
+
+| 設定元 | 強制力と対象 |
+|---|---|
+| repository defaults | trusted repository の `.github/copilot/settings.json` で Marketplace と default Plugin を指定。個人・Business・Enterprise の利用者が対象。policy が許せば contributor は無効化できる。 |
+| enterprise managed settings | 承認した Marketplace への限定、Plugin の require / block を管理。required Plugin は自動 install / enable され、利用者は無効化できない。repository / personal 設定より優先する。GitHub Enterprise Cloud の企業または配下組織から Business / Enterprise license を付与された利用者が対象。 |
+
+CLI 1.0.81 時点の `Managed` 表示と設定元のエラーだけで、現在の repository default を強制設定と判断しないでください。導入後は、企業で必須にした Plugin が無効化できないことと、任意の repository default が policy の範囲内で無効化できることを両方確かめます。
+
+VS Code の Customization Marketplace は **Official / Preview** で既定有効です。Agents window の Customizations / Browse から Skills・MCP・Plugins を探せます。Business / Enterprise は Editor preview features の許可が必要です。発見できることと install が許されることを分けます。[VS Code Universe 発表](https://github.blog/changelog/2026-10-28-github-copilot-in-vs-code-universe-releases/)。
 
 ---
 
@@ -267,6 +278,12 @@ VS Code では **Agent plugins** として一般提供され、「Agent Plugins 
 - [Agent Skills specification](https://agentskills.io/specification) — `SKILL.md` 形式の仕様（公式）
 - [Agent Plugins 1.0 in VS Code, Copilot CLI, and the Copilot app](https://github.blog/changelog/2026-08-12-agent-plugins-1-0-in-vs-code-copilot-cli-and-the-copilot-app/) — GitHub 実装の提供開始（公式）
 - [MCP allowlists in enterprise managed settings](https://github.blog/changelog/2026-08-06-mcp-allowlists-in-enterprise-managed-settings/) — MCP 許可リスト（公式）
+
+## 設定の棚卸しと導入後の評価（2026-11-05〜11-06）
+
+**提供元: Official / 状態: GA（発表で提供済み、Preview 表記なし）**。2026-11-07 確認、実機試験は未実施です。[Copilot CLI の `/settings`](https://github.blog/changelog/2026-11-06-github-copilot-weekly-releases-november-2/) は Plugins / MCP を含む統合 dashboard と検索を提供します。設定画面の統合を policy の統合・上書きと解釈せず、設定元を照合してください。
+
+[code review の customization 別集計](https://github.blog/changelog/2026-11-05-usage-metrics-api-adds-code-review-details-and-addressed-rate/)は、instructions / Skills / MCP / none による違いを調べる材料です。集計方法・merge 日基準・bot PR の扱い・欠損の注意は [addressed rate の読み方](../dev-methods/evals.md#copilot-code-review-の-addressed-rate)へ集約しています。breakdown だけを Plugin の効果の因果証明には使いません。
 
 ## 関連ドキュメント
 

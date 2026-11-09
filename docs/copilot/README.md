@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-30
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-07
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -1471,6 +1471,37 @@ Enterprise の方針は、管理を **organization に委任する**か、**ente
 - [Copilot CLI v1.0.96](https://github.com/github/copilot-cli/releases/tag/v1.0.96) ／ [v1.0.97](https://github.com/github/copilot-cli/releases/tag/v1.0.97) ／ [Hooks reference](https://docs.github.com/en/copilot/reference/hooks-reference) — permission の判定主体の表示、agent-scoped hooks、Autopilot での `ask` の扱い、再開時の plugin hook（GitHub 公式・2026-10-12〜13）
 - [Content exclusions generally available in Copilot app and CLI](https://github.blog/changelog/2026-09-02-content-exclusions-generally-available-in-copilot-app-and-cli/) — app / CLI での GA（公式・2026-09-02）
 - [Content exclusion for GitHub Copilot](https://docs.github.com/en/copilot/concepts/context/content-exclusion) — 対応面・非対応面と制限の一次情報（公式）
+
+## 組織の認証と複数 context の管理（2026-10-27〜10-28）
+
+以下は **提供元: Official / 状態: Preview**（SDK authentication / Projects は Public preview）です。2026-11-07 に公式発表を確認しました。実機・管理画面での試験は未実施です。
+
+| 入口 | 使いどころと条件 |
+|---|---|
+| [Copilot SDK server-to-server authentication](https://github.blog/changelog/2026-10-27-github-copilot-supports-server-to-server-authentication/) | 個人の sign-in に依存しない service / agent。組織へ install した GitHub App に read-only の `Copilot Requests` organization permission を与え、短命の installation token を SDK へ渡す。費用・model policy・budget は installation を所有する組織に帰属する。`app_client_id` で使用量を追い、suspend / uninstall で停止する。 |
+| [Copilot Projects](https://github.blog/changelog/2026-10-28-github-copilot-app-universe-releases/) | 複数 repository・design・Slack・会議メモを、context・agents・結果と一緒にまとめる。Project automation を設定できる。単一 repository の session / shared Automation とは管理単位を分ける。 |
+| [Copilot connectors](https://github.blog/changelog/2026-10-28-github-copilot-in-vs-code-universe-releases/) | 自前 MCP server の install / management なしで Slack・Notion・Microsoft Learn などへ接続する。全 Copilot plan、Copilot harness が対象。同一アカウントの対応 client 間で再利用できる。Business / Enterprise は Editor preview features の許可が必要。 |
+
+[Agent Host Protocol（AHP）](https://github.blog/changelog/2026-10-28-github-copilot-in-vs-code-universe-releases/) は **Official / Open protocol** です。独自 client を Agent Host の live session につなぎ、再接続後の未取得 update を追随します。TypeScript・Rust・Go・Kotlin・Swift の client library が案内されています。独自 client の入口であり、tool permission や credential の自動移送の保証ではありません。導入の比較は [ハーネス](../dev-methods/harness.md)、[Plugin の統制](plugins.md)、[tool の選び方](../dev-methods/tool-selection.md)を参照してください。
+
+## 2026-11-05〜11-06 — 計測と設定の更新
+
+**提供元: Official / 状態: GA（発表で提供済み。以下の項目に Preview 表記なし）**。2026-11-07 に一次情報を確認しました。実機・API・管理画面の検証は未実施です。
+
+### 利用指標の欠損を先に確認する
+
+[11-05 の telemetry / version gap](https://github.blog/changelog/2026-11-05-usage-metrics-api-flags-telemetry-and-version-gaps/) は、enterprise / organization の user report に `client_telemetry_present` と `usage_metrics_requirements` を追加しました。`false` は活動を検知したが editor の usage events が届いていない状態です。最低 version を満たしても proxy などで欠損し得ます。日次の `missing_client_telemetry_user_count` と `below_usage_metrics_minimum_user_count` は重複し得るため合算せず、日をまたぐ unique user 数にも使いません。`null` / omitted は利用不可で、0 / false と区別します。リリース前の日付には値がありません。
+
+[11-06 の impact dashboard](https://github.blog/changelog/2026-11-06-copilot-impact-dashboard-adds-chat-and-vs-code-agent-usage/) と enterprise / organization の28日 report は、feature engagement に `chat` / `vscode_agent` を追加しました。28日中2日以上の利用を数え、同じ人が複数 feature に入ります。adoption phase の判定は変わらず、Chat-first users の API 値は `No Cohort` のままです。いずれも Copilot usage metrics policy と閲覧権限（owner / billing manager / `View Copilot Metrics` を持つ role など）が必要です。code review の指標は [evals](../dev-methods/evals.md#copilot-code-review-の-addressed-rate)へ集約しています。
+
+### 設定・自動化・会話からの書き込み
+
+| 更新 | 対象と確認 |
+|---|---|
+| [CLI の `/settings`](https://github.blog/changelog/2026-11-06-github-copilot-weekly-releases-november-2/) | Plugins / MCP などを統合 dashboard で横断検索できる。[Plugins](plugins.md)の設定元・企業 policy を併せて確認する。 |
+| 同発表の assisted approval instructions | opt-in の personal instructions で local session の承認支援を調整する。enterprise の強制 policy・無条件 auto-approval と混同しない。 |
+| 同発表の VS Code 1.145 local automations | cron expression と workspace custom agent に対応。[実行場所と所有者の比較](../dev-methods/team-automations.md#localsharedcloud-の自動化を比較する)で選ぶ。 |
+| [Slack / Teams の `@GitHub` GA](https://github.blog/changelog/2026-11-06-github-copilot-in-slack-and-teams-is-generally-available/) | 作成する Issue / PR に会話と利用者の attribution を付ける。Teams Canvas は plan / diff / preview を共同 review する入口。対象 repository・実行主体・書き込み権限・人の review を確認する。 |
 
 ## 関連ドキュメント
 
