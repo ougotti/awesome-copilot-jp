@@ -447,6 +447,12 @@ Hermes の Hub（`hermes skills install`）は、インストール時に必ず�
 
 設定の配布だけで適用済みと判断せず、ダミー対象で許可と拒否を試し、version・有効値・設定元を記録してください。
 
+## 2026-11-06〜11-07 の承認条件
+
+2026-11-07 確認、実機試験は未実施です。[Claude Code 2.1.319](https://github.com/anthropics/claude-code/releases/tag/v2.1.319)（Official / GA）は prompt 待ちを拒否へ変える `denyInsteadOfPrompting` と quoted Bash rule の修正を含みます。auto mode は gateway / telemetry / feature flags で server check が届かない場合の暗黙 fallback をやめました。明示的な classifier / server の選択と managed settings の組み合わせは [check path の表](../claude-code/basics.md)を参照してください。
+
+[Codex 0.167](https://github.com/openai/codex/releases/tag/rust-v0.167.0)（Official / GA）が文書化した managed `prompt-user` は、saved approval・hook・automatic reviewer では代替できない fresh human checkpoint です。managed network、通常の承認、turn-scoped web search は [Codex の制御表](../codex/README.md)で分けています。承認情報の保持と、毎回の人間承認を同じ許可として扱わないでください。
+
 ## 関連ドキュメント
 
 - [Skill / エージェントの評価（evals）](evals.md) — このページの**導入前**チェックに対して、**導入後**に実際に効いているかを測る話
