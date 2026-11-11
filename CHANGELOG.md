@@ -4,6 +4,13 @@
 
 ## 2026-11
 
+- **2026-11-11** [共有したダッシュボードは誰のアクセスで動くか](docs/business/shared-data-access.md)を追加。
+  - 2026-11-10 の Claude Data（旧 Claude Dashboards）の GA と、Claude Sheets・Claude Whiteboards のベータを受けて、Team と Enterprise の既定の設定を表にした。Enterprise では Claude Data が 2026-11-19 に既定でオンになり、オーナーが先に設定を保存していればそれが残ることを記した。
+  - ベータの live sharing は、見る人ではなく作った人のアクセスで問い合わせが動き、データソースの権限がない人にも結果が見えることを、使わない場合と並べて整理した。行レベルのアクセス制御・組織外の人への動作・キャッシュの置き場所は、公式の資料から確かめられなかった点として分けた。
+  - certified queries の印を付けられる人と印が外れる条件、利用量の負担先、Compliance API に残るイベント、導入の順番を書いた。Hacker News の議論は「コミュニティの見方」として分けた。
+  - 同じ日に報じられた Claude Meetings は、Anthropic の公式の資料で確かめられなかったため扱っていない。
+  - [事務・ビジネス活用ガイド](docs/business/README.md)・[生成AIを業務で安全に使う](docs/business/safety.md#関連ドキュメント)・[AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md#関連ドキュメント)から誘導した。Anthropic の発表とヘルプセンターは 2026-11-11 に確認した。実機・管理画面での検証は行っていない。
+
 - **2026-11-09** [エージェントの周辺ツールが終わるとき](docs/dev-methods/tool-exit-plan.md)を追加。
   - 2026-11-04 の Conductor の Meta への合流の発表を受けて、Conductor Cloud の 11-13 の読み取り専用化・11-20 の終了とデータ削除、ローカルの Mac アプリの 2027 年初めの終了を表にした。発表が日付だけで時刻とタイムゾーンを書いていないことも記した。
   - 利用者が期限までにやること（Export data の中身の確認、Transfer to local で移らないかもしれない branch・未 push の commit を Git で持ち出す、渡した OAuth・API key を片づける）をまとめた。
