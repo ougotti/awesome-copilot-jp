@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-11-11** [共有したダッシュボードは誰のアクセスで動くか](docs/business/shared-data-access.md)を追加。2026-11-10 の Claude Data の GA を受けて、Enterprise で 11-19 に既定でオンになる設定、作った人のアクセスで動く live sharing（ベータ）、certified queries の印、利用量と監査の記録を、共有の前に決めることとして整理。
 - **2026-11-09** [エージェントの周辺ツールが終わるとき](docs/dev-methods/tool-exit-plan.md)を追加。Conductor Cloud の 11-13 読み取り専用・11-20 終了を受けて、期限までの書き出し・Git での持ち出し・認証情報の片づけと、周辺ツールに何を預けているか・次のツールの選び方を整理。
 - **2026-11-07** [11-05〜11-07 の最新動向](docs/trends.md)を反映。Claude Code の prompt 待ち拒否、Codex の fresh approval と MCP 接続、Copilot のレビュー指標・計測欠損・local automation を整理。
 - **2026-11-07** [10-27〜10-30 の最新動向](docs/trends.md)を反映。Claude Code の書き込み境界、Codex の承認・再開、Copilot の組織認証、Plugin の推奨既定と企業の強制設定を整理。
 - **2026-11-04** [今週のエージェント動向](docs/dev-methods/agent-updates-2026-11-04.md)を追加。APM と Dependabot、Claude の Message threads、CLI の再開修正、実行環境と BYOK の利用指標を「使う段階から、更新・再開・改善を管理する段階へ」の切り口で整理。
-- **2026-10-30** [チームで常設するエージェント](docs/dev-methods/team-automations.md)を追加。GitHub Universe の Shared Copilot Automations・自己改善する Automations・Agent Merge・Agentic Workflows の GA を、名義・費用・起動条件・改善の判断の軸で整理。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -185,6 +185,7 @@
 | **[シナリオ別ユースケース集](docs/business/use-cases.md)** | 本ガイド | — | Chat UI | 役割・業務シーン別の実例とプロンプトのテンプレート |
 | **[事務・バックオフィス活用ガイド](docs/business/office-work.md)** | 本ガイド | — | Chat UI | 議事録・帳票・集計・スライド作成の実践 |
 | **[生成AIを業務で安全に使う](docs/business/safety.md)** | 本ガイド | — | 共通 | 入力してよい情報、外部送信、出力後に確認する項目 |
+| **[共有したダッシュボードは誰のアクセスで動くか](docs/business/shared-data-access.md)** | 本ガイド | — | Chat UI | Claude Data の live sharing・certified queries・組織の既定の設定を、共有の前に決めることとして整理 |
 | **[金融サービス向けスキル](docs/business/financial-services.md)** | Official | GA | Chat UI / CLI | 決算照合・月次決算・KYC 等の業務エージェント |
 | **[Skills 最新動向](docs/trends.md)** | Official / Community / 本ガイド | GA / Preview / Experimental | Chat UI / IDE / CLI / Cloud | Skill・MCP・GUI 自動化の動向と使い分け（随時更新） |
 | **[更新履歴（CHANGELOG）](CHANGELOG.md)** | 本ガイド | — | — | 本ガイドの構成変更・解説追加の時系列記録 |
