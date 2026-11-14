@@ -4,6 +4,11 @@
 
 ## 2026-11
 
+- **2026-11-14** #318 の 11-07〜11-14 の未掲載差分を反映。
+  - [Claude Code 2.1.321 / 2.1.323](docs/claude-code/basics.md)の Code Mode、Plugin の version range・hook 検証・heartbeat、MCP OAuth、Bash・background session の permission / identity 修正を整理した。
+  - [Codex 0.168 / 0.169](docs/codex/README.md)の未信頼 directory における project config / MCP、明示的な `--trust`、plan handoff、MCP wait・interrupt / approval cancellation の修正を追加した。
+  - [MCP Skills 拡張](docs/dev-methods/skills-over-mcp.md)に C# SDK 2.4.0 の Experimental 実装を、[Copilot](docs/copilot/README.md)に GHES 対応の GA と Enterprise GitHub App の seat management permission を追加した。公式資料は 2026-11-14 に確認し、実機・管理画面・API の検証は行っていない。
+
 - **2026-11-11** [共有したダッシュボードは誰のアクセスで動くか](docs/business/shared-data-access.md)を追加。
   - 2026-11-10 の Claude Data（旧 Claude Dashboards）の GA と、Claude Sheets・Claude Whiteboards のベータを受けて、Team と Enterprise の既定の設定を表にした。Enterprise では Claude Data が 2026-11-19 に既定でオンになり、オーナーが先に設定を保存していればそれが残ることを記した。
   - ベータの live sharing は、見る人ではなく作った人のアクセスで問い合わせが動き、データソースの権限がない人にも結果が見えることを、使わない場合と並べて整理した。行レベルのアクセス制御・組織外の人への動作・キャッシュの置き場所は、公式の資料から確かめられなかった点として分けた。

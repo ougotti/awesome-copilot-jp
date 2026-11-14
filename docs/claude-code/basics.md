@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-07
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-14
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -988,6 +988,29 @@ MCP connector の `mcp-client-2026-09-15` beta header と組み合わせると�
 | disk full・read-only folder・bind mount で config / settings / 編集ファイルが空・途中になる保存を修正し、session 間の save を直列化。 | 一般的な atomicity / durability の保証ではない。保存後に config と成果物を読み戻す。 |
 
 非対話・resume・保存失敗を確認する試験は [信頼性設計](../dev-methods/agent-reliability.md)、権限判定の見直しは [Skill / Plugin のセキュリティ](../dev-methods/skill-security.md)を参照してください。
+
+### 2.1.321 / 2.1.323 — Code Mode、Plugin と実行主体の境界
+
+**提供元: Official / 状態: GA（CLI の正式リリース。Code Mode は Experimental）**。[2.1.321](https://github.com/anthropics/claude-code/releases/tag/v2.1.321) は 2026-11-09 19:22 UTC、[2.1.323](https://github.com/anthropics/claude-code/releases/tag/v2.1.323) は 11-12 22:12 UTC 公開。2026-11-14 に確認し、実機試験は未実施です。
+
+| 配布・実行の変更 | 境界と導入時の確認 |
+|---|---|
+| [Code Mode](https://code.claude.com/docs/en/code-mode) | Claude が JavaScript を書いて tool を呼ぶ Experimental / opt-in の実行方式。組織で無効化できる。通常の tool permission・sandbox・managed settings を置き換える仕組みとは扱わない。 |
+| Plugin の `engines["claude-code"]` | Claude Code の version range 外の Plugin は install・update・load されず、install / update は互換範囲で最新の版を選ぶ。互換版であることは Plugin の内容が安全である保証ではない。 |
+| `claude plugin validate` | TypeScript hooks module の型検査を warning として出し、`--strict` では失敗する。mod の `engine.create` が追加・保留・置換する `$` noun も表示する。CI は warning を許すか `--strict` で止めるかを決める。 |
+| hook の heartbeat | `claude -p` / SDK で長い hook の実行中に 30 秒ごとの進捗を送り、host が hung として turn を終えにくくする。heartbeat を副作用の完了記録や timeout の無効化とは扱わない。 |
+| Remote Control の `--settings <file>`（2.1.321） | 起動する全 session に同じ settings file を適用する。実行中に file を変えた場合、新しい session を始めるには Remote Control の再起動が必要。 |
+
+権限・認証に関わる修正は、更新後に既存 session を再起動し、無害な command とダミーファイルで確認します。
+
+| 修正された経路 | 運用上の意味 |
+|---|---|
+| MCP OAuth redirect が refresh token などを別 host へ送る問題（2.1.321） | sign-in をやり直し、redirect host と保存済み credential を確認する。すべての MCP server の安全性を保証する修正ではない。 |
+| read-only Bash が sandbox 外で prompt なしに動く、Bash write を誤った folder で判定する、directory への `cp` / `mv` で実際の出力 file に deny / protected prompt が効かない問題（2.1.321） | read / write、移動先、current directory を変えた同等 command で ask / deny を試す。 |
+| named profile、API key、auth token、workload identity の session が background 化で別 sign-in へ移る問題（2.1.323） | profile が消失・変更された場合は停止する。session の表示名だけでなく、実際の request の identity と監査記録を照合する。 |
+| sensitive path write の誤った「don't ask again」、一部の `lsof`、`rm` の folder 判定、Bash command の一部を見落とす問題（2.1.323） | 保存された許可を全 command の grant と扱わず、`.git` / `.claude` と使い捨て directory で拒否を確認する。 |
+| auto mode が利用できないのに、`--permission-mode auto` / `defaultMode: auto` から広い mode で始まり得る問題（2.1.323） | 利用不能時は Manual で始まり、先に確認する。組織として止める場合は既存の `permissions.disableAutoMode` も併用する。 |
+| session 中に Bash sandbox が無効になる問題（2.1.323） | version update を恒久的な sandbox 保証とせず、長時間 session でも実効設定と拒否結果を再確認する。 |
 
 ## セットアップ
 

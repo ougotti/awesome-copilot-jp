@@ -1,6 +1,6 @@
 # Codex ガイド（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-11-07
+> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-11-14
 
 Codex に作業手順や外部サービスとの連携を持たせる方法は 2 つあります。**Skill**（指示・スクリプト・リソースをまとめたフォルダ）と、Skill に MCP サーバー・コネクタ・フックなどを束ねて配る **Plugin** です。OpenAI は現在、再利用・配布の単位として Plugin を勧めています。
 
@@ -363,6 +363,20 @@ session 側の変更は、会話と下書きを別の面へ持ち越す仕組み
 `refresh_mcp_config` の session `plugins` は、**省略なら現在の override を保持、指定なら置換、空 map なら解除して下位設定を継承**します。他の session override / user settings は保持します。全 policy の上書き保証ではありません。[PR #57974](https://github.com/openai/codex/pull/57974)。remote Plugin bundle URL を diagnostics へ残さない修正も収録されています（[PR #58165](https://github.com/openai/codex/pull/58165)）。
 
 **継続作業**: CLI の `codex agents --no-daemon` で command center を開き、未読結果を確認できます。backend 切替時は draft を保持し、model provider 切替後も saved chat を表示します。resume 不可なら transcript から新規 chat 用の editable prompt を作れます。draft / transcript の継続を credential・tool・permission の移送と同一視しないでください。automatic compaction は failed response や token usage 欠損時の retained output も考慮します。
+
+### Codex CLI 0.168 / 0.169 — directory trust と turn の継続
+
+**提供元: Official / 状態: GA（Stable release）**。[0.168.0](https://github.com/openai/codex/releases/tag/rust-v0.168.0) は 2026-11-13 03:54 UTC、[0.169.0](https://github.com/openai/codex/releases/tag/rust-v0.169.0) は同日 08:37 UTC 公開。2026-11-14 に確認し、実機試験は未実施です。
+
+| 変更 | 境界と確認方法 |
+|---|---|
+| 未信頼 directory の `codex exec` | `--sandbox workspace-write` を付けても project configuration と MCP server は無効のまま。必要な場合だけ `codex exec --trust` または `codex review --trust` で project trust を明示的に保存する。sandbox の書き込み範囲と、repository が供給する設定・MCP を読む判断を同じ許可にしない。 |
+| plan handoff | 「Yes, clear context and implement now」は approved plan 全体を新しい session へ渡す。handoff が失敗した場合は現在の session を開いたままにする。承認済み plan と、移送先の credential・permission・workspace trust は別に確認する。 |
+| MCP server wait | shared app server が報告しなかった MCP server を待ち続ける問題を修正。待機が終わったことを tool call の完了や外部副作用の不存在とは扱わない。 |
+| interrupt / approval cancellation | interrupted turn を cleanly close し、遅延した abort や file approval cancellation が後続 turn を止めないよう修正。中断後は tool の完了記録を照会してから再送する。 |
+| 0.168 の multi-agent 設定 | `features.multi_agent` を明示している場合、subagent tool を無効にする現行の `agents.enabled` を案内する。旧設定の警告を無視せず、実効設定を確認する。 |
+
+0.168 の side conversation、0.169 の task search・model provider・画面表示は一般 UI のため、この節では扱いません。trust の動作確認は、使い捨ての未信頼 directory で harmless な project MCP を用意し、`--sandbox` だけの場合と明示的な `--trust` の場合を比較します。
 
 ### Codexを製品へ組み込む入口を分ける
 

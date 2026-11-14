@@ -1,8 +1,8 @@
 # MCP Skills 拡張 — Skill を MCP server から配る
 
-> **対象ツール**: ツール横断（MCP server の開発者・MCP に対応したホスト） ｜ **実行環境**: CLI / IDE / Cloud / Chat UI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-10-19
+> **対象ツール**: ツール横断（MCP server の開発者・MCP に対応したホスト） ｜ **実行環境**: CLI / IDE / Cloud / Chat UI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-11-14
 
-> [MCP Skills 拡張](https://modelcontextprotocol.io/extensions/skills/overview)（`io.modelcontextprotocol/skills`、[SEP-2640](https://modelcontextprotocol.io/seps/2640-skills-extension)）は、`SKILL.md` を含む Skill のディレクトリを、**ファイルとしてではなく MCP の Resources として**届ける公式の拡張です。MCP server が自分の tool の使い方を Skill として一緒に配れるようになります。このページでは、ファイルで配る Skill との違い、仕組み、対応状況、ホストに課された承認とセキュリティの要件を整理します。内容は 2026-10-19 に一次資料で確認したもので、実機・SDK での検証は行っていません。
+> [MCP Skills 拡張](https://modelcontextprotocol.io/extensions/skills/overview)（`io.modelcontextprotocol/skills`、[SEP-2640](https://modelcontextprotocol.io/seps/2640-skills-extension)）は、`SKILL.md` を含む Skill のディレクトリを、**ファイルとしてではなく MCP の Resources として**届ける公式の拡張です。MCP server が自分の tool の使い方を Skill として一緒に配れるようになります。このページでは、ファイルで配る Skill との違い、仕組み、対応状況、ホストに課された承認とセキュリティの要件を整理します。内容は 2026-11-14 に一次資料で確認したもので、実機・SDK での検証は行っていません。
 
 ---
 
@@ -133,7 +133,8 @@ skill://<Skill のパス>/<Skill 内のファイルパス>
 
 | 実装 | 状態 | 補足 |
 |------|------|------|
-| 公式 SDK（TypeScript・Python・Go・C#） | **実装中**（PR 段階） | 公式 SDK で正式に使える版はまだない |
+| [C# SDK 2.4.0](https://github.com/modelcontextprotocol/csharp-sdk/releases/tag/v2.4.0) | **Experimental** | 2026-11-07 公開。`ModelContextProtocol.Extensions.Skills` で Skills extension を実装。server primitive と typed request handler に合わせた初期実装で、ホスト側の対応や拡張自体の GA を意味しない |
+| 公式 SDK（TypeScript・Python・Go） | **実装中**（PR 段階） | 公式 SDK で正式に使える版はまだない |
 | FastMCP の SkillsProvider | 実装中 | 公開済みの版は**独自の `skill://` 形式**のままで、この拡張とは URI・発見の方法が違う。SEP は移行を当面の優先課題としている |
 | mcpkit（Go）・Tachyon（Java） | 対応（自己申告） | mcpkit は適合テストの server シナリオに合格 |
 | [hf-mcp-server](https://github.com/huggingface/hf-mcp-server)（Hugging Face） | 対応 | `skills/list`・`skills/get`・`directoryRead`。HTTP の transport のみ |
@@ -192,7 +193,7 @@ pnpm の承認は「この発行元を信頼する」判断、MCP Skills 拡張�
 
 ## 5. server を作る側の最小の確認
 
-公式 SDK はまだ実装中のため、server を作る場合は SDK の対応状況を先に確認してください（[3 節](#sdkserverskill-を配る側)）。作った server が仕様に合っているかは、MCP Inspector の CLI で確かめられます。
+C# SDK では Experimental 実装を使えます。その他の公式 SDK はまだ実装中のため、server を作る場合は SDK の対応状況を先に確認してください（[3 節](#sdkserverskill-を配る側)）。作った server が仕様に合っているかは、MCP Inspector の CLI で確かめられます。
 
 **どこで実行するか**: server の動作を確認できる端末のシェル（PowerShell など）。Node.js が必要です。`<server>` には Inspector に渡す server の指定（起動コマンドや URL）を入れます。
 
