@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-11-14** [11-07〜11-14 の最新動向](docs/trends.md)を反映。Claude Code の Code Mode・Plugin互換性・権限 / identity、Codex の directory trust、MCP C# SDK の Skills 実装、Copilot app の GHES 対応と Enterprise seat API を整理。
 - **2026-11-11** [共有したダッシュボードは誰のアクセスで動くか](docs/business/shared-data-access.md)を追加。2026-11-10 の Claude Data の GA を受けて、Enterprise で 11-19 に既定でオンになる設定、作った人のアクセスで動く live sharing（ベータ）、certified queries の印、利用量と監査の記録を、共有の前に決めることとして整理。
 - **2026-11-09** [エージェントの周辺ツールが終わるとき](docs/dev-methods/tool-exit-plan.md)を追加。Conductor Cloud の 11-13 読み取り専用・11-20 終了を受けて、期限までの書き出し・Git での持ち出し・認証情報の片づけと、周辺ツールに何を預けているか・次のツールの選び方を整理。
 - **2026-11-07** [11-05〜11-07 の最新動向](docs/trends.md)を反映。Claude Code の prompt 待ち拒否、Codex の fresh approval と MCP 接続、Copilot のレビュー指標・計測欠損・local automation を整理。
 - **2026-11-07** [10-27〜10-30 の最新動向](docs/trends.md)を反映。Claude Code の書き込み境界、Codex の承認・再開、Copilot の組織認証、Plugin の推奨既定と企業の強制設定を整理。
-- **2026-11-04** [今週のエージェント動向](docs/dev-methods/agent-updates-2026-11-04.md)を追加。APM と Dependabot、Claude の Message threads、CLI の再開修正、実行環境と BYOK の利用指標を「使う段階から、更新・再開・改善を管理する段階へ」の切り口で整理。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 

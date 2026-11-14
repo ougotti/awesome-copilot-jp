@@ -1,8 +1,19 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-07
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-14
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
+
+## 2026-11-07〜11-14 の更新 — 信頼・認証・配布の境界
+
+2026-11-14 に公式 release / 発表を確認しました。実機試験は未実施です。MCP C# SDK の対応は Experimental であり、MCP Skills 拡張そのものの新しい正式 release ではありません。
+
+| 提供元・状態 | 更新と読む場所 | 公開日 |
+|---|---|---|
+| Anthropic / Official / GA（Code Mode は Experimental） | [Claude Code 2.1.321 / 2.1.323](claude-code/basics.md) — Code Mode、Plugin の version range と hook 検証、MCP OAuth、Bash・background session の権限 / identity 境界。 | 2026-11-09 / 11-12 UTC。 |
+| OpenAI / Official / GA | [Codex 0.168 / 0.169](codex/README.md) — 未信頼 directory の project config / MCP、明示的な `--trust`、plan handoff、interrupt / MCP wait。 | 2026-11-13 UTC。 |
+| MCP / Official / Experimental | [MCP C# SDK 2.4](dev-methods/skills-over-mcp.md#sdkserverskill-を配る側) — `ModelContextProtocol.Extensions.Skills` による Skills 拡張の server 実装。 | 2026-11-07 UTC。 |
+| GitHub / Official / GA | [Copilot app の GHES 対応と Enterprise seat API](copilot/README.md#ghes-と-enterprise-copilot-の管理2026-11-1013) — GHES の repository / Issue / PR、cloud session の対象外、GitHub App の license management permission。 | 2026-11-10 / 11-13。 |
 
 ## 2026-11-05〜11-07 の更新 — 承認と計測の条件
 
@@ -30,6 +41,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-11-14 | #318 の信頼・認証・配布の差分を追加。Claude Code 2.1.321 / 2.1.323、Codex 0.168 / 0.169、MCP C# SDK 2.4、Copilot app の GHES 対応と Enterprise seat API を反映した。 |
 | 2026-11-07 | #311 の承認・MCP 寿命・計測差分を追加。network policy の移行条件、拡張を宣言する server の lease、override の省略・置換・解除を区別した。 |
 | 2026-11-07 | #309 の未掲載差分を製品別ページへ反映。write・policy・認証・Plugin の強制力と、再開時の確認手順を追加した。 |
 | 2026-11-04 | [10-29〜11-04の週次記事](dev-methods/agent-updates-2026-11-04.md)を追加。APM の更新 PR、Message threads、CLI の再開修正、実行環境と BYOK 指標を、更新・再開・改善の管理という切り口で整理した。 |

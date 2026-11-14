@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-07
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-14
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -1502,6 +1502,17 @@ Enterprise の方針は、管理を **organization に委任する**か、**ente
 | 同発表の assisted approval instructions | opt-in の personal instructions で local session の承認支援を調整する。enterprise の強制 policy・無条件 auto-approval と混同しない。 |
 | 同発表の VS Code 1.145 local automations | cron expression と workspace custom agent に対応。[実行場所と所有者の比較](../dev-methods/team-automations.md#localsharedcloud-の自動化を比較する)で選ぶ。 |
 | [Slack / Teams の `@GitHub` GA](https://github.blog/changelog/2026-11-06-github-copilot-in-slack-and-teams-is-generally-available/) | 作成する Issue / PR に会話と利用者の attribution を付ける。Teams Canvas は plan / diff / preview を共同 review する入口。対象 repository・実行主体・書き込み権限・人の review を確認する。 |
+
+## GHES と Enterprise Copilot の管理（2026-11-10〜13）
+
+**提供元: Official / 状態: GA**。2026-11-14 に公式変更ログを確認し、実機・管理画面・API の検証は未実施です。
+
+| 更新 | 対象と境界 |
+|---|---|
+| [Copilot app の GitHub Enterprise Server 対応](https://github.blog/changelog/2026-11-13-github-enterprise-server-support-in-the-github-copilot-app/) | Copilot app 1.2.0 以降で、GHES の remote repository・Issue・PR を扱える。GitHub.com または GHE.com の account へ先に sign-in し、Settings > Accounts から GHES account を追加する。以前の opt-in preview から GA になった。**GHES では cloud session は使えない**。local session の sandbox・credential・managed settings は別に確認する。 |
+| [Enterprise GitHub App の Copilot seat management](https://github.blog/changelog/2026-11-10-github-app-support-for-enterprise-copilot-seat-management/) | Enterprise GitHub App が enterprise-level Copilot seat management API を呼び、user / enterprise team へ seat を割り当てられる。新しい fine-grained App permission は `Enterprise Copilot license management`。App の permission・installation owner・監査主体を確認し、個人 token や SDK request の認証と混同しない。 |
+
+GHES account の追加は「どの repository を操作できるか」、seat API は「誰へ Copilot 利用権を割り当てるか」を扱います。同じ Enterprise 管理でも、repository access、agent operation の managed permissions、model policy、seat allocation は別の層です。
 
 ## 関連ドキュメント
 
