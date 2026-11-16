@@ -725,6 +725,7 @@
     "skills/writing-guidelines"
   ],
   "aidlc_skills": [
+    "core/skills/aidlc-issue-report",
     "core/skills/aidlc-knowledge",
     "core/skills/aidlc-outcomes-pack",
     "core/skills/aidlc-replay",
