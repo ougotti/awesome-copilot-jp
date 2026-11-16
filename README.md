@@ -114,8 +114,8 @@
 
 | ドキュメント | 提供元 | 状態 | 環境 | 内容 | 件数 |
 |-------------|-------|------|------|------|------|
-| **[Instructions 一覧](docs/copilot/instructions.md)** | Official | GA | IDE | ファイルパターン別に規約を自動適用するルール | 193 件 |
-| **[Agents 一覧](docs/copilot/agents.md)** | Official | GA | IDE | 特定ドメインの専門家ペルソナ定義 | 222 件 |
+| **[Instructions 一覧](docs/copilot/instructions.md)** | Official | GA | IDE | ファイルパターン別に規約を自動適用するルール | 195 件 |
+| **[Agents 一覧](docs/copilot/agents.md)** | Official | GA | IDE | 特定ドメインの専門家ペルソナ定義 | 230 件 |
 | **[Prompts / Skills 一覧](docs/copilot/prompts.md)** | Official | GA | IDE / CLI | `/` から呼ぶタスクテンプレートと Skills | 128 件 |
 | **[Plugins](docs/copilot/plugins.md)** | Official | GA | CLI / IDE | 拡張一式をまとめて配布する単位と Marketplace | — |
 | **[VS Code エディタウィンドウでの複数ルート運用](docs/copilot/multi-root.md)** | 本ガイド | Experimental | IDE | 複数フォルダ（multi-root workspace）を横断するエージェントセッションの設定・hooks の読み込み元 | — |
