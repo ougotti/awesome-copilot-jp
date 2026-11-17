@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-11-18** [月額プランのAPIクレジット比較](docs/dev-methods/subscription-api-credits.md)を追加。ChatGPT・Claude・Geminiの対象プラン、期限、ChatGPT Proでの有効化手順を整理。
 - **2026-11-17** [Copilotカタログ](docs/copilot/instructions.md)に Instructions 2件・[Agents](docs/copilot/agents.md) 8件を追加。[AI-DLC](docs/dev-methods/aidlc-workflows.md#失敗した実行の報告書を作る)に失敗した実行の報告書を作る手順を追加。
 - **2026-11-14** [11-07〜11-14 の最新動向](docs/trends.md)を反映。Claude Code の Code Mode・Plugin互換性・権限 / identity、Codex の directory trust、MCP C# SDK の Skills 実装、Copilot app の GHES 対応と Enterprise seat API を整理。
 - **2026-11-11** [共有したダッシュボードは誰のアクセスで動くか](docs/business/shared-data-access.md)を追加。2026-11-10 の Claude Data の GA を受けて、Enterprise で 11-19 に既定でオンになる設定、作った人のアクセスで動く live sharing（ベータ）、certified queries の印、利用量と監査の記録を、共有の前に決めることとして整理。
 - **2026-11-09** [エージェントの周辺ツールが終わるとき](docs/dev-methods/tool-exit-plan.md)を追加。Conductor Cloud の 11-13 読み取り専用・11-20 終了を受けて、期限までの書き出し・Git での持ち出し・認証情報の片づけと、周辺ツールに何を預けているか・次のツールの選び方を整理。
-- **2026-11-07** [11-05〜11-07 の最新動向](docs/trends.md)を反映。Claude Code の prompt 待ち拒否、Codex の fresh approval と MCP 接続、Copilot のレビュー指標・計測欠損・local automation を整理。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -152,6 +152,7 @@
 | **[AI エージェントの実行基盤（ハーネス）](docs/dev-methods/harness.md)** | 本ガイド | — | CLI / Cloud | エージェントを動かす裏側の仕組みと実装例（Copilot Studio / QM / Kiro Crew / OpenAI Agents API / Hermes Agent）、OpenTelemetry による可観測性 |
 | **[AI 導入の効果をどう測るか](docs/dev-methods/ai-adoption-metrics.md)** | 本ガイド | — | — | 採用・活動・成果の 3 層、DORA と METR が示す傾向と限界、指標の落とし穴、製品の指標が測るもの |
 | **[エージェントが働きやすいリポジトリ](docs/dev-methods/agent-ready-repo.md)** | 本ガイド | — | CLI / IDE / Cloud | `AGENTS.md`・`CLAUDE.md` の効果の研究、何を指示ファイルに書き何をテスト・Skill・CI に移すか、自分で確かめる仕組み |
+| **[月額プランのAPIクレジット比較](docs/dev-methods/subscription-api-credits.md)** | 本ガイド | — | Chat UI / Cloud | ChatGPT・Claude・GeminiのAPI特典とChatGPT Proでの有効化 |
 | **[エージェントの費用管理](docs/dev-methods/agent-costs.md)** | 本ガイド | — | — | 費用が膨らむ仕組み、Copilot の予算の階層・Claude Code の上限と `/usage`・Codex の利用枠、チームでの配分 |
 | **[人の仕事はどこに移るか](docs/dev-methods/human-role.md)** | 本ガイド | — | — | レビューが律速になる理由と対策、人が持ち続ける仕事、経験の浅い開発者の育成 |
 | **[レガシーのモダナイゼーション](docs/dev-methods/legacy-modernization.md)** | 本ガイド | — | CLI / IDE / Cloud | 理解 → 振る舞いの固定 → 変換 → 検証の段階、Microsoft・GitHub・AWS Transform の手順、失敗しやすい点 |

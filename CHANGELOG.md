@@ -4,6 +4,8 @@
 
 ## 2026-11
 
+- **2026-11-18** [月額プランのAPIクレジット比較](docs/dev-methods/subscription-api-credits.md)を追加。ChatGPT・Claude・Geminiの受取先・有効期限・残高切れの挙動と、ChatGPT Proでの有効化を整理した。
+
 - **2026-11-17** [Instructions](docs/copilot/instructions.md) に Bulma v1 と Godot 4、[Agents](docs/copilot/agents.md) に New Relic、オンデバイス委譲などの8件を追加。追跡一覧と件数を同期した（#320）。
 
 - **2026-11-17** [AI-DLC の実行報告書](docs/dev-methods/aidlc-workflows.md#失敗した実行の報告書を作る)の作成手順と共有前の確認を追加し、`aidlc-issue-report` を追跡対象に登録した（#321）。
