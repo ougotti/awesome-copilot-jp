@@ -1,8 +1,8 @@
 # Agents 一覧と活用ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-17
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **222 個の Agents** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **230 個の Agents** を日本語で解説します。
 >
 > **2026-10-16 の点検**: upstream で 2026-03〜08 に削除された 22 件（`polyglot-test-*` の 8 件、Beast モード系 4 件、`semantic-kernel-*`・`microsoft-agent-framework-*` の 4 件、`winui3-expert`・`modernize-java`・`gem-critic`・`gem-*-mobile` など）を一覧から外しました。外部 Plugin への置き換えや重複整理によるもので、同じ用途は [Copilot Plugins](plugins.md) や Skills で探せる場合があります。
 
@@ -242,6 +242,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`expert-cpp-software-engineer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/expert-cpp-software-engineer.agent.md) | C++ ソフトウェアエンジニア | C++ 開発 |
 | [`expert-embedded-c-engineer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/expert-embedded-c-engineer.agent.md) | 組み込み C ソフトウェアエンジニア | MISRA C/CERT C 準拠の安全重視な組み込み開発 |
 | [`clojure-interactive-programming.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/clojure-interactive-programming.agent.md) | Clojure インタラクティブプログラミング | Clojure REPL 開発 |
+| [`openapi-to-application-java-spring-boot.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/openapi-to-application-java-spring-boot.agent.md) | OpenAPI からの Java / Spring Boot 実装 | API 仕様に沿ったコントローラーや DTO の実装と契約のテスト |
 
 ---
 
@@ -555,6 +556,11 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`reepl-linkedin.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/reepl-linkedin.agent.md) | Reepl LinkedIn コンテンツエージェント | LinkedIn 投稿作成・スケジュール管理 |
 | [`linkedin-post-writer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/linkedin-post-writer.agent.md) | LinkedIn 投稿ライター | Unicode 書式付き LinkedIn 投稿の下書き・フォーマット |
 | [`scientific-paper-research.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/scientific-paper-research.agent.md) | 科学論文リサーチエージェント | BGPT MCP を使った科学文献検索・分析 |
+| [`adobe-creative-cloud.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/adobe-creative-cloud.agent.md) | Adobe Creative Cloud の技術アーティスト | 制作アプリや連携方式の選定、Illustrator のスクリプト・拡張 |
+| [`new-relic-apm.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/new-relic-apm.agent.md) | New Relic APM 調査 | 設定済みの New Relic MCP でエラー、遅延、トランザクション、デプロイ影響を調査 |
+| [`new-relic-finops.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/new-relic-finops.agent.md) | New Relic FinOps 分析 | New Relic MCP と Cloud Cost Intelligence のデータで支出、異常、予算、配賦を分析 |
+| [`new-relic-kubernetes.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/new-relic-kubernetes.agent.md) | New Relic Kubernetes 診断 | New Relic MCP と取り込み済みの Kubernetes テレメトリで Pod 障害やスケジューリングを調査 |
+| [`sap-integration-suite-copilot.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/sap-integration-suite-copilot.agent.md) | SAP Integration Suite 開発支援 | iFlow、Groovy、マッピングの設計・調査。Cloud Integration では `sap-cloud-integration` Skill と参照資料が必要 |
 
 ---
 
@@ -567,6 +573,8 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`hlbpa.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/hlbpa.agent.md) | HLBPA | 高レベル計画 |
 | [`droid.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/droid.agent.md) | Droid | 汎用エージェント |
 | [`caveman-mode.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/caveman-mode.agent.md) | Caveman モード | 低トークン・最小表現での応答 |
+| [`on-device-offload.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/on-device-offload.agent.md) | ローカルモデルへの作業委譲（Experimental） | 対応環境の MAI Code 1.1 Flash に大量のログやファイルの確認、定型編集を委譲 |
+| [`on-device-worker.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/on-device-worker.agent.md) | オンデバイスの単一タスク担当 | `on-device-delegate` から指定された入力の要約、抽出、定型編集を実行 |
 
 ---
 
@@ -606,7 +614,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 
 ## まとめ
 
-Agents は **222 ファイル** あり、以下のカテゴリに分類されます：
+Agents は **230 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な用途 |
 |---------|----------|---------|

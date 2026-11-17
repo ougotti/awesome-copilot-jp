@@ -1,6 +1,6 @@
 # AI-DLC Workflows — 日本語で試すAI駆動開発ライフサイクル
 
-> **対象ツール**: AI-DLC Workflows（Codex・Claude Code・Kiro・Cursor・GitHub Copilotほか） ｜ **実行環境**: CLI / IDE ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-16
+> **対象ツール**: AI-DLC Workflows（Codex・Claude Code・Kiro・Cursor・GitHub Copilotほか） ｜ **実行環境**: CLI / IDE ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-17
 
 > [awslabs/aidlc-workflows](https://github.com/awslabs/aidlc-workflows) は、AWS Labsが公開するAI駆動開発ライフサイクルのOSS実装です。AWSのマネージドサービスではありません。
 
@@ -74,6 +74,14 @@ aidlc doctor
 ```
 
 出典: [2.9.0](https://github.com/awslabs/aidlc-workflows/releases/tag/v2.9.0)、[2.10.0](https://github.com/awslabs/aidlc-workflows/releases/tag/v2.10.0)、[2.11.0](https://github.com/awslabs/aidlc-workflows/releases/tag/v2.11.0)。更新の実機確認は行っていません。
+
+### 失敗した実行の報告書を作る
+
+AI-DLC [2.11.4](https://github.com/awslabs/aidlc-workflows/releases/tag/v2.11.4)（Official / GA）で、[`aidlc-issue-report`](https://github.com/awslabs/aidlc-workflows/tree/v2.11.4/core/skills/aidlc-issue-report) が追加されました。AI-DLC の実行で問題が起きたら、対象プロジェクトのセッションで `/aidlc-issue-report`（Codex CLI では `$aidlc-issue-report`）を呼ぶか、日本語で「AI-DLC の問題報告書を作って」と依頼します。問題が起きたおおよその時刻が分かれば、対象期間の絞り込みに使えます。
+
+Skill は AI-DLC の監査記録・状態・診断結果と、プロジェクトに関係する Kiro、Claude Code、Codex、Copilot の会話ログから、調査に必要な情報を集めます。氏名・組織名・パス・自由記述をラベルに置き換え、`aidlc/diagnostics/issue-reports/<時刻>/` に概要の `aidlc-issue-report.md` と `safe.json` を生成します。診断と原因の分析は受け取った側が行います。
+
+共有前に概要を読み、含めたくない情報があれば追加で伏せるよう依頼してください。Skill は検査を通過した報告書をローカルに用意します。確認後、利用者が共有先を決め、概要と `safe.json` を渡します。公式資料は2026-11-17に確認しました。
 
 ## Windowsで試す最小手順
 

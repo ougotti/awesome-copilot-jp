@@ -4,6 +4,10 @@
 
 ## 2026-11
 
+- **2026-11-17** [Instructions](docs/copilot/instructions.md) に Bulma v1 と Godot 4、[Agents](docs/copilot/agents.md) に New Relic、オンデバイス委譲などの8件を追加。追跡一覧と件数を同期した（#320）。
+
+- **2026-11-17** [AI-DLC の実行報告書](docs/dev-methods/aidlc-workflows.md#失敗した実行の報告書を作る)の作成手順と共有前の確認を追加し、`aidlc-issue-report` を追跡対象に登録した（#321）。
+
 - **2026-11-14** #318 の 11-07〜11-14 の未掲載差分を反映。
   - [Claude Code 2.1.321 / 2.1.323](docs/claude-code/basics.md)の Code Mode、Plugin の version range・hook 検証・heartbeat、MCP OAuth、Bash・background session の permission / identity 修正を整理した。
   - [Codex 0.168 / 0.169](docs/codex/README.md)の未信頼 directory における project config / MCP、明示的な `--trust`、plan handoff、MCP wait・interrupt / approval cancellation の修正を追加した。

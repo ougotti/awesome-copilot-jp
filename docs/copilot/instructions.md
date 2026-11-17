@@ -1,8 +1,8 @@
 # Instructions 一覧と活用ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-28
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-17
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **193 個の Instructions** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **195 個の Instructions** を日本語で解説します。
 >
 > **2026-10-16 の点検**: upstream で統合・削除された `powershell-pester-5`（→ `powershell-pester-6`）と Java の移行 3 件（→ `java-upgrade`）を差し替え、掲載が漏れていた `ansible` を追加しました。
 
@@ -166,6 +166,7 @@ applyTo: "**/*.py"
 | [`powershell.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/powershell.instructions.md) | PowerShell スクリプト規約 | 自動化スクリプト |
 | [`shell.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/shell.instructions.md) | シェルスクリプト規約 | Bash/Sh スクリプト |
 | [`makefile.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/makefile.instructions.md) | Makefile 規約 | ビルド自動化 |
+| [`godot-4-gdscript.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/godot-4-gdscript.instructions.md) | GDScript 2.0 の型、注釈、`await`、シグナル、RPC | Godot 4 の開発・Godot 3 からの移行 |
 
 ---
 
@@ -177,6 +178,7 @@ applyTo: "**/*.py"
 |-----------|------|---------|
 | [`nextjs.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/nextjs.instructions.md) | Next.js 16+（App Router、Server Components） | Next.js フルスタック |
 | [`nextjs-tailwind.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/nextjs-tailwind.instructions.md) | Next.js + Tailwind CSS | スタイリング統合 |
+| [`bulma-v1.instructions.md`](https://github.com/github/awesome-copilot/blob/main/instructions/bulma-v1.instructions.md) | Bulma v1 の Dart Sass モジュール、CSS 変数、テーマとグリッド | Bulma v1 の導入・0.9 からの移行 |
 
 **[nextjs.instructions.md](https://github.com/github/awesome-copilot/blob/main/instructions/nextjs.instructions.md)** の主なルール:
 - `app/` ディレクトリ（App Router）を使用、Server Components がデフォルト
@@ -573,7 +575,7 @@ applyTo: "**/*.py"
 
 ## まとめ
 
-Instructions は **193 ファイル** あり、以下のカテゴリに分類されます：
+Instructions は **195 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な内容 |
 |---------|----------|---------|
