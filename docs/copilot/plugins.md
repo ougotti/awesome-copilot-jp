@@ -1,6 +1,6 @@
 # GitHub Copilot Plugins
 
-> **対象ツール**: GitHub Copilot（Copilot アプリ / CLI / VS Code） ｜ **実行環境**: Chat UI（Copilot アプリ）／ CLI（ターミナル）／ IDE（VS Code） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-07
+> **対象ツール**: GitHub Copilot（Copilot アプリ / CLI / VS Code） ｜ **実行環境**: Chat UI（Copilot アプリ）／ CLI（ターミナル）／ IDE（VS Code） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-21
 
 Plugin は、Custom Agents・Skills・Hooks・MCP サーバー設定・LSP サーバー設定を **1 つの配布単位** にまとめる仕組みです。Skill を 1 個ずつ配る代わりに、チームやプロジェクトに必要な拡張一式をまとめて配布・更新できます。
 
@@ -192,6 +192,18 @@ Marketplace の情報は `~/.cache/copilot/marketplaces/`（Linux）または `~
 CLI 1.0.81 時点の `Managed` 表示と設定元のエラーだけで、現在の repository default を強制設定と判断しないでください。導入後は、企業で必須にした Plugin が無効化できないことと、任意の repository default が policy の範囲内で無効化できることを両方確かめます。
 
 VS Code の Customization Marketplace は **Official / Preview** で既定有効です。Agents window の Customizations / Browse から Skills・MCP・Plugins を探せます。Business / Enterprise は Editor preview features の許可が必要です。発見できることと install が許されることを分けます。[VS Code Universe 発表](https://github.blog/changelog/2026-10-28-github-copilot-in-vs-code-universe-releases/)。
+
+### 配布元と既定を組織・チームで分ける（2026-11-16〜18）
+
+**提供元: Official / 状態: GA**。2026-11-21 に公式発表を確認し、管理画面・client の実機試験は未実施です。
+
+| 制御 | 効果と境界 |
+|---|---|
+| [`strictPluginOnlyCustomization`](https://github.blog/changelog/2026-11-16-control-where-github-copilot-customizations-come-from/) | skills・custom agents・hooks・MCP servers・executable Copilot extensions のうち、選んだカテゴリで standalone の user / project 設定を止め、Plugin または managed settings 由来だけを許可する。executable extensions は canvas provider などで、VS Code Marketplace extension ではない。 |
+| `strictKnownMarketplaces` | eligible な Marketplace source を限定する。**plugin-only 自体は Marketplace allowlist ではなく、enterprise-managed Plugin だけに絞る設定でもない**ため、配布元も制限する場合に併用する。 |
+| [team customizations](https://github.blog/changelog/2026-11-18-customize-github-copilot-for-your-team/) | team maintainer / organization owner が Agent Plugin を direct member の既定にする。VS Code・Copilot app・CLI が対象。child team は継承せず、policy が許せば member は無効化できる。上位の require / block・Marketplace policy を上書きしない。 |
+
+repository default・team default は開始構成をそろえるための**既定**、enterprise の require / block と plugin-only / Marketplace policy は**制約**です。導入試験では、direct member と child team、任意 Plugin と required Plugin、standalone Skill / MCP と Plugin 同梱版を分け、client ごとの実効設定を確認します。
 
 ---
 
