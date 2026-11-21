@@ -1,6 +1,6 @@
 # Claude Code のカスタマイズ機能
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-14
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル/デスクトップ） / Chat UI（Web） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-21
 
 Claude Code を「自分たちのやり方」に合わせるための仕組みを解説します。**どの仕組みをいつ使うか**の判断を先に示し、その後で各仕組みの設定方法を説明します。
 
@@ -1011,6 +1011,21 @@ MCP connector の `mcp-client-2026-09-15` beta header と組み合わせると�
 | sensitive path write の誤った「don't ask again」、一部の `lsof`、`rm` の folder 判定、Bash command の一部を見落とす問題（2.1.323） | 保存された許可を全 command の grant と扱わず、`.git` / `.claude` と使い捨て directory で拒否を確認する。 |
 | auto mode が利用できないのに、`--permission-mode auto` / `defaultMode: auto` から広い mode で始まり得る問題（2.1.323） | 利用不能時は Manual で始まり、先に確認する。組織として止める場合は既存の `permissions.disableAutoMode` も併用する。 |
 | session 中に Bash sandbox が無効になる問題（2.1.323） | version update を恒久的な sandbox 保証とせず、長時間 session でも実効設定と拒否結果を再確認する。 |
+
+### 2.1.326 — Agent Teams・managed settings・permission の整合性
+
+**提供元: Official / 状態: GA（CLI の正式リリース。Code Mode は Experimental）**。[2.1.326](https://github.com/anthropics/claude-code/releases/tag/v2.1.326) は 2026-11-16 22:11 UTC 公開。2026-11-21 に確認し、実機試験は未実施です。
+
+| 変更 | 境界と導入時の確認 |
+|---|---|
+| Agent Teams と Code Mode | Agent Teams が有効な session でも Code Mode を開始できる。既に opt-in 済みなら team session でも有効になるため、team ごとに tool permission・sandbox・組織の無効化設定を再確認する。 |
+| tool rule / Plugin manifest の警告 | 不完全な `--allowedTools` / `--disallowedTools` / `--tools` entry と、無視される malformed `plugin.json` field を表示する。警告がないことを Plugin の安全性や tool の許可証明にしない。 |
+| session 中の managed MCP 追加 | 管理者が `managed-mcp.json` を追加して server loading が止まった理由を表示する。既存 session の継続を期待せず、変更後に新しい session で実効 server 一覧を確認する。 |
+| settings の保存・解析 | `/permissions`・tool prompt・`/add-dir` の保存失敗、途中で壊れた settings の黙示 skip、特定 key で managed settings が他 file に影響する問題を修正。64階層を超える値は warning とともに drop される。保存後に file と解決結果を読み戻す。 |
+| background session の gateway / process | crash・別 folder からの reopen・background service の環境差で gateway を失った場合、model request 前に停止する。他利用者の再利用済み process ID を終了しない修正も含む。session 名ではなく request の identity / gateway と process ownership を確認する。 |
+| Bash / trust / managed hook | file delete / overwrite の transcript summary、`cp` の deny、folder trust prompt、managed `PreToolUse` 拒否の telemetry を修正。summary や OTel event だけでなく、使い捨て file と command で ask / deny / write 結果を確認する。 |
+
+version update は全経路の安全保証ではありません。managed file の差し替え、background 化、directory 変更、resume を含む試験で、startup warning・解決済み設定・拒否結果・監査記録を対応させます。
 
 ## セットアップ
 
