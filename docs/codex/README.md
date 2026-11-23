@@ -1,6 +1,6 @@
 # Codex ガイド（Agent Skills）
 
-> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-11-14
+> **対象ツール**: Codex（OpenAI）・ChatGPTの継続作業 ｜ **実行環境**: CLI（ターミナル）／ Chat UI（ChatGPT アプリ・ChatGPT・ChatGPT Work）／ Cloud ｜ **対象読者**: エンジニア・業務の自動化担当 ｜ **最終更新**: 2026-11-21
 
 Codex に作業手順や外部サービスとの連携を持たせる方法は 2 つあります。**Skill**（指示・スクリプト・リソースをまとめたフォルダ）と、Skill に MCP サーバー・コネクタ・フックなどを束ねて配る **Plugin** です。OpenAI は現在、再利用・配布の単位として Plugin を勧めています。
 
@@ -377,6 +377,21 @@ session 側の変更は、会話と下書きを別の面へ持ち越す仕組み
 | 0.168 の multi-agent 設定 | `features.multi_agent` を明示している場合、subagent tool を無効にする現行の `agents.enabled` を案内する。旧設定の警告を無視せず、実効設定を確認する。 |
 
 0.168 の side conversation、0.169 の task search・model provider・画面表示は一般 UI のため、この節では扱いません。trust の動作確認は、使い捨ての未信頼 directory で harmless な project MCP を用意し、`--sandbox` だけの場合と明示的な `--trust` の場合を比較します。
+
+### Codex CLI 0.170 / 0.171 — MCP・permission と remote session
+
+**提供元: Official / 状態: GA（Stable release。同名 MCP server の環境分離は Experimental）**。[0.170.0](https://github.com/openai/codex/releases/tag/rust-v0.170.0) は 2026-11-18 03:40 UTC、[0.171.0](https://github.com/openai/codex/releases/tag/rust-v0.171.0) は 11-20 00:44 UTC 公開。2026-11-21 に確認し、実機試験は未実施です。
+
+| 変更 | 境界と確認方法 |
+|---|---|
+| 同名 MCP server の環境別分離（0.170、Experimental） | environment ごとの server を同名でも別接続として扱う。表示名だけで接続先を判断せず、environment・URL / command・credential を照合する。 |
+| MCP OAuth credential race（0.170） | cancellation、login、logout が重なったときの古い credential write を防ぐ修正。更新後も logout / login の完了と保存先を確認し、別 identity の token を自動移送しない。 |
+| permission / sandbox restriction の保持（0.170 / 0.171） | child thread の permission update と directory 変更で既存の制限を落とさない修正。directory を変えた後も、profile 名ではなく無害な拒否結果で実効制限を確認する。 |
+| `codex exec --remote <ADDR>` と `/rc` / `/remote`（0.171） | 既存 app server で非対話 session を開始・再開し、TUI から local remote control を管理する。remote transport は identity・workspace trust・sandbox・approval の代替ではない。 |
+| enterprise MCP sign-in（0.171） | refresh token を発行しない identity provider でも sign-in できる修正。ID token の発行元・対象 server・session の identity を監査記録と照合する。 |
+| late completion / approval（0.171） | 前 turn の遅延 completion が新しい turn の approval を cancel しない。中断後の外部副作用は履歴を確認してから再送する。 |
+
+remote session の導入試験では、接続先 app server、作業 directory、MCP environment、identity、permission profile、sandbox を別項目で記録します。status line は観測の補助であり、実効制約の証明にはしません。
 
 ### Codexを製品へ組み込む入口を分ける
 

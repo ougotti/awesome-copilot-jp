@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-14
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-21
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -1513,6 +1513,20 @@ Enterprise の方針は、管理を **organization に委任する**か、**ente
 | [Enterprise GitHub App の Copilot seat management](https://github.blog/changelog/2026-11-10-github-app-support-for-enterprise-copilot-seat-management/) | Enterprise GitHub App が enterprise-level Copilot seat management API を呼び、user / enterprise team へ seat を割り当てられる。新しい fine-grained App permission は `Enterprise Copilot license management`。App の permission・installation owner・監査主体を確認し、個人 token や SDK request の認証と混同しない。 |
 
 GHES account の追加は「どの repository を操作できるか」、seat API は「誰へ Copilot 利用権を割り当てるか」を扱います。同じ Enterprise 管理でも、repository access、agent operation の managed permissions、model policy、seat allocation は別の層です。
+
+## Copilot code review と connectors の 2026-11 更新
+
+2026-11-21 に公式発表を確認し、実機・管理画面での試験は未実施です。
+
+| 更新 | 提供元・状態 | 対象と境界 |
+|---|---|---|
+| [Adaptive effort](https://github.blog/changelog/2026-11-17-copilot-code-review-adaptive-effort-secret-detection-and-more/) | Official / Public Preview | PR の complexity / risk から Lite・Balanced・Max を選ぶ。enterprise / organization / repository の maximum を超えない。選ばれた level は各 review で確認する。Balanced は引き続き既定。 |
+| cross-repository context | Official / Public Preview | public repository の review で、関連 public repository の code・docs・custom instructions・Skills を参照する。private repository の横断読取へ一般化しない。 |
+| secret detection | Official / Public Preview | deterministic detector と AI/ML で review comment を出す。repository / organization の Copilot code review 設定で有効化する。secret scanning policy や人の確認の代替にはしない。 |
+| Azure Repos code review | Official / GA | custom instructions / Skills、Lite / Balanced、branch policy、audit event に対応する。GitHub repository の review 設定と同じ管理面とは扱わない。 |
+| [verified MCP connectors 追加](https://github.blog/changelog/2026-11-18-connect-supabase-box-calendly-and-more-to-copilot/) | Official / Public Preview | Box・Buildkite・Calendly・ClickUp・Mixpanel・Supabase・Webflow・Wix。Copilot app / CLI / VS Code / github.com で接続する。Business / Enterprise は Editor preview features が必要で、MCP allowlist が個別列挙なら connector の追加も必要。 |
+
+review の参照元、effort、secret detector、connector の接続権限は別々に管理します。Preview の review comment や connector tool call を merge 条件・外部操作の承認へ自動昇格させず、使用した Skill / MCP、選択 effort、対象 repository、tool の副作用を記録します。Plugin の配布制御は [Plugins](plugins.md#配布元と既定を組織チームで分ける2026-11-1618) を参照してください。
 
 ## 関連ドキュメント
 

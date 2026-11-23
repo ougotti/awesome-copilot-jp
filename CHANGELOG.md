@@ -4,6 +4,12 @@
 
 ## 2026-11
 
+- **2026-11-21** #324 の 11-14〜11-21 の未掲載差分を反映。
+  - [Copilot Plugins](docs/copilot/plugins.md)に `strictPluginOnlyCustomization`、Marketplace policy との違い、team customizations の direct member / child team / opt-out / 上位 policy の境界を追加した。
+  - [Copilot](docs/copilot/README.md)に code review の Adaptive・cross-repository context・secret detection、Azure Repos review、verified MCP connectors の状態と管理条件を追加した。
+  - [Claude Code 2.1.326](docs/claude-code/basics.md)の Agent Teams + Code Mode、managed MCP、settings 保存・解析、background session、Bash / trust / managed hook の修正を整理した。
+  - [Codex 0.170 / 0.171](docs/codex/README.md)の同名 MCP server、OAuth credential、permission profile、enterprise sign-in、remote app server の境界を追加した。公式資料は 2026-11-21 に確認し、実機・管理画面・API の検証は行っていない。
+
 - **2026-11-18** [月額プランのAPIクレジット比較](docs/dev-methods/subscription-api-credits.md)を追加。ChatGPT・Claude・Geminiの受取先・有効期限・残高切れの挙動と、ChatGPT Proでの有効化を整理した。
 
 - **2026-11-17** [Instructions](docs/copilot/instructions.md) に Bulma v1 と Godot 4、[Agents](docs/copilot/agents.md) に New Relic、オンデバイス委譲などの8件を追加。追跡一覧と件数を同期した（#320）。

@@ -1,8 +1,19 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-14
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-21
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
+
+## 2026-11-14〜11-21 の更新 — 配布元・実行先・権限の分離
+
+2026-11-21 に公式 release / 発表を確認しました。実機・管理画面・API の試験は未実施です。機能単位の GA / Preview / Experimental を一括して GA と扱わないでください。
+
+| 提供元・状態 | 更新と読む場所 | 公開日 |
+|---|---|---|
+| GitHub / Official / GA | [Copilot Plugin の統制](copilot/plugins.md#配布元と既定を組織チームで分ける2026-11-1618) — standalone customization を Plugin / managed settings に限定する設定と、team default・marketplace policy の違い。 | 2026-11-16 / 11-18。 |
+| GitHub / Official / Preview（一部 GA） | [Copilot code review / connectors](copilot/README.md#copilot-code-review-と-connectors-の-2026-11-更新) — Adaptive・cross-repository context・secret detection、verified MCP connectors。Azure Repos review は GA。 | 2026-11-17 / 11-18。 |
+| Anthropic / Official / GA（Code Mode は Experimental） | [Claude Code 2.1.326](claude-code/basics.md#21326--agent-teamsmanaged-settingspermission-の整合性) — Agent Teams と Code Mode、managed MCP・設定保存・background session・permission 判定。 | 2026-11-16 UTC。 |
+| OpenAI / Official / GA（同名 MCP server の環境分離は Experimental） | [Codex 0.170 / 0.171](codex/README.md#codex-cli-0170--0171--mcppermission-と-remote-session) — MCP OAuth、permission profile、enterprise sign-in、remote app server。 | 2026-11-18 / 11-20 UTC。 |
 
 ## 2026-11-07〜11-14 の更新 — 信頼・認証・配布の境界
 
@@ -41,6 +52,7 @@
 
 | 日付 | 変更内容 |
 |------|---------|
+| 2026-11-21 | #324 の配布・権限・接続先の差分を追加。Copilot の Plugin 統制 / team default / code review / connectors、Claude Code 2.1.326、Codex 0.170 / 0.171 を反映した。 |
 | 2026-11-14 | #318 の信頼・認証・配布の差分を追加。Claude Code 2.1.321 / 2.1.323、Codex 0.168 / 0.169、MCP C# SDK 2.4、Copilot app の GHES 対応と Enterprise seat API を反映した。 |
 | 2026-11-07 | #311 の承認・MCP 寿命・計測差分を追加。network policy の移行条件、拡張を宣言する server の lease、override の省略・置換・解除を区別した。 |
 | 2026-11-07 | #309 の未掲載差分を製品別ページへ反映。write・policy・認証・Plugin の強制力と、再開時の確認手順を追加した。 |
