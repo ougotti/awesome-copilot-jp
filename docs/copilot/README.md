@@ -896,6 +896,8 @@ approval 後に新しいコミットが push されると、**人間のレビュ
 
 なお、PR を merge 可能な状態へ持っていく**修復ループ**（VS Code 1.136 の **Agent Merge**、Preview）は、これとは別の機能です。merge の実行でも approval でもありません（[Skills 最新動向 9-3 節](../trends.md#9-3-pr-を-merge-ready-にするまで--修復ループと-ai-の-approval)）。
 
+Claude の Claude Approvals（2026-11-23、Beta）と並べた比較、方針の変更権限、両方を併用するときの注意は [AI に PR の承認を任せる前に決めること](../dev-methods/ai-pr-approvals.md) を参照してください。
+
 ---
 
 ## 組織の統制 — 実行操作を `deny` / `ask` / `allow` に分ける

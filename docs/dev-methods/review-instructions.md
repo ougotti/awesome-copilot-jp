@@ -121,6 +121,7 @@ Claude Code の Code Review には、2026-10-19 以降の更新で**レビュー
 - [Claude Code のカスタマイズ機能](../claude-code/basics.md#claudemd) — `CLAUDE.md` の配置と読み込み
 - [Skill / エージェントの評価（evals）](evals.md) — 回帰評価と品質評価の設計
 - [AI 時代のコードレビュー](ai-code-review.md) — テストの削除・弱化の点検と、AI レビュアーの誤検知・見逃しの測り方
+- [AI に PR の承認を任せる前に決めること](ai-pr-approvals.md) — 承認の方針ファイル（`.claude/approvals.yml`）がどの branch から効くか、誰が変えられるか
 - [プラグインの可搬性](plugin-portability.md#instruction-ファイルは別のエージェントにも読まれる) — 別のエージェントにも読まれる instruction ファイル
 - [Skill / Plugin のセキュリティ](skill-security.md) — 導入前の信頼と権限の確認
 
