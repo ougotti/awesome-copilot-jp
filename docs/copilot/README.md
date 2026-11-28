@@ -1,6 +1,6 @@
 # GitHub Copilot ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-21
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: Chat UI（github.com / Mobile）／ IDE（VS Code 等）／ CLI ／ Cloud（cloud agent） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-28
 
 GitHub Copilot は GitHub が提供するコーディングアシスタントで、IDE 内のインライン補完・チャットが中心です。このページでは、Copilot のカスタマイズの種類と設定方法、クイックスタートを解説します。
 
@@ -10,6 +10,7 @@ GitHub Copilot は GitHub が提供するコーディングアシスタントで
 |-------------|------|
 | **[Instructions 一覧](instructions.md)** | ファイルパターンに応じてコーディング規約を自動適用するルールファイルの詳細解説 |
 | **[Agents 一覧](agents.md)** | Copilot を特定ドメインの専門家ペルソナとして振る舞わせるエージェント定義の詳細解説 |
+| **[MCP サーバーの Skill を使う](../dev-methods/use-mcp-skills.md)** | VS Code の Copilot でサーバーが配る Skill を見つけ、読み込みを承認する。 |
 | **[Prompts / Skills 一覧](prompts.md)** | `/` コマンドから呼び出せる再利用可能なタスクテンプレートおよび Skills の詳細解説 |
 | **[Plugins](plugins.md)** | Agents / Skills / Hooks / MCP / LSP を 1 つの単位で配布する Plugin と Marketplace の詳細解説 |
 | **[VS Code エディタウィンドウでの複数ルート運用](multi-root.md)** | 複数フォルダ（multi-root workspace）を横断するエージェントセッションの設定・hooks の読み込み元・確認手順（Experimental） |
@@ -1527,6 +1528,17 @@ GHES account の追加は「どの repository を操作できるか」、seat AP
 | [verified MCP connectors 追加](https://github.blog/changelog/2026-11-18-connect-supabase-box-calendly-and-more-to-copilot/) | Official / Public Preview | Box・Buildkite・Calendly・ClickUp・Mixpanel・Supabase・Webflow・Wix。Copilot app / CLI / VS Code / github.com で接続する。Business / Enterprise は Editor preview features が必要で、MCP allowlist が個別列挙なら connector の追加も必要。 |
 
 review の参照元、effort、secret detector、connector の接続権限は別々に管理します。Preview の review comment や connector tool call を merge 条件・外部操作の承認へ自動昇格させず、使用した Skill / MCP、選択 effort、対象 repository、tool の副作用を記録します。Plugin の配布制御は [Plugins](plugins.md#配布元と既定を組織チームで分ける2026-11-1618) を参照してください。
+
+### Copilot code review の請求先
+
+Copilot Business / Enterprise で、有料 Copilot ライセンスを持つメンバーのレビューを誰に請求するか選べます。GitHub は **2026-12-30** に、請求先をまだ保存していない場合の既定を変更します。[GitHub の11月25日の告知](https://github.blog/changelog/2026-11-25-copilot-code-review-billing-will-default-to-the-organization/)
+
+| 現在の設定 | 12月30日以降の扱い |
+|---|---|
+| 未設定（画面表示は **Default (Member)**） | 原則としてリポジトリを所有する組織に請求。AI Credits の有料利用が無効、請求がロック中、または請求可能な顧客が登録されていない場合は **Member** に設定される。 |
+| **Member** または **Organization** を保存済み | 選んだ請求先を継続する。 |
+
+メンバーの利用枠での支払いを続ける場合は、変更日前に組織または Enterprise の Copilot ポリシーで **Member** を選んで保存します。Enterprise がこの設定を管理している場合は Enterprise owner が操作します。ライセンスを持たないメンバーのレビューには別の請求設定が適用されます。
 
 ## 関連ドキュメント
 

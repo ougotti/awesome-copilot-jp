@@ -1,14 +1,14 @@
 # MCP Skills 拡張 — Skill を MCP server から配る
 
-> **対象ツール**: ツール横断（MCP server の開発者・MCP に対応したホスト） ｜ **実行環境**: CLI / IDE / Cloud / Chat UI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-11-14
+> **対象ツール**: ツール横断（MCP server の開発者・MCP に対応したホスト） ｜ **実行環境**: CLI / IDE / Cloud / Chat UI ｜ **対象読者**: エンジニア・組織の導入担当 ｜ **最終更新**: 2026-11-28
 
-> [MCP Skills 拡張](https://modelcontextprotocol.io/extensions/skills/overview)（`io.modelcontextprotocol/skills`、[SEP-2640](https://modelcontextprotocol.io/seps/2640-skills-extension)）は、`SKILL.md` を含む Skill のディレクトリを、**ファイルとしてではなく MCP の Resources として**届ける公式の拡張です。MCP server が自分の tool の使い方を Skill として一緒に配れるようになります。このページでは、ファイルで配る Skill との違い、仕組み、対応状況、ホストに課された承認とセキュリティの要件を整理します。内容は 2026-11-14 に一次資料で確認したもので、実機・SDK での検証は行っていません。
+> [MCP Skills 拡張](https://modelcontextprotocol.io/extensions/skills/overview)（`io.modelcontextprotocol/skills`、[SEP-2640](https://modelcontextprotocol.io/seps/2640-skills-extension)）は、`SKILL.md` を含む Skill のディレクトリを、**ファイルとしてではなく MCP の Resources として**届ける公式の拡張です。MCP server が自分の tool の使い方を Skill として一緒に配れるようになります。このページでは、ファイルで配る Skill との違い、仕組み、対応状況、ホストに課された承認とセキュリティの要件を整理します。内容は 2026-11-28 に一次資料で確認したもので、実機・SDK での検証は行っていません。
 
 ---
 
 ## 1. 何が変わるのか
 
-これまで Skill は、リポジトリの `.claude/skills/` や `.agents/skills/` などに**ファイルとして置き**、エージェントがそれを読む形が基本でした（配布の手段は [Skills 最新動向 7 節](../trends.md#7-skill-の発見配布更新)）。MCP Skills 拡張では、MCP server が Skill を Resources として公開し、ホスト（Claude・ChatGPT・IDE などのクライアント）が**必要になった時点で server から読み出します**。
+これまで Skill は、リポジトリの `.claude/skills/` や `.agents/skills/` などに**ファイルとして置き**、エージェントがそれを読む形が基本でした（配布の手段は [Skills 最新動向 7 節](../trends.md#7-skill-の発見配布更新)）。MCP Skills 拡張では、MCP server が Skill を Resources として公開し、対応ホスト（Claude Code・VS Code など）が**必要になった時点で server から読み出します**。
 
 SEP-2640 は、この拡張が必要な理由を 3 つ挙げています。
 
@@ -23,7 +23,7 @@ SEP-2640 は、この拡張が必要な理由を 3 つ挙げています。
 | | ファイルの Skill | Plugin（Copilot / Claude Code / Codex） | MCP server の `instructions` | **MCP Skills 拡張** |
 |---|---|---|---|---|
 | 置き場所 | リポジトリ・ユーザーのディレクトリ | Marketplace から取得して手元に展開 | server の応答 | **MCP server**（手元には必要な分だけ取得） |
-| 更新 | ファイルを差し替える | Plugin を更新する | server を更新すれば即時 | server を更新すれば即時。ただし**中身が変われば承認をやり直す**（[4 節](#4-ホストに課された承認とセキュリティの要件)） |
+| 更新 | ファイルを差し替える | Plugin を更新する | server を更新すれば即時 | server を更新すれば即時。**Skill 単位で保存した承認は中身が変わると取り直す**（[4 節](#4-ホストに課された承認とセキュリティの要件)） |
 | 大きさ | 制限は実装次第 | 制限は実装次第 | 短い説明に限られる | 1 Skill あたり 512 ファイル・16 MiB まで（[2 節](#上限)） |
 | 実行コード | 同梱できる | 同梱できる（hooks・MCP 設定など） | なし | 同梱はできるが、**明示的な承認なしに手元で実行させてはならない** |
 | 向く場面 | チーム内で中身を管理したい | 複数の Skill・Agent・MCP 設定をまとめて配る | 短い使い方の注意 | **server とその使い方を一緒に版管理したい** |
@@ -41,9 +41,9 @@ MCP Skills 拡張は Plugin の代わりではありません。Plugin は「手
 | 提供元 | Official（MCP プロジェクトの Skills Over MCP Working Group。リポジトリは [modelcontextprotocol/ext-skills](https://github.com/modelcontextprotocol/ext-skills)、Apache-2.0） |
 | SEP の状態 | **Final**（Extensions Track、2026-04-23 作成、[PR #2640](https://github.com/modelcontextprotocol/modelcontextprotocol/pull/2640) は 2026-09-13 に merge） |
 | 対象のプロトコル | base protocol `2026-07-28` 以降（[13 節](../trends.md#13-mcp-2026-07-28-仕様と移行時の確認)の stateless core が前提）。2026-10-15 に仕様の型と例を `2026-07-28` の schema に合わせる改訂が入った |
-| 状態ラベル | 本ガイドでは **Preview** として扱う。仕様は確定しているが、主要なホストの対応がまだ部分的なため（[3 節](#3-対応状況)） |
+| 状態ラベル | 拡張自体は **Beta（Preview）**。SEP の採択と各製品の対応状況は個別に確認する。[拡張のリリース段階](https://github.com/modelcontextprotocol/ext-skills#specification) ／ [製品別の対応表](#3-対応状況) |
 
-> OpenAI の文書は、この拡張を「draft SEP-2640」「stable MCP specification の一部ではない」と書いています。SEP は Final ですが、**拡張は core の仕様とは別に版を重ねる**ため、core の仕様書だけを見ても載っていません。拡張の仕様は ext-skills の `specification/stable/skills.mdx` が正です。
+> 拡張の仕様は MCP 本体と別に版を重ねます。作業部会は[現行の仕様本文](https://github.com/modelcontextprotocol/ext-skills/blob/main/specification/beta/skills.mdx)を beta として公開しています。
 
 ### 対応の宣言
 
@@ -102,7 +102,7 @@ skill://<Skill のパス>/<Skill 内のファイルパス>
 | 1 Skill のファイル数 | 512 | `resources` の件数（`SKILL.md` を含む） |
 | 1 Skill の合計サイズ | 16 MiB | `resources` の `size` の合計 |
 
-ホストはこの範囲の Skill を必ず扱える必要があり、server はこれを超える Skill を配るべきではありません。目録が完全なので、ホストはファイルを 1 つも取得する前に上限を確認できます。ただし**ホストごとにさらに小さい上限を持つことがあります**（ChatGPT の例は [3 節](#chatgpt-の取り込み)）。
+ホストはこの範囲の Skill を必ず扱える必要があり、server はこれを超える Skill を配るべきではありません。目録が完全なので、ホストはファイルを 1 つも取得する前に上限を確認できます。製品側でスキャン対象に別の上限を設ける例もあります。[Claude Code の制限](https://code.claude.com/docs/en/mcp#mcp-skill-limitations)
 
 ### 取得は必要になってから
 
@@ -114,19 +114,21 @@ skill://<Skill のパス>/<Skill 内のファイルパス>
 
 ## 3. 対応状況
 
-2026-10-19 時点の[公式の対応表](https://modelcontextprotocol.io/extensions/client-matrix)と、Working Group の[実装一覧](https://github.com/modelcontextprotocol/ext-skills/blob/main/docs/implementations.md)をまとめます。どちらもコミュニティが更新する一覧で、自己申告を含みます。
+2026-11-28 に各製品の案内と [MCP 作業部会の実装一覧](https://github.com/modelcontextprotocol/ext-skills/blob/ba23984ab9859c88663d1ce1d93fa81942cae5a2/docs/implementations.md)を照合しました。実装一覧には各開発元の自己申告も含まれます。
 
-**Claude Code・GitHub Copilot（VS Code）・Codex は、2026-10-19 時点でこの拡張に正式対応していません。** SEP には Claude Code を Anthropic 社内で試作したこと、gemini-cli と Codex のフォークで試作したことが記録されていますが、いずれも公開された製品の機能ではありません。手元のエージェントで今すぐ使える機能として扱わないでください。
+Claude Code と VS Code の Copilot では、接続先の Skill をチャットから呼び出せます。利用条件と承認画面の読み方は[利用者向けの手順](use-mcp-skills.md)にまとめました。
 
 ### ホスト（Skill を読む側）
 
 | ホスト | 提供元 | 状態 | 補足 |
 |--------|--------|------|------|
-| [ChatGPT（Plugin）](https://developers.openai.com/plugins/build/mcp-server#import-skills-from-the-mcp-server) | Official（OpenAI） | 部分対応 | Plugin の申請時に Skill を**静的なスナップショット**として取り込む（下記） |
+| [Claude Code](https://code.claude.com/docs/en/mcp#use-skills-from-mcp-servers) | Official（Anthropic） | Preview | 対話型セッションでサーバー名付きの Skill を呼び出せる。 |
+| [VS Code の Copilot](https://techcommunity.microsoft.com/blog/azuredevcommunityblog/skills-over-mcp-are-now-available-in-vs-code/4574580) | Official（Microsoft） | Preview | 1.147 以降の Copilot Agent Host セッションで発見・読み込みに対応。 |
+| ChatGPT・Codex | Official（OpenAI） | 計画段階 | 作業部会の実装一覧によると、ChatGPT の Plugin 申請時に Skill の写しを取り込む機能は2026年11月に取り下げられた。 |
 | [MCP Inspector](https://github.com/modelcontextprotocol/inspector) | Official（MCP） | 部分対応 | 2.6.0（2026-09-09）から。CLI で Skill を検証できる（[5 節](#5-server-を作る側の最小の確認)） |
-| [mcpc](https://github.com/apify/mcpc) | Official（Apify） | 対応表では対応 | MCP の CLI クライアント |
-| [fast-agent](https://github.com/evalstate/fast-agent) | Community | 部分対応 | 最初に server と端から端まで相互運用したクライアント |
-| [MCPJam Inspector](https://github.com/MCPJam/inspector) | Official（MCPJam） | 部分対応 | アプリと CLI で Skill を表示し、拡張の capability を宣言する |
+| [mcpc](https://github.com/apify/mcpc) | Official（Apify） | Preview | MCP の CLI クライアント。配信されたファイルのサイズと digest を確認できる。 |
+| [fast-agent](https://github.com/evalstate/fast-agent) | Community | Preview | 配信された Skill を検証して読み込める。 |
+| [MCPJam Inspector](https://github.com/MCPJam/inspector) | Official（MCPJam） | Preview | アプリ・CLI・SDK で digest と frontmatter を検証する。 |
 | Goose | Official（AAIF） | 計画中 | [aaif-goose/goose#12068](https://github.com/aaif-goose/goose/issues/12068) |
 
 ### SDK・server（Skill を配る側）
@@ -134,25 +136,12 @@ skill://<Skill のパス>/<Skill 内のファイルパス>
 | 実装 | 状態 | 補足 |
 |------|------|------|
 | [C# SDK 2.4.0](https://github.com/modelcontextprotocol/csharp-sdk/releases/tag/v2.4.0) | **Experimental** | 2026-11-07 公開。`ModelContextProtocol.Extensions.Skills` で Skills extension を実装。server primitive と typed request handler に合わせた初期実装で、ホスト側の対応や拡張自体の GA を意味しない |
-| 公式 SDK（TypeScript・Python・Go） | **実装中**（PR 段階） | 公式 SDK で正式に使える版はまだない |
-| FastMCP の SkillsProvider | 実装中 | 公開済みの版は**独自の `skill://` 形式**のままで、この拡張とは URI・発見の方法が違う。SEP は移行を当面の優先課題としている |
+| [TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk/pull/3047) | Preview | 2.4.0 の `ext/skills` にサーバー側とクライアント側の API を収録。 |
+| [Python SDK](https://github.com/modelcontextprotocol/python-sdk/pull/3485)・[Go SDK](https://github.com/modelcontextprotocol/go-sdk/pull/1238) | 開発中 | Python は取り込み済みでリリース待ち、Go はレビュー中。 |
+| [FastMCP](https://gofastmcp.com/servers/skills) | Experimental | 4.2.0 で `SkillCatalogProvider` による配布とクライアントからの読み取りに対応。 |
 | mcpkit（Go）・Tachyon（Java） | 対応（自己申告） | mcpkit は適合テストの server シナリオに合格 |
 | [hf-mcp-server](https://github.com/huggingface/hf-mcp-server)（Hugging Face） | 対応 | `skills/list`・`skills/get`・`directoryRead`。HTTP の transport のみ |
-| GitHub MCP Server | 試作 | デモ用のブランチで、merge の予定なし |
-
-### ChatGPT の取り込み
-
-ChatGPT の Plugin は、申請画面の **Scan Tools** を実行した時点で MCP server の Skill を取り込みます。**取り込まれるのは実行時に読みに行く Skill ではなく、申請時点の写し**です。Skill を直したら、もう一度 Scan Tools を実行し、取り込まれた内容を確認して、新しい版の Plugin を申請する必要があります。
-
-| ChatGPT の上限（2026-10-19 確認） | 値 |
-|----------------------------------|----|
-| Skill の数 | 名前の異なる 5 件まで（一覧は 10 ページまで） |
-| 1 Skill のファイル数 | 100 |
-| `SKILL.md` | 256 KiB |
-| 同梱ファイル 1 つ | 1 MiB |
-| 1 Skill の合計 | 5 MiB |
-
-仕様の上限（512 ファイル・16 MiB）より小さいため、**仕様に合っていても ChatGPT には取り込めない Skill があり得ます**。1 件でも検証に失敗するか上限を超えると、tool は読み込まれても Skill の取り込みは前のままになります。capability は `experimental` ではなく `extensions` に宣言する必要があり、旧来の宣言は認識されません。Plugin の申請手順そのものは [Skill の公開・共有](skill-publishing.md)を参照してください。
+| [GitHub MCP Server](https://github.com/github/github-mcp-server/pull/3685) | Preview | 2.2.0 以降で明示的に有効化できる。利用可能な toolset に応じて Skill を配る。 |
 
 ---
 
@@ -169,14 +158,14 @@ Skill は model に渡す指示文なので、MCP で届く Skill は prompt inj
 | **ほかの server を読ませない** | server A の Skill が、server B に対する `resources/read` を起こしてはならない。別の server を読む場合は、両方の server 名を示して毎回承認を取る | 複数の MCP server を接続したときの読み取り先 |
 | **名前の衝突を許さない** | Skill の名前は server をまたいで一意ではない。人気の Skill と同じ名前で配る攻撃があり得るため、名前は server ごとの名前空間で解決し、手元の Skill を黙って上書きさせない。server の識別には、server の自己申告の名前ではなくホストが付けた名前を使う | 同名の Skill が出たとき、ホストが知らせるか |
 | **入れ子の Skill は別に承認** | Skill の中にある別の `SKILL.md` は、親を承認しても承認されたことにならない | — |
-| **承認を中身に結びつける** | 承認を記憶する場合は、承認したときの全ファイルの URI と digest の組に結びつける。後でファイルが 1 つでも変わる・増える・減ると、**承認は取り消され、もう一度聞かれる** | 更新後に再承認を求められるか |
+| **承認を中身に結びつける** | Skill 単位の承認を記憶する場合は、承認したときの全ファイルの URI と digest の組に結びつける。後でファイルが 1 つでも変わる・増える・減ると、**承認は取り消され、もう一度聞かれる** | 更新後に再承認を求められるか |
 | **キャッシュは昇格させない** | 手元のキャッシュは、ホストしか書き込めない場所に置くか、読むたびに digest を計算し直す。キャッシュは手元の Skill を探す場所から外し、再起動後も server を切断した後も「MCP で届いたもの」として扱う。server を外したらキャッシュも消す | キャッシュの置き場所が `.claude/skills/` などの探索対象になっていないか |
 
 ### digest は信頼の根拠にならない
 
 目録の digest には署名がなく、中身と同じ server が出しています。**digest が一致しても、「目録と中身が食い違っていない」ことしか分かりません。** server 自体が悪意を持っている場合や、途中の gateway が目録と中身を一緒に書き換えた場合は検出できません。仕様も「digest の一致をセキュリティの境界として扱ってはならない」と明記しています。
 
-承認後に中身が差し替えられることは digest で防げますが、**承認した時点の中身が安全だったかどうかは、利用者が読んで判断するしかありません**。導入前の確認手順は [Skill / Plugin のセキュリティ 2 節](skill-security.md#2-導入前に何を確認するか)と同じです。
+保存した目録と取得したファイルの digest を照合すると差し替えを検出できますが、**承認した時点の中身が安全だったかどうかは、利用者が読んで判断するしかありません**。導入前の確認手順は [Skill / Plugin のセキュリティ 2 節](skill-security.md#2-導入前に何を確認するか)と同じです。
 
 ### pnpm の承認との違い
 
@@ -185,15 +174,15 @@ Skill は model に渡す指示文なので、MCP で届く Skill は prompt inj
 | | 承認の単位 | 中身が変わったとき |
 |---|---|---|
 | [pnpm の agent skills](../trends.md#7-6-pnpm--依存パッケージに同梱された-skill-をつなぐ) | パッケージ（以降のバージョンにも及ぶ） | 聞き直されない |
-| MCP Skills 拡張 | Skill の全ファイルの URI と digest の組 | **承認が取り消され、聞き直される** |
+| MCP Skills 拡張（Skill 単位で保存した承認） | Skill の全ファイルの URI と digest の組 | **承認が取り消され、聞き直される** |
 
-pnpm の承認は「この発行元を信頼する」判断、MCP Skills 拡張の承認は「この中身を信頼する」判断です。前者は更新のたびに差分を自分で読む必要があり、後者は更新のたびに承認を求められます。どちらも、**承認したことを中身を読んだことの代わりにはできません**。
+pnpm はパッケージ単位で承認します。MCP の仕様は、ホストが **Skill 単位の承認を保存する場合**に、承認時のファイル一覧と digest に結びつけることを求めます。サーバー単位で読み込みを許可する製品もあるので、[利用画面での承認の単位](use-mcp-skills.md)も確認してください。
 
 ---
 
 ## 5. server を作る側の最小の確認
 
-C# SDK では Experimental 実装を使えます。その他の公式 SDK はまだ実装中のため、server を作る場合は SDK の対応状況を先に確認してください（[3 節](#sdkserverskill-を配る側)）。作った server が仕様に合っているかは、MCP Inspector の CLI で確かめられます。
+使う言語に合う実装を[対応表](#sdkserverskill-を配る側)から選びます。サーバーが公開した Skill の目録とファイルは、MCP Inspector の CLI で検証できます。
 
 **どこで実行するか**: server の動作を確認できる端末のシェル（PowerShell など）。Node.js が必要です。`<server>` には Inspector に渡す server の指定（起動コマンドや URL）を入れます。
 
@@ -209,13 +198,13 @@ npx @modelcontextprotocol/inspector --cli <server> --method skills/list --verify
 | 出力 | 標準出力に Skill ごとの結果が 1 行ずつ（NDJSON）、標準エラーに 1 行の要約 |
 | frontmatter の照合 | 一覧に載せた frontmatter と、実際の `SKILL.md` の frontmatter が一致しているか。digest では「一覧が中身を正直に説明しているか」までは分からないため、別に照合される |
 
-Inspector の検証に通っても、**特定のホストで使えるとは限りません**。ChatGPT のように仕様より小さい上限を持つホストもあるため、配る先のホストの文書もあわせて確認してください。
+Inspector で目録とファイルを検証した後、配布先のクライアントでも Skill 名の表示と読み込みを確認します。[Claude Code・VS Code での確認手順](use-mcp-skills.md)
 
 ### 配る前に人が確認すること
 
-- Skill の本文に、手元での実行（shell・スクリプト）を前提とした手順が入っていないか。入っている場合、ホストは毎回承認を求めるため、利用者が何を承認するのかを本文に書いておく
+- Skill の本文に、手元での実行（shell・スクリプト）を前提とした手順が入っていないか。入っている場合は、利用者が Skill ごとの実行を判断できるよう、実行内容を本文に書く
 - `allowed-tools` に頼った設計になっていないか（MCP では既定で無視される）
-- 中身を頻繁に変える Skill は、更新のたびに利用者へ再承認を求めることになる。変更をまとめて出す運用にするか
+- Skill 単位で承認を記憶する環境では、ファイルが変わると再承認が必要になる。利用者が差分を確認できる形で変更をまとめるか
 - 同じ名前の有名な Skill がないか。あれば、利用者の混乱を避けるため接頭辞（`skill://<組織>/...`）で区別する
 
 ---
@@ -224,9 +213,9 @@ Inspector の検証に通っても、**特定のホストで使えるとは限�
 
 | 読者 | すること |
 |------|---------|
-| **Claude Code・Copilot・Codex をそのまま使う人** | 現時点で対応すべきことはありません。Skill は従来どおりファイルや Plugin で入れます。各製品が対応したときに備え、[4 節](#4-ホストに課された承認とセキュリティの要件)の「読者が確かめること」を覚えておく |
-| **ChatGPT 向けに Plugin を作る人** | MCP server の Skill を Plugin に取り込めます。取り込みは申請時の写しなので、Skill を直したら Scan Tools と再申請が必要 |
-| **MCP server を作る人** | server の使い方を Skill として一緒に配れます。公式 SDK の対応を待つか、対応済みの実装を使い、Inspector で検証する。FastMCP の現行版の `skill://` はこの拡張と形式が違う点に注意 |
+| **Claude Code・VS Code の Copilot を使う人** | [利用手順](use-mcp-skills.md)に沿って、接続先の Skill 名と読み込み時の承認を確認する。 |
+| **ChatGPT・Codex 向けに Plugin を作る人** | Skill を配る場合は [Plugin に同梱する手順](skill-publishing.md)を使う。 |
+| **MCP server を作る人** | 対応する SDK や FastMCP で Skill を公開し、Inspector で目録と配信内容を検証する。 |
 | **組織の導入担当** | MCP server の許可リストを見直すとき、tool だけでなく**その server が Skill を配るか**も確認項目に加える。Skill を配る server は、手元の振る舞いを変える指示を持ち込める |
 
 ---
@@ -244,8 +233,8 @@ Inspector の検証に通っても、**特定のホストで使えるとは限�
 
 - [SEP-2640: Skills Extension](https://modelcontextprotocol.io/seps/2640-skills-extension) — 動機・仕様・セキュリティ要件・見送った機能（アーカイブ形式での配布）（`提供元`: Official / MCP ｜ `状態`: Final）
 - [Skills over MCP — Overview](https://modelcontextprotocol.io/extensions/skills/overview) — 公式文書の概要と通信の流れ（`提供元`: Official / MCP ｜ `状態`: —）
-- [modelcontextprotocol/ext-skills](https://github.com/modelcontextprotocol/ext-skills) — 仕様の正本（`specification/stable/skills.mdx`）、決定記録、設計の理由、実装一覧（`提供元`: Official / MCP ｜ `状態`: —）
+- [modelcontextprotocol/ext-skills](https://github.com/modelcontextprotocol/ext-skills) — 仕様の正本（`specification/beta/skills.mdx`）、決定記録、設計の理由、実装一覧（`提供元`: Official / MCP ｜ `状態`: —）
 - [Extension Support Matrix](https://modelcontextprotocol.io/extensions/client-matrix) — クライアントごとの拡張の対応表（`提供元`: Official / MCP、コミュニティが更新 ｜ `状態`: —）
-- [Import skills from the MCP server](https://developers.openai.com/plugins/build/mcp-server#import-skills-from-the-mcp-server) — ChatGPT の Plugin が Skill を取り込む条件と上限（`提供元`: Official / OpenAI ｜ `状態`: —）
+- [MCP Skills 作業部会の実装一覧](https://github.com/modelcontextprotocol/ext-skills/blob/main/docs/implementations.md) — ホスト・SDK・サーバーごとの対応と各実装へのリンク。
 - [MCP Inspector CLI — Skill verification](https://github.com/modelcontextprotocol/inspector/blob/main/clients/cli/README.md#skill-verification---verify) — `--verify` の検証内容と終了コード（`提供元`: Official / MCP ｜ `状態`: —）
 - [Agent Skills Specification](https://agentskills.io/specification) — Skill の書式。拡張はこれに委ねている（`提供元`: Official ｜ `状態`: —）

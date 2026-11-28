@@ -1,6 +1,6 @@
 # Claude Code ガイド
 
-> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-10-05
+> **対象ツール**: Claude Code ｜ **実行環境**: CLI（ターミナル） ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-28
 
 [Claude Code](https://docs.anthropic.com/ja/docs/claude-code/overview) は Anthropic が提供するターミナルベースのコーディングエージェントです。GitHub Copilot が IDE 内のインライン補完に特化しているのに対し、ファイルシステム全体を横断する複雑なタスクをこなせるエージェントとして設計されています。
 
@@ -9,6 +9,7 @@
 | ドキュメント | 内容 |
 |-------------|------|
 | **[カスタマイズ機能](basics.md)** | CLAUDE.md、Agent Skills、カスタムコマンド、サブエージェント、フック、MCP と、その使い分け |
+| **[MCP サーバーの Skill を使う](../dev-methods/use-mcp-skills.md)** | 対話型ターミナルでの呼び出し方、版ごとの承認、表示されないときの確認方法。 |
 | **[Mods](mods.md)** | 2.1.287 で加わった、Claude Code の内部で動くプラグイン。フックとの違い、動く場所、導入前の確認、`allowManagedModsOnly` などの組織での止め方 |
 | **[コマンド一覧（付録）](commands.md)** | 組み込みスラッシュコマンド、バンドルスキル、キーボードショートカットのスナップショット |
 | **[Anthropic 公式スキル](official-skills.md)** | [anthropics/skills](https://github.com/anthropics/skills) 収録スキル（docx / pdf / pptx / xlsx 等）の詳細解説 |
