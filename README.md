@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-11-28** [MCP サーバーの Skill を Claude Code・VS Code で使う](docs/dev-methods/use-mcp-skills.md)を追加。[最新動向](docs/trends.md)に Copilot レビューの請求先変更と Copilot・Codex CLI の更新を掲載。
+- **2026-11-28** [Copilot Agents 一覧](docs/copilot/agents.md)を226件に更新。GEM Designer の削除と AI Team の3件の移行先を掲載。
 - **2026-11-25** [AI に PR の承認を任せる前に決めること](docs/dev-methods/ai-pr-approvals.md)を追加。11-23 の Claude Ship を例に、承認を任せる範囲・方針ファイルの置き場所と変更権限・ブランチ保護との組み合わせ・名義・費用と止め方を整理。
 - **2026-11-21** [11-14〜11-21 の最新動向](docs/trends.md)を反映。Copilot の Plugin 配布統制・team default・review / connectors、Claude Code 2.1.326、Codex 0.170 / 0.171 の権限・MCP・remote session を整理。
 - **2026-11-18** [月額プランのAPIクレジット比較](docs/dev-methods/subscription-api-credits.md)を追加。ChatGPT・Claude・Geminiの対象プラン、期限、ChatGPT Proでの有効化手順を整理。
-- **2026-11-17** [Copilotカタログ](docs/copilot/instructions.md)に Instructions 2件・[Agents](docs/copilot/agents.md) 8件を追加。[AI-DLC](docs/dev-methods/aidlc-workflows.md#失敗した実行の報告書を作る)に失敗した実行の報告書を作る手順を追加。
-- **2026-11-14** [11-07〜11-14 の最新動向](docs/trends.md)を反映。Claude Code の Code Mode・Plugin互換性・権限 / identity、Codex の directory trust、MCP C# SDK の Skills 実装、Copilot app の GHES 対応と Enterprise seat API を整理。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -115,7 +115,7 @@
 | ドキュメント | 提供元 | 状態 | 環境 | 内容 | 件数 |
 |-------------|-------|------|------|------|------|
 | **[Instructions 一覧](docs/copilot/instructions.md)** | Official | GA | IDE | ファイルパターン別に規約を自動適用するルール | 195 件 |
-| **[Agents 一覧](docs/copilot/agents.md)** | Official | GA | IDE | 特定ドメインの専門家ペルソナ定義 | 230 件 |
+| **[Agents 一覧](docs/copilot/agents.md)** | Official | GA | IDE | 特定ドメインの専門家ペルソナ定義 | 226 件 |
 | **[Prompts / Skills 一覧](docs/copilot/prompts.md)** | Official | GA | IDE / CLI | `/` から呼ぶタスクテンプレートと Skills | 128 件 |
 | **[Plugins](docs/copilot/plugins.md)** | Official | GA | CLI / IDE | 拡張一式をまとめて配布する単位と Marketplace | — |
 | **[VS Code エディタウィンドウでの複数ルート運用](docs/copilot/multi-root.md)** | 本ガイド | Experimental | IDE | 複数フォルダ（multi-root workspace）を横断するエージェントセッションの設定・hooks の読み込み元 | — |
@@ -169,6 +169,7 @@
 | **[MCP ツールの契約設計](docs/dev-methods/mcp-tool-contracts.md)** | 本ガイド | — | CLI / IDE / Cloud | Tool の入出力スキーマ、副作用、再試行、エラー、承認と認可、検証手順 |
 | **[MCP Events — 外部の変化を受けてエージェントを動かす](docs/dev-methods/mcp-events.md)** | 本ガイド | — | Chat UI / Cloud | ChatGPT の MCP Events（draft）の前提、利用者とサーバー開発者の作業、重複・期限・権限喪失・自己再発火のテスト観点 |
 | **[MCP Apps — 会話内にUIを追加する](docs/dev-methods/mcp-apps.md)** | 本ガイド | — | CLI / IDE / Cloud / Chat UI | tool 結果として UI を返す仕組み、最小例、対応ホストの確認と fallback、データ露出範囲 |
+| **[MCP サーバーの Skill を Claude Code・VS Code で使う](docs/dev-methods/use-mcp-skills.md)** | 本ガイド | — | CLI / IDE | 接続先の Skill の呼び出し方、承認の単位、表示されないときの確認方法 |
 | **[MCP Skills 拡張 — Skill を MCP server から配る](docs/dev-methods/skills-over-mcp.md)** | 本ガイド | — | CLI / IDE / Cloud / Chat UI | SEP-2640 の `skill://` と `skills/list`、対応状況、出所表示・内容に結びついた承認などホストの要件、Inspector での検証 |
 | **[AIエージェントのID・認可・委任権限](docs/dev-methods/agent-identity.md)** | 本ガイド | — | CLI / IDE / Cloud | エージェント固有ID・OAuth scope/token audience・委任権限・control planeの設計 |
 | **[マルチエージェントを使う境界線](docs/dev-methods/multi-agent.md)** | 本ガイド | — | CLI / IDE / Cloud | agent-as-tool・supervisor・peer/teamの使い分け、向く仕事・向かない仕事、導入判断フローチャート |

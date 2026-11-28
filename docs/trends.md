@@ -1,8 +1,17 @@
 # Agent Skills・MCP・GUI 自動化の最新動向
 
-> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-21
+> **対象ツール**: ツール横断 ｜ **実行環境**: IDE / CLI / Cloud / Chat UI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-28
 
 > Agent Skills は `SKILL.md` だけで完結する仕組みから、MCP、Web データ取得、デプロイ、Computer Use と組み合わさる実行基盤へ広がっています。本ページは、現在注目度の高いテーマを公式情報に基づいて整理する**常設ページ**です。内容は冒頭の「最終更新」日時点の情報で、動向が変わるたびに本ページを改訂します。
+
+## 2026-11-21〜11-28 の更新
+
+| 公開日 | 提供元・状態 | 読者に関わる変更 |
+|---|---|---|
+| 11-24 | Anthropic / Official / Preview | Claude が接続先の MCP サーバーから Skill を読み込めるようになった。11-18 に公開された VS Code の実装とは、承認を記憶する単位が異なる。[Claude Code・VS Code の利用手順](dev-methods/use-mcp-skills.md) |
+| 11-24 UTC | OpenAI / Official / GA（CLI 正式版） | Codex CLI 0.172.0 では、ツール一覧をキャッシュした任意の stdio MCP サーバーは、既定で最初のツール呼び出し時に起動する。接続アプリはツールごとに承認を担当する reviewer を設定できる。[0.172.0 のリリースノート](https://github.com/openai/codex/releases/tag/rust-v0.172.0) |
+| 11-25 | GitHub / Official / 変更予告 | Copilot code review の請求先が未設定の組織に12-30から新しい既定値を適用する。メンバーの利用枠を使い続ける場合は事前に設定を保存する。[対象と例外](copilot/README.md#copilot-code-review-の請求先) |
+| 11-27 UTC | GitHub / Official / GA（CLI 正式版） | Copilot CLI 1.0.117 は、カスタムエージェントが利用するツールの明示指定に対応。MCP サーバー名と組み込みの権限種別が一致した場合も、サーバーへの承認をそのサーバーのツールに限定する。[1.0.117 のリリースノート](https://github.com/github/copilot-cli/releases/tag/v1.0.117) |
 
 ## 2026-11-14〜11-21 の更新 — 配布元・実行先・権限の分離
 
@@ -474,7 +483,7 @@ GitHub Copilot も 2026-10-01 に、**Copilot CLI と GitHub Copilot app** で m
 | `ant apply` | **クライアントへの配布ではなく**、Claude API 上の Agent / Environment / Skill / Memory Store / Deployment を宣言ファイルと lockfile で管理する（[7-5 節](#7-5-ant-apply--api-上のリソースを宣言で管理する)） | Official（Anthropic） | `ant` CLI 1.30.0 以降（2026-09-03 のリリースノートで案内） |
 | pnpm の agent skills | 依存パッケージが同梱した `skills/<name>/SKILL.md` を、`pnpm install` 時に**承認したものだけ**エージェントのスキルディレクトリへリンクする（[7-6 節](#7-6-pnpm--依存パッケージに同梱された-skill-をつなぐ)） | Official（pnpm） | GA（pnpm 12.11.0 以降、2026-10-09） |
 
-> 手元へ配るのではなく、**接続した MCP server から必要な時に読ませる**経路もできました。MCP の Skills 拡張（SEP-2640）は、Skill を MCP の Resources として届け、承認を全ファイルの digest に結びつけます。主要なコーディングエージェントはまだ対応していないため、本節の仕組みとは分けて [13 節](#skill-を-mcp-server-から配る--skills-拡張sep-2640)と[解説ページ](dev-methods/skills-over-mcp.md)で扱います。
+> 手元へ配るのではなく、**接続した MCP server から必要な時に読ませる**経路もできました。MCP の Skills 拡張（SEP-2640）は、Skill を MCP の Resources として届け、Skill 単位の承認を全ファイルの digest に結びつけます。Claude Code と VS Code での操作は[利用手順](dev-methods/use-mcp-skills.md)、通信と検証は[拡張の解説](dev-methods/skills-over-mcp.md)を参照してください。
 
 > もう 1 つ、**人が配るのではなくエージェント自身が Skill を書く**経路も広がっています。[Hermes Agent](dev-methods/hermes-agent.md#9-skills-と記憶) は agentskills.io 互換の `SKILL.md` を、複雑なタスクの後やターン終了後の背景レビューで自分で作成・修正し、既定ではすぐ反映します。CLI に内蔵した Hub は skills.sh・GitHub・ClawHub などからも導入でき、インストール時のスキャンと 4 段階の信頼レベルで判定します。本節の仕組みで固定・承認した Skill も、こうしたエージェントと同じディレクトリを共有すると書き換わり得ます。確認の考え方は [Skill / Plugin のセキュリティ](dev-methods/skill-security.md#エージェントが自分で書く-skill) にまとめました。
 
@@ -1093,7 +1102,7 @@ Codex は 2026-09-05 に `codex mcp-server` command と standalone `codex-mcp-se
 
 もう一つの公式拡張 **Skills**（`io.modelcontextprotocol/skills`）は、`SKILL.md` を含む Skill のディレクトリを MCP の Resources（`skill://<Skill のパス>/<ファイル>`）として配る取り決めです（`提供元`: Official / MCP ｜ `状態`: Preview。SEP-2640 は 2026-09-13 に Final、2026-10-15 に仕様を `2026-07-28` の schema に合わせて改訂）。server は `skills/list` / `skills/get` で、frontmatter と**全ファイルの SHA-256 digest つきの目録**を返します。ホストは必要になった時点でファイルを読み、目録と照合します。
 
-ファイルの Skill より扱いが厳しいのが特徴です。ホストは出所の server を model に示し、手元でのコード実行には Skill ごとの承認を取り、`allowed-tools` は利用者が認めない限り無視します。記憶した承認は**全ファイルの digest の組に結びつき、中身が変われば取り消されます**（[7-6 節](#7-6-pnpm--依存パッケージに同梱された-skill-をつなぐ)の pnpm の承認が以降のバージョンにも及ぶのと対照的です）。2026-10-19 時点で対応表に載るのは ChatGPT（Plugin の申請時に写しを取り込む部分対応）・MCP Inspector・mcpc・fast-agent などで、**Claude Code・Copilot・Codex は未対応**です。**→ [MCP Skills 拡張 — Skill を MCP server から配る](dev-methods/skills-over-mcp.md)**
+ファイルの Skill より扱いが厳しいのが特徴です。ホストは出所の server を model に示し、手元でのコード実行には Skill ごとの承認を取り、`allowed-tools` は利用者が認めない限り無視します。Skill 単位で記憶した承認は**全ファイルの digest の組に結びつき、中身が変われば取り消されます**（[7-6 節](#7-6-pnpm--依存パッケージに同梱された-skill-をつなぐ)の pnpm の承認が以降のバージョンにも及ぶのと対照的です）。2026-11-28 時点では Claude Code と VS Code の Copilot に公開実装があります。製品での読み込みの承認は[利用手順](dev-methods/use-mcp-skills.md)、ChatGPT・Codex を含む対応状況は拡張の解説を参照してください。**→ [MCP Skills 拡張 — Skill を MCP server から配る](dev-methods/skills-over-mcp.md)**
 
 ### 次に来るもの — 2026-08-22 のロードマップ
 
