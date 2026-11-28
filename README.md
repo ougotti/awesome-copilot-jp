@@ -20,9 +20,9 @@
 
 - **2026-11-28** [MCP サーバーの Skill を Claude Code・VS Code で使う](docs/dev-methods/use-mcp-skills.md)を追加。[最新動向](docs/trends.md)に Copilot レビューの請求先変更と Copilot・Codex CLI の更新を掲載。
 - **2026-11-28** [Copilot Agents 一覧](docs/copilot/agents.md)を226件に更新。GEM Designer の削除と AI Team の3件の移行先を掲載。
+- **2026-11-25** [AI に PR の承認を任せる前に決めること](docs/dev-methods/ai-pr-approvals.md)を追加。11-23 の Claude Ship を例に、承認を任せる範囲・方針ファイルの置き場所と変更権限・ブランチ保護との組み合わせ・名義・費用と止め方を整理。
 - **2026-11-21** [11-14〜11-21 の最新動向](docs/trends.md)を反映。Copilot の Plugin 配布統制・team default・review / connectors、Claude Code 2.1.326、Codex 0.170 / 0.171 の権限・MCP・remote session を整理。
 - **2026-11-18** [月額プランのAPIクレジット比較](docs/dev-methods/subscription-api-credits.md)を追加。ChatGPT・Claude・Geminiの対象プラン、期限、ChatGPT Proでの有効化手順を整理。
-- **2026-11-17** [Copilotカタログ](docs/copilot/instructions.md)に Instructions 2件・[Agents](docs/copilot/agents.md) 8件を追加。[AI-DLC](docs/dev-methods/aidlc-workflows.md#失敗した実行の報告書を作る)に失敗した実行の報告書を作る手順を追加。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -178,6 +178,7 @@
 | **[プラグインの可搬性](docs/dev-methods/plugin-portability.md)** | 本ガイド | — | IDE / CLI | `plugin.json` を見て、他のエージェントへ持ち出せる Plugin かを判定する手順 |
 | **[AI コードレビューはどの指示を読むか](docs/dev-methods/review-instructions.md)** | 本ガイド | — | Cloud | Copilot code review（head）と Claude Code Code Review（`CLAUDE.md` は base）の参照元、レビュー基準の更新・検証・CODEOWNERS での承認 |
 | **[AI 時代のコードレビュー](docs/dev-methods/ai-code-review.md)** | 本ガイド | — | Cloud / CLI | テストの削除・弱化で検証が減っていないかの点検、ReviewBench の grounded / augmented と AI レビュアーの誤検知・見逃しの測り方 |
+| **[AI に PR の承認を任せる前に決めること](docs/dev-methods/ai-pr-approvals.md)** | 本ガイド | — | Cloud / CLI | Claude Ship（Code Review・PR Steward・Claude Approvals）を例に、任せる範囲・方針ファイルの変更権限・ブランチ保護・名義・費用と止め方、Copilot approvals との併用 |
 | **[Skill / エージェントの評価（evals）](docs/dev-methods/evals.md)** | 本ガイド | — | CLI / Cloud | Skill / Plugin変更時の回帰評価と、本番エージェントの継続的な品質評価を分けて設計する |
 
 ### 共通・事務活用

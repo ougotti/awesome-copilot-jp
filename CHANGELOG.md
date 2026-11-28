@@ -9,6 +9,12 @@
 
 - **2026-11-28** [Copilot Agents 一覧](docs/copilot/agents.md)と追跡リストを226件に同期。GEM Designer の削除と、AI Team の開発・進行管理・QA の外部プラグインへの移行を記録した（#326）。
 
+- **2026-11-25** [AI に PR の承認を任せる前に決めること](docs/dev-methods/ai-pr-approvals.md)を追加。
+  - 2026-11-23 の Claude Ship（Code Review は GA、PR Steward と Claude Approvals は Beta）を受けて、「AI が判定を出す」「approving review を出す」「merge 要件に数える」の 3 段階を Copilot approvals と並べた。
+  - `.claude/approvals.yml` で書けること、default branch の方針が効くことと protected file の扱い、CODEOWNERS・古い承認の取り消し・必要な承認数との組み合わせを、任せる範囲の決め方とあわせて整理した。
+  - PR Steward・Claude Approvals・`/ship` の名義と書き込める範囲、サービス側で拒否される操作と GitHub の branch ルールに任される操作、observe モードでも課金されることと止める順番を書いた。Hacker News の議論は「コミュニティの見方」として分けた。
+  - [Copilot ガイド](docs/copilot/README.md#プルリクエストの承認をどこまで-ai-に任せるか)・[AI コードレビューはどの指示を読むか](docs/dev-methods/review-instructions.md#関連ドキュメント)・[AI 時代のコードレビュー](docs/dev-methods/ai-code-review.md#関連ドキュメント)から誘導した。Anthropic の発表と Claude Code Docs は 2026-11-25 に確認した。実機・管理画面での検証は行っていない。
+
 - **2026-11-21** #324 の 11-14〜11-21 の未掲載差分を反映。
   - [Copilot Plugins](docs/copilot/plugins.md)に `strictPluginOnlyCustomization`、Marketplace policy との違い、team customizations の direct member / child team / opt-out / 上位 policy の境界を追加した。
   - [Copilot](docs/copilot/README.md)に code review の Adaptive・cross-repository context・secret detection、Azure Repos review、verified MCP connectors の状態と管理条件を追加した。

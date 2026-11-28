@@ -244,6 +244,7 @@ npm run judge -- --candidate ./findings --provider openai --model <model-id> \
 
 - [人の仕事はどこに移るか](human-role.md) — レビューが律速になるときの対策と、人が持ち続ける仕事
 - [AI コードレビューはどの指示を読むか](review-instructions.md) — 指示ファイルの参照元（head / base）、レビュー基準の更新・検証・CODEOWNERS での承認
+- [AI に PR の承認を任せる前に決めること](ai-pr-approvals.md) — Claude Approvals・Copilot approvals で任せる範囲、方針の変更権限、ブランチ保護との組み合わせ
 - [Skill / エージェントの評価（evals）](evals.md) — 回帰評価と本番品質の評価、マージ後の品質の測り方
 - [GitHub Copilot ガイド — カスタマイズが効く場所](../copilot/README.md#カスタマイズが効く場所--レビューとエージェント) — Copilot code review の skills・MCP・effort level・API
 - [仕様駆動開発（SDD）](spec-driven.md) — 実装の前に仕様と受け入れ条件を固定する方法
