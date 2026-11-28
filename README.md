@@ -18,11 +18,11 @@
   書式は「- **YYYY-MM-DD** 変更内容（該当ページへのリンク）」です。
 -->
 
+- **2026-11-28** [Copilot Agents 一覧](docs/copilot/agents.md)を226件に更新。GEM Designer の削除と AI Team の3件の移行先を掲載。
 - **2026-11-21** [11-14〜11-21 の最新動向](docs/trends.md)を反映。Copilot の Plugin 配布統制・team default・review / connectors、Claude Code 2.1.326、Codex 0.170 / 0.171 の権限・MCP・remote session を整理。
 - **2026-11-18** [月額プランのAPIクレジット比較](docs/dev-methods/subscription-api-credits.md)を追加。ChatGPT・Claude・Geminiの対象プラン、期限、ChatGPT Proでの有効化手順を整理。
 - **2026-11-17** [Copilotカタログ](docs/copilot/instructions.md)に Instructions 2件・[Agents](docs/copilot/agents.md) 8件を追加。[AI-DLC](docs/dev-methods/aidlc-workflows.md#失敗した実行の報告書を作る)に失敗した実行の報告書を作る手順を追加。
 - **2026-11-14** [11-07〜11-14 の最新動向](docs/trends.md)を反映。Claude Code の Code Mode・Plugin互換性・権限 / identity、Codex の directory trust、MCP C# SDK の Skills 実装、Copilot app の GHES 対応と Enterprise seat API を整理。
-- **2026-11-11** [共有したダッシュボードは誰のアクセスで動くか](docs/business/shared-data-access.md)を追加。2026-11-10 の Claude Data の GA を受けて、Enterprise で 11-19 に既定でオンになる設定、作った人のアクセスで動く live sharing（ベータ）、certified queries の印、利用量と監査の記録を、共有の前に決めることとして整理。
 
 **→ すべての更新は [更新履歴（CHANGELOG）](CHANGELOG.md) を参照**
 
@@ -115,7 +115,7 @@
 | ドキュメント | 提供元 | 状態 | 環境 | 内容 | 件数 |
 |-------------|-------|------|------|------|------|
 | **[Instructions 一覧](docs/copilot/instructions.md)** | Official | GA | IDE | ファイルパターン別に規約を自動適用するルール | 195 件 |
-| **[Agents 一覧](docs/copilot/agents.md)** | Official | GA | IDE | 特定ドメインの専門家ペルソナ定義 | 230 件 |
+| **[Agents 一覧](docs/copilot/agents.md)** | Official | GA | IDE | 特定ドメインの専門家ペルソナ定義 | 226 件 |
 | **[Prompts / Skills 一覧](docs/copilot/prompts.md)** | Official | GA | IDE / CLI | `/` から呼ぶタスクテンプレートと Skills | 128 件 |
 | **[Plugins](docs/copilot/plugins.md)** | Official | GA | CLI / IDE | 拡張一式をまとめて配布する単位と Marketplace | — |
 | **[VS Code エディタウィンドウでの複数ルート運用](docs/copilot/multi-root.md)** | 本ガイド | Experimental | IDE | 複数フォルダ（multi-root workspace）を横断するエージェントセッションの設定・hooks の読み込み元 | — |

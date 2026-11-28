@@ -4,6 +4,8 @@
 
 ## 2026-11
 
+- **2026-11-28** [Copilot Agents 一覧](docs/copilot/agents.md)と追跡リストを226件に同期。GEM Designer の削除と、AI Team の開発・進行管理・QA の外部プラグインへの移行を記録した（#326）。
+
 - **2026-11-21** #324 の 11-14〜11-21 の未掲載差分を反映。
   - [Copilot Plugins](docs/copilot/plugins.md)に `strictPluginOnlyCustomization`、Marketplace policy との違い、team customizations の direct member / child team / opt-out / 上位 policy の境界を追加した。
   - [Copilot](docs/copilot/README.md)に code review の Adaptive・cross-repository context・secret detection、Azure Repos review、verified MCP connectors の状態と管理条件を追加した。
