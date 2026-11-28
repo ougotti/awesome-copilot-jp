@@ -4,6 +4,11 @@
 
 ## 2026-11
 
+- **2026-11-28** [サーバーが配る Skill の利用手順](docs/dev-methods/use-mcp-skills.md)を追加し、[MCP Skills 拡張の対応表](docs/dev-methods/skills-over-mcp.md)を更新。Claude Code・VS Code の承認単位と、ChatGPT・Codex の提供状況を反映した（#328）。
+- **2026-11-28** [Copilot code review の請求先](docs/copilot/README.md#copilot-code-review-の請求先)に12月30日の変更対象と例外を掲載。[最新動向](docs/trends.md)に Copilot CLI 1.0.117 と Codex CLI 0.172.0 の MCP に関する変更を追加した（#329）。
+
+- **2026-11-28** [Copilot Agents 一覧](docs/copilot/agents.md)と追跡リストを226件に同期。GEM Designer の削除と、AI Team の開発・進行管理・QA の外部プラグインへの移行を記録した（#326）。
+
 - **2026-11-21** #324 の 11-14〜11-21 の未掲載差分を反映。
   - [Copilot Plugins](docs/copilot/plugins.md)に `strictPluginOnlyCustomization`、Marketplace policy との違い、team customizations の direct member / child team / opt-out / 上位 policy の境界を追加した。
   - [Copilot](docs/copilot/README.md)に code review の Adaptive・cross-repository context・secret detection、Azure Repos review、verified MCP connectors の状態と管理条件を追加した。

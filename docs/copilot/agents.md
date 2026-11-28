@@ -1,10 +1,12 @@
 # Agents 一覧と活用ガイド
 
-> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-17
+> **対象ツール**: GitHub Copilot ｜ **実行環境**: IDE（VS Code 等）／ CLI ｜ **対象読者**: エンジニア ｜ **最終更新**: 2026-11-28
 
-> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **230 個の Agents** を日本語で解説します。
+> [github/awesome-copilot](https://github.com/github/awesome-copilot) で公開されている **226 個の Agents** を日本語で解説します。
 >
 > **2026-10-16 の点検**: upstream で 2026-03〜08 に削除された 22 件（`polyglot-test-*` の 8 件、Beast モード系 4 件、`semantic-kernel-*`・`microsoft-agent-framework-*` の 4 件、`winui3-expert`・`modernize-java`・`gem-critic`・`gem-*-mobile` など）を一覧から外しました。外部 Plugin への置き換えや重複整理によるもので、同じ用途は [Copilot Plugins](plugins.md) や Skills で探せる場合があります。
+
+> **2026-11-28 の点検**　GEM チームの定義整理で `gem-designer` が削除されました。AI Team の開発・進行管理・QA は、作者が管理する外部プラグインで引き続き利用できます。[GEM の変更履歴](https://github.com/github/awesome-copilot/commit/42477fef1c9d66efc882b4c91b3ff3b340f1724c) ／ [AI Team の移行記録](https://github.com/github/awesome-copilot/pull/6575) ／ [移行先の Agents](https://github.com/denis-a-evdokimov/ai-team-orchestration/tree/main/plugins/ai-team-orchestration/com.github.copilot/agents)
 
 ## Agents とは
 
@@ -51,7 +53,6 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`sast-sca-security-analyzer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/sast-sca-security-analyzer.agent.md) | SAST/SCA セキュリティアナライザー | 静的解析・依存関係脆弱性監査 |
 | [`doublecheck.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/doublecheck.agent.md) | AI 生成物検証エージェント | ファクトチェック・ソース検証 |
 | [`gem-reviewer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-reviewer.agent.md) | GEM レビュアー（セキュリティゲートキーパー） | OWASP・シークレット検出・PRD 準拠検証 |
-| [`gem-designer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-designer.agent.md) | GEM デザイナー（UI/UX スペシャリスト） | レイアウト・テーマ・カラースキーム・デザインシステム・アクセシビリティ検証 |
 | [`trojan-skill-hunter.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/trojan-skill-hunter.agent.md) | トロイの木馬スキルハンター（サプライチェーン監査） | Skill・Agent・Hooks・MCP 設定を導入前に監査、隠し指示・難読化ペイロードの検出 |
 
 **[se-security-reviewer.agent.md](https://github.com/github/awesome-copilot/blob/main/agents/se-security-reviewer.agent.md)** の特徴:
@@ -78,7 +79,6 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 |-----------|---------|---------|
 | [`plan.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/plan.agent.md) | 戦略的計画・アーキテクチャアシスタント | コードベース分析、実装戦略策定 |
 | [`planner.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/planner.agent.md) | 実装計画作成エージェント（コード変更なし） | Markdown 形式の計画書作成 |
-| [`ai-team-producer.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/ai-team-producer.agent.md) | AI チームプロデューサー（Remy） | スプリント計画、課題トリアージ、進行管理 |
 | [`prd.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/prd.agent.md) | シニアプロダクトマネージャー | PRD（プロダクト要件定義書）作成 |
 | [`specification.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/specification.agent.md) | 仕様書作成エージェント | AI 向け仕様書生成 |
 | [`implementation-plan.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/implementation-plan.agent.md) | 実装計画エージェント（AI-to-AI） | 機械可読な実装計画 |
@@ -158,7 +158,6 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`refine-issue.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/refine-issue.agent.md) | Issue 改善エージェント | GitHub Issue の詳細化 |
 | [`address-comments.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/address-comments.agent.md) | コメント対応エージェント | PR コメントへの対応 |
 | [`swe-subagent.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/swe-subagent.agent.md) | シニアソフトウェアエンジニア（SWE）サブエージェント | 機能開発・デバッグ・リファクタリング |
-| [`ai-team-dev.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/ai-team-dev.agent.md) | AI 開発チーム（Nova/Sage/Milo） | 機能実装、バグ修正、UI/API 開発 |
 | [`gem-debugger.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-debugger.agent.md) | GEM デバッガー（根本原因分析・スタックトレース診断） | 根本原因調査・スタックトレース解析・リグレッション特定 |
 | [`gem-code-simplifier.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-code-simplifier.agent.md) | GEM コードシンプリファイアー（デッドコード除去・複雑度削減） | リファクタリング・デッドコード削除・重複統合・命名改善 |
 | [`devtools-regression-investigator.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/devtools-regression-investigator.agent.md) | DevTools リグレッション調査エージェント | ブラウザリグレッションの再現・証拠収集・根本原因特定 |
@@ -510,7 +509,6 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 | [`diffblue-cover.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/diffblue-cover.agent.md) | Diffblue Cover | Java テスト自動生成 |
 | [`gem-browser-tester.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-browser-tester.agent.md) | GEM ブラウザテスター | E2E ブラウザテスト（Playwright/Chrome DevTools） |
 | [`qa-subagent.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/qa-subagent.agent.md) | QA サブエージェント | テスト計画・バグハント・品質検証 |
-| [`ai-team-qa.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/ai-team-qa.agent.md) | AI QA エンジニア（Ivy） | E2E 検証、バグ報告、QA サインオフ |
 | [`accessibility-runtime-tester.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/accessibility-runtime-tester.agent.md) | アクセシビリティランタイムテスター | キーボードフロー・フォーカス管理・WCAG ランタイム検証 |
 | [`gem-mobile-tester.agent.md`](https://github.com/github/awesome-copilot/blob/main/agents/gem-mobile-tester.agent.md) | GEM モバイルテスター（E2E） | iOS/Android シミュレーターでの E2E テスト実行 |
 
@@ -614,7 +612,7 @@ Copilot Chat のエージェント選択で、ビルトインエージェント�
 
 ## まとめ
 
-Agents は **230 ファイル** あり、以下のカテゴリに分類されます：
+Agents は **226 ファイル** あり、以下のカテゴリに分類されます：
 
 | カテゴリ | ファイル数 | 主な用途 |
 |---------|----------|---------|
